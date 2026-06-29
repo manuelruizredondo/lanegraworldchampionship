@@ -1,0 +1,205 @@
+---
+import { MENU, LANG_SWITCH, CTA, HOME_HREF } from "../data/nav.js";
+const { lang = "es" } = Astro.props;
+const menu = MENU[lang];
+const langSwitch = LANG_SWITCH[lang];
+const cta = CTA[lang];
+const homeHref = HOME_HREF[lang];
+const ext = (h) => h.startsWith("http");
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href={homeHref}>
+      <img src="/img/2025/03/logotipo-def-lanegra-dance-festival.png" width="500" height="195" alt="La Negra Dance Festival" />
+    </a>
+    <div class="header-right">
+      <a class="btn btn-outline cta" href={cta.href}>
+        <svg class="cta-icon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h15A1.5 1.5 0 0 1 21 8.5v1a2 2 0 0 0 0 4v1a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 14.5v-1a2 2 0 0 0 0-4z"/><path d="M9 7v10"/></svg>
+        {cta.label}
+      </a>
+      <button class="burger" type="button" aria-label="Abrir menú" data-menu-open>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="flyout" id="flyout">
+    <div class="flyout-backdrop" data-menu-close></div>
+    <div class="flyout-panel">
+    <button class="flyout-close" type="button" aria-label="Cerrar menú" data-menu-close></button>
+    <nav class="flyout-inner" aria-label="Menú principal">
+      <ul class="flyout-menu">
+        {menu.map((item) => (
+          <li class={item.sub.length ? "has-sub" : ""}>
+            <div class="row">
+              <a href={item.href} {...(ext(item.href) ? { target: "_blank", rel: "noopener" } : {})}>{item.label}</a>
+              {item.sub.length > 0 && <button class="sub-toggle" type="button" aria-label="Abrir submenú"></button>}
+            </div>
+            {item.sub.length > 0 && (
+              <ul class="submenu">
+                {item.sub.map((s) => (
+                  <li><a href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+        <li class="lang"><div class="row"><a href={langSwitch.href}>{langSwitch.label}</a></div></li>
+      </ul>
+    </nav>
+    </div>
+  </div>
+</div>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 1000;
+    background: transparent;
+    box-shadow: none;
+    transition: background .25s ease, box-shadow .25s ease, backdrop-filter .25s ease;
+  }
+  /* Al hacer scroll: fondo semitranslúcido + blur y sombra apenas insinuada */
+  .site-header.scrolled {
+    background: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(15, 11, 30, 0.08);
+  }
+  .header-inner {
+    position: relative;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 6px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 62px;
+  }
+  /* Logo absoluto: la barra queda baja y el logo sobresale por debajo */
+  .logo { position: absolute; left: 24px; top: 7px; line-height: 0; }
+  .logo img { width: clamp(160px, 21vw, 215px); height: auto; }
+
+  .header-right { display: flex; align-items: center; gap: 18px; }
+  .burger {
+    display: flex; flex-direction: column; justify-content: center; gap: 6px;
+    width: 50px; height: 50px; padding: 13px;
+    background: transparent; border: 0; cursor: pointer;
+  }
+  .burger span { display: block; height: 3px; width: 100%; background: var(--gold); border-radius: 2px; }
+
+  .cta { padding: 7px 20px; font-size: 15px; white-space: nowrap; }
+  .cta-icon { flex: 0 0 auto; }
+
+  /* Flyout lateral derecho (1/3 del ancho) */
+  .flyout {
+    position: fixed; inset: 0; z-index: 2000;
+    visibility: hidden;
+    overflow-x: hidden; /* evita scroll horizontal por el panel fuera de pantalla */
+  }
+  .flyout.open { visibility: visible; }
+
+  .flyout-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(15,11,30,.55);
+    opacity: 0; transition: opacity .35s ease;
+  }
+  .flyout.open .flyout-backdrop { opacity: 1; }
+
+  .flyout-panel {
+    position: absolute; top: 0; right: 0; height: 100%;
+    width: 33.333vw; min-width: 340px; max-width: 520px;
+    background: rgba(15,11,30,.98);
+    box-shadow: -6px 0 30px rgba(0,0,0,.35);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  }
+  .flyout.open .flyout-panel { transform: translateX(0); }
+
+  .flyout-inner { padding: 92px 36px 56px; }
+  .flyout-close {
+    position: absolute; top: 24px; right: 28px; width: 46px; height: 46px;
+    background: transparent; border: 0; cursor: pointer; z-index: 1;
+  }
+  .flyout-close::before, .flyout-close::after {
+    content: ""; position: absolute; top: 50%; left: 8px; width: 30px; height: 3px;
+    background: var(--gold); border-radius: 2px;
+  }
+  .flyout-close::before { transform: rotate(45deg); }
+  .flyout-close::after { transform: rotate(-45deg); }
+
+  .flyout-menu, .submenu { list-style: none; margin: 0; padding: 0; }
+  .flyout-menu > li { border-bottom: 1px solid rgba(219,200,168,.18); }
+  .row { display: flex; align-items: center; justify-content: space-between; }
+  .flyout-menu a {
+    display: block; flex: 1; padding: 16px 4px;
+    color: var(--cream); text-decoration: none;
+    font-size: 20px; letter-spacing: .04em; text-transform: uppercase;
+  }
+  .flyout-menu a:hover { color: var(--gold); }
+  .sub-toggle { position: relative; width: 44px; height: 44px; background: transparent; border: 0; cursor: pointer; flex: 0 0 auto; }
+  .sub-toggle::before, .sub-toggle::after { content: ""; position: absolute; top: 50%; left: 50%; background: var(--gold); transition: transform .2s; }
+  .sub-toggle::before { width: 16px; height: 2px; transform: translate(-50%,-50%); }
+  .sub-toggle::after { width: 2px; height: 16px; transform: translate(-50%,-50%); }
+  .has-sub.open .sub-toggle::after { transform: translate(-50%,-50%) scaleY(0); }
+  .submenu { max-height: 0; overflow: hidden; transition: max-height .25s ease; background: rgba(0,0,0,.18); }
+  .has-sub.open .submenu { max-height: 640px; }
+  .submenu a { font-size: 16px; padding: 12px 4px 12px 22px; color: var(--gold-light); }
+  .lang a { color: var(--gold); font-weight: 700; }
+
+  @media (max-width: 1000px) {
+    .flyout-panel { width: 50vw; }
+  }
+  @media (max-width: 640px) {
+    .burger { width: 46px; height: 46px; padding: 11px; }
+    .cta { display: none; }
+    .header-inner { min-height: 54px; }
+    .logo { left: 16px; top: 6px; }
+    .logo img { width: 150px; }
+    .flyout-panel { width: 86vw; min-width: 0; }
+    .flyout-inner { padding: 84px 26px 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flyout-backdrop, .flyout-panel { transition: none; }
+  }
+</style>
+
+<script>
+  // Publica la altura visual de la cabecera (incluido lo que sobresale el logo)
+  // para que el submenú sticky se coloque justo por debajo.
+  const header = document.querySelector(".site-header");
+  const logo = header.querySelector(".logo");
+  const setHeaderH = () => {
+    const hr = header.getBoundingClientRect();
+    const lr = logo.getBoundingClientRect();
+    const h = Math.max(hr.height, lr.bottom - hr.top);
+    document.documentElement.style.setProperty("--header-h", Math.round(h) + "px");
+    document.documentElement.style.setProperty("--header-bar", Math.round(hr.height) + "px");
+  };
+  setHeaderH();
+  window.addEventListener("resize", setHeaderH);
+
+  // Sombra + fondo semitranslúcido al separarse del top
+  const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 8);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  const fly = document.getElementById("flyout");
+  const open = () => { fly.classList.add("open"); document.body.style.overflow = "hidden"; };
+  const close = () => { fly.classList.remove("open"); document.body.style.overflow = ""; };
+  document.querySelectorAll("[data-menu-open]").forEach((b) => b.addEventListener("click", open));
+  document.querySelectorAll("[data-menu-close]").forEach((b) => b.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+  fly.querySelectorAll(".sub-toggle").forEach((t) => {
+    t.addEventListener("click", () => t.closest(".has-sub").classList.toggle("open"));
+  });
+  // En ítems con submenú, pulsar el texto también abre/cierra el acordeón
+  fly.querySelectorAll(".has-sub > .row > a").forEach((a) => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      a.closest(".has-sub").classList.toggle("open");
+    });
+  });
+</script>

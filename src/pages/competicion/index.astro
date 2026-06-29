@@ -1,0 +1,236 @@
+---
+import Base from "@/layouts/Base.astro";
+import SubNav from "@/components/SubNav.astro";
+import { img } from "@/data/img.js";
+
+const subNav = [
+  { label: "Inscripción", href: "#inscripcion" },
+  { label: "Bases", href: "#bases" },
+  { label: "Pase competición", href: "#fullpass" },
+  { label: "Competidores", href: "/competidores/" },
+  { label: "Ganadores 2025", href: "/ganadores-2025/" },
+  { label: "Ganadores 2024", href: "/ganadores/" },
+];
+
+const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfYZmv7H84x3PvdIFRJwJPQk2yU7KjQyGsu2ba5uu6kPtGapA/viewform?usp=header";
+
+const heroGrid = [
+  "lanegra-dance-festival-comepeticion-7.webp",
+  "lanegra-dance-festival-comepeticion-6.webp",
+  "lanegra-dance-festival-comepeticion-14.webp",
+  "lanegra-dance-festival-comepeticion-13.webp",
+  "lanegra-dance-festival-comepeticion-19.webp",
+  "lanegra-dance-festival-comepeticion-15.webp",
+];
+
+const gallery = [
+  "la-negra-dance-festival-artistas-1-6.webp",
+  "la-negra-dance-festival-artistas-1-5.webp",
+  "la-negra-dance-festival-artistas-1-4.webp",
+  "la-negra-dance-festival-artistas-1-3.webp",
+  "la-negra-dance-festival-artistas-1-7.webp",
+  "la-negra-dance-festival-artistas-1-2.webp",
+  "la-negra-dance-festival-artistas-1-1.webp",
+  "la-negra-dance-festival-artistas-.webp",
+  "la-negra-dance-festival-festival-img-5.webp",
+  "la-negra-dance-festival-festival-img-6.webp",
+  "la-negra-dance-festival-festival-img-8.webp",
+  "la-negra-dance-festival-img-ganadores-2.webp",
+  "la-negra-dance-festival-img-ganadores-3.webp",
+  "la-negra-dance-festival-img-ganadores-4.webp",
+  "la-negra-dance-festival-img-ganadores-5.webp",
+  "la-negra-dance-festival-img-ganadores-6.webp",
+  "la-negra-dance-festival-img-ganadores-7.webp",
+];
+---
+
+<Base title="Competición" description="Inscripciones para el Mundial de Salsa y Bachata de La Negra Dance Festival. Descarga las bases, conoce los talleres y reserva tu hotel.">
+  <SubNav items={subNav} label="Secciones de la competición" />
+  <!-- HERO / INSCRIPCIÓN -->
+  <section class="section inscripcion text-center" id="inscripcion">
+    <div class="container">
+      <p class="eyebrow dark">Salsa - Bachata</p>
+      <h1 class="script-title">Inscripciones para el mundial 2026</h1>
+      <a class="btn btn-solid hero-btn" href={FORM_URL} target="_blank" rel="noopener">Inscríbete ahora</a>
+      <div class="hero-grid">
+        {heroGrid.map((src) => (
+          <div class="hero-cell"><img src={img(src)} alt="" loading="lazy" /></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BASES -->
+  <section class="section bases" id="bases">
+    <div class="container bases-inner">
+      <div class="bases-text">
+        <p class="eyebrow dark">Compite en Salsa y Bachata</p>
+        <h2 class="script-title">Descarga las bases de la competición</h2>
+        <div class="bases-buttons">
+          <a class="btn btn-solid" href="/img/2026/05/SALSA-BASES-Y-REGLAMENTO-2026_1.pdf" target="_blank" rel="noopener">Bases Salsa</a>
+          <a class="btn btn-outline" href="/img/2026/05/BACHATA-BASES-Y-REGLAMENTO-2026_1.docx.pdf" target="_blank" rel="noopener">Bases Bachata</a>
+        </div>
+      </div>
+      <div class="bases-imgs">
+        <img src={img("la-negra-dance-festival-galeria-2023-23.webp")} alt="" loading="lazy" />
+        <img src={img("la-negra-dance-festival-galeria-2023-28.webp")} alt="" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <!-- TALLERES -->
+  <section class="section talleres text-center">
+    <div class="container">
+      <p class="eyebrow dark">Salsa – Bachata</p>
+      <h2 class="script-title">Talleres donde disfrutar</h2>
+      <p class="talleres-text">Todos los años traemos de diferentes rincones del mundo a artistas y bailarines de reconocido prestigio. Desde aficionados hasta competidores y profesionales pueden disfrutar de talleres de niveles básicos, intermedios y avanzados en disciplinas como: Salsa Cubana, On2, On2, Bachata Sensual, Tradicional, Fusión y las últimas tendencias. Masterclass solo para profesionales.</p>
+      <a class="btn btn-outline" href="/talleres/">Ver todos los talleres</a>
+    </div>
+  </section>
+
+  <!-- FULL PASS -->
+  <section class="section fullpass text-center" id="fullpass">
+    <div class="container">
+      <p class="eyebrow dark">Full Pass</p>
+      <h2 class="script-title">Nos vemos en ….</h2>
+      <p class="fullpass-text">Consigue tu Full Pass para vivir La Negra Dance Festival al completo. Entradas gestionadas a través de nuestro partner oficial.</p>
+      <a class="btn btn-solid" href="https://www.goandance.com" target="_blank" rel="noopener">go&amp;dance</a>
+    </div>
+  </section>
+
+  <!-- HOTEL -->
+  <section class="section hotel">
+    <div class="container">
+      <div class="hotel-head text-center">
+        <p class="eyebrow dark">AR Diamante Beach</p>
+        <h2 class="script-title">Reserva ya tu Hotel</h2>
+        <p class="hotel-sub">Sede de La Negra Dance Festival</p>
+      </div>
+      <div class="hotel-grid">
+        <div class="hotel-map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3115.9332867988783!2d0.07065367592495361!3d38.65041427177794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129dfe00f86d3eef%3A0x8f672c62926e85bf!2sAR%20Diamante%20Beach!5e0!3m2!1ses!2ses!4v1742755084006!5m2!1ses!2ses"
+            width="100%" height="360" style="border:0" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade" title="AR Diamante Beach"></iframe>
+        </div>
+        <div class="hotel-text">
+          <p>Disfruta de una estancia inigualable en <strong>AR Diamante Beach</strong>, un referente en la Costa Blanca con vistas espectaculares al mar y al Peñón de Ifach. Nuestras elegantes habitaciones combinan confort y estilo para que cada despertar sea especial.</p>
+          <p>Relájate en nuestras <strong>tres piscinas</strong>, incluyendo una infantil en un entorno exclusivo con palmeras, tumbonas, cócteles y animación. ¿Playa o piscina? No elijas, disfrútalo todo, a solo unos pasos del mar.</p>
+          <p>En caso de problema con la reserva pueden contactar a: <a href="mailto:reservas@galaxtur.com">reservas@galaxtur.com</a></p>
+          <p class="hotel-note">NOTA IMPORTANTE: TARIFA EXCLUSIVA PARA ASISTENTES AL EVENTO. EN CASO DE IDENTIFICAR LO CONTRARIO Y NO PRESENTAR EL FULLPASS AL HACER EL CHECK-IN SE PROCEDERÁ A LA ANULACIÓN DE LA RESERVA.</p>
+          <a class="btn btn-solid" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Reserva ya</a>
+        </div>
+      </div>
+
+      <div class="transfers">
+        <h3 class="transfers-title">¿Cómo llegar al hotel desde el aeropuerto o la estación de tren?</h3>
+        <div class="transfers-grid">
+          <div class="transfer-card">
+            <h4>Transfers aeropuerto Alicante - Calpe</h4>
+            <p>Llegada o despegue entre las 7:00h y las 23:55h: Precio del transfer compartido 23.50 € por persona y trayecto</p>
+          </div>
+          <div class="transfer-card">
+            <h4>Transfers estación de trenes Alicante - Calpe</h4>
+            <p>Llegada o salida entre las 9:00h y las 20:15h: Precio del transfer compartido 18 € por persona y trayecto</p>
+          </div>
+        </div>
+        <p class="transfers-note">Una vez recibida la información se realizará la reserva y se enviará la confirmación y un link para el pago del transfer.</p>
+        <div class="text-center">
+          <a class="btn btn-outline" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Reserva ya</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALERÍA -->
+  <section class="section-tight gallery-section">
+    <div class="container">
+      <div class="gallery-grid">
+        {gallery.map((src) => (
+          <div class="gallery-cell"><img src={img(src)} alt="" loading="lazy" /></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section final-cta text-center">
+    <div class="container">
+      <p class="eyebrow dark">Disfruta bailando</p>
+      <h2 class="script-title">Tu festival de baile latino</h2>
+      <p class="final-text">Tres días de salsa y bachata, para los enamorados-as del baile latino. Puro fuego en la pista: artistas, concursantes, talleres, fiesta y mucho ritmo. No te lo puedes perder, del 21 al 25 de octubre del 2026 en Calpe (España).</p>
+      <p class="final-sub">Un festival y concurso de baile a nivel internacional de Salsa y Bachata.</p>
+      <p class="final-claim">¡Ven, baila y disfruta!</p>
+      <div class="final-buttons">
+        <a class="btn btn-outline" href="/ganadores/">Ganadores anteriores</a>
+        <a class="btn btn-solid" href="/competidores/">Competidores</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .eyebrow.dark { color: var(--navy); }
+
+  /* INSCRIPCIÓN / HERO */
+  .inscripcion h1 { margin-bottom: 22px; }
+  .hero-btn { margin-bottom: 40px; }
+  .hero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .hero-cell { border-radius: 10px; overflow: hidden; aspect-ratio: 4/3; }
+  .hero-cell img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* BASES */
+  .bases { background: var(--cream); }
+  .bases-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .bases-buttons { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
+  .bases-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .bases-imgs img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; aspect-ratio: 3/4; }
+
+  /* TALLERES */
+  .talleres-text { max-width: 820px; margin: 0 auto 32px; }
+
+  /* FULL PASS */
+  .fullpass { background: linear-gradient(135deg,#14102b,#2a1f57); color: #fff; }
+  .fullpass .eyebrow.dark { color: var(--gold); }
+  .fullpass .script-title { color: var(--gold); }
+  .fullpass-text { max-width: 720px; margin: 0 auto 28px; }
+
+  /* HOTEL */
+  .hotel-sub { font-size: 18px; color: var(--gold-dark); margin-top: 6px; }
+  .hotel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 36px; }
+  .hotel-map { border-radius: 12px; overflow: hidden; line-height: 0; }
+  .hotel-text p { font-size: 15px; margin: 0 0 16px; }
+  .hotel-text a { color: var(--gold-dark); }
+  .hotel-note { font-size: 13px; font-weight: 700; color: var(--navy); background: var(--cream); padding: 14px 16px; border-radius: 8px; }
+  .transfers { margin-top: 56px; }
+  .transfers-title { text-align: center; font-family: var(--font-body); font-weight: 700; color: var(--navy); font-size: 22px; margin-bottom: 28px; }
+  .transfers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px; }
+  .transfer-card { background: var(--cream); border-radius: 10px; padding: 24px; }
+  .transfer-card h4 { font-family: var(--font-body); font-weight: 700; color: var(--gold-dark); margin: 0 0 10px; font-size: 17px; }
+  .transfer-card p { margin: 0; font-size: 15px; }
+  .transfers-note { text-align: center; font-size: 14px; max-width: 720px; margin: 0 auto 22px; }
+
+  /* GALERÍA */
+  .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .gallery-cell { border-radius: 8px; overflow: hidden; aspect-ratio: 1; }
+  .gallery-cell img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* FINAL CTA */
+  .final-text { max-width: 820px; margin: 0 auto 18px; }
+  .final-sub { max-width: 720px; margin: 0 auto 4px; }
+  .final-claim { font-family: var(--font-script); color: var(--gold); font-size: 34px; margin: 6px 0 26px; }
+  .final-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: repeat(2, 1fr); }
+    .bases-inner { grid-template-columns: 1fr; gap: 28px; }
+    .hotel-grid { grid-template-columns: 1fr; gap: 28px; }
+    .transfers-grid { grid-template-columns: 1fr; }
+    .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .hero-grid { grid-template-columns: 1fr 1fr; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

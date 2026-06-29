@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "astro", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "4388"], "port": 4388, "autoPort": false },
+    { "name": "ref", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "8850", "--directory", "/Users/manuelruizredondo/Proyectos/lanegra/_captured_ref"], "port": 8850, "autoPort": false }
+  ]
+}

@@ -1,0 +1,404 @@
+---
+import Base from "@/layouts/Base.astro";
+import { img } from "@/data/img.js";
+import { ARTISTS_ES as artists } from "@/data/artists.js";
+
+const circles = [
+  "/img/2025/03/lanegra-dance-festival-home-2-3.webp",
+  "/img/2025/03/lanegra-dance-festival-home-3-19.webp",
+  "/img/2025/05/ciudad-calpes-la-negra-dance-festival.webp",
+  "/img/2025/05/festival-pasos-negra-dance-2.jpeg",
+  "/img/2025/05/festival-negra-dance-home-1.jpg",
+];
+
+const cards = [
+  { title: "Los artistas", eyebrow: "Artista del baile latino, Salsa y Bachata", text: "Entra y descubre la constelación de estrellas de la salsa y la bachata que tendrás como maestros, jueces, animadores e incluso, compañeros de baile, durante cuatro días llenos de magia.", img: "/img/2025/05/la-negra-dance-festival-galeria-2023-23.webp", href: "/artistas/" },
+  { title: "WorkShops", eyebrow: "Disfruta de clases de salsa y bachata", text: "Aquí encontrarás talleres y masterclass acorde a tu nivel de baile (básico, medio, avanzado o máster) en todos los estilos de salsa y bachata con los mejores instructores de cada estilo.", img: "/img/2025/05/la-negra-dance-festival-galeria-2023-10.webp", href: "/talleres/" },
+  { title: "La fiesta", eyebrow: "Conéctate con amantes del baile", text: "Dos salas para el baile social: Salsa (timba, sones, clásicos, románticas, urbanas) y Bachata (tradicional, moderna y los últimos lanzamientos) harán las delicias a los amantes de la fiesta.", img: "/img/2025/03/lanegra-dance-festival-slide-2.webp", href: "/fiesta/" },
+];
+
+const igIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8zm0 8.1a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm6.3-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"/></svg>`;
+const ytIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12zM9.7 15.3V8.7l5.8 3.3-5.8 3.3z"/></svg>`;
+const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>`;
+---
+
+<Base title="La Negra Dance Festival — Festival de Salsa y Bachata" heroOverlay={true}>
+  <!-- HERO -->
+  <section class="hero">
+    <video autoplay muted loop playsinline poster="/img/posters/La-negra-web-video-1.jpg">
+      <source src="/img/2025/06/La-negra-web-video-1.mp4" type="video/mp4" />
+    </video>
+  </section>
+
+  <!-- PASS BAND -->
+  <section class="pass-band">
+    <div class="container pass-inner">
+      <div class="pass-left">
+        <h1 class="pass-headline"><em>La</em> <b>Negra</b> <em>Dance</em> <b>FESTIVAL</b></h1>
+        <p class="pass-date">Del 21 al 25 de octubre del 2026 en Calpe (España)</p>
+        <svg class="pass-flourish" viewBox="0 0 240 14" aria-hidden="true"><path d="M3 9 C 55 1 90 1 125 7 C 160 13 200 12 237 5" /></svg>
+      </div>
+      <div class="pass-right">
+        <p class="pass-cta"><em>Compra ahora tu</em> <b>PASE</b></p>
+        <div class="pass-buttons">
+          <a class="btn btn-solid" href="/tu-pase/">Competidor*</a>
+          <a class="btn btn-solid" href="/tu-pase/">Público general</a>
+        </div>
+        <p class="pass-note">*Solo si fuiste seleccionado</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTRO -->
+  <section class="section intro text-center">
+    <div class="container">
+      <p class="eyebrow dark">Salsa - Bachata</p>
+      <h2 class="script-title">¡Que se prenda fuego la tarima!</h2>
+      <div class="intro-cols">
+        <p>Desde el 2010 La Negra Dance Festival es un evento que reúne lo mejor de un congreso de baile y la espectacularidad de una competición mundial donde se dan cita los mejores bailarines de más de 35 países diferentes e infinitas nacionalidades, tanto en la disciplina de Salsa como la de Bachata en todos sus estilos.</p>
+        <p>En el hermoso marco del pueblo costero de Calpe, Alicante, podrás disfrutar del turismo, gastronomía, playas y del lujo de un hotel-spa 4 estrellas superior, todo en un mismo espacio: talleres para todos los niveles de baile, formaciones especializadas para profesionales, fiestas hasta el amanecer y el único Mundial de Salsa y Bachata con coreografías 100% de estreno. ¡Vive un fin de semana lleno de emociones!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CIRCLES -->
+  <section class="section-tight">
+    <div class="container circles">
+      {circles.map((src) => <div class="circle"><img src={src} alt="" loading="lazy" /></div>)}
+    </div>
+  </section>
+
+  <!-- ARTISTAS / FESTIVAL (split) -->
+  <section class="onoff">
+    <img class="onoff-img onoff-img-left" src={img("festival-negra-dance-home-1.jpg")} alt="" loading="lazy" />
+    <img class="onoff-img onoff-img-right" src={img("lanegra-dance-festival-comepeticion-7.webp")} alt="" loading="lazy" />
+    <div class="onoff-inner">
+      <a class="onoff-col" href="/competicion/">
+        <span class="onoff-eyebrow">Vienes a</span>
+        <h2 class="onoff-title">Competir</h2>
+        <p class="onoff-desc">Inscríbete en el Mundial de Salsa y Bachata y compite ante un jurado de élite.</p>
+        <span class="onoff-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
+      </a>
+      <a class="onoff-col" href="/festival/">
+        <span class="onoff-eyebrow">Vienes al</span>
+        <h2 class="onoff-title">Festival</h2>
+        <p class="onoff-desc">Talleres, fiestas, shows y hotel-spa frente al mar. Disfrútalo como público.</p>
+        <span class="onoff-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FEATURE CARDS -->
+  <section class="section feature-cards">
+    <div class="container cards-grid">
+      {cards.map((c) => (
+        <article class="fcard">
+          <div class="fcard-img">
+            <img src={c.img} alt={c.title} loading="lazy" />
+            <span class="fcard-caption">{c.eyebrow}</span>
+          </div>
+          <h3 class="script-title fcard-title">{c.title}</h3>
+          <p class="fcard-text">{c.text}</p>
+          <a class="btn btn-outline" href={c.href}>Más info</a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- BAILAR / COMPETIR -->
+  <section class="split-grid">
+    <div class="split-img" style="background-image:url('/img/2025/05/festival-negra-dance-home-1.jpg')"></div>
+    <div class="split-text bailar">
+      <p class="eyebrow">Este es tu festival</p>
+      <h2 class="script-title white">Si te gusta bailar</h2>
+      <p>Únete a una audiencia multicultural y cosmopolita que le gusta disfrutar de talleres, que amanece en nuestras fiestas, que le encanta hacer amigos y disfrutar cómodamente desde la butaca de los mejores shows del Mundial.</p>
+      <p class="split-date">Del 21 al 25 de octubre de 2026 en Calpe (España)</p>
+      <a class="btn btn-light" href="/festival/">Festival más info</a>
+    </div>
+    <div class="split-text competir">
+      <p class="eyebrow dark">Este es tu mundial</p>
+      <h2 class="script-title white">Si te gusta competir</h2>
+      <p>Debes saber que cada mes de noviembre, terminado el festival, abrimos las solicitudes para que envíes tu video y te postules a competir en una de las competiciones más prestigiosas, exigentes y exclusivas del mundo, en la diversas categorías de salsa y bachata.</p>
+      <p class="split-date">Del 21 al 25 de octubre de 2026 en Calpe (España)</p>
+      <a class="btn btn-light" href="/competicion/">Competición más info</a>
+    </div>
+    <div class="split-img" style="background-image:url('/img/2025/05/festival-pasos-negra-dance-2.jpeg')"></div>
+  </section>
+
+  <!-- ARTISTS -->
+  <section class="section artists">
+    <div class="container text-center">
+      <p class="eyebrow dark">Salsa - Bachata</p>
+      <h2 class="script-title">Nuestros artistas invitados</h2>
+      <p class="artists-intro">Todos los años traemos de diferentes rincones del mundo a artistas y bailarines de reconocido prestigio. Bailarines de élite, talleres, playa, piscinas, fiestas y competidores de renombre mundial de más de 20 países se unen cada año en este gran evento.</p>
+    </div>
+    <div class="artists-slider">
+      <div class="artists-track">
+        {[...artists, ...artists].map((a, i) => (
+          <article class="artist" aria-hidden={i >= artists.length ? "true" : undefined}>
+            <div class="artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <h3 class="artist-name">{a.name}</h3>
+            <p class="artist-country">{a.country}</p>
+            <div class="artist-social">
+              {a.fb && <a href={a.fb} target="_blank" rel="noopener" aria-label="Facebook" set:html={fbIcon}></a>}
+              {a.ig && <a href={a.ig} target="_blank" rel="noopener" aria-label="Instagram" set:html={igIcon}></a>}
+              {a.yt && <a href={a.yt} target="_blank" rel="noopener" aria-label="YouTube" set:html={ytIcon}></a>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+    <div class="container text-center">
+      <a class="btn btn-outline" href="/artistas/">Ver todos</a>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container cta-box">
+      <div class="cta-img"><img src="/img/2025/03/lanegra-dance-festival-home-1-7.webp" alt="" loading="lazy" /></div>
+      <div class="cta-content">
+        <p class="cta-eyebrow">Disfruta bailando</p>
+        <h2 class="cta-title">Tu festival de baile latino</h2>
+        <p>Tres días de salsa y bachata, para los enamorados-as del baile latino. Puro fuego en la pista: artistas, concursantes, talleres, fiesta y mucho ritmo. No te lo puedes perder, del 21 al 25 de octubre del 2026 en Calpe (España).</p>
+        <p class="cta-strong">Un festival y concurso de baile a nivel internacional de Salsa y Bachata.</p>
+        <p class="cta-claim">¡Ven, baila y disfruta!</p>
+        <div class="cta-buttons">
+          <a class="btn cta-btn" href="/tu-pase/">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h15A1.5 1.5 0 0 1 21 8.5v1a2 2 0 0 0 0 4v1a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 14.5v-1a2 2 0 0 0 0-4z"/><path d="M9 7v10"/></svg>
+            Comprar Pase
+          </a>
+          <a class="btn cta-btn" href="/competicion/#inscripcion">Inscríbete al Mundial</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .eyebrow.dark { color: var(--navy); }
+
+  /* HERO */
+  /* El vídeo sube bajo el header transparente para que quede por encima */
+  .hero { line-height: 0; background: var(--navy); margin-top: calc(-1 * var(--header-bar, 64px)); }
+  .hero video { width: 100%; height: 90vh; object-fit: cover; display: block; }
+
+  /* PASS BAND */
+  .pass-band {
+    max-width: var(--container);
+    margin: -70px auto 0;
+    position: relative; z-index: 5;
+    border-radius: 22px;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(115deg, #0a0f24 0%, #0e1430 50%, #122150 100%);
+  }
+  .pass-band::after {
+    content: ""; position: absolute; top: 20px; right: 28px;
+    width: 250px; height: 100px;
+    background: url("/img/2025/03/notas-musicales_notas-musicales-blanco-400.png") no-repeat center / contain;
+    opacity: .18; pointer-events: none; z-index: 0;
+  }
+  .pass-inner { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: center; padding: 44px 44px; position: relative; z-index: 1; }
+
+  .pass-headline { margin: 0 0 10px; line-height: 1.02; font-weight: 400; white-space: nowrap; }
+  .pass-headline b { font-family: var(--font-script); color: #fff; font-weight: 400; font-size: clamp(30px, 4vw, 50px); }
+  .pass-headline em { font-family: var(--font-display); color: var(--gold); font-style: normal; font-size: clamp(20px, 2.7vw, 34px); }
+  .pass-date { font-size: 20px; font-weight: 300; margin: 0; }
+  .pass-flourish { display: block; width: 230px; max-width: 80%; height: 14px; margin-top: 8px; }
+  .pass-flourish path { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round; }
+
+  .pass-right { text-align: center; }
+  .pass-cta { margin: 0 0 18px; line-height: 1.05; white-space: nowrap; }
+  .pass-cta em { font-family: var(--font-script); color: var(--gold); font-style: normal; font-weight: 400; font-size: clamp(24px, 3vw, 36px); }
+  .pass-cta b { font-family: var(--font-script); color: #fff; font-weight: 400; font-size: clamp(24px, 3vw, 36px); letter-spacing: .02em; }
+  .pass-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .pass-note { font-size: 15px; color: rgba(255,255,255,.7); margin: 12px 0 0; }
+
+  /* INTRO */
+  .intro-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; max-width: 1000px; margin: 10px auto 0; }
+
+  /* CIRCLES */
+  .circles { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; }
+  .circle { width: 180px; height: 180px; border-radius: 50%; overflow: hidden; flex: 0 0 auto; }
+  .circle img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ARTISTAS / FESTIVAL (split) */
+  .onoff { position: relative; overflow: hidden; padding: 92px 0; }
+  .onoff-img { position: absolute; top: 0; bottom: 0; width: 23%; height: 100%; object-fit: cover; z-index: 1; }
+  .onoff-img-left { left: 0; object-position: 72% center; border-radius: 0 18px 18px 0; }
+  .onoff-img-right { right: 0; object-position: 28% center; border-radius: 18px 0 0 18px; }
+  .onoff-inner { position: relative; z-index: 2; max-width: 820px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .onoff-col { text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .onoff-eyebrow { font-family: var(--font-display); color: var(--gold); font-size: clamp(22px, 2.4vw, 28px); line-height: 1; }
+  .onoff-title { font-family: "Bebas Neue", var(--font-body); font-weight: 400; font-size: clamp(54px, 8vw, 104px); line-height: .88; color: var(--navy); letter-spacing: .01em; margin: 2px 0 0; transition: color .2s; }
+  .onoff-desc { font-size: 15px; color: var(--text); max-width: 300px; margin: 14px 0 22px; }
+  .onoff-arrow { width: 52px; height: 52px; border-radius: 12px; background: var(--gold); color: var(--navy); display: inline-flex; align-items: center; justify-content: center; transition: transform .2s, background .2s, color .2s; }
+  .onoff-col:hover .onoff-arrow { background: var(--gold-dark); color: #fff; transform: translateY(-3px); }
+  .onoff-col:hover .onoff-title { color: var(--gold-dark); }
+  @media (max-width: 820px) {
+    .onoff-img { width: 16%; opacity: .45; }
+    .onoff-inner { grid-template-columns: 1fr; gap: 46px; max-width: 420px; }
+  }
+  @media (max-width: 560px) { .onoff-img { display: none; } }
+
+  /* FEATURE CARDS */
+  .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+  .fcard { text-align: center; }
+  .fcard-img { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 16px; aspect-ratio: 4/3; }
+  .fcard-img img { width: 100%; height: 100%; object-fit: cover; }
+  .fcard-caption {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 26px 14px 12px; color: #fff; font-size: 15px; font-weight: 400;
+    background: linear-gradient(to top, rgba(15,11,30,.78), transparent);
+  }
+  .fcard-title { font-size: 34px; color: var(--gold); margin: 6px 0 12px; }
+  .fcard-text { font-size: 15px; margin-bottom: 20px; }
+
+  /* SPLIT GRID (bailar / competir) */
+  .split-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .split-img { min-height: 360px; background-size: cover; background-position: center; }
+  .split-text { padding: 56px 48px; color: #fff; }
+  .split-text.bailar { background: var(--blue); }
+  .split-text.competir { background: var(--gold); }
+  .split-text.competir .eyebrow.dark { color: var(--navy); }
+  .split-text p { font-size: 15px; }
+  .split-date { font-weight: 400; opacity: .85; margin: 16px 0 22px; }
+
+  /* ARTISTS */
+  .artists-intro { max-width: 760px; margin: 0 auto 40px; }
+  /* Slider automático a todo el ancho, con arrastre del ratón */
+  .artists-slider {
+    width: 100%; margin-bottom: 38px;
+    overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; -ms-overflow-style: none;
+    cursor: grab; touch-action: pan-x;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  }
+  .artists-slider::-webkit-scrollbar { display: none; }
+  .artists-slider.dragging { cursor: grabbing; }
+  .artists-track { display: flex; gap: 24px; width: max-content; user-select: none; }
+  .artists-track img { -webkit-user-drag: none; user-select: none; }
+  .artist { flex: 0 0 230px; width: 230px; }
+  .artist-img { border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; margin-bottom: 14px; }
+  .artist-img img { width: 100%; height: 100%; object-fit: cover; }
+  .artist-name { font-family: var(--font-body); font-weight: 700; text-transform: uppercase; font-size: 17px; letter-spacing: .03em; margin: 0 0 4px; color: var(--navy); }
+  .artist-country { color: var(--gold-dark); font-size: 15px; margin: 0 0 10px; }
+  .artist-social { display: flex; gap: 8px; justify-content: center; }
+  .artist-social a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--gold); color: #fff;
+  }
+  .artist-social a:hover { background: var(--gold-dark); }
+
+  /* FINAL CTA */
+  .final-cta { padding: 70px 0; }
+  .cta-box { display: grid; grid-template-columns: 1fr 1.05fr; align-items: stretch; border-radius: 22px; overflow: hidden; }
+  .cta-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cta-content { background: linear-gradient(120deg,#0a0f24 0%,#0f1430 55%,#161c40 100%); color: #fff; padding: 50px 52px; display: flex; flex-direction: column; justify-content: center; text-align: left; }
+  .cta-eyebrow { font-family: var(--font-display); color: var(--gold); font-size: clamp(22px, 2.6vw, 30px); line-height: 1; margin: 0 0 2px; }
+  .cta-title { font-family: var(--font-script); color: #fff; font-weight: 400; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.05; margin: 0 0 16px; }
+  .cta-content p { font-size: 16px; line-height: 1.55; margin: 0 0 14px; color: rgba(255,255,255,.92); }
+  .cta-strong { font-weight: 700; color: #fff !important; }
+  .cta-claim { font-family: var(--font-script); color: var(--gold) !important; font-weight: 400; font-size: clamp(28px, 3.4vw, 40px); margin: 8px 0 24px !important; line-height: 1; }
+  .cta-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+  .cta-btn { background: transparent; border: 2px solid #fff; color: #fff; }
+  .cta-btn:hover { background: #fff; color: var(--navy); }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .pass-inner { grid-template-columns: 1fr; gap: 26px; text-align: center; }
+    .pass-headline { white-space: normal; }
+    .pass-cta { white-space: normal; }
+    .pass-flourish { margin-left: auto; margin-right: auto; }
+    .pass-band::after { width: 150px; height: 60px; top: 12px; right: 14px; }
+    .intro-cols { grid-template-columns: 1fr; gap: 14px; }
+    .cards-grid { grid-template-columns: 1fr; gap: 44px; }
+    .artist { flex: 0 0 180px; width: 180px; }
+    .split-grid { grid-template-columns: 1fr; }
+    .split-grid .split-img { min-height: 260px; }
+    .split-text.competir { order: 4; }
+    .cta-box { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .pass-band { margin-top: -40px; border-radius: 12px; }
+    .circle { width: 140px; height: 140px; }
+  }
+</style>
+
+<script>
+  // Slider de artistas: auto-scroll lento + arrastre con el ratón (y swipe nativo en móvil)
+  const slider = document.querySelector(".artists-slider");
+  const track = slider && slider.querySelector(".artists-track");
+  if (slider && track) {
+    const SPEED = 28; // px por segundo (auto-scroll lento)
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const half = () => track.scrollWidth / 2;
+    const wrap = (v) => { const h = half(); if (h > 0) { v %= h; if (v < 0) v += h; } return v; };
+    let paused = false, dragging = false, moved = false;
+    let startX = 0, startScroll = 0, x = 0, last = null;
+    let vel = 0, lastMoveX = 0, lastMoveT = 0, resumeAt = 0; // inercia del arrastre
+
+    function tick(t) {
+      if (last === null) last = t;
+      const dt = Math.min((t - last) / 1000, 0.05); last = t;
+      if (dragging) {
+        // el usuario controla el scroll
+      } else if (Math.abs(vel) > 16) {
+        // inercia con easing al soltar (deceleración exponencial)
+        x = wrap(x + vel * dt);
+        vel *= Math.exp(-dt / 0.45);
+        slider.scrollLeft = x;
+      } else if (!reduce && !paused && t >= resumeAt) {
+        vel = 0;
+        x = wrap(x + SPEED * dt);
+        slider.scrollLeft = x;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    // Sincroniza x cuando el desplazamiento lo provoca el usuario (arrastre/swipe nativo)
+    slider.addEventListener("scroll", () => {
+      if (Math.abs(slider.scrollLeft - x) > 2) x = wrap(slider.scrollLeft);
+    }, { passive: true });
+
+    slider.addEventListener("mouseenter", () => { paused = true; });
+    slider.addEventListener("mouseleave", () => { paused = false; });
+
+    slider.addEventListener("pointerdown", (e) => {
+      dragging = true; moved = false; vel = 0;
+      if (e.pointerType === "mouse") {
+        startX = e.clientX; startScroll = slider.scrollLeft;
+        lastMoveX = e.clientX; lastMoveT = performance.now();
+        try { slider.setPointerCapture(e.pointerId); } catch (_) {}
+        slider.classList.add("dragging");
+      }
+    });
+    slider.addEventListener("pointermove", (e) => {
+      if (!dragging || e.pointerType !== "mouse") return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) moved = true;
+      x = wrap(startScroll - dx);
+      slider.scrollLeft = x;
+      const now = performance.now();
+      const mdt = (now - lastMoveT) / 1000;
+      if (mdt > 0) vel = Math.max(-5000, Math.min(5000, -(e.clientX - lastMoveX) / mdt));
+      lastMoveX = e.clientX; lastMoveT = now;
+    });
+    const endDrag = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      slider.classList.remove("dragging");
+      x = wrap(slider.scrollLeft);
+      if (e && e.pointerType !== "mouse") { vel = 0; resumeAt = performance.now() + 1200; }
+      else if (performance.now() - lastMoveT > 90) vel = 0; // ratón parado al soltar
+    };
+    slider.addEventListener("pointerup", endDrag);
+    slider.addEventListener("pointercancel", endDrag);
+    // Evitar que un arrastre dispare los enlaces de las tarjetas
+    slider.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
+</script>

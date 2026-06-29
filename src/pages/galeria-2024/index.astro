@@ -1,0 +1,118 @@
+---
+import Base from "@/layouts/Base.astro";
+import { img } from "@/data/img.js";
+
+const images = [
+  "la-negra-dance-festival-img-ganadores-7.webp",
+  "la-negra-dance-festival-img-ganadores-6.webp",
+  "la-negra-dance-festival-img-ganadores-5.webp",
+  "la-negra-dance-festival-img-ganadores-4.webp",
+  "la-negra-dance-festival-img-ganadores-3.webp",
+  "la-negra-dance-festival-img-ganadores-2.webp",
+  "la-negra-dance-festival-img-ganadores-1.webp",
+  "la-negra-dance-festival-fiesta-img-17.webp",
+  "la-negra-dance-festival-fiesta-img-15.webp",
+  "la-negra-dance-festival-fiesta-img-14.webp",
+  "la-negra-dance-festival-fiesta-img-13.webp",
+  "la-negra-dance-festival-fiesta-img-11.webp",
+  "la-negra-dance-festival-fiesta-img-9-1.webp",
+  "la-negra-dance-festival-fiesta-img-9.webp",
+  "la-negra-dance-festival-fiesta-img-8-1.webp",
+  "la-negra-dance-festival-fiesta-img-8.webp",
+  "la-negra-dance-festival-fiesta-img-7-1.webp",
+  "la-negra-dance-festival-fiesta-img-6-1.webp",
+  "la-negra-dance-festival-fiesta-img-5-1.webp",
+  "la-negra-dance-festival-fiesta-img-4-2.webp",
+  "la-negra-dance-festival-fiesta-img-4-1.webp",
+  "la-negra-dance-festival-fiesta-img-3-1.webp",
+  "la-negra-dance-festival-fiesta-img-2-1.webp",
+  "la-negra-dance-festival-fiesta-img-1-2.webp",
+  "la-negra-dance-festival-fiesta-img-1-1.webp",
+  "la-negra-dance-festival-fiesta-img-.webp",
+  "la-negra-dance-festival-fiesta-img-6.webp",
+  "la-negra-dance-festival-fiesta-img-5.webp",
+  "la-negra-dance-festival-fiesta-img-4.webp",
+  "la-negra-dance-festival-fiesta-img-3.webp",
+  "la-negra-dance-festival-fiesta-img-2.webp",
+  "la-negra-dance-festival-fiesta-img-1.webp",
+  "la-negra-dance-festival-fiesta-img-10.webp",
+  "la-negra-dance-festival-fiesta-img-7.webp",
+  "la-negra-dance-festival-fiesta-img-12.webp",
+  "la-negra-dance-festival-festival-img-.webp",
+  "la-negra-dance-festival-festival-img-21.webp",
+  "la-negra-dance-festival-festival-img-20.webp",
+  "la-negra-dance-festival-festival-img-19.webp",
+  "la-negra-dance-festival-festival-img-18.webp",
+  "la-negra-dance-festival-festival-img-17.webp",
+  "la-negra-dance-festival-festival-img-16.webp",
+  "la-negra-dance-festival-festival-img-15.webp",
+  "la-negra-dance-festival-festival-img-14.webp",
+  "la-negra-dance-festival-festival-img-13.webp",
+  "la-negra-dance-festival-festival-img-12.webp",
+  "la-negra-dance-festival-festival-img-11.webp",
+  "la-negra-dance-festival-festival-img-10.webp",
+  "la-negra-dance-festival-festival-img-9.webp",
+  "la-negra-dance-festival-festival-img-8.webp",
+  "la-negra-dance-festival-festival-img-7.webp",
+  "la-negra-dance-festival-festival-img-6.webp",
+  "la-negra-dance-festival-festival-img-5.webp",
+  "la-negra-dance-festival-festival-img-4.webp",
+  "la-negra-dance-festival-festival-img-3.webp",
+  "la-negra-dance-festival-festival-img-2.webp",
+  "la-negra-dance-festival-festival-img-1.webp",
+];
+---
+
+<Base
+  title="Galería 2024 — La Negra Dance Festival"
+  description="Revive otras ediciones de La Negra Dance Festival con la galería de fotos de 2024."
+  lang="es"
+>
+  <section class="section gallery-head text-center">
+    <div class="container">
+      <p class="eyebrow dark">Revive otras ediciones - 2024</p>
+      <h1 class="script-title">¡Que se prenda fuego la tarima!</h1>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container">
+      <div class="gallery-grid">
+        {images.map((name, i) => (
+          <figure class="gallery-item">
+            <img src={img(name)} alt={`La Negra Dance Festival 2024 — foto ${i + 1}`} loading="lazy" />
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .eyebrow.dark { color: var(--navy); }
+  .gallery-head { padding-bottom: 0; }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .gallery-item {
+    margin: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    background: var(--cream);
+  }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+  }
+  .gallery-item:hover img { transform: scale(1.05); }
+
+  @media (max-width: 900px) {
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
+</style>

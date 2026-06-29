@@ -1,0 +1,97 @@
+---
+import Base from "@/layouts/Base.astro";
+import { img } from "@/data/img.js";
+
+const photos = [
+  "la-negra-dance-festival-galeria-2023-27.webp",
+  "la-negra-dance-festival-galeria-2023-28.webp",
+  "la-negra-dance-festival-galeria-2023-29.webp",
+  "la-negra-dance-festival-galeria-2023-30.webp",
+  "la-negra-dance-festival-galeria-2023-31.webp",
+  "la-negra-dance-festival-galeria-2023-32.webp",
+  "la-negra-dance-festival-galeria-2023-33.webp",
+  "la-negra-dance-festival-galeria-2023-34.webp",
+  "la-negra-dance-festival-galeria-2023-35.webp",
+  "la-negra-dance-festival-galeria-2023-.webp",
+  "la-negra-dance-festival-galeria-2023-1.webp",
+  "la-negra-dance-festival-galeria-2023-2.webp",
+  "la-negra-dance-festival-galeria-2023-3.webp",
+  "la-negra-dance-festival-galeria-2023-4.webp",
+  "la-negra-dance-festival-galeria-2023-5.webp",
+  "la-negra-dance-festival-galeria-2023-6.webp",
+  "la-negra-dance-festival-galeria-2023-7.webp",
+  "la-negra-dance-festival-galeria-2023-8.webp",
+  "la-negra-dance-festival-galeria-2023-9.webp",
+  "la-negra-dance-festival-galeria-2023-10.webp",
+  "la-negra-dance-festival-galeria-2023-11.webp",
+  "la-negra-dance-festival-galeria-2023-12.webp",
+  "la-negra-dance-festival-galeria-2023-13.webp",
+  "la-negra-dance-festival-galeria-2023-14.webp",
+  "la-negra-dance-festival-galeria-2023-15.webp",
+  "la-negra-dance-festival-galeria-2023-16.webp",
+  "la-negra-dance-festival-galeria-2023-17.webp",
+  "la-negra-dance-festival-galeria-2023-18.webp",
+  "la-negra-dance-festival-galeria-2023-19.webp",
+  "la-negra-dance-festival-galeria-2023-20.webp",
+  "la-negra-dance-festival-galeria-2023-21.webp",
+  "la-negra-dance-festival-galeria-2023-22.webp",
+  "la-negra-dance-festival-galeria-2023-23.webp",
+  "la-negra-dance-festival-galeria-2023-24.webp",
+  "la-negra-dance-festival-galeria-2023-25.webp",
+  "la-negra-dance-festival-galeria-2023-26.webp",
+];
+---
+
+<Base title="Gallery 2023 — La Negra Dance Festival" description="Photo gallery from the 2023 edition of La Negra Dance Festival." lang="en">
+  <section class="section gallery-head text-center">
+    <div class="container">
+      <p class="eyebrow dark">Photo Gallery</p>
+      <h1 class="script-title">Relive other editions – 2023</h1>
+      <p class="gallery-sub">i DJ to set the stage on fire !</p>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <div class="container">
+      <div class="gallery-grid">
+        {photos.map((name) => (
+          <div class="gallery-item">
+            <img src={img(name)} alt="La Negra Dance Festival 2023" loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .eyebrow.dark { color: var(--navy); }
+  .gallery-head { padding-bottom: 30px; }
+  .gallery-sub { font-family: var(--font-script); color: var(--gold); font-size: 28px; margin: 8px 0 0; }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .gallery-item {
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+  }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+  }
+  .gallery-item:hover img { transform: scale(1.05); }
+
+  @media (max-width: 900px) {
+    .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  }
+  @media (max-width: 600px) {
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  }
+</style>

@@ -1,0 +1,106 @@
+---
+import { FOOTER_LEGAL, FOOTER_SOCIAL_TITLE } from "../data/nav.js";
+const { lang = "es" } = Astro.props;
+const legal = FOOTER_LEGAL[lang];
+const socialTitle = FOOTER_SOCIAL_TITLE[lang];
+const gallery = [
+  "/img/2025/03/lanegra-dance-festival-home-3-12.webp",
+  "/img/2025/03/lanegra-dance-festival-home-3-11.webp",
+  "/img/2025/03/lanegra-dance-festival-home-3-27.webp",
+  "/img/2025/03/lanegra-dance-festival-home-3-15.webp",
+  "/img/2025/03/lanegra-dance-festival-home-3-24.webp",
+  "/img/2025/03/lanegra-dance-festival-home-3-28.webp",
+];
+const sponsors = [
+  { img: "/img/2025/03/CAMISETAS-BAILONGAS-COLABORADORES-LA-NEGRA-FESTIVAL.png", alt: "Bailongas", href: "#" },
+  { img: "/img/2025/03/processed_image_1.png", alt: "Carpy Technical Dance Shoes", href: "#" },
+  { img: "/img/2025/03/processed_image_0.png", alt: "Diamante Beach Spa Hotel", href: "https://ar-hotels.actpages.com/la-negra-festival.html" },
+];
+const social = {
+  facebook: "https://www.facebook.com/lanegradancefestival",
+  instagram: "https://www.instagram.com/pasoslibreslanegrasalsa/",
+  youtube: "https://www.youtube.com/user/LaNegraSalsa1",
+};
+---
+
+<footer class="site-footer">
+  <div class="gallery-strip">
+    {gallery.map((src) => <div class="gcell"><img src={src} alt="" loading="lazy" /></div>)}
+  </div>
+
+  <div class="footer-main">
+    <div class="container footer-row">
+      <div class="sponsors">
+        {sponsors.map((s) => (
+          <a href={s.href} class="sponsor" {...(s.href.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}>
+            <img src={s.img} alt={s.alt} loading="lazy" />
+          </a>
+        ))}
+      </div>
+
+      <div class="social-block">
+        <p class="social-title">{socialTitle}</p>
+        <div class="social-icons">
+          <a href={social.facebook} target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>
+          </a>
+          <a href={social.instagram} target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1C2.6 8.5 2.6 8.9 2.6 12s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.3-.4-.4-.8-.6-1.3-.8-.4-.2-1-.3-2.1-.4-1.2-.1-1.6-.1-4.7-.1zm0 3.1a4.9 4.9 0 1 1 0 9.8 4.9 4.9 0 0 1 0-9.8zm0 8.1a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zm6.3-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"/></svg>
+          </a>
+          <a href={social.youtube} target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12zM9.7 15.3V8.7l5.8 3.3-5.8 3.3z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-legal">
+    <div class="container legal-inner">
+      <nav class="legal-links">
+        {legal.map((l) => <a href={l.h}>{l.t}</a>)}
+      </nav>
+      <p class="copyright">© Todos los derechos reservados · La Negra Dance Festival · Diseñado por <strong>MANAMO</strong></p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--cream); }
+
+  .gallery-strip { display: grid; grid-template-columns: repeat(6, 1fr); }
+  .gcell { aspect-ratio: 1 / 1; overflow: hidden; }
+  .gcell img { width: 100%; height: 100%; object-fit: cover; }
+
+  .footer-main { padding: 48px 0; }
+  .footer-row {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 32px;
+  }
+  .sponsors { display: flex; align-items: center; gap: 34px; flex-wrap: wrap; }
+  .sponsor img { max-height: 64px; width: auto; object-fit: contain; }
+
+  .social-block { text-align: center; }
+  .social-title { font-size: 22px; color: var(--text); margin: 0 0 12px; }
+  .social-icons { display: flex; gap: 12px; justify-content: center; }
+  .social-icons a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 8px;
+    background: var(--gold); color: #fff;
+  }
+  .social-icons a:hover { background: var(--gold-dark); }
+
+  .footer-legal { background: var(--cream); border-top: 1px solid rgba(15,11,30,.08); padding: 22px 0 34px; }
+  .legal-inner { text-align: center; }
+  .legal-links { display: flex; gap: 26px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .legal-links a { color: #212934; text-decoration: none; font-size: 16px; }
+  .legal-links a:hover { color: var(--gold); }
+  .copyright { font-size: 14px; color: #555; margin: 0; }
+  .copyright strong { color: var(--gold); }
+
+  @media (max-width: 820px) {
+    .footer-row { flex-direction: column; text-align: center; }
+    .sponsors { justify-content: center; }
+    .gallery-strip { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

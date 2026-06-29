@@ -1,0 +1,62 @@
+---
+// Submenú "píldora" sticky para páginas con secciones (Festival, Competición…)
+// items: [{ label, href }]  — href puede ser ancla (#id) o ruta (/...)
+const { items = [], label = "Secciones" } = Astro.props;
+const ext = (h) => h.startsWith("http");
+---
+<nav class="subnav" aria-label={label}>
+  <div class="subnav-pill">
+    {items.map((it) => (
+      <a href={it.href} {...(ext(it.href) ? { target: "_blank", rel: "noopener" } : {})}>{it.label}</a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .subnav {
+    position: sticky;
+    top: var(--header-h, 110px);
+    z-index: 900;
+    display: flex;
+    justify-content: center;
+    padding: 10px 16px;
+    pointer-events: none;
+  }
+  .subnav-pill {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: 100%;
+    overflow-x: auto;
+    background: rgba(15, 11, 30, 0.55);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 999px;
+    padding: 4px 6px;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22);
+    scrollbar-width: none;
+  }
+  .subnav-pill::-webkit-scrollbar { display: none; }
+  .subnav-pill a {
+    white-space: nowrap;
+    color: var(--cream);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 7px 15px;
+    border-radius: 999px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .subnav-pill a:hover {
+    color: #fff;
+    background: var(--gold);
+  }
+  @media (max-width: 640px) {
+    .subnav { padding: 8px 10px; }
+    .subnav-pill a { font-size: 13px; padding: 6px 12px; }
+  }
+</style>

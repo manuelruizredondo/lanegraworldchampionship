@@ -1,0 +1,172 @@
+---
+import Base from "@/layouts/Base.astro";
+import { img } from "@/data/img.js";
+
+const ticketsUrl = "https://www.goandance.com/es/event/106ef4d5-c8be-4fce-8660-ea6854726bff/tickets.js";
+const ticketsPage = "https://www.goandance.com/es/event/106ef4d5-c8be-4fce-8660-ea6854726bff";
+
+const fiestaImgs = [
+  "la-negra-dance-festival-fiesta-img-12.webp",
+  "la-negra-dance-festival-fiesta-img-7.webp",
+  "la-negra-dance-festival-fiesta-img-10.webp",
+];
+---
+
+<Base
+  title="Tu Pase"
+  description="Consigue tu Full Pass para La Negra Dance Festival. Talleres, competición y fiesta en Calpe."
+  lang="es"
+>
+  <!-- PASE / COUNTDOWN -->
+  <section class="section pass-hero text-center">
+    <div class="container">
+      <p class="eyebrow">Full Pass</p>
+      <h2 class="script-title white">Nos vemos en el 21 de octubre de 2026</h2>
+      <div class="countdown" id="countdown" aria-hidden="true">
+        <div class="cd-box"><span class="cd-num" data-cd-days>00</span><span class="cd-lbl">Días</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd-hours>00</span><span class="cd-lbl">Horas</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd-mins>00</span><span class="cd-lbl">Minutos</span></div>
+        <div class="cd-box"><span class="cd-num" data-cd-secs>00</span><span class="cd-lbl">Segundos</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKETING (widget go&dance embebido) -->
+  <section class="section tickets text-center" id="entradas">
+    <div class="container">
+      <p class="eyebrow dark">Compra tu entrada</p>
+      <h3 class="script-title">Consigue tu pase</h3>
+      <p class="tickets-intro">Reserva tu Full Pass para disfrutar de los talleres, la competición y la fiesta de La Negra Dance Festival. Compra segura a través de go&amp;dance.</p>
+      <div class="goandance-embed">
+        <div class="goandance-tickets" id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff"></div>
+      </div>
+      <p class="ticket-powered">
+        ¿No ves el selector de entradas?
+        <a href={ticketsPage} target="_blank" rel="noopener">Ábrelo en go&amp;dance</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- HOTEL CON DESCUENTO -->
+  <section class="section hotel-cta">
+    <div class="container hotel-cta-inner">
+      <div class="hotel-cta-img"><img src={img("ciudad-calpes-la-negra-dance-festival.webp")} alt="AR Diamante Beach, Calpe" loading="lazy" /></div>
+      <div class="hotel-cta-text">
+        <p class="eyebrow dark">Alojamiento</p>
+        <h3 class="script-title">Reserva tu hotel con descuento</h3>
+        <p>Hospédate en el <strong>AR Diamante Beach 4★ superior</strong>, sede del festival, frente al mar en Calpe. Reservando desde el <strong>enlace oficial</strong> consigues un <strong>descuento especial</strong> exclusivo para asistentes de La Negra Dance Festival.</p>
+        <a class="btn btn-solid" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Reservar hotel con descuento</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIESTA -->
+  <section class="section fiesta">
+    <div class="container fiesta-inner">
+      <div class="fiesta-gallery">
+        {fiestaImgs.map((name) => (
+          <div class="fiesta-img"><img src={img(name)} alt="Fiesta La Negra Dance Festival" loading="lazy" /></div>
+        ))}
+      </div>
+      <div class="fiesta-text">
+        <p class="eyebrow dark">Por la noche…</p>
+        <h3 class="script-title">¡ Disfruta la fiesta !</h3>
+        <p>Después de una jornada intensa de talleres, aprendizaje y descanso…¡tenemos fiesta! Los talleres y la competición son solo el comienzo. Prepárate para noches de pura energía en nuestras fiestas temáticas, donde el mejor ambiente, los mejores bailarines y la mejor música te harán vivir una experiencia inolvidable.</p>
+        <a class="btn btn-outline" href="/fiesta/">Saber más</a>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline src="https://www.goandance.com/es/event/106ef4d5-c8be-4fce-8660-ea6854726bff/tickets.js"></script>
+
+  <script>
+    // Cuenta atrás hasta el inicio del festival: 21 de octubre de 2026 (hora de España)
+    const target = new Date("2026-10-21T00:00:00+02:00").getTime();
+    const el = {
+      d: document.querySelector("[data-cd-days]"),
+      h: document.querySelector("[data-cd-hours]"),
+      m: document.querySelector("[data-cd-mins]"),
+      s: document.querySelector("[data-cd-secs]"),
+    };
+    const pad = (n) => String(n).padStart(2, "0");
+    function tick() {
+      const diff = Math.max(0, target - Date.now());
+      if (el.d) el.d.textContent = String(Math.floor(diff / 86400000));
+      if (el.h) el.h.textContent = pad(Math.floor(diff / 3600000) % 24);
+      if (el.m) el.m.textContent = pad(Math.floor(diff / 60000) % 60);
+      if (el.s) el.s.textContent = pad(Math.floor(diff / 1000) % 60);
+    }
+    if (el.d) { tick(); setInterval(tick, 1000); }
+  </script>
+</Base>
+
+<style>
+  .eyebrow.dark { color: var(--navy); }
+
+  /* TICKETING (go&dance) */
+  .tickets-intro { max-width: 680px; margin: 0 auto 28px; font-size: 16px; }
+  .goandance-embed {
+    max-width: 760px; margin: 0 auto;
+    min-height: 320px;
+    background: var(--cream);
+    border: 1px solid var(--gold-light);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  .ticket-powered { font-size: 14px; color: var(--blue); margin-top: 18px; }
+  .ticket-powered a { color: var(--gold-dark); font-weight: 700; }
+
+  /* HOTEL CON DESCUENTO */
+  .hotel-cta-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 44px; align-items: center; }
+  .hotel-cta-img { border-radius: 14px; overflow: hidden; aspect-ratio: 4/3; }
+  .hotel-cta-img img { width: 100%; height: 100%; object-fit: cover; }
+  .hotel-cta-text .script-title { color: var(--gold); margin: 6px 0 14px; }
+  .hotel-cta-text p { font-size: 16px; margin-bottom: 22px; }
+  .hotel-cta-text strong { color: var(--navy); }
+  @media (max-width: 900px) {
+    .hotel-cta-inner { grid-template-columns: 1fr; gap: 26px; }
+  }
+
+  /* PASE / COUNTDOWN */
+  .pass-hero {
+    background: linear-gradient(135deg, #14102b 0%, #1d1640 60%, #2a1f57 100%);
+    color: #fff;
+  }
+  .pass-hero .eyebrow { color: var(--gold); }
+  .countdown { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .cd-box {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-width: 110px; padding: 22px 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(204,153,51,.4);
+  }
+  .cd-num { font-family: var(--font-script); font-size: 46px; line-height: 1; color: var(--gold); }
+  .cd-lbl { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; margin-top: 8px; color: rgba(255,255,255,.8); }
+
+  /* TICKETING */
+  .ticket-box {
+    max-width: 640px; margin: 0 auto;
+    background: var(--cream);
+    border: 1px solid var(--gold-light);
+    border-radius: 16px;
+    padding: 48px 40px;
+  }
+  .ticket-box p { font-size: 16px; }
+  .ticket-btn { margin-top: 20px; }
+  .ticket-powered { font-size: 14px; color: var(--blue); margin-top: 22px; }
+  .ticket-powered a { color: var(--gold-dark); font-weight: 700; }
+
+  /* FIESTA */
+  .fiesta-inner { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+  .fiesta-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .fiesta-img { border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; }
+  .fiesta-img:first-child { grid-column: 1 / -1; aspect-ratio: 16/9; }
+  .fiesta-img img { width: 100%; height: 100%; object-fit: cover; }
+  .fiesta-text .script-title { color: var(--gold); margin: 6px 0 16px; }
+  .fiesta-text p { font-size: 16px; margin-bottom: 22px; }
+
+  @media (max-width: 900px) {
+    .fiesta-inner { grid-template-columns: 1fr; gap: 30px; }
+  }
+</style>
