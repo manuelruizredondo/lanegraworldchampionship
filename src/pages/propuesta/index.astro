@@ -45,7 +45,7 @@ const stats = [
 // Nombre en dos líneas (nombre / apellidos) y en Título (evita nombres en MAYÚSCULAS del dataset)
 const titleCase = (s) =>
   s.toLowerCase().replace(/(^|[\s\-])([a-záéíóúñü])/g, (m, p, c) => p + c.toUpperCase());
-const artists = ARTISTS_ES.slice(0, 6).map((a) => {
+const artists = ARTISTS_ES.map((a) => {
   const parts = titleCase(a.name).split(" ");
   return { ...a, first: parts[0], last: parts.slice(1).join(" ") };
 });
@@ -59,6 +59,7 @@ const artists = ARTISTS_ES.slice(0, 6).map((a) => {
   <div class="prop">
     <!-- HERO (oscuro) -->
     <section class="p-hero">
+      <video class="p-hero-video" autoplay muted loop playsinline src="https://res.cloudinary.com/manuel-ruiz/video/upload/v1783497994/VIDEOWEB2025LANEGRACHAMPIONSCHIP_wpnfc8.mp4"></video>
       <div class="p-hero-inner">
         <img class="p-hero-logo" src="/img/2025/03/logotipo-def-lanegra-dance-festival.png" alt="La Negra World Championship" />
         <p class="p-hero-date"><span>21–25 OCT 2026</span><span>Calpe · España</span></p>
@@ -192,14 +193,27 @@ const artists = ARTISTS_ES.slice(0, 6).map((a) => {
         <h2 class="p-display">Nuestros artistas.</h2>
         <p class="p-lead p-narrow">Las estrellas internacionales de la salsa y la bachata que harán arder la tarima.</p>
       </div>
-      <div class="p-artists">
-        {artists.map((a) => (
+      <div class="p-artists" data-artists-slider>
+        <div class="p-artists-track">
+          <div class="p-artists-set">
+            {artists.map((a) => (
           <div class="p-artist">
             <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
             <span class="p-artist-n"><span>{a.first}</span>{a.last && <span>{a.last}</span>}</span>
             <span class="p-artist-c">{a.country}</span>
           </div>
         ))}
+          </div>
+          <div class="p-artists-set" aria-hidden="true">
+            {artists.map((a) => (
+          <div class="p-artist">
+            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <span class="p-artist-n"><span>{a.first}</span>{a.last && <span>{a.last}</span>}</span>
+            <span class="p-artist-c">{a.country}</span>
+          </div>
+        ))}
+          </div>
+        </div>
       </div>
       <div class="p-container">
         <a class="p-btn p-btn-dark" href="/artistas/">Ver todos los artistas</a>
@@ -277,7 +291,7 @@ const artists = ARTISTS_ES.slice(0, 6).map((a) => {
         revealEls.push(el);
       };
       document
-        .querySelectorAll(".p-intro, .p-split, .p-narrow, .p-values, .p-values-list, .p-stats-row, .p-artists, .p-pillars, .p-cards, .p-final-inner")
+        .querySelectorAll(".p-intro, .p-split, .p-narrow, .p-values, .p-values-list, .p-stats-row, .p-pillars, .p-cards, .p-final-inner")
         .forEach((parent) => {
           [...parent.children].forEach((el, i) => {
             if (!el.matches(".p-values-list")) addRv(el, i);
@@ -356,6 +370,24 @@ const artists = ARTISTS_ES.slice(0, 6).map((a) => {
         }
         requestAnimationFrame(fxTick);
       });
+
+      // Slider automático de artistas: bucle continuo, pausa al pasar el ratón
+      const artSlider = document.querySelector("[data-artists-slider]");
+      if (artSlider) {
+        const artTrack = artSlider.querySelector(".p-artists-track");
+        let ax = 0, artPaused = false;
+        artSlider.addEventListener("mouseenter", () => { artPaused = true; });
+        artSlider.addEventListener("mouseleave", () => { artPaused = false; });
+        requestAnimationFrame(function artTick() {
+          if (!artPaused) {
+            ax -= 0.3;
+            const half = artTrack.scrollWidth / 2;
+            if (half > 0 && -ax >= half) ax += half;
+            artTrack.style.transform = "translateX(" + ax.toFixed(1) + "px)";
+          }
+          requestAnimationFrame(artTick);
+        });
+      }
 
       // 4) Botones magnéticos
       if (finePointer) {
@@ -436,7 +468,11 @@ const artists = ARTISTS_ES.slice(0, 6).map((a) => {
   .p-link { color: var(--p-ink); font-weight: 700; }
 
   /* HERO oscuro */
-  .p-hero { background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 60%); color: #fff; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: center; text-align: center; margin-top: calc(-1 * var(--header-bar, 64px)); padding: 140px 24px 90px; }
+  .p-hero { position: relative; overflow: hidden; background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 60%); color: #fff; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: center; text-align: center; margin-top: calc(-1 * var(--header-bar, 64px)); padding: 140px 24px 90px; }
+  .p-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  /* Oscurecido para legibilidad del contenido sobre el vídeo */
+  .p-hero::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(10, 8, 20, .55) 0%, rgba(10, 8, 20, .35) 45%, rgba(10, 8, 20, .6) 100%); pointer-events: none; }
+  .p-hero-inner { position: relative; z-index: 2; }
 
   /* MARQUEE (justo después del hero) */
   .p-marquee { overflow: hidden; padding: clamp(30px, 4.5vw, 64px) 0; will-change: transform; }
@@ -508,8 +544,12 @@ const artists = ARTISTS_ES.slice(0, 6).map((a) => {
 
   /* ARTISTS (avatares blob, a todo el ancho) */
   .p-section.p-center .p-lead { text-align: center; margin-left: auto; margin-right: auto; }
-  .p-artists { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(18px, 2.4vw, 34px); width: 100%; padding: 0 clamp(18px, 3vw, 48px); margin: 52px 0; }
-  .p-artist { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .p-artists { overflow-x: auto; width: 100%; margin: 52px 0; scrollbar-width: none; }
+  .p-artists::-webkit-scrollbar { display: none; }
+  html.js-fx .p-artists { overflow: hidden; }
+  .p-artists-track { display: flex; width: max-content; will-change: transform; }
+  .p-artists-set { display: flex; gap: clamp(22px, 3vw, 40px); padding-right: clamp(22px, 3vw, 40px); }
+  .p-artist { width: clamp(170px, 19vw, 230px); flex: 0 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .p-artist-img { width: 100%; aspect-ratio: 1; overflow: hidden; margin-bottom: 18px; border-radius: 42% 58% 47% 53% / 52% 43% 57% 48%; }
   .p-artist-img img { width: 100%; height: 100%; object-fit: cover; }
   .p-artist-n { font-weight: 600; font-size: clamp(20px, 1.9vw, 32px); line-height: 1.08; letter-spacing: -.02em; }
@@ -527,11 +567,9 @@ const artists = ARTISTS_ES.slice(0, 6).map((a) => {
     .p-intro, .p-split, .p-pillars, .p-values { grid-template-columns: 1fr; }
     .p-cards { grid-template-columns: 1fr; }
     .p-stats-row { grid-template-columns: repeat(2, 1fr); gap: 30px; }
-    .p-artists { grid-template-columns: repeat(3, 1fr); }
     .p-values-media { order: -1; aspect-ratio: 16/10; }
   }
   @media (max-width: 520px) {
-    .p-artists { grid-template-columns: repeat(2, 1fr); }
   }
 
   /* Insignia: cara estática con el texto circular girando encima */
