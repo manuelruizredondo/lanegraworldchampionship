@@ -32,7 +32,7 @@ const features = [
 const values = [
   { t: "Nivel", d: "El único Mundial con coreografías 100% de estreno y un jurado de primer nivel.", img: img("lanegra-dance-festival-comepeticion-19.webp") },
   { t: "Comunidad", d: "Bailarines de más de 35 países unidos por la misma pasión.", img: img("festival-pasos-negra-dance-2.jpeg") },
-  { t: "Emoción", d: "Shows, competición y fiestas que se viven una sola vez al año.", img: img("la-negra-dance-festival-fiesta-img-7.webp") },
+  { t: "Emoción", d: "Shows, competición y fiestas que se viven una sola vez al año.", img: img("la-negra-dance-festival-fiesta-img-1.webp") },
 ];
 
 const stats = [
@@ -67,7 +67,7 @@ const artists = ARTISTS_ES.map((a) => {
         <img class="p-hero-logo" src="/img/2025/03/logotipo-def-lanegra-dance-festival.png" alt="La Negra World Championship" />
         <p class="p-hero-date"><span>21–25 OCT 2026</span><span>Calpe · España</span></p>
         <div class="p-hero-cta">
-          <a class="p-btn p-btn-light" href="/tu-pase/">Compra tu pase</a>
+          <a class="p-btn p-btn-light" href="/competicion/">Descubre el Mundial</a>
           <a class="p-btn p-btn-outline" href="/festival/">Descubre el festival</a>
         </div>
       </div>
@@ -92,7 +92,7 @@ const artists = ARTISTS_ES.map((a) => {
     <!-- INTRO -->
     <section class="p-section">
       <div class="p-container p-intro">
-        <h1 class="p-h2">Un congreso de baile.<br />Una competición mundial.</h1>
+        <h1 class="p-h2">Un congreso de baile.<br />Una competición mundial.<br /><span class="p-accent">Las dos cosas.</span></h1>
         <div class="p-intro-cols">
           <p>Desde 2010, La Negra World Championship reúne lo mejor de un congreso de baile y la espectacularidad de una competición mundial, con los mejores bailarines de más de 35 países en salsa y bachata.</p>
           <p>Talleres para todos los niveles, formación para profesionales, fiestas hasta el amanecer y el único Mundial con coreografías 100% de estreno, frente al mar en Calpe.</p>
@@ -107,7 +107,7 @@ const artists = ARTISTS_ES.map((a) => {
           <img class="p-badge-ring" src="/img/logo-lanegra-ring.svg" alt="" />
           <img class="p-badge-face" src="/img/logo-lanegra-face.svg" alt="" />
         </div>
-        <h2 class="p-h2">Una comunidad internacional de bailarines unida por la salsa y la bachata, entregada al nivel, la emoción y la celebración.</h2>
+        <h2 class="p-h2">Una comunidad internacional de bailarines unida por la <span class="p-hl">salsa<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span> y la <span class="p-nb"><span class="p-hl p-hl-2">bachata<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span>,</span> entregada al nivel, la emoción y la celebración.</h2>
         <p class="p-lead p-quote">Un lugar donde, vengas del país que vengas, en cuanto pisas la pista estás entre los tuyos.</p>
       </div>
     </section>
@@ -281,55 +281,91 @@ const artists = ARTISTS_ES.map((a) => {
     if (!fxReduce) {
       document.documentElement.classList.add("js-fx");
 
-      // 1) Reveal on scroll con stagger (los titulares grandes entran con máscara)
-      const revealEls = [];
-      const addRv = (el, i) => {
-        const cls = el.matches(".p-display, .p-h2, .p-band-title") ? "rv-mask" : "rv";
-        el.classList.add(cls);
-        if (el.matches(".p-pillar, .p-card")) el.classList.add("rv-scale");
-        el.style.setProperty("--rv-d", Math.min(i * 90, 450) + "ms");
-        if (cls === "rv-mask") {
-          // divide el titular en frases (separadas por <br>) que entran una tras otra
+      // 1) Reveal on scroll con stagger — se inicia tras cargar la fuente
+      // (los titulares se parten por líneas visuales y eso depende de la métrica tipográfica)
+      document.fonts.ready.then(() => {
+        const revealEls = [];
+        const splitPhrases = (el) => {
           const parts = el.innerHTML.split(/<br[^>]*>/i);
-          el.innerHTML = parts
-            .map((p) => '<span class="rv-line"><span class="rv-line-inner">' + p + "</span></span>")
-            .join("");
+          if (parts.length > 1) {
+            // con <br>: cada frase manual es una línea
+            el.innerHTML = parts
+              .map((p) => '<span class="rv-line"><span class="rv-line-inner">' + p + "</span></span>")
+              .join("");
+          } else {
+            // sin <br>: partir por líneas visuales (los spans tipo .p-hl se tratan como unidades)
+            const nodes = [];
+            [...el.childNodes].forEach((node) => {
+              if (node.nodeType === 3) {
+                node.textContent.split(/(\s+)/).forEach((tok) => {
+                  if (!tok) return;
+                  if (/^\s+$/.test(tok)) nodes.push(document.createTextNode(" "));
+                  else { const w = document.createElement("span"); w.textContent = tok; nodes.push(w); }
+                });
+              } else nodes.push(node);
+            });
+            el.innerHTML = "";
+            nodes.forEach((n) => el.appendChild(n));
+            const lines = [];
+            let lastTop = null;
+            nodes.forEach((n) => {
+              if (n.nodeType === 3) { if (lines.length) lines[lines.length - 1].push(n); return; }
+              const top = Math.round(n.getBoundingClientRect().top);
+              if (lastTop === null || Math.abs(top - lastTop) > 4) { lines.push([n]); lastTop = top; }
+              else lines[lines.length - 1].push(n);
+            });
+            el.innerHTML = "";
+            lines.forEach((g) => {
+              const line = document.createElement("span"); line.className = "rv-line";
+              const inner = document.createElement("span"); inner.className = "rv-line-inner";
+              g.forEach((n) => inner.appendChild(n));
+              line.appendChild(inner);
+              el.appendChild(line);
+            });
+          }
           [...el.querySelectorAll(".rv-line-inner")].forEach((line, li) => {
             line.style.transitionDelay = "calc(var(--rv-d, 0ms) + " + (li * 170) + "ms)";
           });
-        }
-        revealEls.push(el);
-      };
-      document
-        .querySelectorAll(".p-intro, .p-split, .p-narrow, .p-values, .p-values-list, .p-stats-row, .p-pillars, .p-cards, .p-band-content, .p-final-inner")
-        .forEach((parent) => {
-          [...parent.children].forEach((el, i) => {
-            if (!el.matches(".p-values-list")) addRv(el, i);
+        };
+        const addRv = (el, i) => {
+          const cls = el.matches(".p-display, .p-h2, .p-band-title") ? "rv-mask" : "rv";
+          el.classList.add(cls);
+          if (el.matches(".p-pillar, .p-card")) el.classList.add("rv-scale");
+          el.style.setProperty("--rv-d", Math.min(i * 90, 450) + "ms");
+          if (cls === "rv-mask") splitPhrases(el);
+          revealEls.push(el);
+        };
+        document
+          .querySelectorAll(".p-intro, .p-split, .p-narrow, .p-values, .p-values-list, .p-stats-row, .p-pillars, .p-cards, .p-band-content, .p-final-inner")
+          .forEach((parent) => {
+            [...parent.children].forEach((el, i) => {
+              if (!el.matches(".p-values-list")) addRv(el, i);
+            });
           });
-        });
-      const io = new IntersectionObserver((ents) => {
-        ents.forEach((e) => {
-          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-        });
-      }, { threshold: [0, 0.15], rootMargin: "14% 0px -6% 0px" });
-      revealEls.forEach((el) => io.observe(el));
-      // Barrido de seguridad: revela todo lo que ya haya entrado (o pasado) el viewport,
-      // por si un scroll brusco se salta al observer. Nada puede quedar oculto.
-      let sweepTick = false;
-      const sweep = () => {
-        sweepTick = false;
-        revealEls.forEach((el) => {
-          if (el.classList.contains("in")) return;
-          if (el.getBoundingClientRect().top < innerHeight * 0.94) {
-            el.classList.add("in");
-            io.unobserve(el);
-          }
-        });
-      };
-      addEventListener("scroll", () => {
-        if (!sweepTick) { sweepTick = true; requestAnimationFrame(sweep); }
-      }, { passive: true });
-      sweep();
+        const io = new IntersectionObserver((ents) => {
+          ents.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+          });
+        }, { threshold: [0, 0.15], rootMargin: "14% 0px -6% 0px" });
+        revealEls.forEach((el) => io.observe(el));
+        // Barrido de seguridad: revela todo lo que ya haya entrado (o pasado) el viewport,
+        // por si un scroll brusco se salta al observer. Nada puede quedar oculto.
+        let sweepTick = false;
+        const sweep = () => {
+          sweepTick = false;
+          revealEls.forEach((el) => {
+            if (el.classList.contains("in")) return;
+            if (el.getBoundingClientRect().top < innerHeight * 0.94) {
+              el.classList.add("in");
+              io.unobserve(el);
+            }
+          });
+        };
+        addEventListener("scroll", () => {
+          if (!sweepTick) { sweepTick = true; requestAnimationFrame(sweep); }
+        }, { passive: true });
+        sweep();
+      });
 
       // 2) Contadores animados en las stats
       document.querySelectorAll(".p-stat-n").forEach((el) => {
@@ -687,6 +723,18 @@ const artists = ARTISTS_ES.map((a) => {
   @media (max-width: 520px) {
   }
 
+  /* Resaltado dorado con subrayado curvo que se dibuja */
+  .p-hl { position: relative; display: inline-block; color: var(--gold); }
+  .p-hl-line { position: absolute; left: -2%; bottom: -.08em; width: 104%; height: .32em; overflow: visible; }
+  .p-hl-line path {
+    fill: none; stroke: var(--gold); stroke-width: 3px; stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 500; stroke-dashoffset: 500;
+  }
+  .rv-mask.in .p-hl-line path { stroke-dashoffset: 0; transition: stroke-dashoffset 1s ease-out .7s; }
+  .rv-mask.in .p-hl-2 .p-hl-line path { transition-delay: 1.5s; }
+  html:not(.js-fx) .p-hl-line path { stroke-dashoffset: 0; }
+
   /* Insignia: cara estática con el texto circular girando encima */
   .p-badge { position: relative; width: clamp(130px, 15vw, 180px); aspect-ratio: 1; margin: 0 auto 36px; }
   .p-badge-ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: p-spin 24s linear infinite; }
@@ -714,7 +762,9 @@ const artists = ARTISTS_ES.map((a) => {
   .rv.rv-scale { transform: translateY(18px) scale(.96); }
   .rv.in { opacity: 1; transform: none; }
   /* Titulares: cada frase (separada por <br>) entra deslizando, una tras otra */
-  .rv-mask :global(.rv-line) { display: block; overflow: clip; }
+  .rv-mask :global(.rv-line) { display: block; overflow: clip; padding-block: .16em; margin-block: -.16em; }
+  .p-nb { white-space: nowrap; }
+  .p-accent { color: var(--gold); }
   .rv-mask :global(.rv-line-inner) { display: block; transform: translateY(115%); transition: transform .85s cubic-bezier(.22, 1, .36, 1); }
   .rv-mask.in :global(.rv-line-inner) { transform: none; }
 
