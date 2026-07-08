@@ -578,7 +578,7 @@ const artists = ARTISTS_ES.map((a) => {
     --p-card: #e9e7e2;
     --p-dark: #14121a;
     --p-radius: 26px;
-    --p-gap: clamp(64px, 9vw, 130px);
+    --p-gap: clamp(44px, 5.5vw, 76px);
     color: var(--p-ink);
     font-family: "Inter", system-ui, sans-serif;
     letter-spacing: -.01em;
@@ -743,7 +743,11 @@ const artists = ARTISTS_ES.map((a) => {
     .p-intro, .p-split, .p-pillars, .p-values { grid-template-columns: 1fr; }
     .p-cards { grid-template-columns: 1fr; }
     .p-stats-row { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+    /* Orden en móvil: cabecera -> imagen -> valores; valores compactos sin línea */
+    .p-values-head { order: -2; }
     .p-values-media { order: -1; aspect-ratio: 16/10; }
+    .p-values { gap: 26px; }
+    .p-value { padding: 9px 0; border-bottom: none; }
   }
   @media (max-width: 520px) {
   }
