@@ -371,20 +371,52 @@ const artists = ARTISTS_ES.map((a) => {
         requestAnimationFrame(fxTick);
       });
 
-      // Slider automático de artistas: bucle continuo, pausa al pasar el ratón
+      // Slider de artistas: automático + arrastre con dedo/ratón con inercia
       const artSlider = document.querySelector("[data-artists-slider]");
       if (artSlider) {
         const artTrack = artSlider.querySelector(".p-artists-track");
-        let ax = 0, artPaused = false;
-        artSlider.addEventListener("mouseenter", () => { artPaused = true; });
-        artSlider.addEventListener("mouseleave", () => { artPaused = false; });
+        let ax = 0, hoverPause = false, artDragging = false, artMoved = false;
+        let artStartX = 0, artStartAx = 0, artVel = 0, artLastX = 0, artLastT = 0, artResumeAt = 0;
+        const artWrap = () => {
+          const half = artTrack.scrollWidth / 2;
+          if (half > 0) { ax %= half; if (ax > 0) ax -= half; }
+        };
+        if (matchMedia("(hover: hover)").matches) {
+          artSlider.addEventListener("mouseenter", () => { hoverPause = true; });
+          artSlider.addEventListener("mouseleave", () => { hoverPause = false; });
+        }
+        artSlider.addEventListener("pointerdown", (e) => {
+          artDragging = true; artMoved = false; artVel = 0;
+          artStartX = e.clientX; artStartAx = ax; artLastX = e.clientX; artLastT = performance.now();
+          if (artSlider.setPointerCapture) { try { artSlider.setPointerCapture(e.pointerId); } catch (_) {} }
+        });
+        artSlider.addEventListener("pointermove", (e) => {
+          if (!artDragging) return;
+          const dx = e.clientX - artStartX;
+          if (Math.abs(dx) > 4) artMoved = true;
+          ax = artStartAx + dx; artWrap();
+          const now = performance.now(), dt = Math.max(now - artLastT, 1);
+          artVel = ((e.clientX - artLastX) / dt) * 16.7; // px por frame
+          artLastX = e.clientX; artLastT = now;
+        });
+        const artEndDrag = () => {
+          if (!artDragging) return;
+          artDragging = false;
+          artResumeAt = performance.now() + 1600; // respiro antes de reanudar el auto
+        };
+        artSlider.addEventListener("pointerup", artEndDrag);
+        artSlider.addEventListener("pointercancel", artEndDrag);
+        // un arrastre no debe disparar clics/enlaces dentro del slider
+        artSlider.addEventListener("click", (e) => { if (artMoved) { e.preventDefault(); e.stopPropagation(); } }, true);
         requestAnimationFrame(function artTick() {
-          if (!artPaused) {
-            ax -= 0.3;
-            const half = artTrack.scrollWidth / 2;
-            if (half > 0 && -ax >= half) ax += half;
-            artTrack.style.transform = "translateX(" + ax.toFixed(1) + "px)";
+          if (artDragging) {
+            // el usuario controla
+          } else if (Math.abs(artVel) > 0.2) {
+            ax += artVel; artVel *= 0.94; artWrap(); // inercia con frenado suave
+          } else if (!hoverPause && performance.now() >= artResumeAt) {
+            ax -= 0.3; artWrap();
           }
+          artTrack.style.transform = "translateX(" + ax.toFixed(1) + "px)";
           requestAnimationFrame(artTick);
         });
       }
@@ -544,7 +576,10 @@ const artists = ARTISTS_ES.map((a) => {
 
   /* ARTISTS (avatares blob, a todo el ancho) */
   .p-section.p-center .p-lead { text-align: center; margin-left: auto; margin-right: auto; }
-  .p-artists { overflow-x: auto; width: 100%; margin: 52px 0; scrollbar-width: none; }
+  .p-artists { overflow-x: auto; width: 100%; margin: 52px 0; scrollbar-width: none; touch-action: pan-y; cursor: grab; }
+  .p-artists:active { cursor: grabbing; }
+  .p-artists img { -webkit-user-drag: none; }
+  .p-artists-set { user-select: none; }
   .p-artists::-webkit-scrollbar { display: none; }
   html.js-fx .p-artists { overflow: hidden; }
   .p-artists-track { display: flex; width: max-content; will-change: transform; }
@@ -577,6 +612,7 @@ const artists = ARTISTS_ES.map((a) => {
   .p-badge-ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: p-spin 24s linear infinite; }
   .p-badge-face { position: absolute; left: 50%; top: 50%; width: 56%; transform: translate(-50%, -50%); }
   @keyframes p-spin { to { transform: rotate(-360deg); } }
+  @media (max-width: 600px) { .p-badge { width: clamp(180px, 52vw, 220px); } }
   @media (prefers-reduced-motion: reduce) { .p-badge-ring { animation: none; } }
 
   /* ===== Efectos ===== */
