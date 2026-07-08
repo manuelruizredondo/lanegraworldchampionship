@@ -1,24 +1,40 @@
 ---
-import { MENU, LANG_SWITCH, CTA, HOME_HREF } from "../data/nav.js";
+import { MENU, LANGUAGES, CTA, HOME_HREF } from "../data/nav.js";
+import { routeFor } from "../data/routes.js";
 const { lang = "es" } = Astro.props;
 const menu = MENU[lang];
-const langSwitch = LANG_SWITCH[lang];
 const cta = CTA[lang];
 const homeHref = HOME_HREF[lang];
 const ext = (h) => h.startsWith("http");
+
+// Al cambiar de idioma se mantiene la página actual (si está mapeada); si no, la home.
+const alternates = routeFor(Astro.url.pathname);
+const langHref = (code, home) => alternates?.[code] || home;
+
+// Textos de accesibilidad en el idioma de la página
+const T = {
+  es: { lang: "Idioma", open: "Abrir menú", close: "Cerrar menú", nav: "Menú principal", sub: "Abrir submenú" },
+  en: { lang: "Language", open: "Open menu", close: "Close menu", nav: "Main menu", sub: "Open submenu" },
+  it: { lang: "Lingua", open: "Apri menu", close: "Chiudi menu", nav: "Menu principale", sub: "Apri sottomenu" },
+}[lang] || { lang: "Idioma", open: "Abrir menú", close: "Cerrar menú", nav: "Menú principal", sub: "Abrir submenú" };
 ---
 
 <header class="site-header">
   <div class="header-inner">
     <a class="logo" href={homeHref}>
-      <img src="/img/2025/03/logotipo-def-lanegra-dance-festival.png" width="500" height="195" alt="La Negra Dance Festival" />
+      <img src="/img/2025/03/logotipo-def-lanegra-dance-festival.png" width="500" height="195" alt="La Negra World Championship" />
     </a>
     <div class="header-right">
-      <a class="btn btn-outline cta" href={cta.href}>
+      <a class="btn btn-solid cta" href={cta.href}>
         <svg class="cta-icon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h15A1.5 1.5 0 0 1 21 8.5v1a2 2 0 0 0 0 4v1a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 14.5v-1a2 2 0 0 0 0-4z"/><path d="M9 7v10"/></svg>
         {cta.label}
       </a>
-      <button class="burger" type="button" aria-label="Abrir menú" data-menu-open>
+      <select class="lang-select" aria-label={T.lang} data-lang-select>
+        {LANGUAGES.map((l) => (
+          <option value={langHref(l.code, l.home)} selected={l.code === lang}>{l.name} ({l.label})</option>
+        ))}
+      </select>
+      <button class="burger" type="button" aria-label={T.open} data-menu-open>
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -28,14 +44,14 @@ const ext = (h) => h.startsWith("http");
 <div class="flyout" id="flyout">
     <div class="flyout-backdrop" data-menu-close></div>
     <div class="flyout-panel">
-    <button class="flyout-close" type="button" aria-label="Cerrar menú" data-menu-close></button>
-    <nav class="flyout-inner" aria-label="Menú principal">
+    <button class="flyout-close" type="button" aria-label={T.close} data-menu-close></button>
+    <nav class="flyout-inner" aria-label={T.nav}>
       <ul class="flyout-menu">
         {menu.map((item) => (
           <li class={item.sub.length ? "has-sub" : ""}>
             <div class="row">
               <a href={item.href} {...(ext(item.href) ? { target: "_blank", rel: "noopener" } : {})}>{item.label}</a>
-              {item.sub.length > 0 && <button class="sub-toggle" type="button" aria-label="Abrir submenú"></button>}
+              {item.sub.length > 0 && <button class="sub-toggle" type="button" aria-label={T.sub}></button>}
             </div>
             {item.sub.length > 0 && (
               <ul class="submenu">
@@ -46,7 +62,6 @@ const ext = (h) => h.startsWith("http");
             )}
           </li>
         ))}
-        <li class="lang"><div class="row"><a href={langSwitch.href}>{langSwitch.label}</a></div></li>
       </ul>
     </nav>
     </div>
@@ -76,18 +91,52 @@ const ext = (h) => h.startsWith("http");
     align-items: center;
     justify-content: flex-end;
     min-height: 62px;
+    transition: min-height .25s ease;
   }
-  /* Logo absoluto: la barra queda baja y el logo sobresale por debajo */
-  .logo { position: absolute; left: 24px; top: 7px; line-height: 0; }
-  .logo img { width: clamp(160px, 21vw, 215px); height: auto; }
+  .site-header.scrolled .header-inner { min-height: 72px; }
+  /* Logo absoluto: en reposo sobresale un poco; al hacer scroll encaja en la barra */
+  .logo {
+    position: absolute; left: 24px; top: 2px; line-height: 0;
+    transition: top .25s ease, transform .25s ease;
+  }
+  .logo img {
+    width: clamp(160px, 21vw, 215px); height: auto;
+    display: block;
+    transition: width .25s ease;
+  }
+  .site-header.scrolled .logo {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .site-header.scrolled .logo img {
+    width: clamp(118px, 15vw, 148px);
+  }
 
-  .header-right { display: flex; align-items: center; gap: 18px; }
+  .header-right { display: flex; align-items: center; gap: 14px; margin-top: 9px; transition: margin-top .25s ease; }
+  .site-header.scrolled .header-right { margin-top: 0; }
+
+  /* Selector de idioma (desplegable, junto a la hamburguesa) */
+  .lang-select {
+    -webkit-appearance: none; appearance: none;
+    font-family: var(--font-body); font-weight: 600;
+    letter-spacing: .01em; font-size: 15px; line-height: 1;
+    color: var(--gold-dark); background: transparent;
+    border: 0; cursor: pointer;
+    padding: 6px 20px 6px 6px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a28243' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 2px center; background-size: 11px;
+    transition: color .2s;
+  }
+  .lang-select:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+  /* Las opciones nativas se dibujan sobre fondo claro del SO: texto oscuro para que se lean */
+  .lang-select option { color: #14102b; background: #fff; font-weight: 700; }
+
   .burger {
     display: flex; flex-direction: column; justify-content: center; gap: 6px;
     width: 50px; height: 50px; padding: 13px;
     background: transparent; border: 0; cursor: pointer;
   }
-  .burger span { display: block; height: 3px; width: 100%; background: var(--gold); border-radius: 2px; }
+  .burger span { display: block; height: 1px; width: 100%; background: var(--gold); }
 
   .cta { padding: 7px 20px; font-size: 15px; white-space: nowrap; }
   .cta-icon { flex: 0 0 auto; }
@@ -96,14 +145,17 @@ const ext = (h) => h.startsWith("http");
   .flyout {
     position: fixed; inset: 0; z-index: 2000;
     visibility: hidden;
+    pointer-events: none;
     overflow-x: hidden; /* evita scroll horizontal por el panel fuera de pantalla */
   }
-  .flyout.open { visibility: visible; }
+  .flyout.open,
+  .flyout.closing { visibility: visible; pointer-events: auto; }
 
   .flyout-backdrop {
     position: absolute; inset: 0;
     background: rgba(15,11,30,.55);
-    opacity: 0; transition: opacity .35s ease;
+    opacity: 0;
+    transition: opacity .35s ease;
   }
   .flyout.open .flyout-backdrop { opacity: 1; }
 
@@ -156,13 +208,15 @@ const ext = (h) => h.startsWith("http");
     .burger { width: 46px; height: 46px; padding: 11px; }
     .cta { display: none; }
     .header-inner { min-height: 54px; }
-    .logo { left: 16px; top: 6px; }
+    .site-header.scrolled .header-inner { min-height: 60px; }
+    .logo { left: 16px; top: 2px; }
     .logo img { width: 150px; }
+    .site-header.scrolled .logo img { width: 108px; }
     .flyout-panel { width: 86vw; min-width: 0; }
     .flyout-inner { padding: 84px 26px 48px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .flyout-backdrop, .flyout-panel { transition: none; }
+    .flyout-backdrop, .flyout-panel, .logo, .logo img, .header-inner { transition: none; }
   }
 </style>
 
@@ -182,13 +236,44 @@ const ext = (h) => h.startsWith("http");
   window.addEventListener("resize", setHeaderH);
 
   // Sombra + fondo semitranslúcido al separarse del top
-  const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 8);
+  const onScroll = () => {
+    header.classList.toggle("scrolled", window.scrollY > 8);
+    setHeaderH();
+  };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
   const fly = document.getElementById("flyout");
-  const open = () => { fly.classList.add("open"); document.body.style.overflow = "hidden"; };
-  const close = () => { fly.classList.remove("open"); document.body.style.overflow = ""; };
+  const panel = fly.querySelector(".flyout-panel");
+  const CLOSE_MS = 350;
+
+  const open = () => {
+    if (fly.classList.contains("closing")) return;
+    fly.classList.remove("closing");
+    fly.classList.add("open");
+    document.body.style.overflow = "hidden";
+  };
+
+  const close = () => {
+    if (!fly.classList.contains("open") || fly.classList.contains("closing")) return;
+    fly.classList.remove("open");
+    fly.classList.add("closing");
+    document.body.style.overflow = "";
+
+    let done = false;
+    const onPanelEnd = (e) => {
+      if (e.target === panel && e.propertyName === "transform") finish();
+    };
+    const finish = () => {
+      if (done) return;
+      done = true;
+      fly.classList.remove("closing");
+      panel.removeEventListener("transitionend", onPanelEnd);
+      clearTimeout(timer);
+    };
+    panel.addEventListener("transitionend", onPanelEnd);
+    const timer = setTimeout(finish, CLOSE_MS + 50);
+  };
   document.querySelectorAll("[data-menu-open]").forEach((b) => b.addEventListener("click", open));
   document.querySelectorAll("[data-menu-close]").forEach((b) => b.addEventListener("click", close));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
@@ -202,4 +287,12 @@ const ext = (h) => h.startsWith("http");
       a.closest(".has-sub").classList.toggle("open");
     });
   });
+
+  // Selector de idioma: navegar al cambiar de opción
+  const langSelect = document.querySelector("[data-lang-select]");
+  if (langSelect) {
+    langSelect.addEventListener("change", (e) => {
+      if (e.target.value) window.location.href = e.target.value;
+    });
+  }
 </script>

@@ -1,81 +1,91 @@
-// Navegación principal y datos de footer (ES / EN)
+// Navegación principal y datos de footer (ES / EN / IT)
 
 export const MENU = {
   es: [
-    { label: "COMPETICIÓN", href: "/competicion/", sub: [
+    { label: "MUNDIAL", href: "/competicion/", sub: [
       { t: "INSCRIPCIÓN", h: "/competicion/#inscripcion" },
-      { t: "BASES COMPETICIÓN", h: "/competicion/#bases" },
-      { t: "PASE COMPETICIÓN", h: "/competicion/#fullpass" },
+      { t: "BASES Y REGLAMENTO", h: "/competicion/#bases" },
+      { t: "PASE COMPETIDOR", h: "/competicion/#fullpass" },
       { t: "COMPETIDORES", h: "/competidores/" },
-      { t: "VIDEOS COMPETIDORES", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
       { t: "GANADORES 2025", h: "/ganadores-2025/" },
       { t: "GANADORES 2024", h: "/ganadores/" },
+      { t: "VÍDEOS", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
     ]},
     { label: "FESTIVAL", href: "/festival/", sub: [
-      { t: "FESTIVAL", h: "/festival/#info" },
-      { t: "ARTISTAS", h: "/festival/#artistas" },
-      { t: "TALLERES", h: "/festival/#talleres" },
+      { t: "EL FESTIVAL", h: "/festival/#info" },
+      { t: "ARTISTAS", h: "/artistas/" },
+      { t: "TALLERES", h: "/talleres/" },
+      { t: "FIESTA", h: "/fiesta/" },
       { t: "FULL PASS", h: "/festival/#fullpass" },
-      { t: "HOTEL", h: "/festival/#hotel" },
-      { t: "CONTACTAR", h: "/festival/#contactar" },
+      { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
-    { label: "RESERVA HOTEL", href: "https://ar-hotels.actpages.com/la-negra-festival.html", sub: [] },
-    { label: "ARTISTAS", href: "/artistas/", sub: [] },
-    { label: "TALLERES", href: "/talleres/", sub: [] },
-    { label: "FIESTA", href: "/fiesta/", sub: [] },
-    { label: "COMPETIDORES", href: "/competidores/", sub: [] },
-    { label: "GANADORES", href: "#", sub: [
-      { t: "GANADORES 2025", h: "/ganadores-2025/" },
-      { t: "GANADORES 2024", h: "/ganadores/" },
-    ]},
-    { label: "FOTOS", href: "#", sub: [
+    { label: "GALERÍA", href: "#", sub: [
       { t: "FOTOS 2024", h: "/galeria-2024/" },
       { t: "FOTOS 2023", h: "/galeria-2023/" },
     ]},
+    { label: "CONTACTO", href: "/festival/#contactar", sub: [] },
   ],
   en: [
-    { label: "COMPETITION", href: "/en/competition/", sub: [
+    { label: "WORLD CUP", href: "/en/competition/", sub: [
       { t: "REGISTRATION", h: "/en/competition/#registration" },
-      { t: "COMPETITION RULES", h: "/en/competition/#rules" },
-      { t: "PASS COMPETITORS", h: "/en/competition/#fullpass" },
+      { t: "RULES", h: "/en/competition/#rules" },
+      { t: "COMPETITOR PASS", h: "/en/competition/#fullpass" },
       { t: "COMPETITORS", h: "/en/competitors/" },
-      { t: "COMPETING VIDEOS", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
       { t: "WINNERS 2025", h: "/en/winners-2025/" },
       { t: "WINNERS 2024", h: "/en/winners/" },
+      { t: "VIDEOS", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
     ]},
     { label: "FESTIVAL", href: "/en/festival/", sub: [
-      { t: "FESTIVAL", h: "/en/festival/#info" },
-      { t: "ARTISTS", h: "/en/festival/#artists" },
-      { t: "WORKSHOPS", h: "/en/festival/#workshops" },
+      { t: "THE FESTIVAL", h: "/en/festival/#info" },
+      { t: "ARTISTS", h: "/en/artists/" },
+      { t: "WORKSHOPS", h: "/en/workshops/" },
+      { t: "PARTY", h: "/en/fiesta/" },
       { t: "FULL PASS", h: "/en/festival/#fullpass" },
-      { t: "HOTEL", h: "/en/festival/#hotel" },
-      { t: "CONTACT", h: "/en/festival/#contact" },
+      { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
-    { label: "HOTEL BOOKING", href: "https://ar-hotels.actpages.com/la-negra-festival.html", sub: [] },
-    { label: "ARTISTS", href: "/en/artists/", sub: [] },
-    { label: "WORKSHOPS", href: "/en/workshops/", sub: [] },
-    { label: "PARTY", href: "/en/fiesta/", sub: [] },
-    { label: "COMPETITORS", href: "/en/competitors/", sub: [] },
-    { label: "WINNERS", href: "#", sub: [
-      { t: "WINNERS 2025", h: "/en/winners-2025/" },
-      { t: "WINNERS 2024", h: "/en/winners/" },
+    { label: "GALLERY", href: "#", sub: [
+      { t: "PHOTOS 2024", h: "/en/gallery-2024/" },
+      { t: "PHOTOS 2023", h: "/en/gallery-2023/" },
     ]},
-    { label: "GALLERIES", href: "#", sub: [
-      { t: "GALLERY 2024", h: "/en/gallery-2024/" },
-      { t: "GALLERY 2023", h: "/en/gallery-2023/" },
+    { label: "CONTACT", href: "/en/festival/#contact", sub: [] },
+  ],
+  it: [
+    { label: "MONDIALE", href: "/it/competition/", sub: [
+      { t: "ISCRIZIONE", h: "/it/competition/#registration" },
+      { t: "REGOLAMENTO", h: "/it/competition/#rules" },
+      { t: "PASS CONCORRENTE", h: "/it/competition/#fullpass" },
+      { t: "COMPETITORI", h: "/it/competitors/" },
+      { t: "VINCITORI 2025", h: "/it/winners-2025/" },
+      { t: "VINCITORI 2024", h: "/it/winners/" },
+      { t: "VIDEO", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
     ]},
+    { label: "FESTIVAL", href: "/it/festival/", sub: [
+      { t: "IL FESTIVAL", h: "/it/festival/#info" },
+      { t: "ARTISTI", h: "/it/artists/" },
+      { t: "WORKSHOP", h: "/it/workshops/" },
+      { t: "FESTA", h: "/it/fiesta/" },
+      { t: "FULL PASS", h: "/it/festival/#fullpass" },
+      { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
+    ]},
+    { label: "GALLERIA", href: "#", sub: [
+      { t: "FOTO 2024", h: "/it/gallery-2024/" },
+      { t: "FOTO 2023", h: "/it/gallery-2023/" },
+    ]},
+    { label: "CONTATTI", href: "/it/festival/#contact", sub: [] },
   ],
 };
 
-// Conmutador de idioma (apunta al otro idioma)
-export const LANG_SWITCH = {
-  es: { label: "EN", href: "/en/" },
-  en: { label: "ES", href: "/" },
-};
+// Selector de idioma: enlaza a la home de cada idioma; el header resalta el activo
+export const LANGUAGES = [
+  { code: "es", label: "ES", name: "Español", home: "/" },
+  { code: "en", label: "EN", name: "English", home: "/en/" },
+  { code: "it", label: "IT", name: "Italiano", home: "/it/" },
+];
 
 export const CTA = {
   es: { label: "Compra tu pase", href: "/tu-pase/" },
   en: { label: "Buy your pass", href: "/en/your-pass/" },
+  it: { label: "Acquista il pass", href: "/it/your-pass/" },
 };
 
 export const FOOTER_LEGAL = {
@@ -89,11 +99,29 @@ export const FOOTER_LEGAL = {
     { t: "Privacy Policy", h: "/en/privacy-policy/" },
     { t: "Cookie Policy", h: "/en/cookie-policy/" },
   ],
+  it: [
+    { t: "Note legali", h: "/it/legal-notice/" },
+    { t: "Informativa sulla privacy", h: "/it/privacy-policy/" },
+    { t: "Informativa sui cookie", h: "/it/cookie-policy/" },
+  ],
 };
 
 export const FOOTER_SOCIAL_TITLE = {
   es: "Síguenos en nuestras redes",
   en: "Follow us on social media",
+  it: "Seguici sui social",
 };
 
-export const HOME_HREF = { es: "/", en: "/en/" };
+export const FOOTER_COPYRIGHT = {
+  es: "Todos los derechos reservados",
+  en: "All rights reserved",
+  it: "Tutti i diritti riservati",
+};
+
+export const FOOTER_DESIGNED_BY = {
+  es: "Diseñado por",
+  en: "Designed by",
+  it: "Progettato da",
+};
+
+export const HOME_HREF = { es: "/", en: "/en/", it: "/it/" };

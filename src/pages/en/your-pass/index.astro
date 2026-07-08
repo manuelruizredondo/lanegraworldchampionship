@@ -13,7 +13,7 @@ const fiestaImgs = [
 
 <Base
   title="Your Pass"
-  description="Get your Full Pass for La Negra Dance Festival. Workshops, competition and party in Calpe."
+  description="Get your Full Pass for La Negra World Championship. Workshops, competition and party in Calpe."
   lang="en"
 >
   <!-- PASS / COUNTDOWN -->
@@ -35,9 +35,11 @@ const fiestaImgs = [
     <div class="container">
       <p class="eyebrow dark">Buy your ticket</p>
       <h3 class="script-title">Get your pass</h3>
-      <p class="tickets-intro">Book your Full Pass to enjoy the workshops, the competition and the party at La Negra Dance Festival. Secure checkout via go&amp;dance.</p>
+      <p class="tickets-intro">Book your Full Pass to enjoy the workshops, the competition and the party at La Negra World Championship. Secure checkout via go&amp;dance.</p>
       <div class="goandance-embed">
-        <div class="goandance-tickets" id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff"></div>
+        <div class="goandance-tickets" id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff">
+          <div id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff-iframe"></div>
+        </div>
       </div>
       <p class="ticket-powered">
         Can’t see the ticket selector?
@@ -53,7 +55,7 @@ const fiestaImgs = [
       <div class="hotel-cta-text">
         <p class="eyebrow dark">Accommodation</p>
         <h3 class="script-title">Book your hotel with a discount</h3>
-        <p>Stay at the <strong>AR Diamante Beach 4★ superior</strong>, the festival venue, by the sea in Calpe. Booking through the <strong>official link</strong> gets you a <strong>special discount</strong> exclusive to La Negra Dance Festival attendees.</p>
+        <p>Stay at the <strong>AR Diamante Beach 4★ superior</strong>, the festival venue, by the sea in Calpe. Booking through the <strong>official link</strong> gets you a <strong>special discount</strong> exclusive to La Negra World Championship attendees.</p>
         <a class="btn btn-solid" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Book hotel with discount</a>
       </div>
     </div>
@@ -64,7 +66,7 @@ const fiestaImgs = [
     <div class="container fiesta-inner">
       <div class="fiesta-gallery">
         {fiestaImgs.map((name) => (
-          <div class="fiesta-img"><img src={img(name)} alt="La Negra Dance Festival party" loading="lazy" /></div>
+          <div class="fiesta-img"><img src={img(name)} alt="La Negra World Championship party" loading="lazy" /></div>
         ))}
       </div>
       <div class="fiesta-text">
@@ -106,11 +108,15 @@ const fiestaImgs = [
   .tickets-intro { max-width: 680px; margin: 0 auto 28px; font-size: 16px; }
   .goandance-embed {
     max-width: 760px; margin: 0 auto;
-    min-height: 320px;
     background: var(--cream);
     border: 1px solid var(--gold-light);
     border-radius: 16px;
     padding: 22px;
+  }
+  /* El auto-resize de go&dance (postMessage) puede no dispararse; garantizamos altura mínima */
+  .goandance-embed :global(iframe) {
+    display: block; width: 100%; border: 0;
+    min-height: 900px;
   }
   .ticket-powered { font-size: 14px; color: var(--blue); margin-top: 18px; }
   .ticket-powered a { color: var(--gold-dark); font-weight: 700; }

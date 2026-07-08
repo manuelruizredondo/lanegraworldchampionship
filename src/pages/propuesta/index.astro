@@ -1,0 +1,588 @@
+---
+import Base from "@/layouts/Base.astro";
+import { img } from "@/data/img.js";
+import { ARTISTS_ES } from "@/data/artists.js";
+
+// Propuesta de home — estructura tipo "Board" (Nixtio) adaptada a La Negra World Championship.
+const pillars = [
+  {
+    tag: "Vienes a competir",
+    title: "El Mundial",
+    desc: "Inscríbete en el Campeonato Mundial de Salsa y Bachata y compite ante un jurado de élite internacional.",
+    cta: "Ver la competición",
+    href: "/competicion/",
+    img: img("festival-negra-dance-home-1.jpg"),
+  },
+  {
+    tag: "Vienes al festival",
+    title: "El Festival",
+    desc: "Talleres, fiestas, shows y hotel-spa frente al mar. Disfrútalo como público en la mejor compañía.",
+    cta: "Ver el festival",
+    href: "/festival/",
+    img: img("lanegra-dance-festival-comepeticion-7.webp"),
+  },
+];
+
+const features = [
+  { title: "Los Artistas", desc: "Entra y descubre la constelación de estrellas de la salsa y la bachata que tendrás como maestros, jueces y compañeros de baile.", cta: "Ver artistas", href: "/artistas/", img: img("la-negra-dance-festival-galeria-2023-23.webp") },
+  { title: "Workshops", desc: "Talleres y masterclass para tu nivel (básico, medio, avanzado o máster) en todos los estilos de salsa y bachata.", cta: "Ver workshops", href: "/talleres/", img: img("la-negra-dance-festival-galeria-2023-10.webp") },
+  { title: "La fiesta", desc: "Dos salas de baile social hasta el amanecer: salsa y bachata en todas sus variantes con los mejores DJs.", cta: "Ver la fiesta", href: "/fiesta/", img: "/img/2025/03/lanegra-dance-festival-slide-2.webp" },
+];
+
+const values = [
+  { t: "Nivel", d: "El único Mundial con coreografías 100% de estreno y un jurado de primer nivel." },
+  { t: "Comunidad", d: "Bailarines de más de 35 países unidos por la misma pasión." },
+  { t: "Emoción", d: "Shows, competición y fiestas que se viven una sola vez al año." },
+];
+
+const stats = [
+  { n: "35+", l: "Países" },
+  { n: "90+", l: "Artistas" },
+  { n: "15", l: "Ediciones" },
+  { n: "5.000+", l: "Bailarines" },
+];
+
+// Nombre en dos líneas (nombre / apellidos) y en Título (evita nombres en MAYÚSCULAS del dataset)
+const titleCase = (s) =>
+  s.toLowerCase().replace(/(^|[\s\-])([a-záéíóúñü])/g, (m, p, c) => p + c.toUpperCase());
+const artists = ARTISTS_ES.slice(0, 6).map((a) => {
+  const parts = titleCase(a.name).split(" ");
+  return { ...a, first: parts[0], last: parts.slice(1).join(" ") };
+});
+---
+
+<Base
+  title="La Negra World Championship — Propuesta"
+  description="La comunidad mundial de la salsa y la bachata. Talleres, shows, fiestas y el único Mundial con coreografías 100% de estreno. Calpe 2026."
+  heroOverlay={true}
+>
+  <div class="prop">
+    <!-- HERO (oscuro) -->
+    <section class="p-hero">
+      <div class="p-hero-inner">
+        <img class="p-hero-logo" src="/img/2025/03/logotipo-def-lanegra-dance-festival.png" alt="La Negra World Championship" />
+        <p class="p-hero-date"><span>21–25 OCT 2026</span><span>Calpe · España</span></p>
+        <div class="p-hero-cta">
+          <a class="p-btn p-btn-light" href="/tu-pase/">Compra tu pase</a>
+          <a class="p-btn p-btn-outline" href="/festival/">Descubre el festival</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARQUEE (frases grandes + fuego separador + skew con el scroll) -->
+    <section class="p-marquee" aria-hidden="true" data-marquee>
+      <div class="p-marquee-track">
+        <div class="p-marquee-half">
+          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+        </div>
+        <div class="p-marquee-half">
+          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="p-section">
+      <div class="p-container p-intro">
+        <h1 class="p-h2">Un congreso de baile.<br />Una competición mundial.</h1>
+        <div class="p-intro-cols">
+          <p>Desde 2010, La Negra World Championship reúne lo mejor de un congreso de baile y la espectacularidad de una competición mundial, con los mejores bailarines de más de 35 países en salsa y bachata.</p>
+          <p>Talleres para todos los niveles, formación para profesionales, fiestas hasta el amanecer y el único Mundial con coreografías 100% de estreno, frente al mar en Calpe.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATEMENT 2 (comunidad) -->
+    <section class="p-section p-center">
+      <div class="p-container p-narrow">
+        <div class="p-badge" aria-hidden="true">
+          <img class="p-badge-ring" src="/img/logo-lanegra-ring.svg" alt="" />
+          <img class="p-badge-face" src="/img/logo-lanegra-face.svg" alt="" />
+        </div>
+        <h2 class="p-h2">Una comunidad internacional de bailarines unida por la salsa y la bachata, entregada al nivel, la emoción y la celebración.</h2>
+        <p class="p-lead p-quote">Un lugar donde, vengas del país que vengas, en cuanto pisas la pista estás entre los tuyos.</p>
+      </div>
+    </section>
+
+    <!-- PILLARS -->
+    <section class="p-section p-tight">
+      <div class="p-container p-pillars">
+        {pillars.map((p) => (
+          <a class="p-pillar" href={p.href}>
+            <div class="p-pillar-media"><img src={p.img} alt={p.title} loading="lazy" /></div>
+            <div class="p-pillar-panel">
+              <span class="p-pillar-tag">{p.tag}</span>
+              <h3 class="p-pillar-t">{p.title}</h3>
+              <p class="p-pillar-d">{p.desc}</p>
+              <span class="p-btn p-btn-light p-btn-sm">{p.cta}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="p-section">
+      <div class="p-container p-split">
+        <h2 class="p-h2">Descúbrelo<br />todo.</h2>
+        <p class="p-lead">Cuatro días de baile sin parar: artistas de leyenda, talleres para tu nivel y fiestas que no olvidarás.</p>
+      </div>
+      <div class="p-container p-cards">
+        {features.map((f) => (
+          <a class="p-card" href={f.href}>
+            <div class="p-card-media"><img src={f.img} alt={f.title} loading="lazy" /></div>
+            <div class="p-card-panel">
+              <h3 class="p-card-t">{f.title}</h3>
+              <p class="p-card-d">{f.desc}</p>
+              <span class="p-card-link">{f.cta} →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- STATEMENT 3 -->
+    <section class="p-section p-center">
+      <div class="p-container p-narrow">
+        <h2 class="p-display">Crecemos<br />bailando juntos.</h2>
+        <p class="p-lead">Aquí no vienes a un evento: entras en una comunidad que se reencuentra cada año frente al Mediterráneo.</p>
+      </div>
+    </section>
+
+    <!-- VALUES -->
+    <section class="p-section p-gray">
+      <div class="p-container p-values">
+        <div class="p-values-head">
+          <p class="p-eyebrow">Nuestros valores</p>
+          <h2 class="p-h2">Lo que nos<br />hace únicos.</h2>
+        </div>
+        <div class="p-values-list">
+          {values.map((v) => (
+            <div class="p-value">
+              <h3 class="p-value-t">{v.t}</h3>
+              <p class="p-value-d">{v.d}</p>
+            </div>
+          ))}
+        </div>
+        <div class="p-values-media"><img src={img("ciudad-calpes-la-negra-dance-festival.webp")} alt="Calpe" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="p-stats">
+      <div class="p-container p-stats-row">
+        {stats.map((s) => (
+          <div class="p-stat"><span class="p-stat-n">{s.n}</span><span class="p-stat-l">{s.l}</span></div>
+        ))}
+      </div>
+    </section>
+
+    <!-- PHOTO BAND -->
+    <section class="p-band">
+      <img src={img("la-negra-dance-festival-fiesta-img-12.webp")} alt="La Negra World Championship" loading="lazy" />
+    </section>
+
+    <!-- ARTISTS -->
+    <section class="p-section p-center">
+      <div class="p-container">
+        <h2 class="p-display">Nuestros artistas.</h2>
+        <p class="p-lead p-narrow">Las estrellas internacionales de la salsa y la bachata que harán arder la tarima.</p>
+      </div>
+      <div class="p-artists">
+        {artists.map((a) => (
+          <div class="p-artist">
+            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <span class="p-artist-n"><span>{a.first}</span>{a.last && <span>{a.last}</span>}</span>
+            <span class="p-artist-c">{a.country}</span>
+          </div>
+        ))}
+      </div>
+      <div class="p-container">
+        <a class="p-btn p-btn-dark" href="/artistas/">Ver todos los artistas</a>
+      </div>
+    </section>
+
+    <!-- FINAL CTA (oscuro) -->
+    <section class="p-final">
+      <div class="p-container p-final-inner">
+        <h2 class="p-display p-white">Nos vemos en<br />Calpe 2026.</h2>
+        <p class="p-lead p-white-70">Reserva tu Full Pass para La Negra World Championship y vive el Mundial de Salsa y Bachata.</p>
+        <div class="p-hero-cta">
+          <a class="p-btn p-btn-light" href="/tu-pase/">Compra tu pase</a>
+          <a class="p-btn p-btn-outline" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Reserva hotel</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Marquee estilo sundayapp: desplazamiento continuo que ACELERA con el scroll + skew según dirección
+    const mq = document.querySelector("[data-marquee]");
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (mq && !reduceMotion) {
+      const track = mq.querySelector(".p-marquee-track");
+      const BASE = 0.5; // px por frame en reposo
+      let x = 0, boost = 0, skewT = 0, skew = 0;
+      let lastY = window.scrollY, lastT = performance.now();
+      window.addEventListener("scroll", () => {
+        const now = performance.now();
+        const dt = Math.max(now - lastT, 1);
+        const v = (window.scrollY - lastY) / dt; // px/ms
+        lastY = window.scrollY; lastT = now;
+        boost = Math.min(18, Math.abs(v) * 10);     // más rápido cuanto más rápido el scroll
+        skewT = Math.max(-12, Math.min(12, v * 8)); // inclinación según dirección
+      }, { passive: true });
+      (function tick() {
+        boost *= 0.94;
+        skewT *= 0.92;
+        skew += (skewT - skew) * 0.1;
+        x -= BASE + boost;
+        const half = track.scrollWidth / 2;
+        if (half > 0 && -x >= half) x += half; // loop perfecto
+        track.style.transform = `translateX(${x}px)`;
+        mq.style.transform = `skewX(${skew.toFixed(2)}deg)`;
+        requestAnimationFrame(tick);
+      })();
+    }
+  </script>
+
+  <script>
+    // Efectos: reveal on scroll, contadores, parallax, botones magnéticos, cursor y zoom-out del hero
+    const fxReduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const finePointer = matchMedia("(pointer: fine)").matches;
+    if (!fxReduce) {
+      document.documentElement.classList.add("js-fx");
+
+      // 1) Reveal on scroll con stagger (los titulares grandes entran con máscara)
+      const revealEls = [];
+      const addRv = (el, i) => {
+        const cls = el.matches(".p-display, .p-h2") ? "rv-mask" : "rv";
+        el.classList.add(cls);
+        if (el.matches(".p-pillar, .p-card")) el.classList.add("rv-scale");
+        el.style.setProperty("--rv-d", Math.min(i * 90, 450) + "ms");
+        if (cls === "rv-mask") {
+          // divide el titular en frases (separadas por <br>) que entran una tras otra
+          const parts = el.innerHTML.split(/<br[^>]*>/i);
+          el.innerHTML = parts
+            .map((p) => '<span class="rv-line"><span class="rv-line-inner">' + p + "</span></span>")
+            .join("");
+          [...el.querySelectorAll(".rv-line-inner")].forEach((line, li) => {
+            line.style.transitionDelay = "calc(var(--rv-d, 0ms) + " + (li * 170) + "ms)";
+          });
+        }
+        revealEls.push(el);
+      };
+      document
+        .querySelectorAll(".p-intro, .p-split, .p-narrow, .p-values, .p-values-list, .p-stats-row, .p-artists, .p-pillars, .p-cards, .p-final-inner")
+        .forEach((parent) => {
+          [...parent.children].forEach((el, i) => {
+            if (!el.matches(".p-values-list")) addRv(el, i);
+          });
+        });
+      const io = new IntersectionObserver((ents) => {
+        ents.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+        });
+      }, { threshold: [0, 0.15], rootMargin: "14% 0px -6% 0px" });
+      revealEls.forEach((el) => io.observe(el));
+      // Barrido de seguridad: revela todo lo que ya haya entrado (o pasado) el viewport,
+      // por si un scroll brusco se salta al observer. Nada puede quedar oculto.
+      let sweepTick = false;
+      const sweep = () => {
+        sweepTick = false;
+        revealEls.forEach((el) => {
+          if (el.classList.contains("in")) return;
+          if (el.getBoundingClientRect().top < innerHeight * 0.94) {
+            el.classList.add("in");
+            io.unobserve(el);
+          }
+        });
+      };
+      addEventListener("scroll", () => {
+        if (!sweepTick) { sweepTick = true; requestAnimationFrame(sweep); }
+      }, { passive: true });
+      sweep();
+
+      // 2) Contadores animados en las stats
+      document.querySelectorAll(".p-stat-n").forEach((el) => {
+        const m = el.textContent.trim().match(/^([\d.]+)(.*)$/);
+        if (!m) return;
+        const target = parseInt(m[1].replace(/\./g, ""), 10);
+        const suffix = m[2] || "";
+        const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        const obs = new IntersectionObserver((ents) => {
+          if (!ents[0].isIntersecting) return;
+          obs.disconnect();
+          const t0 = performance.now(), DUR = 1400;
+          requestAnimationFrame(function step(t) {
+            const p = Math.min((t - t0) / DUR, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = fmt(Math.round(target * eased)) + suffix;
+            if (p < 1) requestAnimationFrame(step);
+          });
+        }, { threshold: 0.6 });
+        obs.observe(el);
+      });
+
+      // 3+9) Parallax (banda de foto y foto de valores) + zoom-out del hero — un solo rAF
+      const bandImg = document.querySelector(".p-band img");
+      const valuesImg = document.querySelector(".p-values-media img");
+      const hero = document.querySelector(".p-hero");
+      const heroInner = document.querySelector(".p-hero-inner");
+      requestAnimationFrame(function fxTick() {
+        const vh = innerHeight;
+        if (bandImg) {
+          const r = bandImg.getBoundingClientRect();
+          if (r.bottom > 0 && r.top < vh) {
+            const p = (r.top + r.height / 2 - vh / 2) / vh;
+            bandImg.style.transform = "translateY(" + (-p * 26).toFixed(1) + "px)";
+          }
+        }
+        if (valuesImg) {
+          const r = valuesImg.parentElement.getBoundingClientRect();
+          if (r.bottom > 0 && r.top < vh) {
+            const p = (r.top + r.height / 2 - vh / 2) / vh;
+            valuesImg.style.transform = "translateY(" + (-11 + p * 9).toFixed(2) + "%)";
+          }
+        }
+        if (hero && heroInner) {
+          const prog = Math.min(Math.max(scrollY / (hero.offsetHeight || vh), 0), 1);
+          heroInner.style.transform = "scale(" + (1 - prog * 0.08).toFixed(4) + ")";
+          heroInner.style.opacity = String(1 - prog * 0.55);
+        }
+        requestAnimationFrame(fxTick);
+      });
+
+      // 4) Botones magnéticos
+      if (finePointer) {
+        document.querySelectorAll(".p-btn").forEach((btn) => {
+          btn.addEventListener("mousemove", (e) => {
+            const r = btn.getBoundingClientRect();
+            const mx = Math.max(-6, Math.min(6, (e.clientX - r.left - r.width / 2) * 0.18));
+            const my = Math.max(-5, Math.min(5, (e.clientY - r.top - r.height / 2) * 0.3));
+            btn.style.transform = "translate(" + mx.toFixed(1) + "px, " + my.toFixed(1) + "px)";
+          });
+          btn.addEventListener("mouseleave", () => { btn.style.transform = ""; });
+        });
+      }
+
+      // 7) Cursor: punto dorado que sigue al ratón y crece sobre enlaces
+      if (finePointer) {
+        const dot = document.createElement("div");
+        Object.assign(dot.style, {
+          position: "fixed", left: "0", top: "0", width: "10px", height: "10px",
+          borderRadius: "50%", background: "#cc9933", pointerEvents: "none",
+          zIndex: "9999", opacity: "0", transition: "opacity .3s ease",
+        });
+        document.body.appendChild(dot);
+        let cx = -100, cy = -100, tx = -100, ty = -100, sc = 1, scT = 1;
+        addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; dot.style.opacity = "0.85"; });
+        document.addEventListener("mouseover", (e) => { scT = e.target.closest("a, button, select") ? 3.2 : 1; });
+        document.addEventListener("mouseleave", () => { dot.style.opacity = "0"; });
+        requestAnimationFrame(function cur() {
+          cx += (tx - cx) * 0.22; cy += (ty - cy) * 0.22;
+          sc += (scT - sc) * 0.18;
+          dot.style.transform = "translate(" + (cx - 5) + "px, " + (cy - 5) + "px) scale(" + sc.toFixed(2) + ")";
+          dot.style.opacity = scT > 1 ? "0.35" : dot.style.opacity;
+          requestAnimationFrame(cur);
+        });
+      }
+    }
+  </script>
+</Base>
+
+<style>
+  .prop {
+    --font-body: "Inter", system-ui, sans-serif;
+    --font-heavy: "Inter", system-ui, sans-serif;
+    --p-ink: #14121a;
+    --p-muted: #6a6a74;
+    --p-line: #e6e3dd;
+    --p-soft: #f4f2ee;
+    --p-card: #e9e7e2;
+    --p-dark: #14121a;
+    --p-radius: 26px;
+    --p-gap: clamp(64px, 9vw, 130px);
+    color: var(--p-ink);
+    font-family: "Inter", system-ui, sans-serif;
+    letter-spacing: -.01em;
+  }
+  .p-container { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
+  .p-section { padding: var(--p-gap) 0; }
+  .p-section.p-tight { padding: clamp(20px, 3vw, 40px) 0 var(--p-gap); }
+  .p-center { text-align: center; }
+  .p-narrow { max-width: 780px; margin-left: auto; margin-right: auto; }
+  .p-gray { background: var(--p-soft); }
+
+  /* Tipografía */
+  .p-eyebrow { font-weight: 700; text-transform: uppercase; letter-spacing: .14em; font-size: 13px; color: var(--gold); margin: 0 0 16px; }
+  .p-display { font-weight: 600; font-size: clamp(38px, 6.6vw, 88px); line-height: .98; letter-spacing: -.05em; margin: 0 0 20px; }
+  .p-h2 { font-weight: 600; font-size: clamp(28px, 4vw, 50px); line-height: 1.05; letter-spacing: -.05em; margin: 0 0 20px; }
+  .p-lead { font-size: clamp(16px, 1.5vw, 20px); line-height: 1.6; color: var(--p-muted); margin: 0; }
+  .p-quote { margin-top: 20px; }
+
+  /* Botones */
+  .p-btn { display: inline-block; padding: 15px 30px; border-radius: 999px; font-weight: 700; font-size: 16px; text-decoration: none; transition: transform .15s ease, opacity .2s, background .2s, color .2s; }
+  .p-btn:hover { transform: translateY(-2px); }
+  .p-btn-sm { padding: 11px 22px; font-size: 14px; }
+  .p-btn-dark { background: var(--p-ink); color: #fff; }
+  .p-btn-light { background: #fff; color: var(--p-ink); border: 1px solid var(--p-line); }
+  .p-btn-outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
+  .p-btn-outline:hover { background: rgba(255,255,255,.1); }
+  .p-link { color: var(--p-ink); font-weight: 700; }
+
+  /* HERO oscuro */
+  .p-hero { background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 60%); color: #fff; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: center; text-align: center; margin-top: calc(-1 * var(--header-bar, 64px)); padding: 140px 24px 90px; }
+
+  /* MARQUEE (justo después del hero) */
+  .p-marquee { overflow: hidden; padding: clamp(30px, 4.5vw, 64px) 0; will-change: transform; }
+  .p-marquee-track { display: flex; width: max-content; }
+  .p-marquee-half { display: flex; align-items: center; gap: clamp(28px, 3.8vw, 58px); padding-right: clamp(28px, 3.8vw, 58px); }
+  .p-marquee-half span { font-weight: 400; font-size: clamp(64px, 10.5vw, 150px); line-height: 1; letter-spacing: -0.09em; white-space: nowrap; }
+  .p-marquee-half img { height: clamp(34px, 5vw, 78px); width: auto; }
+  .p-hero-logo { width: clamp(120px, 16vw, 190px); height: auto; margin: 0 auto 30px; display: block; }
+  .p-hero-date { display: flex; flex-direction: column; gap: 4px; margin: 0 0 34px; }
+  .p-hero-date span:first-child { font-family: var(--font-heavy); font-weight: 800; font-size: clamp(34px, 7vw, 86px); line-height: 1; letter-spacing: .01em; color: transparent; -webkit-text-stroke: 1.6px #fff; text-transform: uppercase; }
+  .p-hero-date span:last-child { font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: clamp(12px, 1.5vw, 15px); color: rgba(255,255,255,.75); }
+  .p-hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  /* INTRO */
+  .p-intro { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(30px, 5vw, 70px); align-items: end; }
+  .p-intro-cols { display: grid; gap: 20px; }
+  .p-intro-cols p { font-size: 17px; line-height: 1.6; color: var(--p-muted); margin: 0; }
+
+  /* SPLIT (título + lead) */
+  .p-split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 5vw, 70px); align-items: end; margin-bottom: 44px; }
+
+  /* PILLARS */
+  .p-pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .p-pillar { position: relative; display: block; border-radius: var(--p-radius); overflow: hidden; text-decoration: none; color: #fff; min-height: clamp(420px, 46vw, 560px); }
+  .p-pillar-media { position: absolute; inset: 0; }
+  .p-pillar-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+  .p-pillar:hover .p-pillar-media img { transform: scale(1.04); }
+  .p-pillar-panel { position: absolute; left: 16px; right: 16px; bottom: 16px; background: rgba(15,11,30,.9); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border-radius: 20px; padding: 26px 28px; }
+  .p-pillar-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); }
+  .p-pillar-t { font-weight: 800; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.02em; margin: 6px 0 10px; }
+  .p-pillar-d { color: rgba(255,255,255,.8); font-size: 15px; line-height: 1.5; margin: 0 0 18px; }
+
+  /* CARDS (imagen a sangre + panel inferior con blur oscuro) */
+  .p-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .p-card { position: relative; display: block; border-radius: var(--p-radius); overflow: hidden; text-decoration: none; color: #fff; min-height: clamp(400px, 36vw, 520px); transition: transform .15s ease; }
+  .p-card:hover { transform: translateY(-4px); }
+  .p-card-media { position: absolute; inset: 0; }
+  .p-card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+  .p-card:hover .p-card-media img { transform: scale(1.04); }
+  .p-card-panel {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 22px 24px 24px;
+    background: rgba(15, 11, 30, .55);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  .p-card-t { font-weight: 800; font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -.02em; margin: 0 0 10px; color: #fff; }
+  .p-card-d { color: rgba(255, 255, 255, .85); font-size: 15px; line-height: 1.55; margin: 0 0 16px; }
+  .p-card-link { color: #fff; font-weight: 700; }
+
+  /* VALUES */
+  .p-values { display: grid; grid-template-columns: 0.8fr 1fr 1fr; gap: clamp(30px, 4vw, 60px); align-items: start; }
+  .p-values-list { display: grid; gap: 4px; }
+  .p-value { padding: 22px 0; border-bottom: 1px solid var(--p-line); }
+  .p-value-t { font-weight: 800; font-size: clamp(24px, 3vw, 34px); letter-spacing: -.02em; margin: 0 0 8px; }
+  .p-value-d { color: var(--p-muted); font-size: 15px; line-height: 1.55; margin: 0; }
+  .p-values-media { border-radius: var(--p-radius); overflow: hidden; aspect-ratio: 3/4; }
+  .p-values-media img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* STATS */
+  .p-stats { padding: clamp(30px, 4vw, 54px) 0; border-top: 1px solid var(--p-line); border-bottom: 1px solid var(--p-line); }
+  .p-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .p-stat { display: flex; flex-direction: column; gap: 6px; }
+  .p-stat-n { font-weight: 800; font-size: clamp(34px, 4.6vw, 60px); line-height: 1; letter-spacing: -.02em; }
+  .p-stat-l { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--p-muted); }
+
+  /* PHOTO BAND */
+  .p-band { padding: 0 24px; }
+  .p-band img { width: 100%; max-width: 1400px; margin: 0 auto; height: clamp(260px, 42vw, 580px); object-fit: cover; border-radius: var(--p-radius); display: block; }
+
+  /* ARTISTS (avatares blob, a todo el ancho) */
+  .p-section.p-center .p-lead { text-align: center; margin-left: auto; margin-right: auto; }
+  .p-artists { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(18px, 2.4vw, 34px); width: 100%; padding: 0 clamp(18px, 3vw, 48px); margin: 52px 0; }
+  .p-artist { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .p-artist-img { width: 100%; aspect-ratio: 1; overflow: hidden; margin-bottom: 18px; border-radius: 42% 58% 47% 53% / 52% 43% 57% 48%; }
+  .p-artist-img img { width: 100%; height: 100%; object-fit: cover; }
+  .p-artist-n { font-weight: 600; font-size: clamp(20px, 1.9vw, 32px); line-height: 1.08; letter-spacing: -.02em; }
+  .p-artist-n span { display: block; }
+  .p-artist-c { font-size: 14px; color: var(--p-muted); margin-top: 4px; }
+
+  /* FINAL CTA */
+  .p-final { background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 65%); color: #fff; text-align: center; padding: var(--p-gap) 24px; }
+  .p-final-inner { max-width: 780px; margin: 0 auto; }
+  .p-white { color: #fff; }
+  .p-white-70 { color: rgba(255,255,255,.72); margin-bottom: 30px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .p-intro, .p-split, .p-pillars, .p-values { grid-template-columns: 1fr; }
+    .p-cards { grid-template-columns: 1fr; }
+    .p-stats-row { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+    .p-artists { grid-template-columns: repeat(3, 1fr); }
+    .p-values-media { order: -1; aspect-ratio: 16/10; }
+  }
+  @media (max-width: 520px) {
+    .p-artists { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Insignia: cara estática con el texto circular girando encima */
+  .p-badge { position: relative; width: clamp(130px, 15vw, 180px); aspect-ratio: 1; margin: 0 auto 36px; }
+  .p-badge-ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: p-spin 24s linear infinite; }
+  .p-badge-face { position: absolute; left: 50%; top: 50%; width: 56%; transform: translate(-50%, -50%); }
+  @keyframes p-spin { to { transform: rotate(-360deg); } }
+  @media (prefers-reduced-motion: reduce) { .p-badge-ring { animation: none; } }
+
+  /* ===== Efectos ===== */
+  /* Entrada del hero al cargar: logo -> fecha -> lugar -> botones */
+  html.js-fx .p-hero-logo,
+  html.js-fx .p-hero-date span,
+  html.js-fx .p-hero-cta {
+    opacity: 0; transform: translateY(28px);
+    animation: p-hero-in .9s cubic-bezier(.22, 1, .36, 1) forwards;
+  }
+  html.js-fx .p-hero-logo { transform: translateY(20px) scale(.92); animation-delay: .15s; }
+  html.js-fx .p-hero-date span:first-child { animation-delay: .32s; }
+  html.js-fx .p-hero-date span:last-child { animation-delay: .48s; }
+  html.js-fx .p-hero-cta { animation-delay: .64s; }
+  @keyframes p-hero-in { to { opacity: 1; transform: none; } }
+
+  /* Reveal on scroll (las clases las añade JS; sin JS todo queda visible) */
+  .rv { opacity: 0; transform: translateY(26px); transition: opacity .7s ease var(--rv-d, 0ms), transform .8s cubic-bezier(.22, 1, .36, 1) var(--rv-d, 0ms); }
+  .rv.rv-scale { transform: translateY(18px) scale(.96); }
+  .rv.in { opacity: 1; transform: none; }
+  /* Titulares: cada frase (separada por <br>) entra deslizando, una tras otra */
+  .rv-mask :global(.rv-line) { display: block; overflow: clip; }
+  .rv-mask :global(.rv-line-inner) { display: block; transform: translateY(115%); transition: transform .85s cubic-bezier(.22, 1, .36, 1); }
+  .rv-mask.in :global(.rv-line-inner) { transform: none; }
+
+  /* Parallax interior en la imagen de valores */
+  html.js-fx .p-values-media img { height: 122%; will-change: transform; }
+  html.js-fx .p-band img { will-change: transform; }
+  html.js-fx .p-hero-inner { will-change: transform, opacity; }
+
+  /* Avatares blob con morph lento */
+  @keyframes p-blob {
+    0%   { border-radius: 40% 60% 55% 45% / 55% 40% 60% 45%; }
+    25%  { border-radius: 62% 38% 36% 64% / 44% 66% 34% 56%; }
+    50%  { border-radius: 35% 65% 60% 40% / 62% 36% 64% 38%; }
+    75%  { border-radius: 64% 36% 45% 55% / 38% 60% 40% 62%; }
+    100% { border-radius: 45% 55% 38% 62% / 66% 44% 56% 34%; }
+  }
+  html.js-fx .p-artist-img { animation: p-blob 7s ease-in-out infinite alternate; }
+  html.js-fx .p-artist:nth-child(2n) .p-artist-img { animation-duration: 8.5s; animation-delay: -3s; }
+  html.js-fx .p-artist:nth-child(3n) .p-artist-img { animation-duration: 10s; animation-delay: -6s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rv, .rv-mask { opacity: 1; transform: none; clip-path: none; transition: none; }
+    html.js-fx .p-artist-img { animation: none; }
+  }
+</style>

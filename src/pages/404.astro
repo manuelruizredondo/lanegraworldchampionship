@@ -1,15 +1,18 @@
 ---
 import Base from "@/layouts/Base.astro";
 ---
-<Base title="Página no encontrada — La Negra Dance Festival" lang="es">
+<Base title="Página no encontrada — La Negra World Championship" lang="es">
   <section class="notfound text-center">
     <div class="container">
       <p class="code">404</p>
       <h1 class="script-title">Página no encontrada</h1>
       <p class="msg">La página que buscas no existe o ha cambiado de dirección.</p>
+      <p class="msg alt" lang="en">The page you are looking for does not exist.</p>
+      <p class="msg alt" lang="it">La pagina che stai cercando non esiste.</p>
       <div class="actions">
         <a class="btn btn-solid" href="/">Volver al inicio</a>
-        <a class="btn btn-outline" href="/en/">Back to homepage (EN)</a>
+        <a class="btn btn-outline" href="/en/">English homepage</a>
+        <a class="btn btn-outline" href="/it/">Homepage italiana</a>
       </div>
     </div>
   </section>
@@ -20,5 +23,7 @@ import Base from "@/layouts/Base.astro";
   .code { font-family: var(--font-script); color: var(--gold); font-size: clamp(90px, 20vw, 180px); line-height: 1; margin: 0; }
   .script-title { margin-top: 6px; }
   .msg { color: var(--text); font-size: 18px; margin: 6px 0 28px; }
+  .msg.alt { font-size: 15px; opacity: .75; margin: 0 0 6px; }
+  .msg.alt:last-of-type { margin-bottom: 28px; }
   .actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 </style>

@@ -98,4 +98,27 @@ export const ARTISTS_EN = [
   { name: "Jose and Yoli Conuco", country: "Bachata | Spain", img: "jose-evelyn-bachata-festival-pasos-libres-1.jpg", ig: "https://www.instagram.com/conucodance", yt: "https://www.youtube.com/c/ConucoDanceBenidorm" },
 ];
 
-export const ARTISTS = { es: ARTISTS_ES, en: ARTISTS_EN };
+// Lista IT derivada de la EN: se traduce el país (la etiqueta visible) y el "and" de los dúos.
+const COUNTRY_IT = {
+  "Puerto Rico": "Porto Rico",
+  "Venezuela": "Venezuela",
+  "Cuba": "Cuba",
+  "Brazil": "Brasile",
+  "Italy": "Italia",
+  "Colombia": "Colombia",
+  "USA-Mexico": "USA-Messico",
+  "Spain": "Spagna",
+  "Uruguay": "Uruguay",
+  "Mexico": "Messico",
+  "Argentina": "Argentina",
+  "Dominican Republic": "Repubblica Dominicana",
+  "Dominican Republic and Spain": "Repubblica Dominicana e Spagna",
+};
+
+export const ARTISTS_IT = ARTISTS_EN.map((a) => {
+  const [style, country] = a.country.split(" | ");
+  const c = COUNTRY_IT[country] || country;
+  return { ...a, name: a.name.replace(/ and /g, " e "), country: `${style} | ${c}` };
+});
+
+export const ARTISTS = { es: ARTISTS_ES, en: ARTISTS_EN, it: ARTISTS_IT };

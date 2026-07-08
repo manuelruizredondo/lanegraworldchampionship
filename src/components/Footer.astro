@@ -1,8 +1,10 @@
 ---
-import { FOOTER_LEGAL, FOOTER_SOCIAL_TITLE } from "../data/nav.js";
+import { FOOTER_LEGAL, FOOTER_SOCIAL_TITLE, FOOTER_COPYRIGHT, FOOTER_DESIGNED_BY } from "../data/nav.js";
 const { lang = "es" } = Astro.props;
 const legal = FOOTER_LEGAL[lang];
 const socialTitle = FOOTER_SOCIAL_TITLE[lang];
+const copyright = FOOTER_COPYRIGHT[lang];
+const designedBy = FOOTER_DESIGNED_BY[lang];
 const gallery = [
   "/img/2025/03/lanegra-dance-festival-home-3-12.webp",
   "/img/2025/03/lanegra-dance-festival-home-3-11.webp",
@@ -60,7 +62,7 @@ const social = {
       <nav class="legal-links">
         {legal.map((l) => <a href={l.h}>{l.t}</a>)}
       </nav>
-      <p class="copyright">© Todos los derechos reservados · La Negra Dance Festival · Diseñado por <strong>MANAMO</strong></p>
+      <p class="copyright">© {copyright} · La Negra World Championship · {designedBy} <strong>MANAMO</strong></p>
     </div>
   </div>
 </footer>

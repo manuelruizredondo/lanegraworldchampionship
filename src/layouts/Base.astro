@@ -3,13 +3,36 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import WhatsApp from "../components/WhatsApp.astro";
+import { routeFor } from "../data/routes.js";
+
+const DEFAULT_DESC = {
+  es: "Festival y campeonato internacional de Salsa y Bachata. Del 21 al 25 de octubre del 2026 en Calpe (España).",
+  en: "International Salsa and Bachata festival and championship. From October 21 to 25, 2026 in Calpe (Spain).",
+  it: "Festival e campionato internazionale di Salsa e Bachata. Dal 21 al 25 ottobre 2026 a Calpe (Spagna).",
+};
+
+const SKIP_LABEL = {
+  es: "Saltar al contenido",
+  en: "Skip to content",
+  it: "Vai al contenuto",
+};
 
 const {
-  title = "La Negra Dance Festival",
-  description = "Festival y campeonato internacional de Salsa y Bachata. Del 21 al 25 de octubre del 2026 en Calpe (España).",
+  title = "La Negra World Championship",
+  description,
   lang = "es",
   heroOverlay = false,
 } = Astro.props;
+
+const desc = description || DEFAULT_DESC[lang] || DEFAULT_DESC.es;
+const fullTitle = title.includes("La Negra") ? title : `${title} — La Negra World Championship`;
+
+// URLs absolutas para canonical / og / hreflang
+const site = Astro.site ?? new URL("https://campeonatopasoslibres.com");
+const canonical = new URL(Astro.url.pathname, site);
+const ogImage = new URL("/img/2025/03/logotipo-def-lanegra-dance-festival.png", site);
+const alternates = routeFor(Astro.url.pathname);
+const OG_LOCALE = { es: "es_ES", en: "en_US", it: "it_IT" };
 ---
 
 <!doctype html>
@@ -17,19 +40,39 @@ const {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    {alternates && (
+      <>
+        <link rel="alternate" hreflang="es" href={new URL(alternates.es, site)} />
+        <link rel="alternate" hreflang="en" href={new URL(alternates.en, site)} />
+        <link rel="alternate" hreflang="it" href={new URL(alternates.it, site)} />
+        <link rel="alternate" hreflang="x-default" href={new URL(alternates.es, site)} />
+      </>
+    )}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="La Negra World Championship" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content={OG_LOCALE[lang] || "es_ES"} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#0f0b1e" />
     <link rel="icon" href="/img/2025/03/favicon-180.png" />
+    <link rel="apple-touch-icon" href="/img/2025/03/favicon-180.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Bebas+Neue&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto+Condensed:wght@300;400;700&family=Bebas+Neue&display=swap"
       rel="stylesheet"
     />
   </head>
   <body class={heroOverlay ? "hero-overlay" : undefined}>
+    <a class="skip-link" href="#main">{SKIP_LABEL[lang] || SKIP_LABEL.es}</a>
     <Header lang={lang} />
-    <main>
+    <main id="main">
       <slot />
     </main>
     <Footer lang={lang} />
