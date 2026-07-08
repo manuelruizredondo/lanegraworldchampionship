@@ -42,6 +42,30 @@ const stats = [
   { n: "5.000+", l: "Bailarines" },
 ];
 
+// Mapa de nacionalidades: [país, asistentes, x%, y%] (cifras editables)
+// Mapa de nacionalidades: país, asistentes, posición (x/y %), altura de varilla (h px)
+const mapPins = [
+  { l: "España", n: 3200, x: 47.2, y: 25.5, h: 150, big: true },
+  { l: "Portugal", n: 170, x: 45.7, y: 28, h: 56 },
+  { l: "Francia", n: 180, x: 48.6, y: 21.5, h: 96 },
+  { l: "Reino Unido", n: 230, x: 47.6, y: 18.5, h: 144 },
+  { l: "Alemania", n: 260, x: 50.4, y: 21.5, h: 62 },
+  { l: "Italia", n: 640, x: 51.6, y: 24.5, h: 114 },
+  { l: "EE. UU.", n: 150, x: 21, y: 27.5, h: 110 },
+  { l: "Canadá", n: 110, x: 25, y: 13.5, h: 66 },
+  { l: "México", n: 210, x: 19, y: 37.5, h: 62 },
+  { l: "Cuba", n: 130, x: 26.3, y: 39.5, h: 122 },
+  { l: "R. Dominicana", n: 90, x: 28.6, y: 41.5, h: 58 },
+  { l: "Venezuela", n: 110, x: 29.2, y: 47.5, h: 100 },
+  { l: "Colombia", n: 240, x: 26.6, y: 51.5, h: 64 },
+  { l: "Brasil", n: 140, x: 33.5, y: 60, h: 112 },
+  { l: "Argentina", n: 95, x: 29.8, y: 74, h: 70 },
+  { l: "Corea del Sur", n: 120, x: 80, y: 27, h: 62 },
+  { l: "Japón", n: 140, x: 83.5, y: 25.5, h: 120 },
+  { l: "Australia", n: 80, x: 85.5, y: 62, h: 84 },
+];
+const pinColors = ["#cc9933", "#14121a", "#a28243"];
+
 // Llama animada del marquee: capa exterior + corazón, con parpadeo tipo fuego
 const fire = `<svg class="p-fire" viewBox="0 0 24 24" aria-hidden="true"><path class="p-fire-o" fill="#ee7b1e" d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/><path class="p-fire-i" fill="#ffc93c" d="M11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>`;
 
@@ -163,7 +187,7 @@ const artists = ARTISTS_ES.map((a) => {
           <a class="p-btn p-btn-dark" href="/tu-pase/">Comprar pase</a>
           <div class="p-btn-off-wrap">
             <span class="p-btn p-btn-off" aria-disabled="true" title="Las inscripciones al Mundial 2026 están cerradas">Inscríbete al Mundial*</span>
-            <p class="p-cta-note">*Inscripciones al Mundial 2026 cerradas.</p>
+            <p class="p-cta-note">*Inscripciones para competidores cerradas.</p>
           </div>
         </div>
       </div>
@@ -206,6 +230,32 @@ const artists = ARTISTS_ES.map((a) => {
         <p class="p-band-eyebrow">35+ países · 5 continentes</p>
         <h2 class="p-band-title">El mundo entero<br />baila en Calpe.</h2>
         <p class="p-band-sub">Distintos idiomas, un mismo lenguaje. Cada octubre, bailarines de todo el planeta se dan cita frente al Mediterráneo.</p>
+      </div>
+    </section>
+
+    <!-- WORLD MAP (nacionalidades) -->
+    <section class="p-map-sec">
+      <div class="p-container p-center p-map-head">
+        <p class="p-eyebrow">Nacionalidades</p>
+        <h2 class="p-h2">De todos los rincones<br />del planeta.</h2>
+      </div>
+      <div class="p-map" data-map>
+        <div class="p-map-plane">
+          <img class="p-map-img" src="/img/world-map-dots.svg" alt="Mapa de nacionalidades de los asistentes" width="2370" height="1104" loading="lazy" />
+          {mapPins.map((p, i) => (
+            <div
+              class={p.big ? "p-pin p-pin-big" : "p-pin"}
+              data-x={p.x}
+              data-y={p.y}
+              style={`left:${p.x}%; top:${p.y}%; --pin-d:${i * 80}ms; --stem:${p.h}px; --dot:${Math.round(8 + Math.min(14, Math.sqrt(p.n) / 4))}px; --pin-c:${p.big ? "#cc9933" : pinColors[i % 3]}`}
+            >
+              <span class="p-pin-bubble"><span class="p-pin-n" data-count={p.n}>{String(p.n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span></span>
+              <span class="p-pin-l">{p.l}</span>
+              <span class="p-pin-stem"></span>
+              <span class="p-pin-hit"></span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
 
@@ -435,20 +485,6 @@ const artists = ARTISTS_ES.map((a) => {
       // Slider de artistas: automático + arrastre con dedo/ratón con inercia
       const artSlider = document.querySelector("[data-artists-slider]");
       if (artSlider) {
-        // orden aleatorio en cada visita (idéntico en ambas mitades para que el bucle cuadre)
-        const artSets = artSlider.querySelectorAll(".p-artists-set");
-        if (artSets.length === 2) {
-          const n = artSets[0].children.length;
-          const order = [...Array(n).keys()];
-          for (let i = n - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [order[i], order[j]] = [order[j], order[i]];
-          }
-          artSets.forEach((set) => {
-            const kids = [...set.children];
-            order.forEach((idx) => set.appendChild(kids[idx]));
-          });
-        }
         const artTrack = artSlider.querySelector(".p-artists-track");
         let ax = 0, hoverPause = false, artDragging = false, artMoved = false;
         let artStartX = 0, artStartAx = 0, artVel = 0, artLastX = 0, artLastT = 0, artResumeAt = 0;
@@ -496,6 +532,34 @@ const artists = ARTISTS_ES.map((a) => {
         });
       }
 
+      // Mapa: pop de burbujas + contadores al entrar en pantalla
+      const mapEl = document.querySelector("[data-map]");
+      if (mapEl) {
+        const mapObs = new IntersectionObserver((ents) => {
+          if (!ents[0].isIntersecting) return;
+          mapObs.disconnect();
+          mapEl.classList.add("in");
+        }, { threshold: 0.3 });
+        mapObs.observe(mapEl);
+        // el número cuenta la primera vez que haces rollover en cada punto
+        mapEl.querySelectorAll(".p-pin").forEach((pin) => {
+          let contado = false;
+          pin.addEventListener("mouseenter", () => {
+            if (contado) return;
+            contado = true;
+            const el = pin.querySelector(".p-pin-n");
+            const target = parseInt(el.dataset.count, 10) || 0;
+            const t0 = performance.now(), DUR = 900;
+            requestAnimationFrame(function step(t) {
+              const p = Math.min((t - t0) / DUR, 1);
+              const eased = 1 - Math.pow(1 - p, 3);
+              el.textContent = String(Math.round(target * eased)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+              if (p < 1) requestAnimationFrame(step);
+            });
+          });
+        });
+      }
+
       // 4) Botones magnéticos
       if (finePointer) {
         document.querySelectorAll(".p-btn").forEach((btn) => {
@@ -530,6 +594,32 @@ const artists = ARTISTS_ES.map((a) => {
           requestAnimationFrame(cur);
         });
       }
+    }
+
+    // Posicionar los pins sobre el mapa inclinado (misma proyección que la CSS de la imagen)
+    const mapPlane = document.querySelector(".p-map-plane");
+    const mapImg = document.querySelector(".p-map-img");
+    const layoutPins = () => {
+      if (!mapPlane || !mapImg) return;
+      const W = mapImg.offsetWidth, H = mapImg.offsetHeight;
+      if (!W || !H) { setTimeout(layoutPins, 120); return; } // la imagen aún no tiene medidas
+      const D = 1400, TH = Math.PI / 4, S = 1.16;
+      mapPlane.querySelectorAll(".p-pin").forEach((pin) => {
+        const x = parseFloat(pin.dataset.x), y = parseFloat(pin.dataset.y);
+        const X = (x / 100 - 0.5) * W * S;
+        const Y = (y / 100 - 0.5) * H * S;
+        const z = Y * Math.sin(TH);
+        const f = D / (D - z);
+        pin.style.left = (W / 2 + X * f).toFixed(1) + "px";
+        pin.style.top = (H / 2 + Y * Math.cos(TH) * f).toFixed(1) + "px";
+        pin.style.setProperty("--proj", Math.max(0.7, Math.min(1.3, f)).toFixed(3));
+      });
+    };
+    if (mapImg) {
+      mapImg.addEventListener("load", layoutPins);
+      addEventListener("load", layoutPins);
+      addEventListener("resize", layoutPins);
+      layoutPins();
     }
 
     // Cuenta atrás del hero hasta el inicio del evento (21 oct 2026, hora de España)
@@ -778,6 +868,77 @@ const artists = ARTISTS_ES.map((a) => {
   }
   .p-btn-off:hover { transform: none; }
   .p-cta-note { margin: 8px 0 0 4px; font-size: 12px; color: var(--p-muted); text-align: left; }
+
+  /* MAPA DE NACIONALIDADES (plano en perspectiva + piruletas a distintas alturas) */
+  .p-map-sec { padding: calc(var(--p-gap) * .7) 0 calc(var(--p-gap) * .45); }
+  .p-map-head { margin-bottom: 6px; }
+  .p-map { position: relative; width: 100%; padding-top: 90px; overflow: hidden; }
+  /* la inclinación encoge la proyección: subimos el plano para comerle el blanco */
+  .p-map-plane { position: relative; margin-top: -6.5%; margin-bottom: -1%; }
+  /* El 3D vive SOLO en la imagen (sin preserve-3d anidado: compatible con Safari);
+     el scale compensa el estrechamiento del borde superior para llenar el ancho */
+  .p-map-img {
+    width: 100%; height: auto; aspect-ratio: 2370 / 1104; display: block;
+    transform: perspective(1400px) rotateX(45deg) scale(1.16);
+    transform-origin: 50% 50%;
+  }
+  /* Piruleta: elemento 2D normal; su posición proyectada la calcula JS con la misma matemática */
+  .p-pin {
+    position: absolute; display: flex; flex-direction: column; align-items: center;
+    transform-origin: 50% 100%;
+    transform: translate(-50%, -100%) scale(var(--proj, 1));
+  }
+  html.js-fx .p-pin {
+    transform: translate(-50%, -100%) scale(0);
+    transition: transform .65s cubic-bezier(.34, 1.56, .64, 1) var(--pin-d, 0ms);
+  }
+  html.js-fx .p-map.in .p-pin { transform: translate(-50%, -100%) scale(var(--proj, 1)); }
+  .p-pin-bubble {
+    width: 76px; height: 76px; border-radius: 50%;
+    border: 4px solid var(--pin-c, var(--gold)); background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 12px 28px rgba(20, 18, 26, .16);
+  }
+  .p-pin-big .p-pin-bubble { width: 100px; height: 100px; border-width: 5px; }
+  .p-pin-n { font-weight: 700; font-size: 17px; color: var(--p-ink); font-variant-numeric: tabular-nums; }
+  .p-pin-big .p-pin-n { font-size: 22px; }
+  .p-pin-l {
+    margin: 7px 0 5px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; color: var(--p-muted);
+    background: rgba(255, 255, 255, .88); padding: 2px 7px; border-radius: 6px; white-space: nowrap;
+  }
+  .p-pin-stem { width: 2px; height: var(--stem, 80px); background: var(--pin-c, var(--gold)); }
+  /* Punto base siempre visible (ancla en el país) con pulso */
+  .p-pin::after {
+    content: ""; position: absolute; left: 50%; bottom: calc(var(--dot, 10px) / -2); transform: translateX(-50%);
+    width: var(--dot, 10px); height: var(--dot, 10px); border-radius: 50%; background: var(--pin-c, var(--gold));
+  }
+  html.js-fx .p-map.in .p-pin::after { animation: p-dot-pulse 2.4s ease-in-out infinite; }
+  @keyframes p-dot-pulse { 50% { transform: translateX(-50%) scale(1.6); } }
+  /* La piruleta brota solo al pasar el ratón por el punto */
+  .p-pin { pointer-events: none; }
+  .p-pin-hit {
+    position: absolute; left: 50%; bottom: -18px; transform: translateX(-50%);
+    width: 36px; height: 36px; border-radius: 50%;
+    pointer-events: auto; cursor: pointer;
+  }
+  .p-pin-bubble, .p-pin-l {
+    opacity: 0; transform: scale(.4); transform-origin: 50% 130%;
+    transition: opacity .25s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  .p-pin-stem { transform: scaleY(0); transform-origin: 50% 100%; transition: transform .35s cubic-bezier(.22, 1, .36, 1); }
+  .p-pin:hover .p-pin-bubble, .p-pin:hover .p-pin-l { opacity: 1; transform: scale(1); }
+  .p-pin:hover .p-pin-stem { transform: scaleY(1); }
+  .p-pin:hover { z-index: 5; }
+  @media (max-width: 700px) {
+    .p-map { padding-top: 90px; }
+    .p-pin-bubble { width: 42px; height: 42px; border-width: 2.5px; }
+    .p-pin-big .p-pin-bubble { width: 54px; height: 54px; border-width: 3px; }
+    .p-pin-n { font-size: 10px; }
+    .p-pin-big .p-pin-n { font-size: 12px; }
+    .p-pin-l { font-size: 7px; padding: 1px 4px; margin: 4px 0 3px; }
+    .p-pin-stem { height: calc(var(--stem, 80px) * .5); }
+  }
 
   /* Resaltado dorado con subrayado curvo que se dibuja */
   .p-hl { position: relative; display: inline-block; color: var(--gold); }
