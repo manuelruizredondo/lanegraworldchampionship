@@ -64,11 +64,16 @@ const artists = ARTISTS_ES.map((a) => {
     <section class="p-hero">
       <video class="p-hero-video" autoplay muted loop playsinline src="https://res.cloudinary.com/manuel-ruiz/video/upload/v1783497994/VIDEOWEB2025LANEGRACHAMPIONSCHIP_wpnfc8.mp4"></video>
       <div class="p-hero-inner">
-        <img class="p-hero-logo" src="/img/2025/03/logotipo-def-lanegra-dance-festival.png" alt="La Negra World Championship" />
         <p class="p-hero-date"><span>21–25 OCT 2026</span><span>Calpe · España</span></p>
         <div class="p-hero-cta">
           <a class="p-btn p-btn-light" href="/competicion/">Descubre el Mundial</a>
           <a class="p-btn p-btn-outline" href="/festival/">Descubre el festival</a>
+        </div>
+        <div class="p-hero-count" role="timer" aria-label="Cuenta atrás para el evento">
+          <div class="p-hc"><span class="p-hc-n" data-d>0</span><span class="p-hc-l">Días</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-h>00</span><span class="p-hc-l">Horas</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-m>00</span><span class="p-hc-l">Min</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-s>00</span><span class="p-hc-l">Seg</span></div>
         </div>
       </div>
     </section>
@@ -307,12 +312,15 @@ const artists = ARTISTS_ES.map((a) => {
             el.innerHTML = "";
             nodes.forEach((n) => el.appendChild(n));
             const lines = [];
-            let lastTop = null;
+            let prevLeft = null;
             nodes.forEach((n) => {
               if (n.nodeType === 3) { if (lines.length) lines[lines.length - 1].push(n); return; }
-              const top = Math.round(n.getBoundingClientRect().top);
-              if (lastTop === null || Math.abs(top - lastTop) > 4) { lines.push([n]); lastTop = top; }
+              // nueva línea cuando la posición horizontal retrocede (salto de línea real);
+              // el top no sirve: los resaltados inline-block tienen caja con top distinto
+              const left = n.getBoundingClientRect().left;
+              if (prevLeft === null || left < prevLeft) lines.push([n]);
               else lines[lines.length - 1].push(n);
+              prevLeft = left;
             });
             el.innerHTML = "";
             lines.forEach((g) => {
@@ -517,6 +525,24 @@ const artists = ARTISTS_ES.map((a) => {
       }
     }
 
+    // Cuenta atrás del hero hasta el inicio del evento (21 oct 2026, hora de España)
+    const hcTarget = new Date("2026-10-21T00:00:00+02:00").getTime();
+    const hc = {
+      d: document.querySelector(".p-hero-count [data-d]"),
+      h: document.querySelector(".p-hero-count [data-h]"),
+      m: document.querySelector(".p-hero-count [data-m]"),
+      s: document.querySelector(".p-hero-count [data-s]"),
+    };
+    const hcPad = (n) => String(n).padStart(2, "0");
+    const hcTick = () => {
+      const diff = Math.max(0, hcTarget - Date.now());
+      if (hc.d) hc.d.textContent = String(Math.floor(diff / 864e5));
+      if (hc.h) hc.h.textContent = hcPad(Math.floor(diff / 36e5) % 24);
+      if (hc.m) hc.m.textContent = hcPad(Math.floor(diff / 6e4) % 60);
+      if (hc.s) hc.s.textContent = hcPad(Math.floor(diff / 1e3) % 60);
+    };
+    if (hc.d) { hcTick(); setInterval(hcTick, 1000); }
+
     // Valores: al pulsar Nivel / Comunidad / Emoción cambia la imagen
     const valueItems = document.querySelectorAll(".p-value");
     const valuesMediaImg = document.querySelector(".p-values-media img");
@@ -614,7 +640,6 @@ const artists = ARTISTS_ES.map((a) => {
     30% { transform: scaleY(1.22) scaleX(.88); }
     60% { transform: scaleY(.82) scaleX(1.12); }
   }
-  .p-hero-logo { width: clamp(120px, 16vw, 190px); height: auto; margin: 0 auto 30px; display: block; }
   .p-hero-date { display: flex; flex-direction: column; gap: 4px; margin: 0 0 34px; }
   .p-hero-date span:first-child { font-family: var(--font-heavy); font-weight: 800; font-size: clamp(34px, 7vw, 86px); line-height: 1; letter-spacing: .01em; color: transparent; -webkit-text-stroke: 1.6px #fff; text-transform: uppercase; }
   .p-hero-date span:last-child { font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: clamp(12px, 1.5vw, 15px); color: rgba(255,255,255,.75); }
@@ -723,6 +748,13 @@ const artists = ARTISTS_ES.map((a) => {
   @media (max-width: 520px) {
   }
 
+  /* Contador del hero */
+  .p-hero-count { display: flex; justify-content: center; align-items: stretch; margin-top: 40px; }
+  .p-hc { display: flex; flex-direction: column; align-items: center; padding: 0 clamp(14px, 3vw, 30px); }
+  .p-hc + .p-hc { border-left: 1px solid rgba(255, 255, 255, .28); }
+  .p-hc-n { font-weight: 600; font-size: clamp(24px, 3.4vw, 42px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: #fff; }
+  .p-hc-l { margin-top: 7px; font-size: 11px; text-transform: uppercase; letter-spacing: .16em; color: rgba(255, 255, 255, .7); }
+
   /* Resaltado dorado con subrayado curvo que se dibuja */
   .p-hl { position: relative; display: inline-block; color: var(--gold); }
   .p-hl-line { position: absolute; left: -2%; bottom: -.08em; width: 104%; height: .32em; overflow: visible; }
@@ -745,16 +777,16 @@ const artists = ARTISTS_ES.map((a) => {
 
   /* ===== Efectos ===== */
   /* Entrada del hero al cargar: logo -> fecha -> lugar -> botones */
-  html.js-fx .p-hero-logo,
   html.js-fx .p-hero-date span,
-  html.js-fx .p-hero-cta {
+  html.js-fx .p-hero-cta,
+  html.js-fx .p-hero-count {
     opacity: 0; transform: translateY(28px);
     animation: p-hero-in .9s cubic-bezier(.22, 1, .36, 1) forwards;
   }
-  html.js-fx .p-hero-logo { transform: translateY(20px) scale(.92); animation-delay: .15s; }
-  html.js-fx .p-hero-date span:first-child { animation-delay: .32s; }
-  html.js-fx .p-hero-date span:last-child { animation-delay: .48s; }
-  html.js-fx .p-hero-cta { animation-delay: .64s; }
+  html.js-fx .p-hero-date span:first-child { animation-delay: .2s; }
+  html.js-fx .p-hero-date span:last-child { animation-delay: .38s; }
+  html.js-fx .p-hero-cta { animation-delay: .56s; }
+  html.js-fx .p-hero-count { animation-delay: .74s; }
   @keyframes p-hero-in { to { opacity: 1; transform: none; } }
 
   /* Reveal on scroll (las clases las añade JS; sin JS todo queda visible) */
