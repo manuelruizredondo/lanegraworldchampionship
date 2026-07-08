@@ -30,9 +30,9 @@ const features = [
 ];
 
 const values = [
-  { t: "Nivel", d: "El único Mundial con coreografías 100% de estreno y un jurado de primer nivel." },
-  { t: "Comunidad", d: "Bailarines de más de 35 países unidos por la misma pasión." },
-  { t: "Emoción", d: "Shows, competición y fiestas que se viven una sola vez al año." },
+  { t: "Nivel", d: "El único Mundial con coreografías 100% de estreno y un jurado de primer nivel.", img: img("lanegra-dance-festival-comepeticion-19.webp") },
+  { t: "Comunidad", d: "Bailarines de más de 35 países unidos por la misma pasión.", img: img("festival-pasos-negra-dance-2.jpeg") },
+  { t: "Emoción", d: "Shows, competición y fiestas que se viven una sola vez al año.", img: img("la-negra-dance-festival-fiesta-img-7.webp") },
 ];
 
 const stats = [
@@ -41,6 +41,9 @@ const stats = [
   { n: "15", l: "Ediciones" },
   { n: "5.000+", l: "Bailarines" },
 ];
+
+// Llama animada del marquee: capa exterior + corazón, con parpadeo tipo fuego
+const fire = `<svg class="p-fire" viewBox="0 0 24 24" aria-hidden="true"><path class="p-fire-o" fill="#ee7b1e" d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/><path class="p-fire-i" fill="#ffc93c" d="M11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>`;
 
 // Nombre en dos líneas (nombre / apellidos) y en Título (evita nombres en MAYÚSCULAS del dataset)
 const titleCase = (s) =>
@@ -74,14 +77,14 @@ const artists = ARTISTS_ES.map((a) => {
     <section class="p-marquee" aria-hidden="true" data-marquee>
       <div class="p-marquee-track">
         <div class="p-marquee-half">
-          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
-          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
-          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+          <span>Que se prenda fuego la tarima!!!</span><Fragment set:html={fire} />
+          <span>Que se prenda fuego la tarima!!!</span><Fragment set:html={fire} />
+          <span>Que se prenda fuego la tarima!!!</span><Fragment set:html={fire} />
         </div>
         <div class="p-marquee-half">
-          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
-          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
-          <span>Que se prenda fuego la tarima!!!</span><img src="/img/fire-interval.svg" alt="" />
+          <span>Que se prenda fuego la tarima!!!</span><Fragment set:html={fire} />
+          <span>Que se prenda fuego la tarima!!!</span><Fragment set:html={fire} />
+          <span>Que se prenda fuego la tarima!!!</span><Fragment set:html={fire} />
         </div>
       </div>
     </section>
@@ -162,14 +165,14 @@ const artists = ARTISTS_ES.map((a) => {
           <h2 class="p-h2">Lo que nos<br />hace únicos.</h2>
         </div>
         <div class="p-values-list">
-          {values.map((v) => (
-            <div class="p-value">
+          {values.map((v, i) => (
+            <div class={i === 0 ? "p-value active" : "p-value"} data-img={v.img} role="button" tabindex="0">
               <h3 class="p-value-t">{v.t}</h3>
               <p class="p-value-d">{v.d}</p>
             </div>
           ))}
         </div>
-        <div class="p-values-media"><img src={img("ciudad-calpes-la-negra-dance-festival.webp")} alt="Calpe" loading="lazy" /></div>
+        <div class="p-values-media"><img src={values[0].img} alt="La Negra World Championship" loading="lazy" /></div>
       </div>
     </section>
 
@@ -182,9 +185,16 @@ const artists = ARTISTS_ES.map((a) => {
       </div>
     </section>
 
-    <!-- PHOTO BAND -->
+    <!-- PHOTO BAND (parallax interior + mensaje de internacionalidad) -->
     <section class="p-band">
-      <img src={img("la-negra-dance-festival-fiesta-img-12.webp")} alt="La Negra World Championship" loading="lazy" />
+      <div class="p-band-media">
+        <img src={img("la-negra-dance-festival-fiesta-img-12.webp")} alt="" loading="lazy" />
+      </div>
+      <div class="p-band-content">
+        <p class="p-band-eyebrow">35+ países · 5 continentes</p>
+        <h2 class="p-band-title">El mundo entero<br />baila en Calpe.</h2>
+        <p class="p-band-sub">Distintos idiomas, un mismo lenguaje. Cada octubre, bailarines de todo el planeta se dan cita frente al Mediterráneo.</p>
+      </div>
     </section>
 
     <!-- ARTISTS -->
@@ -274,7 +284,7 @@ const artists = ARTISTS_ES.map((a) => {
       // 1) Reveal on scroll con stagger (los titulares grandes entran con máscara)
       const revealEls = [];
       const addRv = (el, i) => {
-        const cls = el.matches(".p-display, .p-h2") ? "rv-mask" : "rv";
+        const cls = el.matches(".p-display, .p-h2, .p-band-title") ? "rv-mask" : "rv";
         el.classList.add(cls);
         if (el.matches(".p-pillar, .p-card")) el.classList.add("rv-scale");
         el.style.setProperty("--rv-d", Math.min(i * 90, 450) + "ms");
@@ -291,7 +301,7 @@ const artists = ARTISTS_ES.map((a) => {
         revealEls.push(el);
       };
       document
-        .querySelectorAll(".p-intro, .p-split, .p-narrow, .p-values, .p-values-list, .p-stats-row, .p-pillars, .p-cards, .p-final-inner")
+        .querySelectorAll(".p-intro, .p-split, .p-narrow, .p-values, .p-values-list, .p-stats-row, .p-pillars, .p-cards, .p-band-content, .p-final-inner")
         .forEach((parent) => {
           [...parent.children].forEach((el, i) => {
             if (!el.matches(".p-values-list")) addRv(el, i);
@@ -350,10 +360,10 @@ const artists = ARTISTS_ES.map((a) => {
       requestAnimationFrame(function fxTick() {
         const vh = innerHeight;
         if (bandImg) {
-          const r = bandImg.getBoundingClientRect();
+          const r = bandImg.parentElement.getBoundingClientRect();
           if (r.bottom > 0 && r.top < vh) {
             const p = (r.top + r.height / 2 - vh / 2) / vh;
-            bandImg.style.transform = "translateY(" + (-p * 26).toFixed(1) + "px)";
+            bandImg.style.transform = "translateY(" + (-11.5 + p * 23).toFixed(2) + "%)";
           }
         }
         if (valuesImg) {
@@ -374,6 +384,20 @@ const artists = ARTISTS_ES.map((a) => {
       // Slider de artistas: automático + arrastre con dedo/ratón con inercia
       const artSlider = document.querySelector("[data-artists-slider]");
       if (artSlider) {
+        // orden aleatorio en cada visita (idéntico en ambas mitades para que el bucle cuadre)
+        const artSets = artSlider.querySelectorAll(".p-artists-set");
+        if (artSets.length === 2) {
+          const n = artSets[0].children.length;
+          const order = [...Array(n).keys()];
+          for (let i = n - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [order[i], order[j]] = [order[j], order[i]];
+          }
+          artSets.forEach((set) => {
+            const kids = [...set.children];
+            order.forEach((idx) => set.appendChild(kids[idx]));
+          });
+        }
         const artTrack = artSlider.querySelector(".p-artists-track");
         let ax = 0, hoverPause = false, artDragging = false, artMoved = false;
         let artStartX = 0, artStartAx = 0, artVel = 0, artLastX = 0, artLastT = 0, artResumeAt = 0;
@@ -456,6 +480,28 @@ const artists = ARTISTS_ES.map((a) => {
         });
       }
     }
+
+    // Valores: al pulsar Nivel / Comunidad / Emoción cambia la imagen
+    const valueItems = document.querySelectorAll(".p-value");
+    const valuesMediaImg = document.querySelector(".p-values-media img");
+    const selectValue = (v) => {
+      valueItems.forEach((o) => o.classList.remove("active"));
+      v.classList.add("active");
+      const src = v.dataset.img;
+      if (src && valuesMediaImg && valuesMediaImg.getAttribute("src") !== src) {
+        valuesMediaImg.style.opacity = "0";
+        setTimeout(() => {
+          valuesMediaImg.onload = () => { valuesMediaImg.style.opacity = "1"; };
+          valuesMediaImg.src = src;
+        }, 200);
+      }
+    };
+    valueItems.forEach((v) => {
+      v.addEventListener("click", () => selectValue(v));
+      v.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectValue(v); }
+      });
+    });
   </script>
 </Base>
 
@@ -466,7 +512,7 @@ const artists = ARTISTS_ES.map((a) => {
     --p-ink: #14121a;
     --p-muted: #6a6a74;
     --p-line: #e6e3dd;
-    --p-soft: #f4f2ee;
+    --p-soft: #faf8f4;
     --p-card: #e9e7e2;
     --p-dark: #14121a;
     --p-radius: 26px;
@@ -511,7 +557,27 @@ const artists = ARTISTS_ES.map((a) => {
   .p-marquee-track { display: flex; width: max-content; }
   .p-marquee-half { display: flex; align-items: center; gap: clamp(28px, 3.8vw, 58px); padding-right: clamp(28px, 3.8vw, 58px); }
   .p-marquee-half span { font-weight: 400; font-size: clamp(64px, 10.5vw, 150px); line-height: 1; letter-spacing: -0.09em; white-space: nowrap; }
-  .p-marquee-half img { height: clamp(34px, 5vw, 78px); width: auto; }
+  .p-marquee-half :global(.p-fire) {
+    height: clamp(38px, 5.6vw, 86px); width: auto; overflow: visible;
+    filter: drop-shadow(0 0 12px rgba(238, 123, 30, .5));
+  }
+  .p-marquee-half :global(.p-fire-o),
+  .p-marquee-half :global(.p-fire-i) { transform-origin: 50% 100%; transform-box: fill-box; }
+  .p-marquee-half :global(.p-fire-o) { animation: p-fire-flicker .9s ease-in-out infinite; }
+  .p-marquee-half :global(.p-fire-i) { animation: p-fire-flicker-i .65s ease-in-out infinite; }
+  .p-marquee-half:nth-child(2n) :global(.p-fire-o) { animation-delay: -.45s; }
+  .p-marquee-half :global(.p-fire:nth-of-type(2n) .p-fire-o) { animation-delay: -.3s; }
+  @keyframes p-fire-flicker {
+    0%, 100% { transform: scaleY(1) scaleX(1) rotate(0deg); }
+    25% { transform: scaleY(1.08) scaleX(.95) rotate(-2deg); }
+    50% { transform: scaleY(.93) scaleX(1.06) rotate(1.6deg); }
+    75% { transform: scaleY(1.1) scaleX(.94) rotate(-1deg); }
+  }
+  @keyframes p-fire-flicker-i {
+    0%, 100% { transform: scaleY(1) scaleX(1); }
+    30% { transform: scaleY(1.22) scaleX(.88); }
+    60% { transform: scaleY(.82) scaleX(1.12); }
+  }
   .p-hero-logo { width: clamp(120px, 16vw, 190px); height: auto; margin: 0 auto 30px; display: block; }
   .p-hero-date { display: flex; flex-direction: column; gap: 4px; margin: 0 0 34px; }
   .p-hero-date span:first-child { font-family: var(--font-heavy); font-weight: 800; font-size: clamp(34px, 7vw, 86px); line-height: 1; letter-spacing: .01em; color: transparent; -webkit-text-stroke: 1.6px #fff; text-transform: uppercase; }
@@ -557,7 +623,11 @@ const artists = ARTISTS_ES.map((a) => {
   /* VALUES */
   .p-values { display: grid; grid-template-columns: 0.8fr 1fr 1fr; gap: clamp(30px, 4vw, 60px); align-items: start; }
   .p-values-list { display: grid; gap: 4px; }
-  .p-value { padding: 22px 0; border-bottom: 1px solid var(--p-line); }
+  .p-value { padding: 22px 0; border-bottom: 1px solid var(--p-line); cursor: pointer; transition: opacity .2s; }
+  .p-value:not(.active) { opacity: .55; }
+  .p-value:not(.active):hover { opacity: .8; }
+  .p-value.active .p-value-t { color: var(--gold); }
+  .p-values-media img { transition: opacity .25s ease; }
   .p-value-t { font-weight: 800; font-size: clamp(24px, 3vw, 34px); letter-spacing: -.02em; margin: 0 0 8px; }
   .p-value-d { color: var(--p-muted); font-size: 15px; line-height: 1.55; margin: 0; }
   .p-values-media { border-radius: var(--p-radius); overflow: hidden; aspect-ratio: 3/4; }
@@ -570,9 +640,19 @@ const artists = ARTISTS_ES.map((a) => {
   .p-stat-n { font-weight: 800; font-size: clamp(34px, 4.6vw, 60px); line-height: 1; letter-spacing: -.02em; }
   .p-stat-l { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--p-muted); }
 
-  /* PHOTO BAND */
-  .p-band { padding: 0 24px; }
-  .p-band img { width: 100%; max-width: 1400px; margin: 0 auto; height: clamp(260px, 42vw, 580px); object-fit: cover; border-radius: var(--p-radius); display: block; }
+  /* PHOTO BAND (100% ancho, parallax interior recortado, texto centrado) */
+  .p-band { position: relative; width: 100%; height: clamp(420px, 62vh, 660px); overflow: hidden; }
+  .p-band-media { position: absolute; inset: 0; }
+  .p-band-media img { width: 100%; height: 130%; object-fit: cover; display: block; }
+  .p-band::after { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(10, 8, 20, .48); }
+  .p-band-content {
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; color: #fff; padding: 0 24px;
+  }
+  .p-band-eyebrow { font-weight: 700; text-transform: uppercase; letter-spacing: .16em; font-size: 13px; color: var(--gold); margin: 0 0 16px; }
+  .p-band-title { font-weight: 600; font-size: clamp(36px, 6.4vw, 76px); line-height: 1; letter-spacing: -.04em; margin: 0 0 18px; color: #fff; }
+  .p-band-sub { max-width: 560px; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.6; color: rgba(255, 255, 255, .82); margin: 0; }
 
   /* ARTISTS (avatares blob, a todo el ancho) */
   .p-section.p-center .p-lead { text-align: center; margin-left: auto; margin-right: auto; }
@@ -658,5 +738,6 @@ const artists = ARTISTS_ES.map((a) => {
   @media (prefers-reduced-motion: reduce) {
     .rv, .rv-mask { opacity: 1; transform: none; clip-path: none; transition: none; }
     html.js-fx .p-artist-img { animation: none; }
+    .p-marquee-half :global(.p-fire-o), .p-marquee-half :global(.p-fire-i) { animation: none; }
   }
 </style>
