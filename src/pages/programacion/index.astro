@@ -1,0 +1,261 @@
+---
+import Base from "@/layouts/Base.astro";
+import { PROGRAMA, ROOMS } from "@/data/programa.js";
+
+// Agrupa las sesiones de cada día por franja horaria (respetando el orden del PDF)
+const days = PROGRAMA.map((d) => {
+  const slots = [];
+  d.sessions.forEach((s) => {
+    const last = slots[slots.length - 1];
+    if (last && last.t === s.t) last.items.push(s);
+    else slots.push({ t: s.t, items: [s] });
+  });
+  return { ...d, slots };
+});
+
+const KIND_LABEL = { taller: "Taller", master: "Masterclass", comp: "Competición", social: "Social", meal: "Descanso", info: "Info" };
+const FILTERS = [
+  { key: "all", label: "Todo" },
+  { key: "taller", label: "Talleres" },
+  { key: "master", label: "Masterclass" },
+  { key: "comp", label: "Competición" },
+  { key: "social", label: "Social" },
+];
+---
+
+<Base
+  title="Programación · Horario de clases y talleres"
+  description="Horario completo de clases, talleres, masterclasses y competiciones de La Negra. Filtra por día, tipo y busca tu taller o profesor."
+>
+  <section class="pr-hero">
+    <div class="container">
+      <p class="eyebrow dark">Programación</p>
+      <h1 class="script-title">Horario de clases y talleres</h1>
+      <p class="pr-sub">4 días · 4 salas · más de 100 talleres, masterclasses, shows y competiciones. Elige el día, filtra y encuentra tu clase.</p>
+    </div>
+  </section>
+
+  <!-- Controles sticky: días + filtros + buscador -->
+  <div class="pr-controls">
+    <div class="container">
+      <div class="pr-days" role="tablist" aria-label="Días">
+        {days.map((d, i) => (
+          <button class={"pr-day-btn" + (i === 0 ? " active" : "")} data-day={i} role="tab" aria-selected={i === 0 ? "true" : "false"}>
+            <span class="pr-day-name">{d.day}</span>
+            <span class="pr-day-date">{d.date}</span>
+          </button>
+        ))}
+      </div>
+      <div class="pr-tools">
+        <div class="pr-filters" role="group" aria-label="Filtrar por tipo">
+          {FILTERS.map((f, i) => (
+            <button class={"pr-chip" + (i === 0 ? " active" : "")} data-filter={f.key}>{f.label}</button>
+          ))}
+        </div>
+        <label class="pr-search">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="pr-q" placeholder="Buscar taller o profe…" autocomplete="off" aria-label="Buscar" />
+        </label>
+      </div>
+      <div class="pr-legend" aria-hidden="true">
+        <span class="pr-dot pr-r-gs"></span>Gran Salón
+        <span class="pr-dot pr-r-pb"></span>Piano Bar
+        <span class="pr-dot pr-r-s1"></span>Sala 1
+        <span class="pr-dot pr-r-s2"></span>Sala 2
+      </div>
+    </div>
+  </div>
+
+  <section class="pr-body">
+    <div class="container">
+      {days.map((d, di) => (
+        <div class={"pr-day" + (di === 0 ? " active" : "")} data-day-panel={di}>
+          {d.slots.map((slot) => (
+            <div class="pr-slot">
+              <div class="pr-time"><span>{slot.t}</span></div>
+              <div class="pr-sessions">
+                {slot.items.map((s) => (
+                  <article
+                    class={"pr-card k-" + s.k + (s.r === "full" ? " pr-band" : "")}
+                    data-kind={s.k}
+                    data-text={((s.n || "") + " " + (s.p || "")).toLowerCase()}
+                  >
+                    <div class={"pr-stripe pr-r-" + s.r}></div>
+                    <div class="pr-card-in">
+                      <div class="pr-meta">
+                        {s.r !== "full" && <span class={"pr-room pr-r-" + s.r}>{ROOMS[s.r]}</span>}
+                        <span class={"pr-kind kb-" + s.k}>{KIND_LABEL[s.k]}</span>
+                        {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{s.l}</span>}
+                      </div>
+                      <h3 class="pr-title">{s.n}</h3>
+                      {s.p && <p class="pr-teacher">{s.p}</p>}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ))}
+          <p class="pr-empty" hidden>No hay resultados con estos filtros. <button type="button" class="pr-reset">Quitar filtros</button></p>
+        </div>
+      ))}
+      <p class="pr-note">Los horarios de competición y fiestas pueden sufrir ligeras modificaciones. La organización se reserva el derecho de alterar los talleres por incidencias ajenas. Programación de la edición 2025.</p>
+    </div>
+  </section>
+
+  <script>
+    const dayBtns = [...document.querySelectorAll(".pr-day-btn")];
+    const panels = [...document.querySelectorAll("[data-day-panel]")];
+    const chips = [...document.querySelectorAll(".pr-chip")];
+    const q = document.getElementById("pr-q");
+    let day = 0, filter = "all", query = "";
+
+    const apply = () => {
+      panels.forEach((panel, i) => {
+        panel.classList.toggle("active", i === day);
+        if (i !== day) return;
+        let visible = 0;
+        panel.querySelectorAll(".pr-slot").forEach((slot) => {
+          let shown = 0;
+          slot.querySelectorAll(".pr-card").forEach((card) => {
+            const okKind = filter === "all" || card.dataset.kind === filter
+              || (filter === "social" && (card.dataset.kind === "social" || card.dataset.kind === "meal"));
+            const okText = !query || (card.dataset.text || "").includes(query);
+            const ok = okKind && okText;
+            card.hidden = !ok;
+            if (ok) shown++;
+          });
+          slot.hidden = shown === 0;
+          visible += shown;
+        });
+        const empty = panel.querySelector(".pr-empty");
+        if (empty) empty.hidden = visible !== 0;
+      });
+    };
+
+    dayBtns.forEach((b) => b.addEventListener("click", () => {
+      day = +b.dataset.day;
+      dayBtns.forEach((x) => { const on = x === b; x.classList.toggle("active", on); x.setAttribute("aria-selected", on); });
+      apply();
+      document.querySelector(".pr-controls").scrollIntoView({ block: "start", behavior: "smooth" });
+    }));
+    chips.forEach((c) => c.addEventListener("click", () => {
+      filter = c.dataset.filter;
+      chips.forEach((x) => x.classList.toggle("active", x === c));
+      apply();
+    }));
+    q.addEventListener("input", () => { query = q.value.trim().toLowerCase(); apply(); });
+    document.querySelectorAll(".pr-reset").forEach((r) => r.addEventListener("click", () => {
+      filter = "all"; query = ""; q.value = "";
+      chips.forEach((x) => x.classList.toggle("active", x.dataset.filter === "all"));
+      apply();
+    }));
+    apply();
+  </script>
+</Base>
+
+<style>
+  .pr-hero { padding: clamp(40px, 6vw, 72px) 0 clamp(20px, 3vw, 32px); text-align: center; }
+  .pr-hero .script-title { margin: 0 0 14px; }
+  .pr-sub { max-width: 640px; margin: 0 auto; color: #6a6a74; font-size: 16px; line-height: 1.6; }
+
+  /* Controles sticky */
+  .pr-controls {
+    position: sticky; top: var(--header-h, 88px); z-index: 500;
+    background: rgba(255, 255, 255, 0.86);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-bottom: 1px solid #ece8e1;
+    padding: 12px 0;
+  }
+  .pr-days { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .pr-days::-webkit-scrollbar { display: none; }
+  .pr-day-btn {
+    flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1px;
+    padding: 8px 18px; border-radius: 14px; cursor: pointer;
+    border: 1.5px solid #e6e3dd; background: #fff; color: #14121a;
+    font-family: var(--font-body); transition: all .18s ease; line-height: 1.1;
+  }
+  .pr-day-btn .pr-day-name { font-weight: 700; font-size: 15px; }
+  .pr-day-btn .pr-day-date { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: .6; }
+  .pr-day-btn.active { background: #14121a; border-color: #14121a; color: #fff; }
+  .pr-day-btn.active .pr-day-date { opacity: .7; }
+
+  .pr-tools { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .pr-filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; }
+  .pr-filters::-webkit-scrollbar { display: none; }
+  .pr-chip {
+    flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid #e6e3dd; background: #fff; color: #14121a;
+    font-family: var(--font-body); font-weight: 600; font-size: 13.5px; transition: all .18s ease; white-space: nowrap;
+  }
+  .pr-chip:hover { border-color: var(--gold); }
+  .pr-chip.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .pr-search {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 7px;
+    padding: 7px 14px; border-radius: 999px; border: 1.5px solid #e6e3dd; background: #fff; color: #9a9aa2;
+    min-width: 200px;
+  }
+  .pr-search input { border: 0; outline: 0; background: transparent; font-family: var(--font-body); font-size: 14px; color: #14121a; width: 100%; }
+  .pr-legend { display: flex; align-items: center; gap: 6px 16px; margin-top: 12px; font-size: 12px; color: #6a6a74; flex-wrap: wrap; }
+  .pr-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: -8px; }
+
+  /* Colores de sala */
+  .pr-r-gs { background: #cc9933; }
+  .pr-r-pb { background: #2a9d8f; }
+  .pr-r-s1 { background: #5b6ee1; }
+  .pr-r-s2 { background: #e05a8c; }
+  .pr-r-full { background: #b8b3a8; }
+
+  /* Cuerpo */
+  .pr-body { padding: clamp(24px, 4vw, 44px) 0 64px; }
+  .pr-day { display: none; }
+  .pr-day.active { display: block; }
+  .pr-slot { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid #efece6; }
+  .pr-slot:first-child { border-top: 0; }
+  .pr-time { position: sticky; top: calc(var(--header-h, 88px) + 132px); align-self: start; }
+  .pr-time span { font-weight: 800; font-size: 14px; color: #14121a; letter-spacing: -.01em; line-height: 1.3; display: block; }
+  .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+
+  .pr-card {
+    position: relative; display: flex; overflow: hidden;
+    border-radius: 16px; border: 1px solid #ece8e1; background: #fff;
+    box-shadow: 0 4px 16px rgba(20, 18, 26, .04);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .pr-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(20, 18, 26, .09); }
+  .pr-stripe { flex: 0 0 5px; }
+  .pr-card-in { padding: 13px 15px; min-width: 0; }
+  .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; }
+  .pr-room { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #fff; padding: 2px 8px; border-radius: 999px; }
+  .pr-kind { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; background: #f0ede7; color: #6a6a74; }
+  .kb-master { background: #fbeecb; color: #a2711a; }
+  .kb-comp { background: #14121a; color: #fff; }
+  .kb-social { background: #efe6fb; color: #7a4bcc; }
+  .pr-level { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid; }
+  .lv-Abierto { color: #2e9b63; border-color: #b8e6cd; background: #eafaf1; }
+  .lv-MedioBajo { color: #2a9d8f; border-color: #b7e3dd; background: #e9f7f5; }
+  .lv-Medio { color: #3f6fd0; border-color: #c4d4f2; background: #edf2fc; }
+  .lv-MedioAlto { color: #c9781b; border-color: #f0d8ad; background: #fdf3e2; }
+  .lv-MedioAvanzado { color: #cc5a1e; border-color: #f2ccb0; background: #fdeee4; }
+  .lv-Avanzado { color: #cc3d38; border-color: #f2c1bf; background: #fdeceb; }
+  .pr-title { font-size: 15px; font-weight: 700; letter-spacing: -.01em; line-height: 1.28; margin: 0; color: #14121a; }
+  .pr-teacher { margin: 5px 0 0; font-size: 13px; color: #6a6a74; line-height: 1.4; }
+
+  .k-comp .pr-title { color: #14121a; }
+  /* Bandas (comidas, breaks, acreditaciones) a todo el ancho */
+  .pr-band { grid-column: 1 / -1; background: #faf7f1; box-shadow: none; }
+  .pr-band .pr-card-in { padding: 9px 15px; }
+  .pr-band .pr-title { font-size: 13px; font-weight: 700; color: #8a8578; text-transform: uppercase; letter-spacing: .03em; }
+  .pr-band .pr-meta { margin-bottom: 4px; }
+
+  .pr-empty { text-align: center; color: #6a6a74; padding: 40px 0; }
+  .pr-reset { border: 0; background: none; color: var(--gold-dark); font-weight: 700; cursor: pointer; text-decoration: underline; font-family: var(--font-body); font-size: inherit; }
+  .pr-note { margin-top: 32px; font-size: 12px; color: #9a9aa2; line-height: 1.5; max-width: 720px; }
+
+  @media (max-width: 640px) {
+    .pr-slot { grid-template-columns: 1fr; gap: 8px; padding: 12px 0; }
+    .pr-time { position: static; margin-bottom: 2px; }
+    .pr-time span { color: var(--gold-dark); }
+    .pr-sessions { grid-template-columns: 1fr; }
+    .pr-search { min-width: 0; flex: 1 1 100%; order: 3; }
+  }
+</style>

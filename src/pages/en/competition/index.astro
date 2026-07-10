@@ -51,7 +51,7 @@ const gallery = [
     <div class="container">
       <p class="eyebrow dark">Salsa – Bachata</p>
       <h1 class="script-title">Registration for the 2026 World Cup</h1>
-      <a class="btn btn-solid hero-btn" href={FORM_URL} target="_blank" rel="noopener">Register now</a>
+      <span class="reg-closed hero-btn"><span class="btn btn-solid btn-off" aria-disabled="true" role="button" title="Registration closed">Register now</span><span class="reg-note">Registration closed: the sign-up period for the 2026 World Cup has ended.</span></span>
       <div class="hero-grid">
         {heroGrid.map((src) => (
           <div class="hero-cell"><img src={img(src)} alt="" loading="lazy" /></div>
@@ -92,9 +92,13 @@ const gallery = [
   <section class="section fullpass text-center" id="fullpass">
     <div class="container">
       <p class="eyebrow dark">Full Pass</p>
-      <h2 class="script-title">See you at ….</h2>
+      <h2 class="script-title">See you at La Negra</h2>
       <p class="fullpass-text">Get your Full Pass to experience La Negra World Championship in full. Tickets managed through our official partner.</p>
-      <a class="btn btn-solid" href="https://www.goandance.com" target="_blank" rel="noopener">go&amp;dance</a>
+            <div class="fullpass-widget">
+        <div id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff-iframe"><iframe height="100px" width="100%" frameborder="0" scrolling="auto" src="https://www.goandance.com/en/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"></iframe></div>
+      </div>
+      <p class="gd-credit">Powered by <a href="https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata" target="_blank" rel="noopener">go&amp;dance</a></p>
+      <a class="gd-link" href="https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata" target="_blank" rel="noopener">Go to the tickets page ↗</a>
     </div>
   </section>
 
@@ -170,7 +174,7 @@ const gallery = [
 </Base>
 
 <style>
-  .eyebrow.dark { color: var(--navy); }
+  .eyebrow.dark { color: var(--gold); }
 
   /* REGISTRATION / HERO */
   .registration h1 { margin-bottom: 22px; }
@@ -192,8 +196,13 @@ const gallery = [
   /* FULL PASS */
   .fullpass { background: linear-gradient(135deg,#14102b,#2a1f57); color: #fff; }
   .fullpass .eyebrow.dark { color: var(--gold); }
-  .fullpass .script-title { color: var(--gold); }
+  .fullpass .script-title { color: #fff; }
   .fullpass-text { max-width: 720px; margin: 0 auto 28px; }
+  .fullpass-widget {
+    max-width: 100%; margin: 8px auto 0; border-radius: 16px; overflow: hidden;
+    background: #fff; box-shadow: 0 18px 44px rgba(15, 11, 30, .3);
+  }
+  .fullpass-widget iframe { width: 100%; height: 430px; border: 0; display: block; }
 
   /* HOTEL */
   .hotel-sub { font-size: 18px; color: var(--gold-dark); margin-top: 6px; }
@@ -218,8 +227,8 @@ const gallery = [
   /* FINAL CTA */
   .final-text { max-width: 820px; margin: 0 auto 18px; }
   .final-sub { max-width: 720px; margin: 0 auto 4px; }
-  .final-claim { font-family: var(--font-script); color: var(--gold); font-size: 34px; margin: 6px 0 26px; }
-  .final-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .final-claim { font-family: var(--font-body); font-weight: 700; letter-spacing: -.02em; color: var(--gold); font-size: 28px; margin: 6px 0 26px; }
+  .final-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
 
   /* responsive */
   @media (max-width: 900px) {
@@ -232,5 +241,10 @@ const gallery = [
   @media (max-width: 600px) {
     .hero-grid { grid-template-columns: 1fr 1fr; }
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* En móvil el selector se apila y necesita más altura */
+  @media (max-width: 600px) {
+    .fullpass-widget iframe { height: 760px; }
   }
 </style>

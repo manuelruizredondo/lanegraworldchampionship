@@ -7,7 +7,12 @@ const ext = (h) => h.startsWith("http");
 <nav class="subnav" aria-label={label}>
   <div class="subnav-pill">
     {items.map((it) => (
-      <a href={it.href} {...(ext(it.href) ? { target: "_blank", rel: "noopener" } : {})}>{it.label}</a>
+      <a
+        href={it.href}
+        class={it.active ? "is-active" : undefined}
+        {...(it.active ? { "aria-current": "page" } : {})}
+        {...(ext(it.href) ? { target: "_blank", rel: "noopener" } : {})}
+      >{it.label}</a>
     ))}
   </div>
 </nav>
@@ -15,7 +20,7 @@ const ext = (h) => h.startsWith("http");
 <style>
   .subnav {
     position: sticky;
-    top: var(--header-h, 110px);
+    top: calc(var(--header-h, 110px) + 16px);
     z-index: 900;
     display: flex;
     justify-content: center;
@@ -29,29 +34,34 @@ const ext = (h) => h.startsWith("http");
     gap: 2px;
     max-width: 100%;
     overflow-x: auto;
-    background: rgba(15, 11, 30, 0.55);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
     border-radius: 999px;
     padding: 4px 6px;
-    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 8px 26px rgba(20, 18, 26, 0.14);
     scrollbar-width: none;
   }
   .subnav-pill::-webkit-scrollbar { display: none; }
   .subnav-pill a {
     white-space: nowrap;
-    color: var(--cream);
+    color: #14121a;
     text-decoration: none;
     font-family: var(--font-body);
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    letter-spacing: normal;
+    text-transform: capitalize;
     padding: 7px 15px;
     border-radius: 999px;
     transition: background 0.2s, color 0.2s;
   }
   .subnav-pill a:hover {
+    color: #fff;
+    background: var(--gold);
+  }
+  .subnav-pill a.is-active {
     color: #fff;
     background: var(--gold);
   }

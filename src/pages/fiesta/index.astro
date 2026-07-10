@@ -19,6 +19,7 @@ const djs = [
   { name: "DJ Salva", country: "España", img: "dj-salva-la-negra-dance-festival.jpeg", ig: "https://www.instagram.com/dj_salva_bachataysalsa/" },
   { name: "DJ Lissj", country: "Venezuela", img: "la-negra-dance-festival-fiesta-img-7.webp", ig: "https://www.instagram.com/lissettevianalovera/" },
 ];
+const djArtists = djs.map((d) => { const p = d.name.split(" "); return { ...d, first: p[0], last: p.slice(1).join(" ") }; });
 
 const igIcon = `<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8zm0 8.1a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm6.3-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"/></svg>`;
 const ytIcon = `<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12zM9.7 15.3V8.7l5.8 3.3-5.8 3.3z"/></svg>`;
@@ -78,18 +79,37 @@ const gallery = [
   <section class="section djs text-center">
     <div class="container">
       <h2 class="script-title djs-title">Contaremos con la mejor selección musical gracias a nuestros DJs estrella</h2>
-      <div class="djs-grid">
-        {djs.map((d) => (
-          <article class="dj">
-            <div class="dj-img"><img src={img(d.img)} alt={d.name} loading="lazy" /></div>
-            <h3 class="dj-name">{d.name}</h3>
-            <p class="dj-country">{d.country}</p>
-            <div class="dj-social">
-              {d.ig && <a href={d.ig} target="_blank" rel="noopener" aria-label="Instagram" set:html={igIcon}></a>}
-              {d.yt && <a href={d.yt} target="_blank" rel="noopener" aria-label="YouTube" set:html={ytIcon}></a>}
-            </div>
-          </article>
-        ))}
+    </div>
+    <div class="prop">
+      <div class="p-artists" data-artists-slider>
+        <div class="p-artists-track">
+          <div class="p-artists-set">
+            {djArtists.map((d) => (
+              <div class="p-artist">
+                <div class="p-artist-img"><img src={img(d.img)} alt={d.name} loading="lazy" /></div>
+                <span class="p-artist-n"><span>{d.first}</span>{d.last && <span>{d.last}</span>}</span>
+                <span class="p-artist-c">{d.country}</span>
+                <div class="p-artist-social">
+                  {d.ig && <a class="p-soc" href={d.ig} target="_blank" rel="noopener" aria-label="Instagram" set:html={igIcon}></a>}
+                  {d.yt && <a class="p-soc" href={d.yt} target="_blank" rel="noopener" aria-label="YouTube" set:html={ytIcon}></a>}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div class="p-artists-set" aria-hidden="true">
+            {djArtists.map((d) => (
+              <div class="p-artist">
+                <div class="p-artist-img"><img src={img(d.img)} alt={d.name} loading="lazy" /></div>
+                <span class="p-artist-n"><span>{d.first}</span>{d.last && <span>{d.last}</span>}</span>
+                <span class="p-artist-c">{d.country}</span>
+                <div class="p-artist-social">
+                  {d.ig && <a class="p-soc" href={d.ig} target="_blank" rel="noopener" aria-label="Instagram" set:html={igIcon}></a>}
+                  {d.yt && <a class="p-soc" href={d.yt} target="_blank" rel="noopener" aria-label="YouTube" set:html={ytIcon}></a>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -127,10 +147,13 @@ const gallery = [
       <a class="btn btn-solid" href="/galeria-2024/">Ver galería</a>
     </div>
   </section>
+  <script>
+    import "@/scripts/artists-slider.js";
+  </script>
 </Base>
 
 <style>
-  .eyebrow.dark { color: var(--navy); }
+  .eyebrow.dark { color: var(--gold); }
 
   /* HERO */
   .hero-sub { font-family: var(--font-body); font-weight: 700; text-transform: uppercase; font-size: 22px; letter-spacing: .03em; color: var(--navy); margin: 6px 0 26px; }
@@ -161,7 +184,7 @@ const gallery = [
   /* NIGHTS */
   .nights { background: var(--navy); }
   .nights .eyebrow.dark { color: var(--gold); }
-  .nights .script-title { color: var(--gold); }
+  .nights .script-title { color: #fff; }
   .nights-intro { color: var(--cream); max-width: 820px; margin: 0 auto 40px; font-size: 15px; }
   .nights-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
   .night-img { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; margin-bottom: 16px; }
@@ -195,5 +218,43 @@ const gallery = [
     .djs-grid { grid-template-columns: repeat(2, 1fr); }
     .nights-grid { grid-template-columns: 1fr; }
     .past-gallery { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* DJs: bolas más grandes y más separadas en escritorio (solo esta página) */
+  @media (min-width: 760px) {
+    .djs .p-artist { width: clamp(230px, 24vw, 320px); }
+    .djs .p-artists-set { gap: clamp(44px, 5vw, 78px); padding-right: clamp(44px, 5vw, 78px); }
+  }
+
+  /* DJs: al hacer rollover salen burbujas de redes en abanico hacia arriba */
+  .djs .p-artists { padding-top: 100px; }
+  .djs .p-artist { position: relative; }
+  /* Puente invisible sobre cada bola: mantiene el :hover al mover el ratón hacia las
+     burbujas, para que no se cierren antes de poder clicarlas. Cubre la zona de padding
+     superior del slider (dentro del recorte, así que no se ve). */
+  .djs .p-artist::before { content: ""; position: absolute; z-index: 1; left: 0; right: 0; top: -100px; height: 104px; }
+  .djs .p-artist-social { position: absolute; top: 6px; left: 50%; width: 0; height: 0; z-index: 3; pointer-events: none; }
+  .djs .p-soc {
+    position: absolute; left: 0; top: 0;
+    width: 44px; height: 44px; margin: -22px 0 0 -22px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; color: #fff; background: var(--gold);
+    box-shadow: 0 10px 24px rgba(20, 18, 26, .28);
+    opacity: 0; transform: translate(0, 0) scale(.2); pointer-events: none;
+    transition: transform .55s cubic-bezier(.34, 1.56, .64, 1), opacity .3s ease, background .2s;
+  }
+  .djs .p-soc:hover { background: var(--gold-dark); }
+  @media (hover: hover) {
+    .djs .p-artist:hover { z-index: 5; }
+    .djs .p-artist:hover .p-soc { opacity: 1; pointer-events: auto; }
+    /* 1 red -> arriba */
+    .djs .p-artist:hover .p-soc:only-child { transform: translate(0, -66px) scale(1); }
+    /* 2 redes -> arriba-izquierda + arriba-derecha */
+    .djs .p-artist:hover .p-soc:first-child:nth-last-child(2) { transform: translate(-54px, -52px) scale(1); }
+    .djs .p-artist:hover .p-soc:nth-child(2):last-child { transform: translate(54px, -52px) scale(1); transition-delay: .06s; }
+    /* 3 redes -> arriba-izq + arriba + arriba-der */
+    .djs .p-artist:hover .p-soc:first-child:nth-last-child(3) { transform: translate(-68px, -46px) scale(1); }
+    .djs .p-artist:hover .p-soc:nth-child(2):nth-last-child(2) { transform: translate(0, -70px) scale(1); transition-delay: .05s; }
+    .djs .p-artist:hover .p-soc:nth-child(3):last-child { transform: translate(68px, -46px) scale(1); transition-delay: .1s; }
   }
 </style>

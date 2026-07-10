@@ -2,3 +2,6 @@ node_modules/
 dist/
 .DS_Store
 .astro/
+
+# Vídeo pesado del hotel — no versionar (subir aparte)
+public/video/

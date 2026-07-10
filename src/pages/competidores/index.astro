@@ -1,5 +1,16 @@
 ---
 import Base from "@/layouts/Base.astro";
+import Lightbox from "@/components/Lightbox.astro";
+import SubNav from "@/components/SubNav.astro";
+
+const subNav = [
+  { label: "Inscripción", href: "/competicion/#inscripcion" },
+  { label: "Bases", href: "/competicion/#bases" },
+  { label: "Pase competición", href: "/competicion/#fullpass" },
+  { label: "Competidores", href: "/competidores/", active: true },
+  { label: "Ganadores 2025", href: "/ganadores-2025/" },
+  { label: "Ganadores 2024", href: "/ganadores/" },
+];
 import { img } from "@/data/img.js";
 
 const categories = [
@@ -31,6 +42,7 @@ const gallery = [
 ---
 
 <Base title="Competidores" description="Los competidores del Mundial de Salsa y Bachata de La Negra World Championship." lang="es">
+  <SubNav items={subNav} label="Secciones de la competición" />
   <!-- INTRO + GRID -->
   <section class="section competitors text-center">
     <div class="container">
@@ -39,7 +51,7 @@ const gallery = [
       <div class="cat-grid">
         {categories.map((c) => (
           <article class="cat-card">
-            <div class="cat-img"><img src={img(c.img)} alt={c.label} loading="lazy" /></div>
+            <div class="cat-img"><img src={img(c.img)} alt={c.label} loading="lazy" data-lightbox role="button" tabindex="0" /></div>
             <h3 class="cat-label">{c.label}</h3>
           </article>
         ))}
@@ -70,22 +82,23 @@ const gallery = [
         <p class="cta-claim">¡Ven, baila y disfruta!</p>
         <div class="cta-buttons">
           <a class="btn btn-light" href="/tu-pase/">Comprar Pase</a>
-          <a class="btn btn-solid" href="/competicion/#inscripcion">Inscríbete al Mundial</a>
+          <span class="reg-closed"><span class="btn btn-solid btn-off" aria-disabled="true" role="button" title="Inscripciones cerradas">Inscríbete al Mundial</span><span class="reg-note">Inscripciones cerradas: el plazo de inscripción al Mundial 2026 ha finalizado.</span></span>
         </div>
       </div>
     </div>
   </section>
+  <Lightbox />
 </Base>
 
 <style>
-  .eyebrow.dark { color: var(--navy); }
+  .eyebrow.dark { color: var(--gold); }
 
   /* CATEGORY GRID */
   .competitors .script-title { margin-bottom: 40px; }
   .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 26px; }
   .cat-card { text-align: center; }
-  .cat-img { border-radius: 10px; overflow: hidden; aspect-ratio: 4/3; margin-bottom: 14px; }
-  .cat-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+  .cat-img { border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; margin-bottom: 14px; }
+  .cat-img img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: transform .4s ease; }
   .cat-card:hover .cat-img img { transform: scale(1.04); }
   .cat-label {
     font-family: var(--font-body); font-weight: 700; text-transform: uppercase;
@@ -102,8 +115,8 @@ const gallery = [
   .cta-box { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; border-radius: 16px; overflow: hidden; }
   .cta-img img { width: 100%; height: 100%; object-fit: cover; }
   .cta-content { background: linear-gradient(135deg,#14102b,#2a1f57); color: #fff; padding: 48px 44px; display: flex; flex-direction: column; justify-content: center; text-align: left; }
-  .cta-claim { font-family: var(--font-script); color: var(--gold); font-size: 34px; margin: 6px 0 22px; }
-  .cta-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+  .cta-claim { font-family: var(--font-body); font-weight: 700; letter-spacing: -.02em; color: #fff; font-size: 28px; margin: 6px 0 22px; }
+  .cta-buttons { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
 
   /* responsive */
   @media (max-width: 900px) {

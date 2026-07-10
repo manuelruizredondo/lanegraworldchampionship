@@ -1,461 +1,321 @@
 ---
 import Base from "@/layouts/Base.astro";
 import { img } from "@/data/img.js";
-import { ARTISTS_IT as artists } from "@/data/artists.js";
+import { ARTISTS_IT } from "@/data/artists.js";
 
-const cards = [
-  { title: "Gli artisti", eyebrow: "Artisti di Latin Dance, Salsa e Bachata", text: "Entra e scopri la costellazione di stelle della salsa e della bachata che avrai come insegnanti, giudici, animatori e persino partner di ballo per quattro giorni pieni di magia.", img: "/img/2025/05/la-negra-dance-festival-galeria-2023-23.webp", href: "/it/artists/" },
-  { title: "WorkShops", eyebrow: "Goditi le lezioni di salsa e bachata", text: "Qui troverai workshop e masterclass in base al tuo livello di ballo (base, intermedio, avanzato o master) in tutti gli stili di salsa e bachata con i migliori istruttori di ogni stile.", img: "/img/2025/05/la-negra-dance-festival-galeria-2023-10.webp", href: "/it/workshops/" },
-  { title: "La festa", eyebrow: "Connettiti con gli amanti del ballo", text: "Due sale per il ballo sociale: Salsa (timba, sones, classici, romantica, urban) e Bachata (tradizionale, moderna e le ultime novità) faranno la gioia degli amanti della festa.", img: "/img/2025/03/lanegra-dance-festival-slide-2.webp", href: "/it/fiesta/" },
+// Propuesta de home — estructura tipo "Board" (Nixtio) adaptada a La Negra World Championship.
+const pillars = [
+  {
+    tag: "Vieni a competere",
+    title: "Il Mondiale",
+    desc: "Iscriviti al Campionato Mondiale di Salsa e Bachata e gareggia davanti a una giuria di élite internazionale.",
+    cta: "Scopri la competizione",
+    href: "/it/competition/",
+    img: img("festival-negra-dance-home-1.jpg"),
+  },
+  {
+    tag: "Vieni al festival",
+    title: "Il Festival",
+    desc: "Workshop, feste, show e hotel-spa fronte mare. Vivilo come pubblico nella migliore compagnia.",
+    cta: "Scopri il festival",
+    href: "/it/festival/",
+    img: img("lanegra-dance-festival-comepeticion-7.webp"),
+  },
 ];
 
-const igIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8zm0 8.1a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm6.3-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"/></svg>`;
-const ytIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12zM9.7 15.3V8.7l5.8 3.3-5.8 3.3z"/></svg>`;
-const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>`;
+const features = [
+  { title: "Gli Artisti", desc: "Entra e scopri la costellazione di stelle della salsa e della bachata che avrai come maestri, giudici e compagni di ballo.", cta: "Vedi artisti", href: "/it/artists/", img: img("la-negra-dance-festival-galeria-2023-23.webp") },
+  { title: "Workshop", desc: "Workshop e masterclass per il tuo livello (base, medio, avanzato o master) in tutti gli stili di salsa e bachata.", cta: "Vedi workshop", href: "/it/workshops/", img: img("la-negra-dance-festival-galeria-2023-10.webp") },
+  { title: "La festa", desc: "Due sale di ballo social fino all'alba: salsa e bachata in tutte le loro varianti con i migliori DJ.", cta: "Scopri la festa", href: "/it/fiesta/", img: "/img/2025/03/lanegra-dance-festival-slide-2.webp" },
+];
+
+const values = [
+  { t: "Livello", d: "L'unico Mondiale con coreografie 100% in anteprima e una giuria di primo livello.", img: img("lanegra-dance-festival-comepeticion-19.webp") },
+  { t: "Comunità", d: "Ballerini di oltre 35 paesi uniti dalla stessa passione.", img: img("festival-pasos-negra-dance-2.jpeg") },
+  { t: "Emozione", d: "Show, competizione e feste che si vivono una sola volta all'anno.", img: img("la-negra-dance-festival-fiesta-img-1.webp") },
+];
+
+const stats = [
+  { n: "35+", l: "Paesi" },
+  { n: "90+", l: "Artisti" },
+  { n: "15", l: "Edizioni" },
+  { n: "5.000+", l: "Ballerini" },
+];
+
+// Mapa de nacionalidades: [país, asistentes, x%, y%] (cifras editables)
+// Mapa de nacionalidades: país, asistentes, posición (x/y %), altura de varilla (h px)
+const mapPins = [
+  { l: "Spagna", n: 3200, x: 47.2, y: 25.5, h: 150, big: true },
+  { l: "Portogallo", n: 170, x: 45.7, y: 28, h: 56 },
+  { l: "Francia", n: 180, x: 48.6, y: 21.5, h: 96 },
+  { l: "Regno Unito", n: 230, x: 47.6, y: 18.5, h: 144 },
+  { l: "Germania", n: 260, x: 50.4, y: 21.5, h: 62 },
+  { l: "Italia", n: 640, x: 51.6, y: 24.5, h: 114 },
+  { l: "USA", n: 150, x: 21, y: 27.5, h: 110 },
+  { l: "Canada", n: 110, x: 25, y: 13.5, h: 66 },
+  { l: "Messico", n: 210, x: 19, y: 37.5, h: 62 },
+  { l: "Cuba", n: 130, x: 26.3, y: 39.5, h: 122 },
+  { l: "Rep. Dominicana", n: 90, x: 28.6, y: 41.5, h: 58 },
+  { l: "Venezuela", n: 110, x: 29.2, y: 47.5, h: 100 },
+  { l: "Colombia", n: 240, x: 26.6, y: 51.5, h: 64 },
+  { l: "Brasile", n: 140, x: 33.5, y: 60, h: 112 },
+  { l: "Argentina", n: 95, x: 29.8, y: 74, h: 70 },
+  { l: "Corea del Sud", n: 120, x: 80, y: 27, h: 62 },
+  { l: "Giappone", n: 140, x: 83.5, y: 25.5, h: 120 },
+  { l: "Australia", n: 80, x: 85.5, y: 62, h: 84 },
+];
+const pinColors = ["#cc9933", "#14121a", "#a28243"];
+
+// Llama animada del marquee: capa exterior + corazón, con parpadeo tipo fuego
+const fire = `<svg class="p-fire" viewBox="0 0 24 24" aria-hidden="true"><path class="p-fire-o" fill="#ee7b1e" d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/><path class="p-fire-i" fill="#ffc93c" d="M11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>`;
+
+// Nombre en dos líneas (nombre / apellidos) y en Título (evita nombres en MAYÚSCULAS del dataset)
+const titleCase = (s) =>
+  s.toLowerCase().replace(/(^|[\s\-])([a-záéíóúñü])/g, (m, p, c) => p + c.toUpperCase());
+const artists = ARTISTS_IT.map((a) => {
+  const parts = titleCase(a.name).split(" ");
+  return { ...a, first: parts[0], last: parts.slice(1).join(" ") };
+});
 ---
 
-<Base title="La Negra World Championship — Festival di Salsa e Bachata" description="Festival internazionale di salsa e bachata e competizione di ballo a Calpe (Spagna). Workshop, feste, spettacoli e il Campionato Mondiale di Salsa e Bachata." lang="it" heroOverlay={true}>
-  <!-- HERO -->
-  <section class="hero">
-    <video autoplay muted loop playsinline poster="/img/posters/La-negra-web-video-1.jpg">
-      <source src="/img/2025/06/La-negra-web-video-1.mp4" type="video/mp4" />
-    </video>
-    <div class="hero-info">
-      <p class="hero-date"><span>21–25 OTT 2026</span><span class="hero-place">Calpe - Spagna</span></p>
-      <a class="hero-btn" href="/it/your-pass/">Acquista il pass 2026</a>
-      <div class="hero-countdown" role="timer" aria-label="Conto alla rovescia per l'evento">
-        <div class="hcd"><span class="hcd-num" data-d>00</span><span class="hcd-lbl">Giorni</span></div>
-        <div class="hcd"><span class="hcd-num" data-h>00</span><span class="hcd-lbl">Ore</span></div>
-        <div class="hcd"><span class="hcd-num" data-m>00</span><span class="hcd-lbl">Min</span></div>
-        <div class="hcd"><span class="hcd-num" data-s>00</span><span class="hcd-lbl">Sec</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PASS BAND -->
-  <section class="pass-band">
-    <div class="container pass-inner">
-      <div class="pass-left">
-        <h1 class="pass-headline"><span class="g">La Negra</span> <span class="w">World</span> <span class="g">CHAMPIONSHIP</span></h1>
-        <p class="pass-date">Dal 21 al 25 ottobre 2026 a Calpe (Spagna)</p>
-        <svg class="pass-flourish" viewBox="0 0 240 14" aria-hidden="true"><path d="M3 9 C 55 1 90 1 125 7 C 160 13 200 12 237 5" /></svg>
-      </div>
-      <div class="pass-right">
-        <p class="pass-cta"><em>Acquista il</em> <b>PASS</b></p>
-        <div class="pass-buttons">
-          <a class="btn btn-solid" href="/it/your-pass/">Concorrente*</a>
-          <a class="btn btn-solid" href="/it/your-pass/">Pubblico generale</a>
+<Base
+  lang="it"
+  title="La Negra World Championship — Campionato Mondiale di Salsa e Bachata · Calpe 2026"
+  description="La comunità mondiale della salsa e della bachata. Workshop, show, feste e l'unico Mondiale con coreografie 100% in anteprima. Calpe 2026."
+  heroOverlay={true}
+>
+  <div class="prop">
+    <!-- HERO (oscuro) -->
+    <section class="p-hero">
+      <video class="p-hero-video" autoplay muted loop playsinline src="https://res.cloudinary.com/manuel-ruiz/video/upload/v1783497994/VIDEOWEB2025LANEGRACHAMPIONSCHIP_wpnfc8.mp4"></video>
+      <div class="p-hero-inner">
+        <p class="p-hero-date"><span>21–25 OCT 2026</span><span>Calpe · Spagna</span></p>
+        <div class="p-hero-cta">
+          <a class="p-btn p-btn-light" href="/it/competition/">Scopri il Mondiale</a>
+          <a class="p-btn p-btn-outline" href="/it/festival/">Scopri il festival</a>
         </div>
-        <p class="pass-note">*Solo se sei stato selezionato</p>
+        <div class="p-hero-count" role="timer" aria-label="Conto alla rovescia per l'evento">
+          <div class="p-hc"><span class="p-hc-n" data-d>0</span><span class="p-hc-l">Giorni</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-h>00</span><span class="p-hc-l">Ore</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-m>00</span><span class="p-hc-l">Min</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-s>00</span><span class="p-hc-l">Sec</span></div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- INTRO -->
-  <section class="section intro text-center">
-    <div class="container">
-      <p class="eyebrow dark">Salsa - Bachata</p>
-      <h2 class="script-title">Infiamma il palco!</h2>
-      <div class="intro-cols">
-        <p>Dal 2010 La Negra World Championship è un evento che riunisce il meglio di un congresso di ballo e la spettacolarità di una competizione mondiale, dove si incontrano i migliori ballerini di oltre 35 paesi diversi e infinite nazionalità, sia nella disciplina della Salsa che della Bachata in tutti i suoi stili.</p>
-        <p>Nella splendida cornice della cittadina costiera di Calpe, Alicante, potrai goderti turismo, gastronomia, spiagge e il lusso di un hotel-spa 4 stelle superior, tutto in un unico luogo: workshop per tutti i livelli di ballo, formazione specializzata per professionisti, feste fino all'alba e l'unico Campionato Mondiale di Salsa e Bachata con coreografie 100% inedite. Vivi un weekend pieno di emozioni!</p>
+    <!-- MARQUEE (frases grandes + fuego separador + skew con el scroll) -->
+    <section class="p-marquee" aria-hidden="true" data-marquee>
+      <div class="p-marquee-track">
+        <div class="p-marquee-half">
+          <span>Che il palco vada a fuoco!!!</span><Fragment set:html={fire} />
+          <span>Che il palco vada a fuoco!!!</span><Fragment set:html={fire} />
+          <span>Che il palco vada a fuoco!!!</span><Fragment set:html={fire} />
+        </div>
+        <div class="p-marquee-half">
+          <span>Che il palco vada a fuoco!!!</span><Fragment set:html={fire} />
+          <span>Che il palco vada a fuoco!!!</span><Fragment set:html={fire} />
+          <span>Che il palco vada a fuoco!!!</span><Fragment set:html={fire} />
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ARTISTS / FESTIVAL (split) -->
-  <section class="onoff">
-    <img class="onoff-img onoff-img-left" src={img("festival-negra-dance-home-1.jpg")} alt="" loading="lazy" />
-    <img class="onoff-img onoff-img-right" src={img("lanegra-dance-festival-comepeticion-7.webp")} alt="" loading="lazy" />
-    <div class="onoff-inner">
-      <a class="onoff-col" href="/it/competition/">
-        <span class="onoff-eyebrow">Vieni a</span>
-        <h2 class="onoff-title">Gareggiare</h2>
-        <p class="onoff-desc">Iscriviti alla Coppa del Mondo di Salsa e Bachata e gareggia davanti a una giuria d'élite.</p>
-        <span class="onoff-arrow">Vai alla competizione</span>
-      </a>
-      <a class="onoff-col" href="/it/festival/">
-        <span class="onoff-eyebrow">Vieni al</span>
-        <h2 class="onoff-title">Festival</h2>
-        <p class="onoff-desc">Workshop, feste, spettacoli e un hotel-spa sul lungomare. Goditelo da spettatore.</p>
-        <span class="onoff-arrow">Vai al festival</span>
-      </a>
-    </div>
-  </section>
+    <!-- INTRO -->
+    <section class="p-section">
+      <div class="p-container p-intro">
+        <h1 class="p-h2">Impara con i migliori.<br />Compete contro i migliori.<br /><span class="p-accent">Balla con tutti.</span></h1>
+        <div class="p-intro-cols">
+          <p>Dal 2010, La Negra World Championship riunisce il meglio di un congresso di ballo e la spettacolarità di una competizione mondiale, con i migliori ballerini di oltre 35 paesi in salsa e bachata.</p>
+          <p>Workshop per tutti i livelli, formazione per professionisti, feste fino all'alba e l'unico Mondiale con coreografie 100% in anteprima, fronte mare a Calpe.</p>
+        </div>
+      </div>
+    </section>
 
+    <!-- STATEMENT 2 (comunidad) -->
+    <section class="p-section p-center">
+      <div class="p-container p-narrow">
+        <div class="p-badge" aria-hidden="true">
+          <img class="p-badge-ring" src="/img/logo-lanegra-ring.svg" alt="" />
+          <img class="p-badge-face" src="/img/logo-lanegra-face.svg" alt="" />
+        </div>
+        <h2 class="p-h2">Una comunità internazionale di ballerini unita dalla <span class="p-hl">salsa<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span> e dalla <span class="p-nb"><span class="p-hl p-hl-2">bachata<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span>,</span> dedita al livello, all'emozione e alla celebrazione.</h2>
+        <p class="p-lead p-quote">Un luogo dove, da qualunque paese tu venga, appena metti piede in pista sei tra i tuoi.</p>
+      </div>
+    </section>
 
-  <!-- FEATURE CARDS -->
-  <section class="section feature-cards">
-    <div class="container cards-grid">
-      {cards.map((c) => (
-        <article class="fcard">
-          <div class="fcard-img">
-            <img src={c.img} alt={c.title} loading="lazy" />
-            <span class="fcard-caption">{c.eyebrow}</span>
-          </div>
-          <h3 class="script-title fcard-title">{c.title}</h3>
-          <p class="fcard-text">{c.text}</p>
-          <a class="btn btn-outline" href={c.href}>Più info</a>
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <!-- DANCE / COMPETE -->
-  <section class="split-grid">
-    <div class="split-img" style="background-image:url('/img/2025/05/festival-negra-dance-home-1.jpg')"></div>
-    <div class="split-text bailar">
-      <p class="eyebrow">Questo è il tuo festival</p>
-      <h2 class="script-title white">Se ti piace ballare</h2>
-      <p>Unisciti a un pubblico multiculturale e cosmopolita che ama godersi i workshop, che ama scatenarsi alle nostre feste, che ama fare amicizia e gustarsi i migliori spettacoli della Coppa del Mondo comodamente dalla propria poltrona.</p>
-      <p class="split-date">Dal 21 al 25 ottobre 2026 a Calpe (Spagna)</p>
-      <a class="btn btn-light" href="/it/festival/">Più info sul festival</a>
-    </div>
-    <div class="split-text competir">
-      <p class="eyebrow dark">Questa è la tua coppa del mondo</p>
-      <h2 class="script-title white">Se ti piace gareggiare</h2>
-      <p>Devi sapere che ogni novembre, al termine del festival, apriamo le candidature affinché tu possa inviare il tuo video e candidarti a gareggiare in una delle competizioni più prestigiose, esigenti ed esclusive al mondo, nelle diverse categorie di salsa e bachata.</p>
-      <p class="split-date">Dal 21 al 25 ottobre 2026 a Calpe (Spagna)</p>
-      <a class="btn btn-light" href="/it/competition/">Più info sulla competizione</a>
-    </div>
-    <div class="split-img" style="background-image:url('/img/2025/05/festival-pasos-negra-dance-2.jpeg')"></div>
-  </section>
-
-  <!-- ARTISTS -->
-  <section class="section artists">
-    <div class="container text-center">
-      <p class="eyebrow dark">Salsa - Bachata</p>
-      <h2 class="script-title">I nostri artisti ospiti</h2>
-      <p class="artists-intro">Ogni anno portiamo artisti e ballerini di fama da diversi angoli del mondo. Ballerini d'élite, workshop, spiaggia, piscine, feste e concorrenti di fama mondiale provenienti da oltre 20 paesi si riuniscono ogni anno in questo grande evento.</p>
-    </div>
-    <div class="artists-slider">
-      <div class="artists-track">
-        {[...artists, ...artists].map((a, i) => (
-          <article class="artist" aria-hidden={i >= artists.length ? "true" : undefined}>
-            <div class="artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
-            <h3 class="artist-name">{a.name}</h3>
-            <p class="artist-country">{a.country}</p>
-            <div class="artist-social">
-              {a.fb && <a href={a.fb} target="_blank" rel="noopener" aria-label="Facebook" set:html={fbIcon}></a>}
-              {a.ig && <a href={a.ig} target="_blank" rel="noopener" aria-label="Instagram" set:html={igIcon}></a>}
-              {a.yt && <a href={a.yt} target="_blank" rel="noopener" aria-label="YouTube" set:html={ytIcon}></a>}
+    <!-- PILLARS -->
+    <section class="p-section p-tight">
+      <div class="p-container p-pillars">
+        {pillars.map((p) => (
+          <a class="p-pillar" href={p.href}>
+            <div class="p-pillar-media"><img src={p.img} alt={p.title} loading="lazy" /></div>
+            <div class="p-pillar-panel">
+              <span class="p-pillar-tag">{p.tag}</span>
+              <h3 class="p-pillar-t">{p.title}</h3>
+              <p class="p-pillar-d">{p.desc}</p>
+              <span class="p-btn p-btn-light p-btn-sm">{p.cta}</span>
             </div>
-          </article>
+          </a>
+        ))}
+        <span class="p-pillars-plus" aria-hidden="true">+</span>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="p-section">
+      <div class="p-container p-split">
+        <h2 class="p-h2">Scopri<br />tutto.</h2>
+        <p class="p-lead">Quattro giorni di ballo senza sosta: artisti leggendari, workshop per il tuo livello e feste che non dimenticherai.</p>
+      </div>
+      <div class="p-container p-cards">
+        {features.map((f) => (
+          <a class="p-card" href={f.href}>
+            <div class="p-card-media"><img src={f.img} alt={f.title} loading="lazy" /></div>
+            <div class="p-card-panel">
+              <h3 class="p-card-t">{f.title}</h3>
+              <p class="p-card-d">{f.desc}</p>
+              <span class="p-card-link">{f.cta} →</span>
+            </div>
+          </a>
         ))}
       </div>
-    </div>
-    <div class="container text-center">
-      <a class="btn btn-outline" href="/it/artists/">Vedi tutti</a>
-    </div>
-  </section>
+    </section>
 
-  <!-- FINAL CTA -->
-  <section class="final-cta">
-    <div class="container cta-box">
-      <div class="cta-img"><img src="/img/2025/03/lanegra-dance-festival-home-1-7.webp" alt="" loading="lazy" /></div>
-      <div class="cta-content">
-        <p class="cta-eyebrow">Goditi il ballo</p>
-        <h2 class="cta-title">Il tuo festival di balli latini</h2>
-        <p>Tre giorni di salsa e bachata, per chi è innamorato del ballo latino. Puro fuoco in pista: artisti, concorrenti, workshop, feste e tantissimo ritmo. Da non perdere, dal 21 al 25 ottobre 2026 a Calpe (Spagna).</p>
-        <p class="cta-strong">Un festival internazionale di Salsa e Bachata e una competizione di ballo.</p>
-        <p class="cta-claim">Vieni, balla e divertiti!</p>
-        <div class="cta-buttons">
-          <a class="btn cta-btn" href="/it/your-pass/">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h15A1.5 1.5 0 0 1 21 8.5v1a2 2 0 0 0 0 4v1a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 14.5v-1a2 2 0 0 0 0-4z"/><path d="M9 7v10"/></svg>
-            Acquista il Pass
-          </a>
-          <a class="btn cta-btn" href="/it/competition/#registration">Iscriviti alla Coppa del Mondo</a>
+    <!-- STATEMENT 3 -->
+    <section class="p-section p-center">
+      <div class="p-container p-narrow">
+        <h2 class="p-display">Cresciamo<br />ballando insieme.</h2>
+        <p class="p-lead">Qui non vieni a un evento: entri in una comunità che si ritrova ogni anno di fronte al Mediterraneo.</p>
+        <div class="p-cta-row">
+          <a class="p-btn p-btn-dark" href="/it/your-pass/">Acquista pass</a>
+          <div class="p-btn-off-wrap">
+            <span class="p-btn p-btn-off" aria-disabled="true" title="Le iscrizioni al Mondiale 2026 sono chiuse">Iscriviti al Mondiale*</span>
+            <p class="p-cta-note">*Iscrizioni per i concorrenti chiuse.</p>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- VALUES -->
+    <section class="p-section p-gray">
+      <div class="p-container p-values">
+        <div class="p-values-head">
+          <p class="p-eyebrow">I nostri valori</p>
+          <h2 class="p-h2">Ciò che ci<br />rende unici.</h2>
+        </div>
+        <div class="p-values-list">
+          {values.map((v, i) => (
+            <div class={i === 0 ? "p-value active" : "p-value"} data-img={v.img} role="button" tabindex="0">
+              <h3 class="p-value-t">{v.t}</h3>
+              <p class="p-value-d">{v.d}</p>
+            </div>
+          ))}
+        </div>
+        <div class="p-values-media"><img src={values[0].img} alt="La Negra World Championship" loading="lazy" /></div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="p-stats">
+      <div class="p-container p-stats-row">
+        {stats.map((s) => (
+          <div class="p-stat"><span class="p-stat-n">{s.n}</span><span class="p-stat-l">{s.l}</span></div>
+        ))}
+      </div>
+    </section>
+
+    <!-- PHOTO BAND (parallax interior + mensaje de internacionalidad) -->
+    <section class="p-band">
+      <div class="p-band-media">
+        <img src={img("la-negra-dance-festival-fiesta-img-12.webp")} alt="" loading="lazy" />
+      </div>
+      <div class="p-band-content">
+        <p class="p-band-eyebrow">35+ paesi · 5 continenti</p>
+        <h2 class="p-band-title">Il mondo intero<br />balla a Calpe.</h2>
+        <p class="p-band-sub">Lingue diverse, un solo linguaggio. Ogni ottobre, ballerini di tutto il pianeta si danno appuntamento di fronte al Mediterraneo.</p>
+      </div>
+    </section>
+
+    <!-- WORLD MAP (nacionalidades) -->
+    <section class="p-map-sec">
+      <div class="p-container p-center p-map-head">
+        <p class="p-eyebrow">Nazionalità</p>
+        <h2 class="p-h2">Da ogni angolo<br />del pianeta.</h2>
+      </div>
+      <div class="p-map" data-map>
+        <div class="p-map-plane">
+          <img class="p-map-img" src="/img/world-map-dots.svg" alt="Mappa delle nazionalità dei partecipanti" width="2370" height="1104" loading="lazy" />
+          {mapPins.map((p, i) => (
+            <div
+              class={p.big ? "p-pin p-pin-big" : "p-pin"}
+              data-x={p.x}
+              data-y={p.y}
+              style={`left:${p.x}%; top:${p.y}%; --pin-d:${i * 80}ms; --stem:${p.h}px; --dot:${Math.round(8 + Math.min(14, Math.sqrt(p.n) / 4))}px; --pin-c:${p.big ? "#cc9933" : pinColors[i % 3]}`}
+            >
+              <span class="p-pin-bubble"><span class="p-pin-n" data-count={p.n}>{String(p.n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span></span>
+              <span class="p-pin-l">{p.l}</span>
+              <span class="p-pin-stem"></span>
+              <span class="p-pin-hit"></span>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Móvil: rejilla de cifras siempre visible (sin hover, sin solapes) */}
+      <div class="p-container p-map-grid">
+        {[...mapPins].sort((a, b) => b.n - a.n).map((p) => (
+          <div class="p-map-chip">
+            <span class="p-map-chip-n">{String(p.n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
+            <span class="p-map-chip-l">{p.l}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ARTISTS -->
+    <section class="p-section p-center">
+      <div class="p-container">
+        <h2 class="p-display">I nostri artisti.</h2>
+        <p class="p-lead p-narrow">Le stelle internazionali della salsa e della bachata che faranno ardere il palco.</p>
+      </div>
+      <div class="p-artists" data-artists-slider>
+        <div class="p-artists-track">
+          <div class="p-artists-set">
+            {artists.map((a) => (
+          <div class="p-artist">
+            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <span class="p-artist-n"><span>{a.first}</span>{a.last && <span>{a.last}</span>}</span>
+            <span class="p-artist-c">{a.country}</span>
+          </div>
+        ))}
+          </div>
+          <div class="p-artists-set" aria-hidden="true">
+            {artists.map((a) => (
+          <div class="p-artist">
+            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <span class="p-artist-n"><span>{a.first}</span>{a.last && <span>{a.last}</span>}</span>
+            <span class="p-artist-c">{a.country}</span>
+          </div>
+        ))}
+          </div>
+        </div>
+      </div>
+      <div class="p-container">
+        <a class="p-btn p-btn-dark" href="/it/artists/">Vedi tutti gli artisti</a>
+      </div>
+    </section>
+
+    <!-- FINAL CTA (oscuro) -->
+    <section class="p-final">
+      <div class="p-container p-final-inner">
+        <h2 class="p-display p-white">Ci vediamo a<br />Calpe 2026.</h2>
+        <p class="p-lead p-white-70">Prenota il tuo Full Pass per La Negra World Championship e vivi il Mondiale di Salsa e Bachata.</p>
+        <div class="p-hero-cta">
+          <a class="p-btn p-btn-light" href="/it/your-pass/">Acquista il tuo pass</a>
+          <a class="p-btn p-btn-outline" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Prenota hotel</a>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    import "@/scripts/home.js";
+  </script>
 </Base>
-
-<style>
-  .eyebrow.dark { color: var(--navy); }
-
-  /* HERO */
-  /* El vídeo sube bajo el header transparente para que quede por encima */
-  .hero { position: relative; line-height: 0; background: var(--navy); margin-top: calc(-1 * var(--header-bar, 64px)); }
-  .hero video { width: 100%; height: 90vh; object-fit: cover; display: block; }
-  /* Oscurecido sutil para legibilidad del texto */
-  .hero::after {
-    content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
-    background: linear-gradient(180deg, rgba(10,10,25,.28) 0%, rgba(10,10,25,.10) 38%, rgba(10,10,25,.50) 100%);
-  }
-  .hero-info {
-    position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
-    z-index: 3; width: min(94%, 900px); text-align: center; line-height: normal;
-  }
-  .hero-date {
-    font-family: var(--font-heavy);
-    font-weight: 800;
-    color: transparent;
-    -webkit-text-stroke: 1.6px #fff;
-    font-size: clamp(28px, 5.2vw, 64px); letter-spacing: .02em; text-transform: uppercase;
-    line-height: 1.04; margin: 0 0 30px;
-    filter: drop-shadow(0 2px 10px rgba(0,0,0,.55));
-  }
-  .hero-date span { display: block; white-space: nowrap; }
-  .hero-place { font-size: .64em; }
-  @media (max-width: 560px) { .hero-date { -webkit-text-stroke-width: 1.2px; } }
-  /* Botón del hero (estilo referencia) */
-  .hero-btn {
-    display: inline-block; margin: 4px 0 34px;
-    padding: 15px 32px;
-    background: rgba(0, 0, 0, 0.28);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    color: #fff; text-decoration: none;
-    font-family: var(--font-body); font-weight: 700; font-size: 16px;
-    letter-spacing: .02em; border-radius: 6px;
-    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
-    transition: background .2s, border-color .2s, color .2s;
-  }
-  .hero-btn:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
-
-  /* Contador (números grandes con separadores verticales finos) */
-  .hero-countdown { display: flex; justify-content: center; align-items: stretch; gap: 0; }
-  .hcd {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 0 clamp(12px, 3vw, 30px);
-  }
-  .hcd + .hcd { border-left: 1px solid rgba(255, 255, 255, 0.35); }
-  .hcd-num { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-weight: 700; font-size: clamp(22px, 3vw, 38px); line-height: 1; color: #fff; }
-  .hcd-lbl { font-family: var(--font-body); font-size: clamp(11px, 1.4vw, 14px); text-transform: uppercase; letter-spacing: .12em; margin-top: 8px; color: rgba(255, 255, 255, 0.85); }
-  @media (max-width: 600px) {
-    .hero-info { top: 42%; }
-  }
-
-  /* PASS BAND */
-  .pass-band {
-    max-width: var(--container);
-    margin: -70px auto 0;
-    position: relative; z-index: 5;
-    border-radius: 22px;
-    overflow: hidden;
-    color: #fff;
-    background: linear-gradient(115deg, #0a0f24 0%, #0e1430 50%, #122150 100%);
-  }
-  .pass-band::after {
-    content: ""; position: absolute; top: 20px; right: 28px;
-    width: 250px; height: 100px;
-    background: url("/img/2025/03/notas-musicales_notas-musicales-blanco-400.png") no-repeat center / contain;
-    opacity: .18; pointer-events: none; z-index: 0;
-  }
-  .pass-inner { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: center; padding: 44px 44px; position: relative; z-index: 1; }
-
-  .pass-headline { margin: 0 0 10px; line-height: 1.02; white-space: nowrap; font-family: var(--font-script); font-weight: 400; font-size: clamp(26px, 3.7vw, 46px); }
-  .pass-headline .g { color: var(--gold); }
-  .pass-headline .w { color: #fff; }
-  .pass-date { font-size: 20px; font-weight: 300; margin: 0; }
-  .pass-flourish { display: block; width: 230px; max-width: 80%; height: 14px; margin-top: 8px; }
-  .pass-flourish path { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round; }
-
-  .pass-right { text-align: center; }
-  .pass-cta { margin: 0 0 18px; line-height: 1.05; white-space: nowrap; }
-  .pass-cta em { font-family: var(--font-script); color: var(--gold); font-style: normal; font-weight: 400; font-size: clamp(24px, 3vw, 36px); }
-  .pass-cta b { font-family: var(--font-script); color: #fff; font-weight: 400; font-size: clamp(24px, 3vw, 36px); letter-spacing: .02em; }
-  .pass-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-  .pass-note { font-size: 15px; color: rgba(255,255,255,.7); margin: 12px 0 0; }
-
-  /* INTRO */
-  .intro-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; max-width: 1000px; margin: 10px auto 0; }
-
-  /* ARTISTS / FESTIVAL (split) */
-  .onoff { position: relative; overflow: hidden; padding: 150px 0; margin: 40px 0; }
-  .onoff-img { position: absolute; top: 0; bottom: 0; width: 23%; height: 100%; object-fit: cover; z-index: 1; transition: opacity .25s; }
-  .onoff-img-left { left: 0; object-position: 72% center; border-radius: 0 18px 18px 0; }
-  .onoff-img-right { right: 0; object-position: 28% center; border-radius: 18px 0 0 18px; }
-  .onoff-inner { position: relative; z-index: 2; max-width: 820px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-  .onoff-col { text-decoration: none; text-align: center; display: flex; flex-direction: column; align-items: center; transition: opacity .2s; }
-  .onoff-col:hover { opacity: .82; }
-  /* Al hacer hover en una columna, su imagen lateral baja de opacidad */
-  .onoff:has(.onoff-col:first-child:hover) .onoff-img-left { opacity: .55; }
-  .onoff:has(.onoff-col:last-child:hover) .onoff-img-right { opacity: .55; }
-  .onoff-eyebrow { font-family: var(--font-display); color: var(--gold); font-size: clamp(22px, 2.4vw, 28px); line-height: 1; }
-  .onoff-title { font-family: "Bebas Neue", var(--font-body); font-weight: 400; font-size: clamp(54px, 8vw, 104px); line-height: .88; color: var(--navy); letter-spacing: .01em; margin: 2px 0 0; transition: color .2s; }
-  .onoff-desc { font-size: 15px; color: var(--text); max-width: 300px; margin: 14px 0 22px; }
-  .onoff-arrow { padding: 13px 26px; border-radius: 999px; background: var(--gold); color: #fff; font-family: var(--font-body); font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .04em; display: inline-flex; align-items: center; justify-content: center; transition: transform .2s, background .2s, color .2s; }
-  .onoff-col:hover .onoff-arrow { background: var(--gold-dark); color: #fff; transform: translateY(-3px); }
-  .onoff-col:hover .onoff-title { color: var(--gold-dark); }
-  @media (max-width: 820px) {
-    .onoff-img { width: 16%; opacity: .45; }
-    .onoff-inner { grid-template-columns: 1fr; gap: 46px; max-width: 420px; }
-  }
-  @media (max-width: 560px) { .onoff-img { display: none; } }
-
-  /* FEATURE CARDS */
-  .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
-  .fcard { text-align: center; }
-  .fcard-img { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 16px; aspect-ratio: 4/3; }
-  .fcard-img img { width: 100%; height: 100%; object-fit: cover; }
-  .fcard-caption {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    padding: 26px 14px 12px; color: #fff; font-size: 15px; font-weight: 400;
-    background: linear-gradient(to top, rgba(15,11,30,.78), transparent);
-  }
-  .fcard-title { font-size: 34px; color: var(--gold); margin: 6px 0 12px; }
-  .fcard-text { font-size: 15px; margin-bottom: 20px; }
-
-  /* SPLIT GRID (dance / compete) */
-  .split-grid { display: grid; grid-template-columns: 1fr 1fr; }
-  .split-img { min-height: 360px; background-size: cover; background-position: center; }
-  .split-text { padding: 56px 48px; color: #fff; }
-  .split-text.bailar { background: var(--blue); }
-  .split-text.competir { background: var(--gold); }
-  .split-text.competir .eyebrow.dark { color: var(--navy); }
-  .split-text p { font-size: 15px; }
-  .split-date { font-weight: 400; opacity: .85; margin: 16px 0 22px; }
-
-  /* ARTISTS */
-  .artists-intro { max-width: 760px; margin: 0 auto 40px; }
-  /* Slider automático a todo el ancho, con arrastre del ratón */
-  .artists-slider {
-    width: 100%; margin-bottom: 38px;
-    overflow-x: auto; overflow-y: hidden;
-    scrollbar-width: none; -ms-overflow-style: none;
-    cursor: grab; touch-action: pan-x;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
-  }
-  .artists-slider::-webkit-scrollbar { display: none; }
-  .artists-slider.dragging { cursor: grabbing; }
-  .artists-track { display: flex; gap: 24px; width: max-content; user-select: none; }
-  .artists-track img { -webkit-user-drag: none; user-select: none; }
-  .artist { flex: 0 0 230px; width: 230px; text-align: center; }
-  .artist-img { border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; margin-bottom: 14px; }
-  .artist-img img { width: 100%; height: 100%; object-fit: cover; }
-  .artist-name { font-family: var(--font-body); font-weight: 700; text-transform: uppercase; font-size: 17px; letter-spacing: .03em; margin: 0 0 4px; color: var(--navy); }
-  .artist-country { color: var(--gold-dark); font-size: 15px; margin: 0 0 10px; }
-  .artist-social { display: flex; gap: 8px; justify-content: center; }
-  .artist-social a {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--gold); color: #fff;
-  }
-  .artist-social a:hover { background: var(--gold-dark); }
-
-  /* FINAL CTA */
-  .final-cta { padding: 70px 0; }
-  .cta-box { display: grid; grid-template-columns: 1fr 1.05fr; align-items: stretch; border-radius: 22px; overflow: hidden; }
-  .cta-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .cta-content { background: linear-gradient(120deg,#0a0f24 0%,#0f1430 55%,#161c40 100%); color: #fff; padding: 50px 52px; display: flex; flex-direction: column; justify-content: center; text-align: left; }
-  .cta-eyebrow { font-family: var(--font-display); color: var(--gold); font-size: clamp(22px, 2.6vw, 30px); line-height: 1; margin: 0 0 2px; }
-  .cta-title { font-family: var(--font-script); color: #fff; font-weight: 400; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.05; margin: 0 0 16px; }
-  .cta-content p { font-size: 16px; line-height: 1.55; margin: 0 0 14px; color: rgba(255,255,255,.92); }
-  .cta-strong { font-weight: 700; color: #fff !important; }
-  .cta-claim { font-family: var(--font-script); color: var(--gold) !important; font-weight: 400; font-size: clamp(28px, 3.4vw, 40px); margin: 8px 0 24px !important; line-height: 1; }
-  .cta-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
-  .cta-btn { background: transparent; border: 2px solid #fff; color: #fff; }
-  .cta-btn:hover { background: #fff; color: var(--navy); }
-
-  /* responsive */
-  @media (max-width: 900px) {
-    .pass-inner { grid-template-columns: 1fr; gap: 26px; text-align: center; }
-    .pass-headline { white-space: normal; }
-    .pass-cta { white-space: normal; }
-    .pass-flourish { margin-left: auto; margin-right: auto; }
-    .pass-band::after { width: 150px; height: 60px; top: 12px; right: 14px; }
-    .intro-cols { grid-template-columns: 1fr; gap: 14px; }
-    .cards-grid { grid-template-columns: 1fr; gap: 44px; }
-    .artist { flex: 0 0 180px; width: 180px; }
-    .split-grid { grid-template-columns: 1fr; }
-    .split-grid .split-img { min-height: 260px; }
-    .split-text.competir { order: 4; }
-    .cta-box { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 600px) {
-    .pass-band { margin-top: -40px; border-radius: 12px; }
-  }
-</style>
-
-<script>
-  // Artists slider: slow auto-scroll + mouse drag (and native swipe on touch)
-  const slider = document.querySelector(".artists-slider");
-  const track = slider && slider.querySelector(".artists-track");
-  if (slider && track) {
-    const SPEED = 28; // px per second (slow auto-scroll)
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const half = () => track.scrollWidth / 2;
-    const wrap = (v) => { const h = half(); if (h > 0) { v %= h; if (v < 0) v += h; } return v; };
-    let paused = false, dragging = false, moved = false;
-    let startX = 0, startScroll = 0, x = 0, last = null;
-    let vel = 0, lastMoveX = 0, lastMoveT = 0, resumeAt = 0; // drag inertia
-
-    function tick(t) {
-      if (last === null) last = t;
-      const dt = Math.min((t - last) / 1000, 0.05); last = t;
-      if (dragging) {
-        // user controls the scroll
-      } else if (Math.abs(vel) > 16) {
-        // inertia with easing on release (exponential deceleration)
-        x = wrap(x + vel * dt);
-        vel *= Math.exp(-dt / 0.45);
-        slider.scrollLeft = x;
-      } else if (!reduce && !paused && t >= resumeAt) {
-        vel = 0;
-        x = wrap(x + SPEED * dt);
-        slider.scrollLeft = x;
-      }
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-
-    slider.addEventListener("scroll", () => {
-      if (Math.abs(slider.scrollLeft - x) > 2) x = wrap(slider.scrollLeft);
-    }, { passive: true });
-
-    slider.addEventListener("mouseenter", () => { paused = true; });
-    slider.addEventListener("mouseleave", () => { paused = false; });
-
-    slider.addEventListener("pointerdown", (e) => {
-      dragging = true; moved = false; vel = 0;
-      if (e.pointerType === "mouse") {
-        startX = e.clientX; startScroll = slider.scrollLeft;
-        lastMoveX = e.clientX; lastMoveT = performance.now();
-        try { slider.setPointerCapture(e.pointerId); } catch (_) {}
-        slider.classList.add("dragging");
-      }
-    });
-    slider.addEventListener("pointermove", (e) => {
-      if (!dragging || e.pointerType !== "mouse") return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 3) moved = true;
-      x = wrap(startScroll - dx);
-      slider.scrollLeft = x;
-      const now = performance.now();
-      const mdt = (now - lastMoveT) / 1000;
-      if (mdt > 0) vel = Math.max(-5000, Math.min(5000, -(e.clientX - lastMoveX) / mdt));
-      lastMoveX = e.clientX; lastMoveT = now;
-    });
-    const endDrag = (e) => {
-      if (!dragging) return;
-      dragging = false;
-      slider.classList.remove("dragging");
-      x = wrap(slider.scrollLeft);
-      if (e && e.pointerType !== "mouse") { vel = 0; resumeAt = performance.now() + 1200; }
-      else if (performance.now() - lastMoveT > 90) vel = 0;
-    };
-    slider.addEventListener("pointerup", endDrag);
-    slider.addEventListener("pointercancel", endDrag);
-    slider.addEventListener("click", (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
-  }
-
-  // Cuenta atrás del hero hasta el inicio del evento: 21 de octubre de 2026 (hora de España)
-  const cdTarget = new Date("2026-10-21T00:00:00+02:00").getTime();
-  const cd = {
-    d: document.querySelector(".hero-countdown [data-d]"),
-    h: document.querySelector(".hero-countdown [data-h]"),
-    m: document.querySelector(".hero-countdown [data-m]"),
-    s: document.querySelector(".hero-countdown [data-s]"),
-  };
-  const cdPad = (n) => String(n).padStart(2, "0");
-  function cdTick() {
-    const diff = Math.max(0, cdTarget - Date.now());
-    if (cd.d) cd.d.textContent = String(Math.floor(diff / 86400000));
-    if (cd.h) cd.h.textContent = cdPad(Math.floor(diff / 3600000) % 24);
-    if (cd.m) cd.m.textContent = cdPad(Math.floor(diff / 60000) % 60);
-    if (cd.s) cd.s.textContent = cdPad(Math.floor(diff / 1000) % 60);
-  }
-  if (cd.d) { cdTick(); setInterval(cdTick, 1000); }
-</script>

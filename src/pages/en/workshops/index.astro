@@ -47,7 +47,7 @@ const gallery = [
         <p class="cta-claim">Come, dance and enjoy!</p>
         <div class="cta-buttons">
           <a class="btn btn-light" href="/en/your-pass/">Buy Pass</a>
-          <a class="btn btn-solid" href="/en/competition/#inscripcion">Register for the World Cup</a>
+          <span class="reg-closed"><span class="btn btn-solid btn-off" aria-disabled="true" role="button" title="Registration closed">Register for the World Cup</span><span class="reg-note">Registration closed: the sign-up period for the 2026 World Cup has ended.</span></span>
         </div>
       </div>
     </div>
@@ -55,7 +55,7 @@ const gallery = [
 </Base>
 
 <style>
-  .eyebrow.dark { color: var(--navy); }
+  .eyebrow.dark { color: var(--gold); }
 
   /* INTRO */
   .intro-date {
@@ -77,8 +77,8 @@ const gallery = [
   .cta-box { display: grid; grid-template-columns: 1fr 1fr; align-items: stretch; border-radius: 16px; overflow: hidden; }
   .cta-img img { width: 100%; height: 100%; object-fit: cover; }
   .cta-content { background: linear-gradient(135deg,#14102b,#2a1f57); color: #fff; padding: 48px 44px; display: flex; flex-direction: column; justify-content: center; text-align: left; }
-  .cta-claim { font-family: var(--font-script); color: var(--gold); font-size: 34px; margin: 6px 0 22px; }
-  .cta-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+  .cta-claim { font-family: var(--font-body); font-weight: 700; letter-spacing: -.02em; color: #fff; font-size: 28px; margin: 6px 0 22px; }
+  .cta-buttons { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
 
   /* responsive */
   @media (max-width: 900px) {

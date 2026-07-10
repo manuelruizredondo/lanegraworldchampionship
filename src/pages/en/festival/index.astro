@@ -124,15 +124,17 @@ const fiestaGallery = [
   <section id="fullpass" class="section fullpass text-center">
     <div class="container">
       <p class="eyebrow dark">Full Pass</p>
-      <h2 class="script-title">See you at ….</h2>
-      <p class="fullpass-note">Ticket sales managed through <a href="https://www.goandance.com" target="_blank" rel="noopener">go&amp;dance</a>.</p>
+      <h2 class="script-title">See you at La Negra</h2>
+      <p class="fullpass-note">Ticket sales managed through <a href="https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata" target="_blank" rel="noopener">go&amp;dance</a>.</p>
       <div class="fullpass-widget">
         <iframe
-          src="https://www.goandance.com"
+          src="https://www.goandance.com/en/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"
           title="Buy Full Pass — go&dance"
           loading="lazy"
         ></iframe>
       </div>
+      <p class="gd-credit">Powered by <a href="https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata" target="_blank" rel="noopener">go&amp;dance</a></p>
+      <a class="gd-link" href="https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata" target="_blank" rel="noopener">Go to the tickets page ↗</a>
     </div>
   </section>
 
@@ -224,7 +226,7 @@ const fiestaGallery = [
 </Base>
 
 <style>
-  .eyebrow.dark { color: var(--navy); }
+  .eyebrow.dark { color: var(--gold); }
 
   /* ANCHOR NAV */
   .anchor-nav {
@@ -272,10 +274,10 @@ const fiestaGallery = [
   .fullpass-note { max-width: 640px; margin: 0 auto 28px; }
   .fullpass-note a { color: var(--gold-dark); font-weight: 400; }
   .fullpass-widget {
-    max-width: 900px; margin: 0 auto; border-radius: 14px; overflow: hidden;
+    max-width: 100%; margin: 0 auto; border-radius: 14px; overflow: hidden;
     box-shadow: 0 14px 40px rgba(15,11,30,.14);
   }
-  .fullpass-widget iframe { width: 100%; height: 560px; border: 0; display: block; }
+  .fullpass-widget iframe { width: 100%; height: 430px; border: 0; display: block; }
 
   /* HOTEL */
   .hotel-sub { font-family: var(--font-body); font-weight: 400; color: var(--navy); font-size: 22px; margin: 0 0 8px; }
@@ -330,6 +332,11 @@ const fiestaGallery = [
   }
   @media (max-width: 600px) {
     .field-row { grid-template-columns: 1fr; }
-    .fullpass-widget iframe { height: 460px; }
+    .fullpass-widget iframe { height: 430px; }
+  }
+
+  /* En móvil el selector se apila y necesita más altura */
+  @media (max-width: 600px) {
+    .fullpass-widget iframe { height: 760px; }
   }
 </style>
