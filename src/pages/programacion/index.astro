@@ -74,11 +74,10 @@ const FILTERS = [
               <div class="pr-sessions">
                 {slot.items.map((s) => (
                   <article
-                    class={"pr-card k-" + s.k + (s.r === "full" ? " pr-band" : "")}
+                    class={"pr-card rc-" + s.r + " k-" + s.k + (s.r === "full" ? " pr-band" : "")}
                     data-kind={s.k}
                     data-text={((s.n || "") + " " + (s.p || "")).toLowerCase()}
                   >
-                    <div class={"pr-stripe pr-r-" + s.r}></div>
                     {s.r !== "full" && <span class={"pr-room pr-r-" + s.r}>{ROOMS[s.r]}</span>}
                     <div class="pr-card-in">
                       <div class="pr-meta">
@@ -214,13 +213,18 @@ const FILTERS = [
   .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
 
   .pr-card {
-    position: relative; display: flex; overflow: hidden;
-    border-radius: 16px; border: 1px solid #ece8e1; background: #fff;
+    position: relative; overflow: hidden;
+    border-radius: 16px; border: 2px solid #ece8e1; background: #fff;
     box-shadow: 0 4px 16px rgba(20, 18, 26, .04);
     transition: transform .15s ease, box-shadow .15s ease;
   }
   .pr-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(20, 18, 26, .09); }
-  .pr-stripe { flex: 0 0 5px; }
+  /* Borde completo de la tarjeta en el color de la sala */
+  .rc-gs { border-color: #cc9933; }
+  .rc-pb { border-color: #2a9d8f; }
+  .rc-s1 { border-color: #5b6ee1; }
+  .rc-s2 { border-color: #e05a8c; }
+  .rc-full { border-color: #e8e2d6; }
   .pr-card-in { padding: 13px 15px; min-width: 0; }
   .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; padding-right: 96px; min-height: 22px; }
   /* Sala como pestaña (tab) en la esquina superior derecha de la tarjeta */
