@@ -46,17 +46,15 @@ const FILTERS = [
           </button>
         ))}
       </div>
-      <div class="pr-tools">
-        <div class="pr-filters" role="group" aria-label="Filtrar por tipo">
-          {FILTERS.map((f, i) => (
-            <button class={"pr-chip" + (i === 0 ? " active" : "")} data-filter={f.key}>{f.label}</button>
-          ))}
-        </div>
-        <label class="pr-search">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="search" id="pr-q" placeholder="Buscar taller o profe…" autocomplete="off" aria-label="Buscar" />
-        </label>
+      <div class="pr-filters" role="group" aria-label="Filtrar por tipo">
+        {FILTERS.map((f, i) => (
+          <button class={"pr-chip" + (i === 0 ? " active" : "")} data-filter={f.key}>{f.label}</button>
+        ))}
       </div>
+      <label class="pr-search">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="pr-q" placeholder="Buscar taller o profe…" autocomplete="off" aria-label="Buscar" />
+      </label>
       <div class="pr-legend" aria-hidden="true">
         <span class="pr-dot pr-r-gs"></span>Gran Salón
         <span class="pr-dot pr-r-pb"></span>Piano Bar
@@ -81,9 +79,9 @@ const FILTERS = [
                     data-text={((s.n || "") + " " + (s.p || "")).toLowerCase()}
                   >
                     <div class={"pr-stripe pr-r-" + s.r}></div>
+                    {s.r !== "full" && <span class={"pr-room pr-r-" + s.r}>{ROOMS[s.r]}</span>}
                     <div class="pr-card-in">
                       <div class="pr-meta">
-                        {s.r !== "full" && <span class={"pr-room pr-r-" + s.r}>{ROOMS[s.r]}</span>}
                         <span class={"pr-kind kb-" + s.k}>{KIND_LABEL[s.k]}</span>
                         {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{s.l}</span>}
                       </div>
@@ -166,8 +164,10 @@ const FILTERS = [
     border-bottom: 1px solid #ece8e1;
     padding: 12px 0;
   }
-  .pr-days { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-  .pr-days::-webkit-scrollbar { display: none; }
+  /* Días y filtros a todo el ancho (full-bleed): llegan al borde de la pantalla, sin margen blanco */
+  .pr-days, .pr-filters { display: flex; overflow-x: auto; scrollbar-width: none; margin: 0 -24px; padding: 6px 24px; }
+  .pr-days::-webkit-scrollbar, .pr-filters::-webkit-scrollbar { display: none; }
+  .pr-days { gap: 8px; }
   .pr-day-btn {
     flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1px;
     padding: 8px 18px; border-radius: 14px; cursor: pointer;
@@ -179,9 +179,7 @@ const FILTERS = [
   .pr-day-btn.active { background: #14121a; border-color: #14121a; color: #fff; }
   .pr-day-btn.active .pr-day-date { opacity: .7; }
 
-  .pr-tools { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-  .pr-filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; }
-  .pr-filters::-webkit-scrollbar { display: none; }
+  .pr-filters { gap: 6px; margin-top: 4px; }
   .pr-chip {
     flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; cursor: pointer;
     border: 1.5px solid #e6e3dd; background: #fff; color: #14121a;
@@ -190,9 +188,9 @@ const FILTERS = [
   .pr-chip:hover { border-color: var(--gold); }
   .pr-chip.active { background: var(--gold); border-color: var(--gold); color: #fff; }
   .pr-search {
-    flex: 0 0 auto; display: flex; align-items: center; gap: 7px;
-    padding: 7px 14px; border-radius: 999px; border: 1.5px solid #e6e3dd; background: #fff; color: #9a9aa2;
-    min-width: 200px;
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 10px;
+    width: 100%; max-width: 440px;
+    padding: 8px 14px; border-radius: 999px; border: 1.5px solid #e6e3dd; background: #fff; color: #9a9aa2;
   }
   .pr-search input { border: 0; outline: 0; background: transparent; font-family: var(--font-body); font-size: 14px; color: #14121a; width: 100%; }
   .pr-legend { display: flex; align-items: center; gap: 6px 16px; margin-top: 12px; font-size: 12px; color: #6a6a74; flex-wrap: wrap; }
@@ -224,8 +222,14 @@ const FILTERS = [
   .pr-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(20, 18, 26, .09); }
   .pr-stripe { flex: 0 0 5px; }
   .pr-card-in { padding: 13px 15px; min-width: 0; }
-  .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; }
-  .pr-room { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #fff; padding: 2px 8px; border-radius: 999px; }
+  .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; padding-right: 96px; min-height: 22px; }
+  /* Sala como pestaña (tab) en la esquina superior derecha de la tarjeta */
+  .pr-room {
+    position: absolute; top: 0; right: 0; z-index: 2;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #fff;
+    padding: 4px 11px 5px; border-radius: 0 15px 0 12px;
+    box-shadow: -2px 3px 9px rgba(20, 18, 26, .14);
+  }
   .pr-kind { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; background: #f0ede7; color: #6a6a74; }
   .kb-master { background: #fbeecb; color: #a2711a; }
   .kb-comp { background: #14121a; color: #fff; }
@@ -256,6 +260,6 @@ const FILTERS = [
     .pr-time { position: static; margin-bottom: 2px; }
     .pr-time span { color: var(--gold-dark); }
     .pr-sessions { grid-template-columns: 1fr; }
-    .pr-search { min-width: 0; flex: 1 1 100%; order: 3; }
+    .pr-search { max-width: none; }
   }
 </style>

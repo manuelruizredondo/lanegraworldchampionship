@@ -3,7 +3,7 @@
 // k (tipo): taller · master · comp · social · meal · info
 // l (nivel): Abierto · Medio-Bajo · Medio · Medio-Alto · Medio-Avanzado · Avanzado
 export const ROOMS = {
-  gs: "Gran Salón del Mundial",
+  gs: "Gran Salón",
   pb: "Piano Bar",
   s1: "Sala 1",
   s2: "Sala 2",
