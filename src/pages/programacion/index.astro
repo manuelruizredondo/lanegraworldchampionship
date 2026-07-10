@@ -129,11 +129,19 @@ const FILTERS = [
       });
     };
 
+    const controlsEl = document.querySelector(".pr-controls");
     dayBtns.forEach((b) => b.addEventListener("click", () => {
       day = +b.dataset.day;
       dayBtns.forEach((x) => { const on = x === b; x.classList.toggle("active", on); x.setAttribute("aria-selected", on); });
       apply();
-      document.querySelector(".pr-controls").scrollIntoView({ block: "start", behavior: "smooth" });
+      // Coloca el PRIMER elemento del día justo debajo de la barra fija (header + controles).
+      // Se ancla al primer slot (no sticky), no a los controles, que sí lo son.
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 88;
+      const panel = panels[day];
+      const firstSlot = [...panel.querySelectorAll(".pr-slot")].find((s) => !s.hidden) || panel;
+      const slotDocTop = firstSlot.getBoundingClientRect().top + window.scrollY;
+      const target = Math.max(0, Math.round(slotDocTop - headerH - controlsEl.offsetHeight - 8));
+      if (Math.abs(window.scrollY - target) > 4) window.scrollTo({ top: target, behavior: "smooth" });
     }));
     chips.forEach((c) => c.addEventListener("click", () => {
       filter = c.dataset.filter;
