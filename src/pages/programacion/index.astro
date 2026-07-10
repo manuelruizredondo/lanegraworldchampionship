@@ -239,8 +239,8 @@ const FILTERS = [
 
   /* Salones (antes de los días, NO sticky) con bocadillo de info al hacer click */
   .pr-rooms { padding: 6px 0 10px; }
-  .pr-rooms-label { font-size: 12px; color: #9a9aa2; margin: 0 0 9px; font-weight: 600; letter-spacing: .01em; }
-  .pr-rooms-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pr-rooms-label { font-size: 12px; color: #9a9aa2; margin: 0 0 9px; font-weight: 600; letter-spacing: .01em; text-align: center; }
+  .pr-rooms-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
   .pr-room-item { position: relative; }
   .pr-room-chip {
     display: inline-flex; align-items: center; gap: 8px;
@@ -252,18 +252,18 @@ const FILTERS = [
   .pr-room-chip:hover { box-shadow: 0 4px 14px rgba(20, 18, 26, .08); }
   .pr-room-chip[aria-expanded="true"] { box-shadow: 0 6px 18px rgba(20, 18, 26, .14); }
   .pr-room-pop {
-    position: absolute; top: calc(100% + 10px); left: 0; z-index: 30;
+    position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); z-index: 30;
     width: 260px; max-width: 78vw;
     background: #14121a; color: #fff; border-radius: 13px; padding: 12px 15px;
     box-shadow: 0 16px 38px rgba(20, 18, 26, .3);
-    font-size: 13px; line-height: 1.45;
+    font-size: 13px; line-height: 1.45; text-align: left;
   }
   .pr-room-pop[hidden] { display: none; }
   .pr-room-pop strong { display: block; margin-bottom: 3px; font-size: 13.5px; }
   .pr-room-pop span { color: rgba(255, 255, 255, .82); }
   .pr-room-pop::before {
-    content: ""; position: absolute; bottom: 100%; left: 22px;
-    border: 7px solid transparent; border-bottom-color: #14121a;
+    content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 7px solid transparent; border-top-color: #14121a;
   }
 
   /* Colores de sala */
