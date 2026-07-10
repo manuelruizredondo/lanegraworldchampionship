@@ -7,6 +7,7 @@ export const ROUTES = [
   { es: "/festival/", en: "/en/festival/", it: "/it/festival/" },
   { es: "/artistas/", en: "/en/artists/", it: "/it/artists/" },
   { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" },
+  { es: "/programacion/", en: "/en/schedule/", it: "/it/programma/" },
   { es: "/fiesta/", en: "/en/fiesta/", it: "/it/fiesta/" },
   { es: "/competidores/", en: "/en/competitors/", it: "/it/competitors/" },
   { es: "/ganadores-2025/", en: "/en/winners-2025/", it: "/it/winners-2025/" },

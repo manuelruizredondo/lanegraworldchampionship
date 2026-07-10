@@ -1,0 +1,355 @@
+---
+import { PROGRAMA, ROOM_LIST, I18N } from "@/data/programa.js";
+
+const { lang = "es" } = Astro.props;
+const t = I18N[lang] || I18N.es;
+
+// Agrupa las sesiones de cada día por franja horaria (respetando el orden del PDF)
+const days = PROGRAMA.map((d) => {
+  const slots = [];
+  d.sessions.forEach((s) => {
+    const last = slots[slots.length - 1];
+    if (last && last.t === s.t) last.items.push(s);
+    else slots.push({ t: s.t, items: [s] });
+  });
+  return { ...d, slots };
+});
+
+const FILTER_KEYS = ["all", "taller", "master", "comp", "social"];
+const title = (s) => (s.r === "full" ? (t.band[s.n] || s.n) : s.n);
+const describe = (s) => {
+  if (s.k === "taller") return s.l ? t.levelInfo[s.l] : t.desc.taller;
+  return t.desc[s.k] || t.desc.taller;
+};
+---
+
+<section class="pr-hero">
+  <div class="container">
+    <p class="eyebrow dark">{t.eyebrow}</p>
+    <h1 class="script-title">{t.h1}</h1>
+    <p class="pr-sub">{t.sub}</p>
+  </div>
+</section>
+
+<!-- Salones (antes de los días, NO sticky). Click = bocadillo con la ubicación -->
+<section class="pr-rooms">
+  <div class="container">
+    <p class="pr-rooms-label">{t.roomsLabel}</p>
+    <div class="pr-rooms-list">
+      {ROOM_LIST.map((r) => (
+        <div class="pr-room-item">
+          <button class={"pr-room-chip rc-" + r.key} data-room={r.key} type="button" aria-expanded="false">
+            <span class={"pr-dot pr-r-" + r.key}></span>{t.roomFull[r.key]}
+          </button>
+          <div class="pr-room-pop" role="tooltip" hidden>
+            <strong>{t.roomFull[r.key]}</strong>
+            <span>{t.roomLoc[r.key]}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Controles sticky: días + filtros + buscador -->
+<div class="pr-controls">
+  <div class="container">
+    <div class="pr-days" role="tablist" aria-label={t.daysAria}>
+      {days.map((d, i) => (
+        <button class={"pr-day-btn" + (i === 0 ? " active" : "")} data-day={i} role="tab" aria-selected={i === 0 ? "true" : "false"}>
+          <span class="pr-day-name">{t.days[d.day]}</span>
+          <span class="pr-day-date">{d.date}</span>
+        </button>
+      ))}
+    </div>
+    <div class="pr-filters" role="group" aria-label={t.filtersAria}>
+      {FILTER_KEYS.map((k, i) => (
+        <button class={"pr-chip" + (i === 0 ? " active" : "")} data-filter={k}>{t.filters[k]}</button>
+      ))}
+    </div>
+    <label class="pr-search">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="search" id="pr-q" placeholder={t.search} autocomplete="off" aria-label={t.searchAria} />
+    </label>
+  </div>
+</div>
+
+<section class="pr-body">
+  <div class="container">
+    {days.map((d, di) => (
+      <div class={"pr-day" + (di === 0 ? " active" : "")} data-day-panel={di}>
+        {d.slots.map((slot) => (
+          <div class="pr-slot">
+            <div class="pr-time"><span>{slot.t}</span></div>
+            <div class="pr-sessions">
+              {slot.items.map((s) => (
+                <article
+                  class={"pr-card rc-" + s.r + " k-" + s.k + (s.r === "full" ? " pr-band" : "")}
+                  data-kind={s.k}
+                  data-text={((s.n || "") + " " + (s.p || "")).toLowerCase()}
+                >
+                  {s.r !== "full" && <span class={"pr-room pr-r-" + s.r}>{t.rooms[s.r]}</span>}
+                  <div class="pr-card-in">
+                    <div class="pr-meta">
+                      <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>
+                      {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
+                    </div>
+                    <h3 class="pr-title">{title(s)}</h3>
+                    {s.p && <p class="pr-teacher">{s.p}</p>}
+                    {s.r !== "full" && (
+                      <div class="pr-card-detail">
+                        <p class="pr-det-desc">{describe(s)}</p>
+                        <p class="pr-det-loc"><span class={"pr-dot pr-r-" + s.r}></span>{t.roomFull[s.r]} · {t.roomLoc[s.r]}</p>
+                      </div>
+                    )}
+                  </div>
+                  {s.r !== "full" && <span class="pr-card-more" aria-hidden="true">+</span>}
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+        <p class="pr-empty" hidden>{t.empty} <button type="button" class="pr-reset">{t.reset}</button></p>
+      </div>
+    ))}
+    <p class="pr-note">{t.note}</p>
+  </div>
+</section>
+
+<script>
+  const dayBtns = [...document.querySelectorAll(".pr-day-btn")];
+  const panels = [...document.querySelectorAll("[data-day-panel]")];
+  const chips = [...document.querySelectorAll(".pr-chip")];
+  const q = document.getElementById("pr-q");
+  let day = 0, filter = "all", query = "";
+
+  const apply = () => {
+    panels.forEach((panel, i) => {
+      panel.classList.toggle("active", i === day);
+      if (i !== day) return;
+      let visible = 0;
+      panel.querySelectorAll(".pr-slot").forEach((slot) => {
+        let shown = 0;
+        slot.querySelectorAll(".pr-card").forEach((card) => {
+          const okKind = filter === "all" || card.dataset.kind === filter
+            || (filter === "social" && (card.dataset.kind === "social" || card.dataset.kind === "meal"));
+          const okText = !query || (card.dataset.text || "").includes(query);
+          const ok = okKind && okText;
+          card.hidden = !ok;
+          if (ok) shown++;
+        });
+        slot.hidden = shown === 0;
+        visible += shown;
+      });
+      const empty = panel.querySelector(".pr-empty");
+      if (empty) empty.hidden = visible !== 0;
+    });
+  };
+
+  const controlsEl = document.querySelector(".pr-controls");
+  dayBtns.forEach((b) => b.addEventListener("click", () => {
+    day = +b.dataset.day;
+    dayBtns.forEach((x) => { const on = x === b; x.classList.toggle("active", on); x.setAttribute("aria-selected", on); });
+    apply();
+    const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 88;
+    const panel = panels[day];
+    const firstSlot = [...panel.querySelectorAll(".pr-slot")].find((s) => !s.hidden) || panel;
+    const slotDocTop = firstSlot.getBoundingClientRect().top + window.scrollY;
+    const target = Math.max(0, Math.round(slotDocTop - headerH - controlsEl.offsetHeight - 8));
+    if (Math.abs(window.scrollY - target) > 4) window.scrollTo({ top: target, behavior: "smooth" });
+  }));
+  chips.forEach((c) => c.addEventListener("click", () => {
+    filter = c.dataset.filter;
+    chips.forEach((x) => x.classList.toggle("active", x === c));
+    apply();
+  }));
+  q.addEventListener("input", () => { query = q.value.trim().toLowerCase(); apply(); });
+
+  // Salones: click en un salón -> bocadillo con su ubicación
+  const roomItems = [...document.querySelectorAll(".pr-room-item")];
+  const closeRoomPops = (except) => roomItems.forEach((it) => {
+    if (it === except) return;
+    it.querySelector(".pr-room-pop").hidden = true;
+    it.querySelector(".pr-room-chip").setAttribute("aria-expanded", "false");
+  });
+  roomItems.forEach((it) => {
+    const chip = it.querySelector(".pr-room-chip");
+    const pop = it.querySelector(".pr-room-pop");
+    chip.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const willOpen = pop.hidden;
+      closeRoomPops(it);
+      pop.hidden = !willOpen;
+      chip.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    });
+  });
+  document.addEventListener("click", () => closeRoomPops(null));
+
+  // Click en una tarjeta -> crece y muestra el texto explicativo
+  document.querySelector(".pr-body").addEventListener("click", (e) => {
+    const card = e.target.closest(".pr-card:not(.pr-band)");
+    if (card) card.classList.toggle("expanded");
+  });
+  document.querySelectorAll(".pr-reset").forEach((r) => r.addEventListener("click", () => {
+    filter = "all"; query = ""; q.value = "";
+    chips.forEach((x) => x.classList.toggle("active", x.dataset.filter === "all"));
+    apply();
+  }));
+  apply();
+</script>
+
+<style>
+  .pr-hero { padding: clamp(40px, 6vw, 72px) 0 clamp(20px, 3vw, 32px); text-align: center; }
+  .pr-hero .script-title { margin: 0 0 14px; }
+  .pr-sub { max-width: 640px; margin: 0 auto; color: #6a6a74; font-size: 16px; line-height: 1.6; }
+
+  .pr-controls {
+    position: sticky; top: var(--header-h, 88px); z-index: 500;
+    background: rgba(255, 255, 255, 0.86);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-bottom: 1px solid #ece8e1;
+    padding: 12px 0;
+  }
+  .pr-days, .pr-filters { display: flex; overflow-x: auto; scrollbar-width: none; margin: 0 -24px; padding: 6px 24px; }
+  .pr-days::-webkit-scrollbar, .pr-filters::-webkit-scrollbar { display: none; }
+  .pr-days { gap: 8px; }
+  .pr-day-btn {
+    flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1px;
+    padding: 8px 18px; border-radius: 14px; cursor: pointer;
+    border: 1.5px solid #e6e3dd; background: #fff; color: #14121a;
+    font-family: var(--font-body); transition: all .18s ease; line-height: 1.1;
+  }
+  .pr-day-btn .pr-day-name { font-weight: 700; font-size: 15px; }
+  .pr-day-btn .pr-day-date { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: .6; }
+  .pr-day-btn.active { background: #14121a; border-color: #14121a; color: #fff; }
+  .pr-day-btn.active .pr-day-date { opacity: .7; }
+
+  .pr-filters { gap: 6px; margin-top: 4px; }
+  .pr-chip {
+    flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid #e6e3dd; background: #fff; color: #14121a;
+    font-family: var(--font-body); font-weight: 600; font-size: 13.5px; transition: all .18s ease; white-space: nowrap;
+  }
+  .pr-chip:hover { border-color: var(--gold); }
+  .pr-chip.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .pr-search {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 10px;
+    width: 100%; max-width: 440px;
+    padding: 8px 14px; border-radius: 999px; border: 1.5px solid #e6e3dd; background: #fff; color: #9a9aa2;
+  }
+  .pr-search input { border: 0; outline: 0; background: transparent; font-family: var(--font-body); font-size: 16px; color: #14121a; width: 100%; }
+  .pr-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+
+  .pr-rooms { padding: 6px 0 10px; }
+  .pr-rooms-label { font-size: 12px; color: #9a9aa2; margin: 0 0 9px; font-weight: 600; letter-spacing: .01em; text-align: center; }
+  .pr-rooms-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .pr-room-item { position: relative; }
+  .pr-room-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 15px 7px 12px; border-radius: 999px; cursor: pointer;
+    border: 1.75px solid #e6e3dd; background: #fff; color: #14121a;
+    font-family: var(--font-body); font-weight: 600; font-size: 13.5px;
+    transition: box-shadow .15s ease;
+  }
+  .pr-room-chip:hover { box-shadow: 0 4px 14px rgba(20, 18, 26, .08); }
+  .pr-room-chip[aria-expanded="true"] { box-shadow: 0 6px 18px rgba(20, 18, 26, .14); }
+  .pr-room-pop {
+    position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); z-index: 30;
+    width: 260px; max-width: 78vw;
+    background: #14121a; color: #fff; border-radius: 13px; padding: 12px 15px;
+    box-shadow: 0 16px 38px rgba(20, 18, 26, .3);
+    font-size: 13px; line-height: 1.45; text-align: left;
+  }
+  .pr-room-pop[hidden] { display: none; }
+  .pr-room-pop strong { display: block; margin-bottom: 3px; font-size: 13.5px; }
+  .pr-room-pop span { color: rgba(255, 255, 255, .82); }
+  .pr-room-pop::before {
+    content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 7px solid transparent; border-top-color: #14121a;
+  }
+
+  .pr-r-gs { background: #cc9933; }
+  .pr-r-pb { background: #2a9d8f; }
+  .pr-r-s1 { background: #5b6ee1; }
+  .pr-r-s2 { background: #e05a8c; }
+  .pr-r-full { background: #b8b3a8; }
+
+  .pr-body { padding: clamp(24px, 4vw, 44px) 0 64px; }
+  .pr-day { display: none; }
+  .pr-day.active { display: block; }
+  .pr-slot { display: grid; grid-template-columns: 108px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid #efece6; }
+  .pr-slot:first-child { border-top: 0; }
+  .pr-time { position: sticky; top: calc(var(--header-h, 88px) + 132px); align-self: start; }
+  .pr-time span { font-weight: 800; font-size: 19px; color: #14121a; letter-spacing: -.02em; line-height: 1.2; display: block; }
+  .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+
+  .pr-card {
+    position: relative; overflow: hidden;
+    border-radius: 16px; border: 2px solid #ece8e1; background: #fff;
+    box-shadow: 0 4px 16px rgba(20, 18, 26, .04);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .pr-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(20, 18, 26, .09); }
+  .rc-gs { border-color: #cc9933; }
+  .rc-pb { border-color: #2a9d8f; }
+  .rc-s1 { border-color: #5b6ee1; }
+  .rc-s2 { border-color: #e05a8c; }
+  .rc-full { border-color: #e8e2d6; }
+  .pr-card-in { padding: 13px 15px; min-width: 0; }
+  .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; padding-right: 96px; min-height: 22px; }
+  .pr-room {
+    position: absolute; top: 0; right: 0; z-index: 2;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #fff;
+    padding: 4px 11px 5px; border-radius: 0 15px 0 12px;
+    box-shadow: -2px 3px 9px rgba(20, 18, 26, .14);
+  }
+  .pr-kind { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; background: #f0ede7; color: #6a6a74; }
+  .kb-master { background: #fbeecb; color: #a2711a; }
+  .kb-comp { background: #14121a; color: #fff; }
+  .kb-social { background: #efe6fb; color: #7a4bcc; }
+  .pr-level { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+  .lv-Abierto { color: #2e9b63; border-color: #b8e6cd; background: #eafaf1; }
+  .lv-MedioBajo { color: #2a9d8f; border-color: #b7e3dd; background: #e9f7f5; }
+  .lv-Medio { color: #3f6fd0; border-color: #c4d4f2; background: #edf2fc; }
+  .lv-MedioAlto { color: #c9781b; border-color: #f0d8ad; background: #fdf3e2; }
+  .lv-MedioAvanzado { color: #cc5a1e; border-color: #f2ccb0; background: #fdeee4; }
+  .lv-Avanzado { color: #cc3d38; border-color: #f2c1bf; background: #fdeceb; }
+  .pr-title { font-size: 15px; font-weight: 700; letter-spacing: -.01em; line-height: 1.28; margin: 0; color: #14121a; }
+  .pr-teacher { margin: 5px 0 0; font-size: 13px; color: #6a6a74; line-height: 1.4; padding-right: 26px; }
+
+  .pr-card:not(.pr-band) { cursor: pointer; }
+  .pr-card, .pr-day-btn, .pr-chip, .pr-room-chip { touch-action: manipulation; }
+  .pr-card-detail {
+    max-height: 0; overflow: hidden; opacity: 0; margin-top: 0;
+    transition: max-height .32s ease, opacity .25s ease, margin-top .3s ease;
+  }
+  .pr-card.expanded { box-shadow: 0 14px 32px rgba(20, 18, 26, .12); }
+  .pr-card.expanded .pr-card-detail { max-height: 280px; opacity: 1; margin-top: 11px; }
+  .pr-det-desc { margin: 0 0 8px; font-size: 13.5px; line-height: 1.5; color: #4a4a52; }
+  .pr-det-loc { margin: 0; font-size: 12.5px; font-weight: 600; color: #6a6a74; display: flex; align-items: center; gap: 7px; }
+  .pr-card-more {
+    position: absolute; right: 11px; bottom: 10px;
+    width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; background: #f1ede6; color: #8a8578; font-size: 17px; line-height: 1;
+    transition: transform .28s ease, background .2s, color .2s;
+  }
+  .pr-card.expanded .pr-card-more { transform: rotate(45deg); background: var(--gold); color: #fff; }
+
+  .k-comp .pr-title { color: #14121a; }
+  .pr-band { grid-column: 1 / -1; background: #faf7f1; box-shadow: none; }
+  .pr-band .pr-card-in { padding: 9px 15px; }
+  .pr-band .pr-title { font-size: 13px; font-weight: 700; color: #8a8578; text-transform: uppercase; letter-spacing: .03em; }
+  .pr-band .pr-meta { margin-bottom: 4px; }
+
+  .pr-empty { text-align: center; color: #6a6a74; padding: 40px 0; }
+  .pr-reset { border: 0; background: none; color: var(--gold-dark); font-weight: 700; cursor: pointer; text-decoration: underline; font-family: var(--font-body); font-size: inherit; }
+  .pr-note { margin-top: 32px; font-size: 12px; color: #9a9aa2; line-height: 1.5; max-width: 720px; }
+
+  @media (max-width: 640px) {
+    .pr-slot { grid-template-columns: 1fr; gap: 8px; padding: 12px 0; }
+    .pr-time { position: static; margin-bottom: 2px; }
+    .pr-time span { color: var(--gold-dark); }
+    .pr-sessions { grid-template-columns: 1fr; }
+    .pr-search { max-width: none; }
+  }
+</style>
