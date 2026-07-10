@@ -1,6 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
-import { PROGRAMA, ROOMS } from "@/data/programa.js";
+import { PROGRAMA, ROOMS, ROOM_LIST } from "@/data/programa.js";
 
 // Agrupa las sesiones de cada día por franja horaria (respetando el orden del PDF)
 const days = PROGRAMA.map((d) => {
@@ -35,6 +35,26 @@ const FILTERS = [
     </div>
   </section>
 
+  <!-- Salones (antes de los días, NO sticky). Click = bocadillo con la ubicación -->
+  <section class="pr-rooms">
+    <div class="container">
+      <p class="pr-rooms-label">Salones · toca uno para ver dónde está</p>
+      <div class="pr-rooms-list">
+        {ROOM_LIST.map((r) => (
+          <div class="pr-room-item">
+            <button class={"pr-room-chip rc-" + r.key} data-room={r.key} type="button" aria-expanded="false">
+              <span class={"pr-dot pr-r-" + r.key}></span>{r.name}
+            </button>
+            <div class="pr-room-pop" role="tooltip" hidden>
+              <strong>{r.name}</strong>
+              <span>{r.loc}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <!-- Controles sticky: días + filtros + buscador -->
   <div class="pr-controls">
     <div class="container">
@@ -55,12 +75,6 @@ const FILTERS = [
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         <input type="search" id="pr-q" placeholder="Buscar taller o profe…" autocomplete="off" aria-label="Buscar" />
       </label>
-      <div class="pr-legend" aria-hidden="true">
-        <span class="pr-dot pr-r-gs"></span>Gran Salón
-        <span class="pr-dot pr-r-pb"></span>Piano Bar
-        <span class="pr-dot pr-r-s1"></span>Sala 1
-        <span class="pr-dot pr-r-s2"></span>Sala 2
-      </div>
     </div>
   </div>
 
@@ -149,6 +163,26 @@ const FILTERS = [
       apply();
     }));
     q.addEventListener("input", () => { query = q.value.trim().toLowerCase(); apply(); });
+
+    // Salones: click en un salón -> bocadillo con su ubicación
+    const roomItems = [...document.querySelectorAll(".pr-room-item")];
+    const closeRoomPops = (except) => roomItems.forEach((it) => {
+      if (it === except) return;
+      it.querySelector(".pr-room-pop").hidden = true;
+      it.querySelector(".pr-room-chip").setAttribute("aria-expanded", "false");
+    });
+    roomItems.forEach((it) => {
+      const chip = it.querySelector(".pr-room-chip");
+      const pop = it.querySelector(".pr-room-pop");
+      chip.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const willOpen = pop.hidden;
+        closeRoomPops(it);
+        pop.hidden = !willOpen;
+        chip.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      });
+    });
+    document.addEventListener("click", () => closeRoomPops(null));
     document.querySelectorAll(".pr-reset").forEach((r) => r.addEventListener("click", () => {
       filter = "all"; query = ""; q.value = "";
       chips.forEach((x) => x.classList.toggle("active", x.dataset.filter === "all"));
@@ -201,8 +235,36 @@ const FILTERS = [
   }
   /* font-size 16px: evita el zoom automático de iOS al enfocar el input */
   .pr-search input { border: 0; outline: 0; background: transparent; font-family: var(--font-body); font-size: 16px; color: #14121a; width: 100%; }
-  .pr-legend { display: flex; align-items: center; gap: 6px 16px; margin-top: 12px; font-size: 12px; color: #6a6a74; flex-wrap: wrap; }
-  .pr-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: -8px; }
+  .pr-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+
+  /* Salones (antes de los días, NO sticky) con bocadillo de info al hacer click */
+  .pr-rooms { padding: 6px 0 10px; }
+  .pr-rooms-label { font-size: 12px; color: #9a9aa2; margin: 0 0 9px; font-weight: 600; letter-spacing: .01em; }
+  .pr-rooms-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pr-room-item { position: relative; }
+  .pr-room-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 15px 7px 12px; border-radius: 999px; cursor: pointer;
+    border: 1.75px solid #e6e3dd; background: #fff; color: #14121a;
+    font-family: var(--font-body); font-weight: 600; font-size: 13.5px;
+    transition: box-shadow .15s ease;
+  }
+  .pr-room-chip:hover { box-shadow: 0 4px 14px rgba(20, 18, 26, .08); }
+  .pr-room-chip[aria-expanded="true"] { box-shadow: 0 6px 18px rgba(20, 18, 26, .14); }
+  .pr-room-pop {
+    position: absolute; top: calc(100% + 10px); left: 0; z-index: 30;
+    width: 260px; max-width: 78vw;
+    background: #14121a; color: #fff; border-radius: 13px; padding: 12px 15px;
+    box-shadow: 0 16px 38px rgba(20, 18, 26, .3);
+    font-size: 13px; line-height: 1.45;
+  }
+  .pr-room-pop[hidden] { display: none; }
+  .pr-room-pop strong { display: block; margin-bottom: 3px; font-size: 13.5px; }
+  .pr-room-pop span { color: rgba(255, 255, 255, .82); }
+  .pr-room-pop::before {
+    content: ""; position: absolute; bottom: 100%; left: 22px;
+    border: 7px solid transparent; border-bottom-color: #14121a;
+  }
 
   /* Colores de sala */
   .pr-r-gs { background: #cc9933; }
@@ -215,10 +277,10 @@ const FILTERS = [
   .pr-body { padding: clamp(24px, 4vw, 44px) 0 64px; }
   .pr-day { display: none; }
   .pr-day.active { display: block; }
-  .pr-slot { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid #efece6; }
+  .pr-slot { display: grid; grid-template-columns: 108px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid #efece6; }
   .pr-slot:first-child { border-top: 0; }
   .pr-time { position: sticky; top: calc(var(--header-h, 88px) + 132px); align-self: start; }
-  .pr-time span { font-weight: 800; font-size: 14px; color: #14121a; letter-spacing: -.01em; line-height: 1.3; display: block; }
+  .pr-time span { font-weight: 800; font-size: 19px; color: #14121a; letter-spacing: -.02em; line-height: 1.2; display: block; }
   .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
 
   .pr-card {

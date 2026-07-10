@@ -10,6 +10,14 @@ export const ROOMS = {
   full: "General",
 };
 
+// Salones con su info/ubicación (edita el texto `loc` con la ubicación real dentro del hotel)
+export const ROOM_LIST = [
+  { key: "gs", name: "Gran Salón del Mundial", loc: "Salón principal: escenario de shows, finales del Mundial y baile social hasta el amanecer." },
+  { key: "pb", name: "Piano Bar", loc: "Talleres y masterclasses. Junto a la Terraza Infinity, sede de las pre-parties VIP." },
+  { key: "s1", name: "Sala 1", loc: "Sala de talleres y clases en paralelo." },
+  { key: "s2", name: "Sala 2", loc: "Sala de talleres y clases en paralelo." },
+];
+
 export const PROGRAMA = [
   {
     day: "Jueves", date: "23 OCT", short: "Jue 23",
