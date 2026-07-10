@@ -191,7 +191,8 @@ const FILTERS = [
     width: 100%; max-width: 440px;
     padding: 8px 14px; border-radius: 999px; border: 1.5px solid #e6e3dd; background: #fff; color: #9a9aa2;
   }
-  .pr-search input { border: 0; outline: 0; background: transparent; font-family: var(--font-body); font-size: 14px; color: #14121a; width: 100%; }
+  /* font-size 16px: evita el zoom automático de iOS al enfocar el input */
+  .pr-search input { border: 0; outline: 0; background: transparent; font-family: var(--font-body); font-size: 16px; color: #14121a; width: 100%; }
   .pr-legend { display: flex; align-items: center; gap: 6px 16px; margin-top: 12px; font-size: 12px; color: #6a6a74; flex-wrap: wrap; }
   .pr-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: -8px; }
 
