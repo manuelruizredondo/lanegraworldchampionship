@@ -16,6 +16,8 @@ const days = PROGRAMA.map((d) => {
 });
 
 const FILTER_KEYS = ["all", "fav", "taller", "master", "comp", "social"];
+// Estilo del taller según el título: Bachata (RD) o Salsa (por defecto)
+const isBachata = (s) => /bachata|dominican|bacano/i.test(s.n || "");
 const title = (s) => (s.r === "full" ? (t.band[s.n] || s.n) : s.n);
 const describe = (s) => {
   if (s.k === "taller") return s.l ? t.levelInfo[s.l] : t.desc.taller;
@@ -101,7 +103,9 @@ const describe = (s) => {
                   {s.r !== "full" && <span class={"pr-room pr-r-" + s.r}>{t.rooms[s.r]}</span>}
                   <div class="pr-card-in">
                     <div class="pr-meta">
-                      <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>
+                      {s.k === "taller"
+                        ? <span class={"pr-kind pr-st-" + (isBachata(s) ? "b" : "s")}>{isBachata(s) ? "Bachata" : "Salsa"}</span>
+                        : <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>}
                       {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
                     </div>
                     <h3 class="pr-title">{title(s)}</h3>
@@ -451,6 +455,15 @@ const describe = (s) => {
   .kb-master { background: #fbeecb; color: #a2711a; }
   .kb-comp { background: #14121a; color: #fff; }
   .kb-social { background: #efe6fb; color: #7a4bcc; }
+  /* Talleres por estilo: Bachata (bandera de RD) · Salsa (fondo amarillo) */
+  .pr-st-b {
+    color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .55); border: 1px solid rgba(255, 255, 255, .55);
+    background-image:
+      linear-gradient(rgba(0, 0, 0, .16), rgba(0, 0, 0, .16)),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40' preserveAspectRatio='none'%3E%3Crect width='60' height='40' fill='%23ffffff'/%3E%3Crect width='26' height='16' fill='%23002d62'/%3E%3Crect x='34' width='26' height='16' fill='%23ce1126'/%3E%3Crect y='24' width='26' height='16' fill='%23ce1126'/%3E%3Crect x='34' y='24' width='26' height='16' fill='%23002d62'/%3E%3C/svg%3E");
+    background-size: cover; background-position: center;
+  }
+  .pr-st-s { background: #ffd21e; color: #5a4200; }
   .pr-level { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
   .lv-Abierto { color: #2e9b63; border-color: #b8e6cd; background: #eafaf1; }
   .lv-MedioBajo { color: #2a9d8f; border-color: #b7e3dd; background: #e9f7f5; }
