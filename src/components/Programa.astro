@@ -82,7 +82,7 @@ const describe = (s) => {
   <div class="container">
     <p class="pr-fav-empty" hidden>{t.favEmpty}</p>
     {days.map((d, di) => (
-      <div class={"pr-day" + (di === 0 ? " is-active" : "")} id={`pr-day-${di}`} data-day-panel={di}>
+      <div class="pr-day" id={`pr-day-${di}`} data-day-panel={di}>
         <h2 class="pr-day-head"><span class="pr-day-head-name">{t.days[d.day]}</span><span class="pr-day-head-date">{d.date}</span></h2>
         <div class="pr-timeline">
         {d.slots.map((slot) => { const tm = slot.t.split(/\s*[–—-]\s*/); return (
@@ -205,17 +205,24 @@ const describe = (s) => {
     if (favEmptyEl) favEmptyEl.hidden = !(favMode && favs.size === 0);
   };
 
-  // Vista de un día a la vez: la pestaña de día muestra ese día y oculta los demás.
-  const setActiveDay = (i) => {
-    panels.forEach((p, idx) => p.classList.toggle("is-active", idx === i));
-    dayBtns.forEach((b, idx) => { const on = idx === i; b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+  // Todos los días apilados. Click en una pestaña -> scroll suave a ese día.
+  const scrollToDay = (i) => {
+    const target = Math.max(0, Math.round(panels[i].getBoundingClientRect().top + window.scrollY - headerH() - controlsEl.offsetHeight - 6));
+    window.scrollTo({ top: target, behavior: "smooth" });
   };
-  dayBtns.forEach((b) => b.addEventListener("click", () => {
-    setActiveDay(+b.dataset.day);
-    // Si el usuario ya bajó por el día, al cambiar de día lo llevamos al inicio de la programación
-    const top = Math.round(controlsEl.getBoundingClientRect().top + window.scrollY - headerH() - 8);
-    if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
-  }));
+  dayBtns.forEach((b) => b.addEventListener("click", () => scrollToDay(+b.dataset.day)));
+
+  // Scroll-spy: al hacer scroll, resalta el día que se está viendo
+  let spyTick = false;
+  const spy = () => {
+    spyTick = false;
+    const y = window.scrollY + headerH() + controlsEl.offsetHeight + 24;
+    let active = 0;
+    panels.forEach((p, i) => { if (p.getBoundingClientRect().top + window.scrollY <= y) active = i; });
+    dayBtns.forEach((b, i) => { const on = i === active; b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+  };
+  window.addEventListener("scroll", () => { if (!spyTick) { spyTick = true; requestAnimationFrame(spy); } }, { passive: true });
+  window.addEventListener("resize", spy);
   chips.forEach((c) => c.addEventListener("click", () => {
     filter = c.dataset.filter;
     chips.forEach((x) => x.classList.toggle("active", x === c));
@@ -334,21 +341,20 @@ const describe = (s) => {
   .pr-r-full { background: #b8b3a8; }
 
   .pr-body { padding: clamp(20px, 3vw, 32px) 0 64px; }
-  /* Vista de un día a la vez (se cambia con las pestañas de día) */
-  .pr-day { display: none; }
-  .pr-day.is-active { display: block; }
+  /* Todos los días apilados; al hacer scroll cambia el día activo (scroll-spy) */
+  .pr-day { display: block; scroll-margin-top: calc(var(--header-h, 88px) + var(--controls-h, 140px) + 8px); }
   /* La cabecera del día es una pestaña que cuelga de la barra: pegada arriba,
      esquinas redondeadas solo abajo y del ancho justo de la palabra. */
   .pr-day-head {
     position: sticky; top: calc(var(--header-h, 88px) + var(--controls-h, 140px)); z-index: 350;
     display: inline-flex; align-items: baseline; gap: 8px; width: fit-content;
     margin: 0 0 16px -20px; padding: 7px 16px 8px;
-    background: #14121a; color: #fff;
+    background: #fff; color: #14121a; border: 1.5px solid #ece8e1; border-top: 0;
     border-radius: 0 0 14px 14px;
-    box-shadow: 0 7px 18px rgba(20, 18, 26, .16);
+    box-shadow: 0 8px 18px rgba(20, 18, 26, .10);
   }
-  .pr-day-head-name { font-weight: 800; font-size: 16px; letter-spacing: -.01em; color: #fff; line-height: 1; }
-  .pr-day-head-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gold); }
+  .pr-day-head-name { font-weight: 800; font-size: 16px; letter-spacing: -.01em; color: #14121a; line-height: 1; }
+  .pr-day-head-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gold-dark); }
 
   /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin.
      Se saca 20px a la izquierda para que la hora quede a 4px del borde (padding
