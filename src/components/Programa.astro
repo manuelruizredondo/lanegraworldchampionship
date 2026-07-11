@@ -109,7 +109,7 @@ const describe = (s) => {
                     {s.r !== "full" && (
                       <div class="pr-card-detail">
                         <p class="pr-det-desc">{describe(s)}</p>
-                        <p class="pr-det-loc"><span class={"pr-dot pr-r-" + s.r}></span>{t.roomFull[s.r]} · {t.roomLoc[s.r]}</p>
+                        <p class="pr-det-loc"><span class={"pr-rname pr-rt-" + s.r}>{t.roomFull[s.r]}</span> · {t.roomLoc[s.r]}</p>
                       </div>
                     )}
                   </div>
@@ -470,7 +470,12 @@ const describe = (s) => {
   .pr-card.expanded { box-shadow: 0 14px 32px rgba(20, 18, 26, .12); }
   .pr-card.expanded .pr-card-detail { max-height: 280px; opacity: 1; margin-top: 11px; }
   .pr-det-desc { margin: 0 0 8px; font-size: 13.5px; line-height: 1.5; color: #4a4a52; }
-  .pr-det-loc { margin: 0; font-size: 12.5px; font-weight: 600; color: #6a6a74; display: flex; align-items: center; gap: 7px; }
+  .pr-det-loc { margin: 0; font-size: 12.5px; font-weight: 600; color: #6a6a74; }
+  .pr-det-loc .pr-rname { font-weight: 800; }
+  .pr-rt-gs { color: #a9781f; }
+  .pr-rt-pb { color: #1f8074; }
+  .pr-rt-s1 { color: #4a59c4; }
+  .pr-rt-s2 { color: #cc4c7d; }
   .pr-card-more {
     position: absolute; right: 11px; bottom: 10px;
     width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
@@ -526,6 +531,7 @@ const describe = (s) => {
   .k-comp .pr-fav.is-fav { color: #d0324c; }
   .k-comp .pr-det-desc { color: #3f3410; }
   .k-comp .pr-det-loc { color: #6a561f; }
+  .k-comp .pr-det-loc .pr-rname { color: #241d08; }
 
   .pr-band { grid-column: 1 / -1; background: #faf7f1; box-shadow: none; }
   .pr-band .pr-card-in { padding: 9px 15px; }
