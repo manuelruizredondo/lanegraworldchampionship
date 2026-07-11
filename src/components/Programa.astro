@@ -96,15 +96,17 @@ const describe = (s) => {
             <div class="pr-sessions">
               {slot.items.map((s) => (
                 <article
-                  class={"pr-card rc-" + s.r + " k-" + s.k + (s.r === "full" ? " pr-band" : "")}
+                  class={"pr-card rc-" + s.r + " k-" + s.k + (s.r === "full" ? " pr-band" : "") + (s.k === "taller" ? (isBachata(s) ? " sp-b" : " sp-s") : "")}
                   data-kind={s.k}
                   data-text={((s.n || "") + " " + (s.p || "")).toLowerCase()}
                 >
-                  {s.r !== "full" && <span class={"pr-room pr-r-" + s.r}>{t.rooms[s.r]}</span>}
+                  {s.r !== "full" && (s.k === "taller"
+                    ? <span class={"pr-room pr-st-" + (isBachata(s) ? "b" : "s")}>{isBachata(s) ? "Bachata" : "Salsa"}</span>
+                    : <span class={"pr-room pr-r-" + s.r}>{t.rooms[s.r]}</span>)}
                   <div class="pr-card-in">
                     <div class="pr-meta">
                       {s.k === "taller"
-                        ? <span class={"pr-kind pr-st-" + (isBachata(s) ? "b" : "s")}>{isBachata(s) ? "Bachata" : "Salsa"}</span>
+                        ? <span class="pr-roomtag"><span class={"pr-dot pr-r-" + s.r}></span>{t.rooms[s.r]}</span>
                         : <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>}
                       {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
                     </div>
@@ -443,6 +445,16 @@ const describe = (s) => {
   .rc-s1 { border-color: #5b6ee1; }
   .rc-s2 { border-color: #e05a8c; }
   .rc-full { border-color: #e8e2d6; }
+  /* Borde de la card por especialidad (talleres), no por sala */
+  .sp-b { border-color: #ce1126; }
+  .sp-s { border-color: #e0a416; }
+  /* Etiqueta de sala en la fila de meta (dot + nombre) para los talleres */
+  .pr-roomtag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 9px 2px 7px; border-radius: 999px; background: #f2efe9;
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #5a5560;
+  }
+  .pr-roomtag .pr-dot { width: 8px; height: 8px; }
   .pr-card-in { padding: 13px 15px; min-width: 0; }
   .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; padding-right: 96px; min-height: 22px; }
   .pr-room {
@@ -464,6 +476,9 @@ const describe = (s) => {
     background-size: cover; background-position: center;
   }
   .pr-st-s { background: #ffd21e; color: #5a4200; }
+  /* La especialidad va en la esquina (reutiliza .pr-st-*): sin el borde del badge */
+  .pr-room.pr-st-b, .pr-room.pr-st-s { border: 0; }
+  .pr-room.pr-st-s { text-shadow: none; }
   .pr-level { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
   .lv-Abierto { color: #2e9b63; border-color: #b8e6cd; background: #eafaf1; }
   .lv-MedioBajo { color: #2a9d8f; border-color: #b7e3dd; background: #e9f7f5; }
