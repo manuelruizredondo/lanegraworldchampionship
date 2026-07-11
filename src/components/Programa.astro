@@ -297,8 +297,8 @@ const describe = (s) => {
     position: sticky; top: var(--header-h, 88px); z-index: 500;
     background: rgba(255, 255, 255, 0.86);
     -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
-    border-bottom: 1px solid #ece8e1;
-    padding: 12px 0;
+    border-bottom: 0;
+    padding: 12px 0 0;
   }
   .pr-filters { display: flex; overflow-x: auto; scrollbar-width: none; margin: 8px -24px 0; padding: 6px 24px; gap: 6px; }
   .pr-filters::-webkit-scrollbar { display: none; }
@@ -373,7 +373,7 @@ const describe = (s) => {
   .pr-r-s2 { background: #e05a8c; }
   .pr-r-full { background: #b8b3a8; }
 
-  .pr-body { padding: clamp(20px, 3vw, 32px) 0 64px; }
+  .pr-body { padding: 12px 0 64px; }
   /* Todos los días apilados; al hacer scroll cambia el día activo (scroll-spy) */
   .pr-day { display: block; scroll-margin-top: calc(var(--header-h, 88px) + var(--controls-h, 140px) + 8px); }
   /* Cabecera de día: título normal (no sticky) que separa cada día en la lista */
