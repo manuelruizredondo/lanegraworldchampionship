@@ -51,17 +51,9 @@ const describe = (s) => {
   </div>
 </section>
 
-<!-- Controles sticky: días + filtros + buscador -->
+<!-- Controles sticky: filtros + buscador, y abajo los días como tabs con barra deslizante -->
 <div class="pr-controls">
   <div class="container">
-    <div class="pr-days" role="tablist" aria-label={t.daysAria}>
-      {days.map((d, i) => (
-        <button class={"pr-day-btn" + (i === 0 ? " active" : "")} data-day={i} role="tab" aria-selected={i === 0 ? "true" : "false"}>
-          <span class="pr-day-name">{t.days[d.day]}</span>
-          <span class="pr-day-date">{d.date}</span>
-        </button>
-      ))}
-    </div>
     <div class="pr-filters" role="group" aria-label={t.filtersAria}>
       {FILTER_KEYS.map((k, i) => (
         <button class={"pr-chip" + (k === "fav" ? " pr-chip-fav" : "") + (i === 0 ? " active" : "")} data-filter={k}>
@@ -75,6 +67,15 @@ const describe = (s) => {
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="search" id="pr-q" placeholder={t.search} autocomplete="off" aria-label={t.searchAria} />
     </label>
+    <div class="pr-days" role="tablist" aria-label={t.daysAria}>
+      {days.map((d, i) => (
+        <button class={"pr-day-btn" + (i === 0 ? " active" : "")} data-day={i} role="tab" aria-selected={i === 0 ? "true" : "false"}>
+          <span class="pr-day-name">{t.days[d.day]}</span>
+          <span class="pr-day-date">{d.date}</span>
+        </button>
+      ))}
+      <span class="pr-days-ink" aria-hidden="true"></span>
+    </div>
   </div>
 </div>
 
@@ -205,24 +206,47 @@ const describe = (s) => {
     if (favEmptyEl) favEmptyEl.hidden = !(favMode && favs.size === 0);
   };
 
+  // Barra deslizante (ink) bajo la pestaña del día activo
+  const daysEl = document.querySelector(".pr-days");
+  const ink = document.querySelector(".pr-days-ink");
+  const moveInk = (i) => {
+    const btn = dayBtns[i];
+    if (!btn || !ink) return;
+    ink.style.width = btn.offsetWidth + "px";
+    ink.style.transform = "translateX(" + btn.offsetLeft + "px)";
+  };
+
   // Todos los días apilados. Click en una pestaña -> scroll suave a ese día.
   const scrollToDay = (i) => {
     const target = Math.max(0, Math.round(panels[i].getBoundingClientRect().top + window.scrollY - headerH() - controlsEl.offsetHeight - 6));
     window.scrollTo({ top: target, behavior: "smooth" });
   };
-  dayBtns.forEach((b) => b.addEventListener("click", () => scrollToDay(+b.dataset.day)));
+  const activateDay = (i) => {
+    lastActive = i;
+    dayBtns.forEach((x, idx) => { const on = idx === i; x.classList.toggle("active", on); x.setAttribute("aria-selected", on ? "true" : "false"); });
+    moveInk(i);
+  };
+  dayBtns.forEach((b) => b.addEventListener("click", () => { const i = +b.dataset.day; activateDay(i); scrollToDay(i); }));
 
-  // Scroll-spy: al hacer scroll, resalta el día que se está viendo
-  let spyTick = false;
+  // Scroll-spy: al hacer scroll, resalta el día que se está viendo y desliza la barra
+  let spyTick = false, lastActive = -1;
   const spy = () => {
     spyTick = false;
     const y = window.scrollY + headerH() + controlsEl.offsetHeight + 24;
     let active = 0;
     panels.forEach((p, i) => { if (p.getBoundingClientRect().top + window.scrollY <= y) active = i; });
-    dayBtns.forEach((b, i) => { const on = i === active; b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+    if (active !== lastActive) {
+      lastActive = active;
+      dayBtns.forEach((b, i) => { const on = i === active; b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+      moveInk(active);
+      // mantén visible la pestaña activa dentro del carrusel de días
+      const btn = dayBtns[active];
+      if (btn && daysEl) daysEl.scrollTo({ left: btn.offsetLeft - 24, behavior: "smooth" });
+    }
   };
   window.addEventListener("scroll", () => { if (!spyTick) { spyTick = true; requestAnimationFrame(spy); } }, { passive: true });
-  window.addEventListener("resize", spy);
+  window.addEventListener("resize", () => { moveInk(Math.max(0, lastActive)); spy(); });
+  window.addEventListener("load", () => moveInk(Math.max(0, lastActive)));
   chips.forEach((c) => c.addEventListener("click", () => {
     filter = c.dataset.filter;
     chips.forEach((x) => x.classList.toggle("active", x === c));
@@ -276,21 +300,30 @@ const describe = (s) => {
     border-bottom: 1px solid #ece8e1;
     padding: 12px 0;
   }
-  .pr-days, .pr-filters { display: flex; overflow-x: auto; scrollbar-width: none; margin: 0 -24px; padding: 6px 24px; }
-  .pr-days::-webkit-scrollbar, .pr-filters::-webkit-scrollbar { display: none; }
-  .pr-days { gap: 8px; }
+  .pr-filters { display: flex; overflow-x: auto; scrollbar-width: none; margin: 0 -24px; padding: 6px 24px; gap: 6px; }
+  .pr-filters::-webkit-scrollbar { display: none; }
+
+  /* Días como tabs con barra inferior deslizante */
+  .pr-days {
+    position: relative; display: flex; overflow-x: auto; scrollbar-width: none;
+    margin: 10px -24px 0; padding: 0 24px; gap: 2px;
+    border-bottom: 1.5px solid #ece8e1;
+  }
+  .pr-days::-webkit-scrollbar { display: none; }
   .pr-day-btn {
     flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1px;
-    padding: 8px 18px; border-radius: 14px; cursor: pointer;
-    border: 1.5px solid #e6e3dd; background: #fff; color: #14121a;
-    font-family: var(--font-body); transition: all .18s ease; line-height: 1.1;
+    padding: 8px 16px 11px; border: 0; background: none; cursor: pointer;
+    color: #9a9aa2; font-family: var(--font-body); transition: color .18s ease; line-height: 1.1;
   }
   .pr-day-btn .pr-day-name { font-weight: 700; font-size: 15px; }
-  .pr-day-btn .pr-day-date { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: .6; }
-  .pr-day-btn.active { background: #14121a; border-color: #14121a; color: #fff; }
-  .pr-day-btn.active .pr-day-date { opacity: .7; }
-
-  .pr-filters { gap: 6px; margin-top: 4px; }
+  .pr-day-btn .pr-day-date { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+  .pr-day-btn.active { color: #14121a; }
+  .pr-days-ink {
+    position: absolute; bottom: 0; left: 0; width: 0; height: 3px;
+    background: var(--gold); border-radius: 3px 3px 0 0; pointer-events: none;
+    transform: translateX(0);
+    transition: transform .32s cubic-bezier(.4, 0, .2, 1), width .32s cubic-bezier(.4, 0, .2, 1);
+  }
   .pr-chip {
     flex: 0 0 auto; padding: 7px 14px; border-radius: 999px; cursor: pointer;
     border: 1.5px solid #e6e3dd; background: #fff; color: #14121a;
@@ -343,17 +376,13 @@ const describe = (s) => {
   .pr-body { padding: clamp(20px, 3vw, 32px) 0 64px; }
   /* Todos los días apilados; al hacer scroll cambia el día activo (scroll-spy) */
   .pr-day { display: block; scroll-margin-top: calc(var(--header-h, 88px) + var(--controls-h, 140px) + 8px); }
-  /* La cabecera del día es una pestaña que cuelga de la barra: pegada arriba,
-     esquinas redondeadas solo abajo y del ancho justo de la palabra. */
+  /* Cabecera de día: título normal (no sticky) que separa cada día en la lista */
   .pr-day-head {
-    position: sticky; top: calc(var(--header-h, 88px) + var(--controls-h, 140px)); z-index: 350;
-    display: inline-flex; align-items: baseline; gap: 8px; width: fit-content;
-    margin: 0 0 16px -20px; padding: 7px 16px 8px;
-    background: #fff; color: #14121a; border: 1.5px solid #ece8e1; border-top: 0;
-    border-radius: 0 0 14px 14px;
-    box-shadow: 0 8px 18px rgba(20, 18, 26, .10);
+    display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
+    margin: 8px 0 16px -20px; padding: 0;
   }
-  .pr-day-head-name { font-weight: 800; font-size: 16px; letter-spacing: -.01em; color: #14121a; line-height: 1; }
+  .pr-day:first-child .pr-day-head { margin-top: 0; }
+  .pr-day-head-name { font-weight: 800; font-size: clamp(19px, 4vw, 26px); letter-spacing: -.02em; color: #14121a; line-height: 1; }
   .pr-day-head-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gold-dark); }
 
   /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin.
