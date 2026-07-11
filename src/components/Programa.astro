@@ -1,6 +1,7 @@
 ---
 import { PROGRAMA, ROOM_LIST, I18N } from "@/data/programa.js";
 import { ARTISTS } from "@/data/artists.js";
+import { BIOS } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
 
 const { lang = "es" } = Astro.props;
@@ -21,8 +22,11 @@ const artistFor = (teacher) => {
 };
 const initials = (n) => (n || "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 // Descripción del artista (generada a partir de estilo + país; sustituible por biografía real)
+// Índice de biografías por nombre normalizado (tolera mayúsculas/acentos)
+const bioIndex = {};
+for (const k in BIOS) { if (BIOS[k]) bioIndex[norm(k)] = BIOS[k]; }
 const bioFor = (a, name) => {
-  if (a && a.bio) return a.bio; // biografía real (rellenar `bio` en artists.js)
+  if (a) { const rb = bioIndex[norm(a.name)]; if (rb) return rb; } // biografía real
   if (a && a.country) {
     const [style, place] = a.country.split("|").map((s) => s.trim());
     const T = {
