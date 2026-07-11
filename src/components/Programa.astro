@@ -15,7 +15,7 @@ const days = PROGRAMA.map((d) => {
   return { ...d, slots };
 });
 
-const FILTER_KEYS = ["all", "taller", "master", "comp", "social"];
+const FILTER_KEYS = ["all", "fav", "taller", "master", "comp", "social"];
 const title = (s) => (s.r === "full" ? (t.band[s.n] || s.n) : s.n);
 const describe = (s) => {
   if (s.k === "taller") return s.l ? t.levelInfo[s.l] : t.desc.taller;
@@ -64,7 +64,11 @@ const describe = (s) => {
     </div>
     <div class="pr-filters" role="group" aria-label={t.filtersAria}>
       {FILTER_KEYS.map((k, i) => (
-        <button class={"pr-chip" + (i === 0 ? " active" : "")} data-filter={k}>{t.filters[k]}</button>
+        <button class={"pr-chip" + (k === "fav" ? " pr-chip-fav" : "") + (i === 0 ? " active" : "")} data-filter={k}>
+          {k === "fav" && <svg class="pr-chip-heart" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.9 1.9 5.5 5 5c2-.3 3.4.8 4.2 2 .8-1.2 2.2-2.3 4.2-2 3.1.5 4.4 3.9 3 6.8C19.5 16.4 12 21 12 21z"/></svg>}
+          <span>{t.filters[k]}</span>
+          {k === "fav" && <span class="pr-fav-count" hidden>0</span>}
+        </button>
       ))}
     </div>
     <label class="pr-search">
@@ -76,6 +80,7 @@ const describe = (s) => {
 
 <section class="pr-body">
   <div class="container">
+    <p class="pr-fav-empty" hidden>{t.favEmpty}</p>
     {days.map((d, di) => (
       <div class="pr-day" id={`pr-day-${di}`} data-day-panel={di}>
         <h2 class="pr-day-head"><span class="pr-day-head-name">{t.days[d.day]}</span><span class="pr-day-head-date">{d.date}</span></h2>
@@ -105,6 +110,11 @@ const describe = (s) => {
                     )}
                   </div>
                   {s.r !== "full" && <span class="pr-card-more" aria-hidden="true">+</span>}
+                  {s.r !== "full" && (
+                    <button class="pr-fav" type="button" aria-pressed="false" aria-label={t.favAria} data-fav={`${di}|${slot.t}|${s.r}|${s.n}`}>
+                      <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.9 1.9 5.5 5 5c2-.3 3.4.8 4.2 2 .8-1.2 2.2-2.3 4.2-2 3.1.5 4.4 3.9 3 6.8C19.5 16.4 12 21 12 21z"/></svg>
+                    </button>
+                  )}
                 </article>
               ))}
             </div>
@@ -125,6 +135,39 @@ const describe = (s) => {
   const q = document.getElementById("pr-q");
   let filter = "all", query = "";
   const controlsEl = document.querySelector(".pr-controls");
+
+  // ── Favoritos (persisten en el navegador con localStorage) ──
+  const FAV_KEY = "lanegra:programa:favs";
+  const loadFavs = () => { try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || "[]")); } catch (e) { return new Set(); } };
+  const favs = loadFavs();
+  const saveFavs = () => { try { localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); } catch (e) {} };
+  const favCountEl = document.querySelector(".pr-fav-count");
+  const favEmptyEl = document.querySelector(".pr-fav-empty");
+  const favBtns = [...document.querySelectorAll(".pr-fav")];
+  const syncFavCount = () => {
+    if (!favCountEl) return;
+    favCountEl.textContent = favs.size;
+    favCountEl.hidden = favs.size === 0;
+  };
+  const markFavs = () => favBtns.forEach((btn) => {
+    const on = favs.has(btn.dataset.fav);
+    btn.classList.toggle("is-fav", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  favBtns.forEach((btn) => btn.addEventListener("click", (e) => {
+    e.stopPropagation(); // no expandir la tarjeta al tocar el corazón
+    const id = btn.dataset.fav;
+    if (favs.has(id)) favs.delete(id); else favs.add(id);
+    saveFavs();
+    const on = favs.has(id);
+    btn.classList.toggle("is-fav", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+    btn.classList.remove("pr-fav-pop"); void btn.offsetWidth; if (on) btn.classList.add("pr-fav-pop");
+    syncFavCount();
+    if (filter === "fav") apply();
+  }));
+  markFavs();
+  syncFavCount();
   const headerH = () => parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 88;
   // Publica la altura de la barra de controles para fijar la cabecera de día justo debajo
   const setControlsH = () => document.documentElement.style.setProperty("--controls-h", controlsEl.offsetHeight + "px");
@@ -132,13 +175,17 @@ const describe = (s) => {
   window.addEventListener("resize", setControlsH);
 
   const apply = () => {
+    const favMode = filter === "fav";
     panels.forEach((panel) => {
       let visible = 0;
       panel.querySelectorAll(".pr-slot").forEach((slot) => {
         let shown = 0;
         slot.querySelectorAll(".pr-card").forEach((card) => {
-          const okKind = filter === "all" || card.dataset.kind === filter
-            || (filter === "social" && (card.dataset.kind === "social" || card.dataset.kind === "meal"));
+          const favBtn = card.querySelector(".pr-fav");
+          const okKind = favMode
+            ? !!(favBtn && favs.has(favBtn.dataset.fav))
+            : filter === "all" || card.dataset.kind === filter
+              || (filter === "social" && (card.dataset.kind === "social" || card.dataset.kind === "meal"));
           const okText = !query || (card.dataset.text || "").includes(query);
           const ok = okKind && okText;
           card.hidden = !ok;
@@ -148,8 +195,10 @@ const describe = (s) => {
         visible += shown;
       });
       const empty = panel.querySelector(".pr-empty");
-      if (empty) empty.hidden = visible !== 0;
+      // En modo favoritos usamos un único mensaje global, no el de cada día
+      if (empty) empty.hidden = favMode || visible !== 0;
     });
+    if (favEmptyEl) favEmptyEl.hidden = !(favMode && favs.size === 0);
   };
 
   // Todos los días están visibles a la vez. Click en un día -> scroll suave a ese día.
@@ -365,6 +414,35 @@ const describe = (s) => {
     transition: transform .28s ease, background .2s, color .2s;
   }
   .pr-card.expanded .pr-card-more { transform: rotate(45deg); background: var(--gold); color: #fff; }
+
+  /* Botón favorito (corazón) — abajo a la derecha, junto al "+" */
+  .pr-fav {
+    position: absolute; right: 40px; bottom: 8px; z-index: 3;
+    width: 30px; height: 28px; display: flex; align-items: center; justify-content: center;
+    border: 0; background: none; padding: 0; cursor: pointer; touch-action: manipulation;
+    color: #c9c4bb;
+  }
+  .pr-fav svg { transition: transform .2s ease; }
+  .pr-fav svg path { fill: none; stroke: currentColor; stroke-width: 2; transition: fill .18s ease, stroke .18s ease; }
+  .pr-fav:hover { color: #e05a72; }
+  .pr-fav.is-fav { color: #e0435f; }
+  .pr-fav.is-fav svg path { fill: currentColor; stroke: currentColor; }
+  .pr-fav.pr-fav-pop svg { animation: prFavPop .34s ease; }
+  @keyframes prFavPop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+  /* Reserva una franja inferior para el corazón y el "+" (que no pisen el título/profe) */
+  .pr-card:not(.pr-band) .pr-card-in { padding-bottom: 34px; }
+
+  /* Chip de filtro "Mis favoritos" con corazón y contador */
+  .pr-chip-fav { display: inline-flex; align-items: center; gap: 6px; }
+  .pr-chip-heart path { fill: currentColor; }
+  .pr-chip-fav.active { background: #fdeef0; color: #c8324c; border-color: #f2c3cc; }
+  .pr-fav-count {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
+    padding: 0 5px; border-radius: 999px; font-size: 11px; font-weight: 800; line-height: 1;
+    background: #e0435f; color: #fff;
+  }
+  .pr-chip-fav.active .pr-fav-count { background: #c8324c; }
+  .pr-fav-empty { text-align: center; color: #6a6a74; padding: 48px 16px; font-size: 15px; line-height: 1.6; }
 
   .k-comp .pr-title { color: #14121a; }
   .pr-band { grid-column: 1 / -1; background: #faf7f1; box-shadow: none; }
