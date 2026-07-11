@@ -15,7 +15,7 @@ const days = PROGRAMA.map((d) => {
   return { ...d, slots };
 });
 
-const FILTER_KEYS = ["all", "fav", "taller", "master", "comp", "social"];
+const FILTER_KEYS = ["all", "fav", "taller", "bachata", "salsa", "master", "comp", "social"];
 // Estilo del taller según el título: Bachata (RD) o Salsa (por defecto)
 const isBachata = (s) => /bachata|dominican|bacano/i.test(s.n || "");
 const title = (s) => (s.r === "full" ? (t.band[s.n] || s.n) : s.n);
@@ -194,6 +194,8 @@ const describe = (s) => {
           const favBtn = card.querySelector(".pr-fav");
           const okKind = favMode
             ? !!(favBtn && favs.has(favBtn.dataset.fav))
+            : filter === "bachata" ? card.classList.contains("sp-b")
+            : filter === "salsa" ? card.classList.contains("sp-s")
             : filter === "all" || card.dataset.kind === filter
               || (filter === "social" && (card.dataset.kind === "social" || card.dataset.kind === "meal"));
           const okText = !query || (card.dataset.text || "").includes(query);
