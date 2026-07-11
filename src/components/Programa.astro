@@ -339,13 +339,15 @@ const describe = (s) => {
   .pr-day.is-active { display: block; }
   .pr-day-head {
     display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-    margin: 4px 0 18px; padding: 0 0 12px; border-bottom: 2px solid #ece8e1;
+    margin: 4px 0 18px -20px; padding: 0 0 12px; border-bottom: 2px solid #ece8e1;
   }
   .pr-day-head-name { font-weight: 800; font-size: clamp(24px, 5vw, 36px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
   .pr-day-head-date { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); }
 
-  /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin */
-  .pr-timeline { position: relative; }
+  /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin.
+     Se saca 20px a la izquierda para que la hora quede a 4px del borde (padding
+     del contenedor = 24px) y aprovechar el ancho. */
+  .pr-timeline { position: relative; margin-left: -20px; }
   .pr-slot {
     display: grid; grid-template-columns: 46px 1fr; gap: 0 12px;
     padding: 16px 0; border-top: 1px solid #efece6;
