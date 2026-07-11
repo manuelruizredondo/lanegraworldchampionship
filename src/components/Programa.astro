@@ -77,7 +77,8 @@ const describe = (s) => {
 <section class="pr-body">
   <div class="container">
     {days.map((d, di) => (
-      <div class={"pr-day" + (di === 0 ? " active" : "")} data-day-panel={di}>
+      <div class="pr-day" id={`pr-day-${di}`} data-day-panel={di}>
+        <h2 class="pr-day-head"><span class="pr-day-head-name">{t.days[d.day]}</span><span class="pr-day-head-date">{d.date}</span></h2>
         {d.slots.map((slot) => (
           <div class="pr-slot">
             <div class="pr-time"><span>{slot.t}</span></div>
@@ -121,12 +122,12 @@ const describe = (s) => {
   const panels = [...document.querySelectorAll("[data-day-panel]")];
   const chips = [...document.querySelectorAll(".pr-chip")];
   const q = document.getElementById("pr-q");
-  let day = 0, filter = "all", query = "";
+  let filter = "all", query = "";
+  const controlsEl = document.querySelector(".pr-controls");
+  const headerH = () => parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 88;
 
   const apply = () => {
-    panels.forEach((panel, i) => {
-      panel.classList.toggle("active", i === day);
-      if (i !== day) return;
+    panels.forEach((panel) => {
       let visible = 0;
       panel.querySelectorAll(".pr-slot").forEach((slot) => {
         let shown = 0;
@@ -146,18 +147,24 @@ const describe = (s) => {
     });
   };
 
-  const controlsEl = document.querySelector(".pr-controls");
-  dayBtns.forEach((b) => b.addEventListener("click", () => {
-    day = +b.dataset.day;
-    dayBtns.forEach((x) => { const on = x === b; x.classList.toggle("active", on); x.setAttribute("aria-selected", on); });
-    apply();
-    const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 88;
-    const panel = panels[day];
-    const firstSlot = [...panel.querySelectorAll(".pr-slot")].find((s) => !s.hidden) || panel;
-    const slotDocTop = firstSlot.getBoundingClientRect().top + window.scrollY;
-    const target = Math.max(0, Math.round(slotDocTop - headerH - controlsEl.offsetHeight - 8));
-    if (Math.abs(window.scrollY - target) > 4) window.scrollTo({ top: target, behavior: "smooth" });
-  }));
+  // Todos los días están visibles a la vez. Click en un día -> scroll suave a ese día.
+  const scrollToDay = (i) => {
+    const target = Math.max(0, Math.round(panels[i].getBoundingClientRect().top + window.scrollY - headerH() - controlsEl.offsetHeight - 6));
+    window.scrollTo({ top: target, behavior: "smooth" });
+  };
+  dayBtns.forEach((b) => b.addEventListener("click", () => scrollToDay(+b.dataset.day)));
+
+  // Scroll-spy: resalta el botón del día que se está viendo
+  let spyTick = false;
+  const spy = () => {
+    spyTick = false;
+    const y = window.scrollY + headerH() + controlsEl.offsetHeight + 24;
+    let active = 0;
+    panels.forEach((p, i) => { if (p.getBoundingClientRect().top + window.scrollY <= y) active = i; });
+    dayBtns.forEach((b, i) => { const on = i === active; b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+  };
+  window.addEventListener("scroll", () => { if (!spyTick) { spyTick = true; requestAnimationFrame(spy); } }, { passive: true });
+  window.addEventListener("resize", spy);
   chips.forEach((c) => c.addEventListener("click", () => {
     filter = c.dataset.filter;
     chips.forEach((x) => x.classList.toggle("active", x === c));
@@ -196,6 +203,7 @@ const describe = (s) => {
     apply();
   }));
   apply();
+  spy();
 </script>
 
 <style>
@@ -274,9 +282,16 @@ const describe = (s) => {
   .pr-r-s2 { background: #e05a8c; }
   .pr-r-full { background: #b8b3a8; }
 
-  .pr-body { padding: clamp(24px, 4vw, 44px) 0 64px; }
-  .pr-day { display: none; }
-  .pr-day.active { display: block; }
+  .pr-body { padding: clamp(20px, 3vw, 32px) 0 64px; }
+  /* Todos los días visibles, uno debajo de otro */
+  .pr-day { display: block; scroll-margin-top: calc(var(--header-h, 88px) + 150px); }
+  .pr-day-head {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    margin: 34px 0 4px; padding-bottom: 10px; border-bottom: 2px solid #ece8e1;
+  }
+  .pr-day:first-child .pr-day-head { margin-top: 6px; }
+  .pr-day-head-name { font-weight: 800; font-size: clamp(22px, 4.4vw, 34px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
+  .pr-day-head-date { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); }
   .pr-slot { display: grid; grid-template-columns: 108px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid #efece6; }
   .pr-slot:first-child { border-top: 0; }
   .pr-time { position: sticky; top: calc(var(--header-h, 88px) + 132px); align-self: start; }
