@@ -423,10 +423,10 @@ const describe = (s) => {
     color: #c9c4bb;
   }
   .pr-fav svg { transition: transform .2s ease; }
-  .pr-fav svg path { fill: none; stroke: currentColor; stroke-width: 2; transition: fill .18s ease, stroke .18s ease; }
-  .pr-fav:hover { color: #e05a72; }
+  .pr-fav svg path { fill: currentColor; stroke: none; transition: fill .18s ease; }
+  .pr-fav { color: #d7d2c8; }
+  .pr-fav:hover { color: #ec7c90; }
   .pr-fav.is-fav { color: #e0435f; }
-  .pr-fav.is-fav svg path { fill: currentColor; stroke: currentColor; }
   .pr-fav.pr-fav-pop svg { animation: prFavPop .34s ease; }
   @keyframes prFavPop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
   /* Reserva una franja inferior para el corazón y el "+" (que no pisen el título/profe) */
