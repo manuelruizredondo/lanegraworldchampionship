@@ -104,14 +104,20 @@ const describe = (s) => {
                     ? <span class={"pr-room pr-st-" + (isBachata(s) ? "b" : "s")}>{isBachata(s) ? "Bachata" : "Salsa"}</span>
                     : <span class={"pr-room pr-r-" + s.r}>{t.rooms[s.r]}</span>)}
                   <div class="pr-card-in">
-                    <div class="pr-meta">
-                      {s.k === "taller"
-                        ? <span class="pr-roomtag"><span class={"pr-dot pr-r-" + s.r}></span>{t.rooms[s.r]}</span>
-                        : <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>}
-                      {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
-                    </div>
+                    {s.k !== "taller" && (
+                      <div class="pr-meta">
+                        <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>
+                        {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
+                      </div>
+                    )}
                     <h3 class="pr-title">{title(s)}</h3>
                     {s.p && <p class="pr-teacher">{s.p}</p>}
+                    {s.k === "taller" && (
+                      <div class="pr-meta pr-meta-bottom">
+                        <span class="pr-roomtag"><span class={"pr-dot pr-r-" + s.r}></span>{t.rooms[s.r]}</span>
+                        {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
+                      </div>
+                    )}
                     {s.r !== "full" && (
                       <div class="pr-card-detail">
                         <p class="pr-det-desc">{describe(s)}</p>
@@ -459,6 +465,8 @@ const describe = (s) => {
   .pr-roomtag .pr-dot { width: 8px; height: 8px; }
   .pr-card-in { padding: 13px 15px; min-width: 0; }
   .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; padding-right: 96px; min-height: 22px; }
+  /* Sala + nivel abajo a la izquierda (talleres), dejando hueco para el corazón/+ */
+  .pr-meta-bottom { margin: 9px 0 0; padding-right: 72px; min-height: 0; }
   .pr-room {
     position: absolute; top: 0; right: 0; z-index: 2;
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #fff;
@@ -599,6 +607,7 @@ const describe = (s) => {
     .pr-sessions > .pr-card:only-child { flex-basis: 100%; max-width: none; }
     /* En tarjetas estrechas, la pestaña de sala ocupa menos y la meta deja menos hueco */
     .pr-sessions > .pr-card:not(:only-child) .pr-meta { padding-right: 62px; }
+    .pr-sessions > .pr-card:not(:only-child) .pr-meta-bottom { padding-right: 66px; }
     .pr-sessions > .pr-band { flex-basis: 100%; max-width: none; }
     .pr-search { max-width: none; }
   }
