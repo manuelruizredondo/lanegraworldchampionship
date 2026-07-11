@@ -576,6 +576,25 @@ const describe = (s) => {
   .k-comp .pr-det-loc { color: #6a561f; }
   .k-comp .pr-det-loc .pr-rname { color: #241d08; }
 
+  /* Cards SOCIAL: cielo nocturno (degradado azul + estrellas) */
+  .k-social {
+    border-color: #3a4a94; color: #fff;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='11' cy='15' r='1.2' opacity='.9'/%3E%3Ccircle cx='47' cy='9' r='.8' opacity='.55'/%3E%3Ccircle cx='72' cy='26' r='1.4' opacity='.85'/%3E%3Ccircle cx='26' cy='40' r='.7' opacity='.5'/%3E%3Ccircle cx='60' cy='54' r='1' opacity='.8'/%3E%3Ccircle cx='14' cy='66' r='.9' opacity='.6'/%3E%3Ccircle cx='40' cy='30' r='.6' opacity='.45'/%3E%3Ccircle cx='82' cy='72' r='1.1' opacity='.75'/%3E%3Ccircle cx='36' cy='78' r='.8' opacity='.55'/%3E%3Ccircle cx='68' cy='84' r='.6' opacity='.4'/%3E%3C/g%3E%3C/svg%3E") repeat,
+      linear-gradient(150deg, #26356f 0%, #1a2550 52%, #101836 100%);
+  }
+  .k-social .pr-title { color: #fff; }
+  .k-social .pr-teacher { color: rgba(255, 255, 255, .82); }
+  .k-social .pr-kind { background: #6b46c9; color: #fff; }
+  .k-social .pr-card-more { background: rgba(255, 255, 255, .16); color: #fff; }
+  .k-social.expanded .pr-card-more { background: #fff; color: #26356f; }
+  .k-social .pr-fav { color: rgba(255, 255, 255, .45); }
+  .k-social .pr-fav:hover { color: #ff8fb0; }
+  .k-social .pr-fav.is-fav { color: #ff5c8a; }
+  .k-social .pr-det-desc { color: rgba(255, 255, 255, .86); }
+  .k-social .pr-det-loc { color: rgba(255, 255, 255, .72); }
+  .k-social .pr-det-loc .pr-rname { color: #fff; }
+
   .pr-band { grid-column: 1 / -1; background: #faf7f1; box-shadow: none; }
   .pr-band .pr-card-in { padding: 9px 15px; }
   .pr-band .pr-title { font-size: 13px; font-weight: 700; color: #8a8578; text-transform: uppercase; letter-spacing: .03em; }
