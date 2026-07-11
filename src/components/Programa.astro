@@ -337,15 +337,18 @@ const describe = (s) => {
   /* Vista de un día a la vez (se cambia con las pestañas de día) */
   .pr-day { display: none; }
   .pr-day.is-active { display: block; }
+  /* La cabecera del día es una pestaña que cuelga de la barra: pegada arriba,
+     esquinas redondeadas solo abajo y del ancho justo de la palabra. */
   .pr-day-head {
     position: sticky; top: calc(var(--header-h, 88px) + var(--controls-h, 140px)); z-index: 350;
-    display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
-    margin: 0 -24px 14px; padding: 9px 24px 9px 4px; border-bottom: 2px solid #ece8e1;
-    background: rgba(255, 255, 255, 0.95);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    display: inline-flex; align-items: baseline; gap: 8px; width: fit-content;
+    margin: 0 0 16px -20px; padding: 7px 16px 8px;
+    background: #14121a; color: #fff;
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 7px 18px rgba(20, 18, 26, .16);
   }
-  .pr-day-head-name { font-weight: 800; font-size: clamp(17px, 3.6vw, 21px); letter-spacing: -.02em; color: #14121a; line-height: 1; }
-  .pr-day-head-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gold-dark); }
+  .pr-day-head-name { font-weight: 800; font-size: 16px; letter-spacing: -.01em; color: #fff; line-height: 1; }
+  .pr-day-head-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gold); }
 
   /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin.
      Se saca 20px a la izquierda para que la hora quede a 4px del borde (padding
