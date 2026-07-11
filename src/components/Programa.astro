@@ -338,11 +338,14 @@ const describe = (s) => {
   .pr-day { display: none; }
   .pr-day.is-active { display: block; }
   .pr-day-head {
-    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-    margin: 4px 0 18px -20px; padding: 0 0 12px; border-bottom: 2px solid #ece8e1;
+    position: sticky; top: calc(var(--header-h, 88px) + var(--controls-h, 140px)); z-index: 350;
+    display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
+    margin: 0 -24px 14px; padding: 9px 24px 9px 4px; border-bottom: 2px solid #ece8e1;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   }
-  .pr-day-head-name { font-weight: 800; font-size: clamp(24px, 5vw, 36px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
-  .pr-day-head-date { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); }
+  .pr-day-head-name { font-weight: 800; font-size: clamp(17px, 3.6vw, 21px); letter-spacing: -.02em; color: #14121a; line-height: 1; }
+  .pr-day-head-date { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--gold-dark); }
 
   /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin.
      Se saca 20px a la izquierda para que la hora quede a 4px del borde (padding
