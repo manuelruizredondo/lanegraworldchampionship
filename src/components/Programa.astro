@@ -349,7 +349,17 @@ const describe = (s) => {
     .pr-slot { grid-template-columns: 1fr; gap: 8px; padding: 12px 0; }
     .pr-time { position: static; margin-bottom: 2px; }
     .pr-time span { color: var(--gold-dark); }
-    .pr-sessions { grid-template-columns: 1fr; }
+    /* Eventos que coinciden: en fila horizontal (scroll lateral), no apilados */
+    .pr-sessions {
+      display: flex; grid-template-columns: none; gap: 10px;
+      overflow-x: auto; scrollbar-width: none;
+      scroll-snap-type: x proximity;
+      margin: 0 -24px; padding: 2px 24px 8px;
+    }
+    .pr-sessions::-webkit-scrollbar { display: none; }
+    .pr-sessions > .pr-card { flex: 0 0 82%; max-width: 340px; scroll-snap-align: start; }
+    .pr-sessions > .pr-card:only-child { flex-basis: 100%; max-width: none; }
+    .pr-sessions > .pr-band { flex-basis: 100%; max-width: none; }
     .pr-search { max-width: none; }
   }
 </style>
