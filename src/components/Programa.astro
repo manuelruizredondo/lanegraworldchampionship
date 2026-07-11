@@ -125,6 +125,10 @@ const describe = (s) => {
   let filter = "all", query = "";
   const controlsEl = document.querySelector(".pr-controls");
   const headerH = () => parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 88;
+  // Publica la altura de la barra de controles para fijar la cabecera de día justo debajo
+  const setControlsH = () => document.documentElement.style.setProperty("--controls-h", controlsEl.offsetHeight + "px");
+  setControlsH();
+  window.addEventListener("resize", setControlsH);
 
   const apply = () => {
     panels.forEach((panel) => {
@@ -286,8 +290,11 @@ const describe = (s) => {
   /* Todos los días visibles, uno debajo de otro */
   .pr-day { display: block; scroll-margin-top: calc(var(--header-h, 88px) + 150px); }
   .pr-day-head {
+    position: sticky; top: calc(var(--header-h, 88px) + var(--controls-h, 140px)); z-index: 400;
     display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-    margin: 34px 0 4px; padding-bottom: 10px; border-bottom: 2px solid #ece8e1;
+    margin: 30px 0 4px; padding: 8px 0 10px; border-bottom: 2px solid #ece8e1;
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   }
   .pr-day:first-child .pr-day-head { margin-top: 6px; }
   .pr-day-head-name { font-weight: 800; font-size: clamp(22px, 4.4vw, 34px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
@@ -369,7 +376,7 @@ const describe = (s) => {
       display: flex; grid-template-columns: none; gap: 10px;
       overflow-x: auto; scrollbar-width: none;
       scroll-snap-type: x proximity;
-      margin: 0 -24px; padding: 2px 24px 8px;
+      margin: 0; padding: 2px 2px 8px;
     }
     .pr-sessions::-webkit-scrollbar { display: none; }
     .pr-sessions > .pr-card { flex: 0 0 57%; max-width: 250px; scroll-snap-align: start; }
