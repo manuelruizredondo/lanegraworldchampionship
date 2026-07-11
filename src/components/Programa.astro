@@ -372,14 +372,16 @@ const describe = (s) => {
     .pr-time { position: static; margin-bottom: 2px; }
     .pr-time span { color: var(--gold-dark); }
     /* Eventos que coinciden: en fila horizontal (scroll lateral), no apilados */
+    /* El carril usa el 100% del ancho (full-bleed). La primera tarjeta se indenta
+       24px para alinearse con el texto del horario; una sola ocupa toda la fila. */
     .pr-sessions {
       display: flex; grid-template-columns: none; gap: 10px;
       overflow-x: auto; scrollbar-width: none;
-      scroll-snap-type: x proximity;
-      margin: 0; padding: 2px 2px 8px;
+      scroll-snap-type: x proximity; scroll-padding-left: 24px;
+      margin: 0 -24px; padding: 2px 24px 8px;
     }
     .pr-sessions::-webkit-scrollbar { display: none; }
-    .pr-sessions > .pr-card { flex: 0 0 57%; max-width: 250px; scroll-snap-align: start; }
+    .pr-sessions > .pr-card { flex: 0 0 62%; max-width: 250px; scroll-snap-align: start; }
     .pr-sessions > .pr-card:only-child { flex-basis: 100%; max-width: none; }
     /* En tarjetas estrechas, la pestaña de sala ocupa menos y la meta deja menos hueco */
     .pr-sessions > .pr-card:not(:only-child) .pr-meta { padding-right: 62px; }
