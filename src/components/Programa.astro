@@ -37,17 +37,16 @@ const describe = (s) => {
     <p class="pr-rooms-label">{t.roomsLabel}</p>
     <div class="pr-rooms-grid">
       {ROOM_LIST.map((r) => (
-        <article class={"pr-room-box rc-" + r.key}>
+        <article class={"pr-room-box rc-" + r.key} data-room={r.key} data-name={t.roomFull[r.key]} data-loc={t.roomLoc[r.key]} role="button" tabindex="0" aria-expanded="false">
           <div class={"pr-room-img pr-rimg-" + r.key} style={r.img ? `background-image:url(${r.img})` : undefined}>
+            <strong class="pr-room-name-full">{t.roomFull[r.key]}</strong>
+            <strong class="pr-room-name-short">{t.rooms[r.key]}</strong>
             <span class={"pr-dot pr-r-" + r.key}></span>
-          </div>
-          <div class="pr-room-box-body">
-            <strong>{t.roomFull[r.key]}</strong>
-            <span>{t.roomLoc[r.key]}</span>
           </div>
         </article>
       ))}
     </div>
+    <div class="pr-room-info" hidden><strong></strong><span></span></div>
   </div>
 </section>
 
@@ -254,6 +253,32 @@ const describe = (s) => {
   }));
   q.addEventListener("input", () => { query = q.value.trim().toLowerCase(); apply(); });
 
+  // Salas: al tocar una caja se abre un panel con su ubicación (info extra)
+  const roomBoxes = [...document.querySelectorAll(".pr-room-box")];
+  const roomInfo = document.querySelector(".pr-room-info");
+  let openRoom = null;
+  const closeRoomInfo = () => {
+    if (roomInfo) roomInfo.hidden = true;
+    roomBoxes.forEach((b) => { b.classList.remove("open"); b.setAttribute("aria-expanded", "false"); });
+    openRoom = null;
+  };
+  const toggleRoom = (b) => {
+    if (openRoom === b) { closeRoomInfo(); return; }
+    closeRoomInfo();
+    roomInfo.className = "pr-room-info rc-" + b.dataset.room;
+    roomInfo.querySelector("strong").textContent = b.dataset.name;
+    roomInfo.querySelector("span").textContent = b.dataset.loc;
+    roomInfo.hidden = false;
+    b.classList.add("open"); b.setAttribute("aria-expanded", "true");
+    openRoom = b;
+  };
+  roomBoxes.forEach((b) => {
+    b.addEventListener("click", (e) => { e.stopPropagation(); toggleRoom(b); });
+    b.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRoom(b); } });
+  });
+  if (roomInfo) roomInfo.addEventListener("click", (e) => e.stopPropagation());
+  document.addEventListener("click", closeRoomInfo);
+
   // Click en una tarjeta -> crece y muestra el texto explicativo
   document.querySelector(".pr-body").addEventListener("click", (e) => {
     const card = e.target.closest(".pr-card:not(.pr-band)");
@@ -326,18 +351,37 @@ const describe = (s) => {
   .pr-room-box {
     border: 2px solid; border-radius: 15px; overflow: hidden; background: #fff;
     box-shadow: 0 4px 14px rgba(20, 18, 26, .05);
+    cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
   }
+  .pr-room-box:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(20, 18, 26, .1); }
+  .pr-room-box.open { box-shadow: 0 12px 28px rgba(20, 18, 26, .16); }
   .pr-room-img {
     position: relative; aspect-ratio: 5 / 4;
     background-size: cover; background-position: center;
   }
+  /* Bola de color arriba a la derecha, pegada al borde */
   .pr-room-img .pr-dot {
-    position: absolute; top: 10px; left: 10px; width: 15px; height: 15px;
+    position: absolute; top: 6px; right: 6px; width: 15px; height: 15px;
     box-shadow: 0 0 0 3px rgba(255, 255, 255, .9), 0 2px 6px rgba(20, 18, 26, .25);
   }
-  .pr-room-box-body { padding: 9px 12px 11px; }
-  .pr-room-box-body strong { display: block; font-size: 13.5px; font-weight: 700; color: #14121a; letter-spacing: -.01em; line-height: 1.2; }
-  .pr-room-box-body span { display: block; margin-top: 4px; font-size: 11.5px; color: #6a6a74; line-height: 1.42; }
+  /* Nombre arriba a la izquierda, a 4px del borde, sobre la imagen */
+  .pr-room-img strong {
+    position: absolute; top: 4px; left: 4px; max-width: calc(100% - 30px);
+    padding: 2px 6px; border-radius: 7px;
+    font-size: 13px; font-weight: 700; color: #fff; line-height: 1.15; letter-spacing: -.01em;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, .45);
+  }
+  .pr-room-img .pr-room-name-short { display: none; }
+  /* Panel de info que aparece al tocar una sala */
+  .pr-room-info {
+    margin-top: 12px; padding: 12px 16px; border-radius: 12px;
+    background: #faf7f1; border: 1px solid #ece8e1; border-left-width: 4px;
+    animation: prInfoIn .2s ease;
+  }
+  .pr-room-info[hidden] { display: none; }
+  .pr-room-info strong { display: block; font-size: 14px; color: #14121a; margin-bottom: 3px; }
+  .pr-room-info span { display: block; font-size: 13px; color: #6a6a74; line-height: 1.45; }
+  @keyframes prInfoIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
   /* Placeholder degradado del color de cada sala (se sustituye al poner foto real) */
   .pr-rimg-gs { background: linear-gradient(135deg, #e4bd5f 0%, #a9781f 100%); }
   .pr-rimg-pb { background: linear-gradient(135deg, #46b6a7 0%, #1c7367 100%); }
@@ -493,7 +537,13 @@ const describe = (s) => {
   .pr-note { margin-top: 32px; font-size: 12px; color: #9a9aa2; line-height: 1.5; max-width: 720px; }
 
   @media (max-width: 640px) {
-    .pr-rooms-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    /* Las 4 salas en una sola fila también en móvil */
+    .pr-rooms-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .pr-room-box { border-width: 1.75px; border-radius: 11px; }
+    .pr-room-img .pr-dot { top: 4px; right: 4px; width: 11px; height: 11px; box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 1px 4px rgba(20, 18, 26, .25); }
+    .pr-room-img strong { top: 4px; left: 4px; padding: 1px 4px; font-size: 10.5px; max-width: calc(100% - 20px); }
+    .pr-room-img .pr-room-name-full { display: none; }
+    .pr-room-img .pr-room-name-short { display: block; }
     .pr-slot { grid-template-columns: 40px 1fr; gap: 0 8px; padding: 14px 0; }
     .pr-rail { padding-right: 6px; }
     .pr-rail::before { right: 0; }
