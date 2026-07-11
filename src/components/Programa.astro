@@ -79,9 +79,9 @@ const describe = (s) => {
     {days.map((d, di) => (
       <div class="pr-day" id={`pr-day-${di}`} data-day-panel={di}>
         <h2 class="pr-day-head"><span class="pr-day-head-name">{t.days[d.day]}</span><span class="pr-day-head-date">{d.date}</span></h2>
-        {d.slots.map((slot) => (
+        {d.slots.map((slot) => { const tm = slot.t.split(/\s*[–—-]\s*/); return (
           <div class="pr-slot">
-            <div class="pr-time"><span>{slot.t}</span></div>
+            <div class="pr-time pr-time-start"><span>{tm[0]}</span></div>
             <div class="pr-sessions">
               {slot.items.map((s) => (
                 <article
@@ -108,8 +108,9 @@ const describe = (s) => {
                 </article>
               ))}
             </div>
+            {tm[1] && <div class="pr-time pr-time-end"><span>{tm[1]}</span></div>}
           </div>
-        ))}
+        ); })}
         <p class="pr-empty" hidden>{t.empty} <button type="button" class="pr-reset">{t.reset}</button></p>
       </div>
     ))}
@@ -299,10 +300,18 @@ const describe = (s) => {
   .pr-day:first-child .pr-day-head { margin-top: 6px; }
   .pr-day-head-name { font-weight: 800; font-size: clamp(22px, 4.4vw, 34px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
   .pr-day-head-date { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); }
-  .pr-slot { display: grid; grid-template-columns: 108px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid #efece6; }
+  .pr-slot {
+    display: grid; grid-template-columns: 108px 1fr;
+    grid-template-areas: "start sessions" "end sessions";
+    gap: 4px 16px; padding: 14px 0; border-top: 1px solid #efece6;
+  }
   .pr-slot:first-child, .pr-day-head + .pr-slot { border-top: 0; }
-  .pr-time { position: sticky; top: calc(var(--header-h, 88px) + 132px); align-self: start; }
+  .pr-time-start { grid-area: start; align-self: start; }
+  .pr-time-end { grid-area: end; align-self: end; }
+  .pr-sessions { grid-area: sessions; }
   .pr-time span { font-weight: 800; font-size: 19px; color: #14121a; letter-spacing: -.02em; line-height: 1.2; display: block; }
+  .pr-time-end span { font-weight: 700; font-size: 14.5px; color: #a7a2b0; }
+  .pr-time-end span::before { content: "–"; margin-right: 5px; color: #cfc9bb; }
   .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
 
   .pr-card {
@@ -368,9 +377,10 @@ const describe = (s) => {
   .pr-note { margin-top: 32px; font-size: 12px; color: #9a9aa2; line-height: 1.5; max-width: 720px; }
 
   @media (max-width: 640px) {
-    .pr-slot { grid-template-columns: 1fr; gap: 8px; padding: 12px 0; }
-    .pr-time { position: static; margin-bottom: 2px; }
-    .pr-time span { color: var(--gold-dark); }
+    .pr-slot { grid-template-columns: 1fr; grid-template-areas: "start" "sessions" "end"; gap: 6px; padding: 12px 0; }
+    .pr-time-start span { color: var(--gold-dark); }
+    .pr-time-end { margin-top: 2px; }
+    .pr-time-end span { color: #b0a891; }
     /* Eventos que coinciden: en fila horizontal (scroll lateral), no apilados */
     /* El carril usa el 100% del ancho (full-bleed). La primera tarjeta se indenta
        24px para alinearse con el texto del horario; una sola ocupa toda la fila. */
