@@ -300,7 +300,7 @@ const describe = (s) => {
   .pr-day-head-name { font-weight: 800; font-size: clamp(22px, 4.4vw, 34px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
   .pr-day-head-date { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); }
   .pr-slot { display: grid; grid-template-columns: 108px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid #efece6; }
-  .pr-slot:first-child { border-top: 0; }
+  .pr-slot:first-child, .pr-day-head + .pr-slot { border-top: 0; }
   .pr-time { position: sticky; top: calc(var(--header-h, 88px) + 132px); align-self: start; }
   .pr-time span { font-weight: 800; font-size: 19px; color: #14121a; letter-spacing: -.02em; line-height: 1.2; display: block; }
   .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
