@@ -102,19 +102,18 @@ const describe = (s) => {
                 >
                   {s.r !== "full" && (s.k === "taller"
                     ? <span class={"pr-room pr-st-" + (isBachata(s) ? "b" : "s")}>{isBachata(s) ? "Bachata" : "Salsa"}</span>
-                    : <span class={"pr-room pr-r-" + s.r}>{t.rooms[s.r]}</span>)}
+                    : <span class={"pr-room pr-cn-" + s.k}>{t.kind[s.k]}</span>)}
                   <div class="pr-card-in">
-                    {s.k !== "taller" && (
+                    {s.r === "full" && (
                       <div class="pr-meta">
                         <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>
-                        {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
                       </div>
                     )}
                     <h3 class="pr-title">{title(s)}</h3>
                     {s.p && <p class="pr-teacher">{s.p}</p>}
-                    {s.k === "taller" && (
+                    {s.r !== "full" && (
                       <div class="pr-meta pr-meta-bottom">
-                        <span class="pr-roomtag"><span class={"pr-dot pr-r-" + s.r}></span>{t.rooms[s.r]}</span>
+                        <span class={"pr-roomtag pr-r-" + s.r}>{t.rooms[s.r]}</span>
                         {s.l && <span class={"pr-level lv-" + s.l.replace(/[^a-zA-ZñÑ]/g, "")}>{t.levels[s.l]}</span>}
                       </div>
                     )}
@@ -456,13 +455,12 @@ const describe = (s) => {
   /* Borde de la card por especialidad (talleres), no por sala */
   .sp-b { border-color: #ce1126; }
   .sp-s { border-color: #e0a416; }
-  /* Etiqueta de sala en la fila de meta (dot + nombre) para los talleres */
+  /* Pill de la sala (abajo-izquierda), en el color de la sala */
   .pr-roomtag {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 2px 9px 2px 7px; border-radius: 999px; background: #f2efe9;
-    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #5a5560;
+    display: inline-flex; align-items: center;
+    padding: 2px 10px; border-radius: 999px;
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #fff;
   }
-  .pr-roomtag .pr-dot { width: 8px; height: 8px; }
   .pr-card-in { padding: 13px 15px; min-width: 0; }
   .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; padding-right: 96px; min-height: 22px; }
   /* Sala + nivel abajo a la izquierda (talleres), dejando hueco para el corazón/+ */
@@ -489,6 +487,10 @@ const describe = (s) => {
   /* La especialidad va en la esquina (reutiliza .pr-st-*): sin el borde del badge */
   .pr-room.pr-st-b, .pr-room.pr-st-s { border: 0; }
   .pr-room.pr-st-s { text-shadow: none; }
+  /* Esquina con el "tipo" para el resto de cards (Masterclass, El Mundial, Social) */
+  .pr-cn-master { background: #d59a22; }
+  .pr-cn-comp { background: #241d08; }
+  .pr-cn-social { background: #6b46c9; }
   .pr-level { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
   .lv-Abierto { color: #2e9b63; border-color: #b8e6cd; background: #eafaf1; }
   .lv-MedioBajo { color: #2a9d8f; border-color: #b7e3dd; background: #e9f7f5; }
@@ -497,6 +499,8 @@ const describe = (s) => {
   .lv-MedioAvanzado { color: #cc5a1e; border-color: #f2ccb0; background: #fdeee4; }
   .lv-Avanzado { color: #cc3d38; border-color: #f2c1bf; background: #fdeceb; }
   .pr-title { font-size: 15px; font-weight: 700; letter-spacing: -.01em; line-height: 1.28; margin: 0; color: #14121a; }
+  /* Reserva el hueco de la esquina (tipo) para que el título no lo pise */
+  .pr-card:not(.pr-band) .pr-title::before { content: ""; float: right; width: 88px; height: 20px; }
   .pr-teacher { margin: 5px 0 0; font-size: 13px; color: #6a6a74; line-height: 1.4; padding-right: 26px; }
 
   .pr-card:not(.pr-band) { cursor: pointer; }
@@ -562,6 +566,7 @@ const describe = (s) => {
   .k-comp .pr-teacher { color: #6a561f; }
   .k-comp .pr-room { background: #241d08; box-shadow: -2px 3px 9px rgba(20, 16, 4, .22); }
   .k-comp .pr-kind { background: #241d08; color: #f6e4a6; }
+  .k-comp .pr-roomtag { background: #241d08; color: #f6e4a6; }
   .k-comp .pr-card-more { background: rgba(36, 29, 8, .12); color: #6a561f; }
   .k-comp.expanded .pr-card-more { background: #241d08; color: #f6e4a6; }
   .k-comp .pr-fav { color: rgba(36, 29, 8, .32); }
