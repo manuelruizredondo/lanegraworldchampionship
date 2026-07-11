@@ -1,8 +1,24 @@
 ---
 import { PROGRAMA, ROOM_LIST, I18N } from "@/data/programa.js";
+import { ARTISTS } from "@/data/artists.js";
+import { img } from "@/data/img.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
+
+// Artistas: si el nombre de un artista aparece en el texto del profe, la card enlaza a su ficha
+const artistList = ARTISTS[lang] || ARTISTS.es;
+const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+const artistFor = (teacher) => {
+  if (!teacher) return null;
+  const tt = norm(teacher);
+  let best = null;
+  for (const a of artistList) {
+    const n = norm(a.name);
+    if (n.length >= 4 && tt.includes(n) && (!best || n.length > norm(best.name).length)) best = a;
+  }
+  return best;
+};
 
 // Agrupa las sesiones de cada día por franja horaria (respetando el orden del PDF)
 const days = PROGRAMA.map((d) => {
@@ -110,7 +126,12 @@ const describe = (s) => {
                       </div>
                     )}
                     <h3 class="pr-title">{title(s)}</h3>
-                    {s.p && <p class="pr-teacher">{s.p}</p>}
+                    {s.p && (() => {
+                      const a = artistFor(s.p);
+                      return a
+                        ? <button class="pr-teacher pr-teacher-link" type="button" data-aname={a.name} data-aimg={img(a.img)} data-acountry={a.country} data-aig={a.ig || ""} data-afb={a.fb || ""} data-ayt={a.yt || ""}>{s.p}</button>
+                        : <p class="pr-teacher">{s.p}</p>;
+                    })()}
                     {s.r !== "full" && (
                       <div class="pr-meta pr-meta-bottom">
                         <span class={"pr-roomtag pr-r-" + s.r}>{t.rooms[s.r]}</span>
@@ -142,6 +163,20 @@ const describe = (s) => {
     <p class="pr-note">{t.note}</p>
   </div>
 </section>
+
+<!-- Modal de artista: se abre al tocar el nombre del profe (si es artista invitado) -->
+<div class="pr-artist-modal" hidden>
+  <div class="pr-am-backdrop" data-am-close></div>
+  <div class="pr-am-card" role="dialog" aria-modal="true" aria-label="Artista">
+    <button class="pr-am-close" type="button" data-am-close aria-label={t.close || "Cerrar"}>&times;</button>
+    <img class="pr-am-img" src="" alt="" />
+    <div class="pr-am-body">
+      <h3 class="pr-am-name"></h3>
+      <p class="pr-am-country"></p>
+      <div class="pr-am-social"></div>
+    </div>
+  </div>
+</div>
 
 <script>
   const dayBtns = [...document.querySelectorAll(".pr-day-btn")];
@@ -291,6 +326,35 @@ const describe = (s) => {
   });
   if (roomInfo) roomInfo.addEventListener("click", (e) => e.stopPropagation());
   document.addEventListener("click", closeRoomInfo);
+
+  // Modal de artista: al tocar el nombre del profe (si es artista) muestra foto + info
+  const amodal = document.querySelector(".pr-artist-modal");
+  const amImg = amodal.querySelector(".pr-am-img");
+  const amName = amodal.querySelector(".pr-am-name");
+  const amCountry = amodal.querySelector(".pr-am-country");
+  const amSocial = amodal.querySelector(".pr-am-social");
+  const SOCIALS = [["aig", "Instagram"], ["ayt", "YouTube"], ["afb", "Facebook"]];
+  const openArtist = (btn) => {
+    amImg.src = btn.dataset.aimg || ""; amImg.alt = btn.dataset.aname || "";
+    amName.textContent = btn.dataset.aname || "";
+    amCountry.textContent = btn.dataset.acountry || "";
+    amSocial.innerHTML = "";
+    SOCIALS.forEach(([k, label]) => {
+      const url = btn.dataset[k];
+      if (url) {
+        const a = document.createElement("a");
+        a.href = url; a.target = "_blank"; a.rel = "noopener";
+        a.className = "pr-am-link"; a.textContent = label;
+        amSocial.appendChild(a);
+      }
+    });
+    amodal.hidden = false;
+    document.body.style.overflow = "hidden";
+  };
+  const closeArtist = () => { amodal.hidden = true; document.body.style.overflow = ""; };
+  document.querySelectorAll(".pr-teacher-link").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); openArtist(b); }));
+  amodal.querySelectorAll("[data-am-close]").forEach((x) => x.addEventListener("click", closeArtist));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeArtist(); });
 
   // Click en una tarjeta -> crece y muestra el texto explicativo
   document.querySelector(".pr-body").addEventListener("click", (e) => {
@@ -502,6 +566,12 @@ const describe = (s) => {
   /* Reserva el hueco de la esquina (tipo) para que el título no lo pise */
   .pr-card:not(.pr-band) .pr-title::before { content: ""; float: right; width: 88px; height: 20px; }
   .pr-teacher { margin: 5px 0 0; font-size: 13px; color: #6a6a74; line-height: 1.4; padding-right: 26px; }
+  /* Nombre del profe que es artista invitado: enlace (abre la ficha) */
+  button.pr-teacher-link { display: block; width: 100%; text-align: left; background: none; border: 0; font-family: var(--font-body); cursor: pointer; }
+  .pr-teacher-link { position: relative; padding-right: 26px; }
+  .pr-teacher-link span, .pr-teacher-link { text-decoration: underline; text-decoration-color: rgba(20, 18, 26, .18); text-underline-offset: 2px; }
+  .pr-teacher-link:hover { color: #14121a; text-decoration-color: currentColor; }
+  .k-social .pr-teacher-link:hover { color: #fff; }
 
   .pr-card:not(.pr-band) { cursor: pointer; }
   .pr-card, .pr-day-btn, .pr-chip, .pr-room-chip { touch-action: manipulation; }
@@ -603,6 +673,21 @@ const describe = (s) => {
   .pr-empty { text-align: center; color: #6a6a74; padding: 40px 0; }
   .pr-reset { border: 0; background: none; color: var(--gold-dark); font-weight: 700; cursor: pointer; text-decoration: underline; font-family: var(--font-body); font-size: inherit; }
   .pr-note { margin-top: 32px; font-size: 12px; color: #9a9aa2; line-height: 1.5; max-width: 720px; }
+
+  /* Modal de artista */
+  .pr-artist-modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .pr-artist-modal[hidden] { display: none; }
+  .pr-am-backdrop { position: absolute; inset: 0; background: rgba(15, 11, 30, .62); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .pr-am-card { position: relative; z-index: 1; width: 100%; max-width: 360px; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, .45); animation: prAmIn .25s ease; }
+  .pr-am-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #ece8e1; }
+  .pr-am-close { position: absolute; top: 10px; right: 10px; z-index: 2; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, .42); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .pr-am-body { padding: 16px 20px 22px; }
+  .pr-am-name { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -.01em; color: #14121a; }
+  .pr-am-country { margin: 4px 0 14px; color: var(--gold-dark); font-weight: 600; font-size: 14px; }
+  .pr-am-social { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pr-am-link { padding: 7px 15px; border-radius: 999px; background: #f0ede7; color: #14121a; font-weight: 600; font-size: 13px; text-decoration: none; transition: background .15s; }
+  .pr-am-link:hover { background: var(--gold); color: #fff; }
+  @keyframes prAmIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
 
   @media (max-width: 640px) {
     /* Las 4 salas en una sola fila también en móvil */
