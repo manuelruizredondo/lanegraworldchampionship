@@ -77,7 +77,7 @@ const describe = (s) => {
     </label>
     <div class="pr-filters" role="group" aria-label={t.filtersAria}>
       {FILTER_KEYS.map((k, i) => (
-        <button class={"pr-chip" + (k === "fav" ? " pr-chip-fav" : "") + (i === 0 ? " active" : "")} data-filter={k}>
+        <button class={"pr-chip" + (k === "fav" ? " pr-chip-fav" : "") + (k === "comp" ? " pr-chip-comp" : "") + (i === 0 ? " active" : "")} data-filter={k}>
           {k === "fav" && <svg class="pr-chip-heart" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.9 1.9 5.5 5 5c2-.3 3.4.8 4.2 2 .8-1.2 2.2-2.3 4.2-2 3.1.5 4.4 3.9 3 6.8C19.5 16.4 12 21 12 21z"/></svg>}
           <span>{t.filters[k]}</span>
           {k === "fav" && <span class="pr-fav-count" hidden>0</span>}
@@ -413,6 +413,9 @@ const describe = (s) => {
   }
   .pr-chip:hover { border-color: var(--gold); }
   .pr-chip.active { background: var(--gold); border-color: var(--gold); color: #fff; }
+  /* Chip de "El Mundial": dorado con letra negra */
+  .pr-chip-comp { background: linear-gradient(135deg, #f0d488, #d9b24d); border-color: #cda23a; color: #14121a; }
+  .pr-chip-comp.active { background: linear-gradient(135deg, #eccb74, #cf9f2f); border-color: #b98a1f; color: #14121a; }
   .pr-search {
     display: inline-flex; align-items: center; gap: 7px;
     width: 100%; max-width: 440px;
