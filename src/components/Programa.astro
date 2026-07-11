@@ -82,11 +82,15 @@ const describe = (s) => {
   <div class="container">
     <p class="pr-fav-empty" hidden>{t.favEmpty}</p>
     {days.map((d, di) => (
-      <div class="pr-day" id={`pr-day-${di}`} data-day-panel={di}>
+      <div class={"pr-day" + (di === 0 ? " is-active" : "")} id={`pr-day-${di}`} data-day-panel={di}>
         <h2 class="pr-day-head"><span class="pr-day-head-name">{t.days[d.day]}</span><span class="pr-day-head-date">{d.date}</span></h2>
+        <div class="pr-timeline">
         {d.slots.map((slot) => { const tm = slot.t.split(/\s*[–—-]\s*/); return (
           <div class="pr-slot">
-            <div class="pr-time pr-time-start"><span>{tm[0]}</span></div>
+            <div class="pr-rail">
+              <div class="pr-time pr-time-start"><span>{tm[0]}</span></div>
+              {tm[1] && <div class="pr-time pr-time-end"><span>{tm[1]}</span></div>}
+            </div>
             <div class="pr-sessions">
               {slot.items.map((s) => (
                 <article
@@ -118,9 +122,9 @@ const describe = (s) => {
                 </article>
               ))}
             </div>
-            {tm[1] && <div class="pr-time pr-time-end"><span>{tm[1]}</span></div>}
           </div>
         ); })}
+        </div>
         <p class="pr-empty" hidden>{t.empty} <button type="button" class="pr-reset">{t.reset}</button></p>
       </div>
     ))}
@@ -201,24 +205,17 @@ const describe = (s) => {
     if (favEmptyEl) favEmptyEl.hidden = !(favMode && favs.size === 0);
   };
 
-  // Todos los días están visibles a la vez. Click en un día -> scroll suave a ese día.
-  const scrollToDay = (i) => {
-    const target = Math.max(0, Math.round(panels[i].getBoundingClientRect().top + window.scrollY - headerH() - controlsEl.offsetHeight - 6));
-    window.scrollTo({ top: target, behavior: "smooth" });
+  // Vista de un día a la vez: la pestaña de día muestra ese día y oculta los demás.
+  const setActiveDay = (i) => {
+    panels.forEach((p, idx) => p.classList.toggle("is-active", idx === i));
+    dayBtns.forEach((b, idx) => { const on = idx === i; b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
   };
-  dayBtns.forEach((b) => b.addEventListener("click", () => scrollToDay(+b.dataset.day)));
-
-  // Scroll-spy: resalta el botón del día que se está viendo
-  let spyTick = false;
-  const spy = () => {
-    spyTick = false;
-    const y = window.scrollY + headerH() + controlsEl.offsetHeight + 24;
-    let active = 0;
-    panels.forEach((p, i) => { if (p.getBoundingClientRect().top + window.scrollY <= y) active = i; });
-    dayBtns.forEach((b, i) => { const on = i === active; b.classList.toggle("active", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
-  };
-  window.addEventListener("scroll", () => { if (!spyTick) { spyTick = true; requestAnimationFrame(spy); } }, { passive: true });
-  window.addEventListener("resize", spy);
+  dayBtns.forEach((b) => b.addEventListener("click", () => {
+    setActiveDay(+b.dataset.day);
+    // Si el usuario ya bajó por el día, al cambiar de día lo llevamos al inicio de la programación
+    const top = Math.round(controlsEl.getBoundingClientRect().top + window.scrollY - headerH() - 8);
+    if (window.scrollY > top) window.scrollTo({ top, behavior: "smooth" });
+  }));
   chips.forEach((c) => c.addEventListener("click", () => {
     filter = c.dataset.filter;
     chips.forEach((x) => x.classList.toggle("active", x === c));
@@ -337,31 +334,39 @@ const describe = (s) => {
   .pr-r-full { background: #b8b3a8; }
 
   .pr-body { padding: clamp(20px, 3vw, 32px) 0 64px; }
-  /* Todos los días visibles, uno debajo de otro */
-  .pr-day { display: block; scroll-margin-top: calc(var(--header-h, 88px) + 150px); }
+  /* Vista de un día a la vez (se cambia con las pestañas de día) */
+  .pr-day { display: none; }
+  .pr-day.is-active { display: block; }
   .pr-day-head {
-    position: sticky; top: calc(var(--header-h, 88px) + var(--controls-h, 140px)); z-index: 400;
     display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-    margin: 30px 0 4px; padding: 8px 0 10px; border-bottom: 2px solid #ece8e1;
-    background: rgba(255, 255, 255, 0.94);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    margin: 4px 0 18px; padding: 0 0 12px; border-bottom: 2px solid #ece8e1;
   }
-  .pr-day:first-child .pr-day-head { margin-top: 6px; }
-  .pr-day-head-name { font-weight: 800; font-size: clamp(22px, 4.4vw, 34px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
+  .pr-day-head-name { font-weight: 800; font-size: clamp(24px, 5vw, 36px); letter-spacing: -.03em; color: #14121a; line-height: 1; }
   .pr-day-head-date { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); }
+
+  /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin */
+  .pr-timeline { position: relative; }
   .pr-slot {
-    display: grid; grid-template-columns: 108px 1fr;
-    grid-template-areas: "start sessions" "end sessions";
-    gap: 4px 16px; padding: 14px 0; border-top: 1px solid #efece6;
+    display: grid; grid-template-columns: 66px 1fr; gap: 0 16px;
+    padding: 16px 0; border-top: 1px solid #efece6;
   }
-  .pr-slot:first-child, .pr-day-head + .pr-slot { border-top: 0; }
-  .pr-time-start { grid-area: start; align-self: start; }
-  .pr-time-end { grid-area: end; align-self: end; }
-  .pr-sessions { grid-area: sessions; }
-  .pr-time span { font-weight: 800; font-size: 19px; color: #14121a; letter-spacing: -.02em; line-height: 1.2; display: block; }
-  .pr-time-end span { font-weight: 700; font-size: 14.5px; color: #a7a2b0; }
-  .pr-time-end span::before { content: "–"; margin-right: 5px; color: #cfc9bb; }
-  .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .pr-slot:first-child { border-top: 0; }
+  .pr-rail { position: relative; text-align: right; padding-right: 18px; display: flex; flex-direction: column; }
+  .pr-rail::before { /* línea continua del eje */
+    content: ""; position: absolute; top: -16px; bottom: -16px; right: 5px; width: 2px; background: #e9e5dd;
+  }
+  .pr-slot:first-child .pr-rail::before { top: 4px; }
+  .pr-slot:last-child .pr-rail::before { bottom: auto; height: 20px; }
+  .pr-time-start { position: relative; }
+  .pr-time-start::after { /* nodo sobre la línea, alineado con la hora de inicio */
+    content: ""; position: absolute; top: 4px; right: -18px; width: 12px; height: 12px; border-radius: 50%;
+    background: #fff; border: 2.5px solid var(--gold); box-sizing: border-box; z-index: 1;
+  }
+  .pr-time-end { margin-top: auto; padding-top: 8px; }
+  .pr-time span { font-weight: 800; font-size: 18px; color: #14121a; letter-spacing: -.02em; line-height: 1.2; display: block; }
+  .pr-time-end span { font-weight: 700; font-size: 14px; color: #a7a2b0; }
+  .pr-time-end span::before { content: "–"; margin-right: 4px; color: #cfc9bb; }
+  .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; align-content: start; }
 
   .pr-card {
     position: relative; overflow: hidden;
@@ -455,21 +460,23 @@ const describe = (s) => {
   .pr-note { margin-top: 32px; font-size: 12px; color: #9a9aa2; line-height: 1.5; max-width: 720px; }
 
   @media (max-width: 640px) {
-    .pr-slot { grid-template-columns: 1fr; grid-template-areas: "start" "sessions" "end"; gap: 6px; padding: 12px 0; }
-    .pr-time-start span { color: var(--gold-dark); }
-    .pr-time-end { margin-top: 2px; }
-    .pr-time-end span { color: #b0a891; }
-    /* Eventos que coinciden: en fila horizontal (scroll lateral), no apilados */
-    /* El carril usa el 100% del ancho (full-bleed). La primera tarjeta se indenta
-       24px para alinearse con el texto del horario; una sola ocupa toda la fila. */
+    .pr-slot { grid-template-columns: 50px 1fr; gap: 0 10px; padding: 14px 0; }
+    .pr-rail { padding-right: 14px; }
+    .pr-rail::before { right: 4px; }
+    .pr-time-start span { color: var(--gold-dark); font-size: 15.5px; }
+    .pr-time-start::after { right: -14px; width: 10px; height: 10px; }
+    .pr-time-end { padding-top: 6px; }
+    .pr-time-end span { color: #b0a891; font-size: 12.5px; }
+    /* Eventos que coinciden: en fila horizontal (scroll lateral). Sangran solo a la
+       derecha (hasta el borde), empezando junto al rail de horas. */
     .pr-sessions {
       display: flex; grid-template-columns: none; gap: 10px;
       overflow-x: auto; scrollbar-width: none;
-      scroll-snap-type: x proximity; scroll-padding-left: 24px;
-      margin: 0 -24px; padding: 2px 24px 8px;
+      scroll-snap-type: x proximity;
+      margin: 0 -24px 0 0; padding: 2px 24px 8px 0;
     }
     .pr-sessions::-webkit-scrollbar { display: none; }
-    .pr-sessions > .pr-card { flex: 0 0 62%; max-width: 250px; scroll-snap-align: start; }
+    .pr-sessions > .pr-card { flex: 0 0 68%; max-width: 250px; scroll-snap-align: start; }
     .pr-sessions > .pr-card:only-child { flex-basis: 100%; max-width: none; }
     /* En tarjetas estrechas, la pestaña de sala ocupa menos y la meta deja menos hueco */
     .pr-sessions > .pr-card:not(:only-child) .pr-meta { padding-right: 62px; }
