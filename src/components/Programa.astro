@@ -347,25 +347,20 @@ const describe = (s) => {
   /* Eje de horas continuo (rail): línea vertical con las horas de inicio/fin */
   .pr-timeline { position: relative; }
   .pr-slot {
-    display: grid; grid-template-columns: 66px 1fr; gap: 0 16px;
+    display: grid; grid-template-columns: 46px 1fr; gap: 0 12px;
     padding: 16px 0; border-top: 1px solid #efece6;
   }
   .pr-slot:first-child { border-top: 0; }
-  .pr-rail { position: relative; text-align: right; padding-right: 18px; display: flex; flex-direction: column; }
+  .pr-rail { position: relative; text-align: left; padding-right: 8px; display: flex; flex-direction: column; }
   .pr-rail::before { /* línea continua del eje */
-    content: ""; position: absolute; top: -16px; bottom: -16px; right: 5px; width: 2px; background: #e9e5dd;
+    content: ""; position: absolute; top: -16px; bottom: -16px; right: 1px; width: 2px; background: #e9e5dd;
   }
   .pr-slot:first-child .pr-rail::before { top: 4px; }
   .pr-slot:last-child .pr-rail::before { bottom: auto; height: 20px; }
-  .pr-time-start { position: relative; }
-  .pr-time-start::after { /* nodo sobre la línea, alineado con la hora de inicio */
-    content: ""; position: absolute; top: 4px; right: -18px; width: 12px; height: 12px; border-radius: 50%;
-    background: #fff; border: 2.5px solid var(--gold); box-sizing: border-box; z-index: 1;
-  }
   .pr-time-end { margin-top: auto; padding-top: 8px; }
-  .pr-time span { font-weight: 800; font-size: 18px; color: #14121a; letter-spacing: -.02em; line-height: 1.2; display: block; }
-  .pr-time-end span { font-weight: 700; font-size: 14px; color: #a7a2b0; }
-  .pr-time-end span::before { content: "–"; margin-right: 4px; color: #cfc9bb; }
+  .pr-time span { font-weight: 800; font-size: 14px; color: #14121a; letter-spacing: -.02em; line-height: 1.15; display: block; }
+  .pr-time-end span { font-weight: 700; font-size: 12px; color: #a7a2b0; }
+  .pr-time-end span::before { content: "–"; margin-right: 3px; color: #cfc9bb; }
   .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; align-content: start; }
 
   .pr-card {
@@ -460,13 +455,12 @@ const describe = (s) => {
   .pr-note { margin-top: 32px; font-size: 12px; color: #9a9aa2; line-height: 1.5; max-width: 720px; }
 
   @media (max-width: 640px) {
-    .pr-slot { grid-template-columns: 50px 1fr; gap: 0 10px; padding: 14px 0; }
-    .pr-rail { padding-right: 14px; }
-    .pr-rail::before { right: 4px; }
-    .pr-time-start span { color: var(--gold-dark); font-size: 15.5px; }
-    .pr-time-start::after { right: -14px; width: 10px; height: 10px; }
+    .pr-slot { grid-template-columns: 40px 1fr; gap: 0 8px; padding: 14px 0; }
+    .pr-rail { padding-right: 6px; }
+    .pr-rail::before { right: 0; }
+    .pr-time-start span { color: var(--gold-dark); font-size: 12.5px; }
     .pr-time-end { padding-top: 6px; }
-    .pr-time-end span { color: #b0a891; font-size: 12.5px; }
+    .pr-time-end span { color: #b0a891; font-size: 11px; }
     /* Eventos que coinciden: en fila horizontal (scroll lateral). Sangran solo a la
        derecha (hasta el borde), empezando junto al rail de horas. */
     .pr-sessions {
