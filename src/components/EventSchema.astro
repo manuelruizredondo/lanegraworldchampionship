@@ -1,0 +1,53 @@
+---
+// Datos estructurados (JSON-LD) del festival para SEO / resultados enriquecidos de Google.
+import { img } from "@/data/img.js";
+import { ARTISTS } from "@/data/artists.js";
+
+const { lang = "es" } = Astro.props;
+const site = (Astro.site?.href || "https://campeonatopasoslibres.com/").replace(/\/$/, "");
+const homePath = { es: "/", en: "/en/", it: "/it/" }[lang] || "/";
+
+const desc = {
+  es: "Festival mundial de salsa y bachata en Calpe: talleres para todos los niveles, shows, fiestas y el Mundial de Pasos Libres. Del 21 al 25 de octubre de 2026.",
+  en: "World salsa and bachata festival in Calpe: workshops for all levels, shows, parties and the Pasos Libres World Championship. October 21–25, 2026.",
+  it: "Festival mondiale di salsa e bachata a Calpe: workshop per tutti i livelli, show, feste e il Mondiale Pasos Libres. Dal 21 al 25 ottobre 2026.",
+}[lang];
+
+const performer = (ARTISTS[lang] || ARTISTS.es).map((a) => ({ "@type": "PerformingGroup", name: a.name }));
+
+const data = {
+  "@context": "https://schema.org",
+  "@type": "Festival",
+  name: "La Negra Dance Festival",
+  startDate: "2026-10-21",
+  endDate: "2026-10-25",
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  description: desc,
+  image: [site + img("festival-negra-dance-home-1.jpg")],
+  url: site + homePath,
+  inLanguage: lang,
+  location: {
+    "@type": "Place",
+    name: "Hotel AR Diamante Beach 4* Superior",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Av. Juan Carlos I, 48",
+      addressLocality: "Calpe",
+      addressRegion: "Alicante",
+      postalCode: "03710",
+      addressCountry: "ES",
+    },
+  },
+  organizer: { "@type": "Organization", name: "La Negra Dance Festival", url: site + "/" },
+  offers: {
+    "@type": "Offer",
+    url: "https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata",
+    availability: "https://schema.org/InStock",
+    priceCurrency: "EUR",
+    validFrom: "2025-01-01",
+  },
+  performer,
+};
+---
+<script type="application/ld+json" set:html={JSON.stringify(data)} is:inline />

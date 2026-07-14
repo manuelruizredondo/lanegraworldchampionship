@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import EventSchema from "@/components/EventSchema.astro";
 import { img } from "@/data/img.js";
 import { ARTISTS_IT } from "@/data/artists.js";
 
@@ -84,6 +85,7 @@ const artists = ARTISTS_IT.map((a) => {
   description="La comunità mondiale della salsa e della bachata. Workshop, show, feste e l'unico Mondiale con coreografie 100% in anteprima. Calpe 2026."
   heroOverlay={true}
 >
+  <EventSchema lang="it" />
   <div class="prop">
     <!-- HERO (oscuro) -->
     <section class="p-hero">
