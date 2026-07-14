@@ -1,13 +1,14 @@
 ---
-// Analítica (GA4) con consentimiento previo (RGPD/AEPD): el script de Google
-// SOLO se carga si el usuario pulsa "Aceptar". Sin ID configurado, no se renderiza nada.
-// Configura el ID con la variable de entorno PUBLIC_GA_ID en Netlify (o pásamelo y lo pongo).
+// Analítica vía Google Tag Manager (GTM) con consentimiento previo (RGPD/AEPD):
+// GTM SOLO se carga si el usuario pulsa "Aceptar". Dentro de GTM configuras GA4,
+// píxeles, conversiones, etc. sin tocar el código.
+// ID: variable de entorno PUBLIC_GTM_ID (o el valor por defecto de abajo).
 import { COOKIES_BANNER } from "../data/nav.js";
 const { lang = "es" } = Astro.props;
-const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
+const GTM_ID = import.meta.env.PUBLIC_GTM_ID || "GTM-PFLT7J29";
 const c = COOKIES_BANNER[lang] || COOKIES_BANNER.es;
 ---
-{GA_ID && (
+{GTM_ID && (
   <>
     <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookies" hidden>
       <p class="cb-text">{c.text} <a href={c.moreUrl}>{c.more}</a></p>
@@ -17,26 +18,27 @@ const c = COOKIES_BANNER[lang] || COOKIES_BANNER.es;
       </div>
     </div>
 
-    <script define:vars={{ GA_ID }}>
+    <script define:vars={{ GTM_ID }}>
       (function () {
         var KEY = "lng:consent";
-        function loadGA() {
-          if (window.__gaLoaded) return;
-          window.__gaLoaded = true;
-          var s = document.createElement("script");
-          s.async = true;
-          s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
-          document.head.appendChild(s);
-          window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
-          window.gtag = gtag;
-          gtag("js", new Date());
-          gtag("config", GA_ID, { anonymize_ip: true });
+        function loadGTM() {
+          if (window.__gtmLoaded) return;
+          window.__gtmLoaded = true;
+          (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.start" });
+            var f = d.getElementsByTagName(s)[0],
+              j = d.createElement(s),
+              dl = l != "dataLayer" ? "&l=" + l : "";
+            j.async = true;
+            j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+            f.parentNode.insertBefore(j, f);
+          })(window, document, "script", "dataLayer", GTM_ID);
         }
         var banner = document.getElementById("cookieBanner");
         var choice = null;
         try { choice = localStorage.getItem(KEY); } catch (e) {}
-        if (choice === "granted") { loadGA(); }
+        if (choice === "granted") { loadGTM(); }
         else if (choice !== "denied" && banner) { banner.hidden = false; }
         if (banner) {
           banner.querySelectorAll("[data-cc]").forEach(function (b) {
@@ -44,7 +46,7 @@ const c = COOKIES_BANNER[lang] || COOKIES_BANNER.es;
               var v = b.getAttribute("data-cc");
               try { localStorage.setItem(KEY, v); } catch (e) {}
               banner.hidden = true;
-              if (v === "granted") loadGA();
+              if (v === "granted") loadGTM();
             });
           });
         }
