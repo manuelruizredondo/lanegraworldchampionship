@@ -4,6 +4,7 @@ import "../styles/proposal.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import WhatsApp from "../components/WhatsApp.astro";
+import Analytics from "../components/Analytics.astro";
 import { routeFor } from "../data/routes.js";
 import { img } from "../data/img.js";
 
@@ -82,5 +83,6 @@ const OG_LOCALE = { es: "es_ES", en: "en_US", it: "it_IT" };
     </main>
     <Footer lang={lang} />
     <WhatsApp lang={lang} />
+    <Analytics lang={lang} />
   </body>
 </html>

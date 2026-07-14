@@ -1,6 +1,7 @@
 ---
-import { FOOTER_LEGAL, FOOTER_SOCIAL_TITLE, FOOTER_COPYRIGHT, FOOTER_DESIGNED_BY } from "../data/nav.js";
+import { FOOTER_LEGAL, FOOTER_SOCIAL_TITLE, FOOTER_COPYRIGHT, FOOTER_DESIGNED_BY, NEWSLETTER } from "../data/nav.js";
 const { lang = "es" } = Astro.props;
+const nl = NEWSLETTER[lang] || NEWSLETTER.es;
 const legal = FOOTER_LEGAL[lang];
 const socialTitle = FOOTER_SOCIAL_TITLE[lang];
 const copyright = FOOTER_COPYRIGHT[lang];
@@ -27,6 +28,28 @@ const social = {
 <footer class="site-footer">
   <div class="gallery-strip">
     {gallery.map((src) => <div class="gcell"><img src={src} alt="" loading="lazy" /></div>)}
+  </div>
+
+  <div class="footer-newsletter">
+    <div class="container nl-inner">
+      <div class="nl-copy">
+        <p class="nl-title">{nl.title}</p>
+        <p class="nl-sub">{nl.sub}</p>
+      </div>
+      <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="nl-form" data-nl>
+        <input type="hidden" name="form-name" value="newsletter" />
+        <p class="nl-hp" hidden><label>No rellenar: <input name="bot-field" /></label></p>
+        <div class="nl-row">
+          <input type="email" name="email" required placeholder={nl.ph} aria-label={nl.ph} />
+          <button type="submit">{nl.btn}</button>
+        </div>
+        <label class="nl-consent">
+          <input type="checkbox" name="consent" required />
+          <span>{nl.consent1}<a href={nl.consentUrl}>{nl.consentLink}</a>.</span>
+        </label>
+        <p class="nl-msg" data-nl-msg hidden></p>
+      </form>
+    </div>
   </div>
 
   <div class="footer-main">
@@ -104,4 +127,50 @@ const social = {
     .sponsors { justify-content: center; }
     .gallery-strip { grid-template-columns: repeat(3, 1fr); }
   }
+
+  /* Newsletter */
+  .footer-newsletter { background: #14121a; color: #fff; padding: 30px 0; }
+  .nl-inner { display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: center; justify-content: space-between; }
+  .nl-title { margin: 0; font-size: clamp(19px, 2.4vw, 24px); font-weight: 800; letter-spacing: -.01em; }
+  .nl-sub { margin: 5px 0 0; font-size: 14px; color: rgba(255, 255, 255, .72); line-height: 1.5; max-width: 420px; }
+  .nl-form { flex: 1 1 320px; max-width: 440px; }
+  .nl-row { display: flex; gap: 8px; }
+  .nl-row input[type="email"] {
+    flex: 1; min-width: 0; border: 1.5px solid rgba(255, 255, 255, .22); background: rgba(255, 255, 255, .06);
+    color: #fff; border-radius: 999px; padding: 11px 18px; font-family: var(--font-body); font-size: 15px;
+  }
+  .nl-row input[type="email"]::placeholder { color: rgba(255, 255, 255, .5); }
+  .nl-row input[type="email"]:focus { outline: 0; border-color: var(--gold); background: rgba(255, 255, 255, .1); }
+  .nl-row button {
+    flex: 0 0 auto; border: 0; cursor: pointer; border-radius: 999px; padding: 11px 22px;
+    background: var(--gold); color: #14121a; font-weight: 700; font-size: 15px; font-family: var(--font-body);
+  }
+  .nl-row button:hover { background: var(--gold-light, #e7cf93); }
+  .nl-consent { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; font-size: 12px; color: rgba(255, 255, 255, .6); line-height: 1.4; }
+  .nl-consent input { margin-top: 2px; accent-color: var(--gold); }
+  .nl-consent a { color: var(--gold-light, #e7cf93); text-decoration: underline; }
+  .nl-msg { margin: 10px 0 0; font-size: 13.5px; font-weight: 600; }
+  .nl-msg[hidden] { display: none; }
+  .nl-msg.ok { color: #6be0a0; }
+  .nl-msg.err { color: #ff8fa0; }
+  @media (max-width: 820px) { .nl-inner { justify-content: center; text-align: center; } .nl-consent { justify-content: center; } }
 </style>
+
+<script is:inline define:vars={{ okMsg: nl.ok, errMsg: nl.err }}>
+  (function () {
+    var form = document.querySelector("[data-nl]");
+    if (!form) return;
+    var msg = form.querySelector("[data-nl-msg]");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var data = new URLSearchParams(new FormData(form)).toString();
+      fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data })
+        .then(function (r) {
+          if (!r.ok) throw new Error();
+          form.reset();
+          msg.textContent = okMsg; msg.className = "nl-msg ok"; msg.hidden = false;
+        })
+        .catch(function () { msg.textContent = errMsg; msg.className = "nl-msg err"; msg.hidden = false; });
+    });
+  })();
+</script>

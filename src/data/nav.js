@@ -125,3 +125,17 @@ export const FOOTER_DESIGNED_BY = {
 };
 
 export const HOME_HREF = { es: "/", en: "/en/", it: "/it/" };
+
+// Banner de consentimiento de cookies (GA4 solo se carga si el usuario acepta)
+export const COOKIES_BANNER = {
+  es: { text: "Usamos cookies de análisis (Google Analytics) para entender cómo se usa la web. Puedes aceptarlas o rechazarlas.", accept: "Aceptar", reject: "Rechazar", more: "Más info", moreUrl: "/cookies/" },
+  en: { text: "We use analytics cookies (Google Analytics) to understand how the site is used. You can accept or decline them.", accept: "Accept", reject: "Decline", more: "Learn more", moreUrl: "/en/cookie-policy/" },
+  it: { text: "Usiamo cookie di analisi (Google Analytics) per capire come viene usato il sito. Puoi accettarli o rifiutarli.", accept: "Accetta", reject: "Rifiuta", more: "Maggiori info", moreUrl: "/it/cookie-policy/" },
+};
+
+// Newsletter (formulario de Netlify Forms en el footer)
+export const NEWSLETTER = {
+  es: { title: "No te pierdas nada", sub: "Line-up, entradas y sorpresas de La Negra, antes que nadie.", ph: "Tu email", btn: "Suscribirme", consent1: "Acepto la ", consentLink: "política de privacidad", consentUrl: "/politica-de-privacidad/", ok: "¡Gracias! Te avisaremos de las novedades.", err: "Ups, algo falló. Inténtalo de nuevo." },
+  en: { title: "Don't miss a thing", sub: "Line-up, tickets and surprises from La Negra, before anyone else.", ph: "Your email", btn: "Subscribe", consent1: "I accept the ", consentLink: "privacy policy", consentUrl: "/en/privacy-policy/", ok: "Thanks! We'll keep you posted.", err: "Oops, something went wrong. Try again." },
+  it: { title: "Non perderti nulla", sub: "Line-up, biglietti e sorprese di La Negra, prima di tutti.", ph: "La tua email", btn: "Iscriviti", consent1: "Accetto la ", consentLink: "privacy policy", consentUrl: "/it/privacy-policy/", ok: "Grazie! Ti terremo aggiornato.", err: "Ops, qualcosa è andato storto. Riprova." },
+};

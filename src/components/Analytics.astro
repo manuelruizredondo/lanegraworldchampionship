@@ -1,0 +1,71 @@
+---
+// Analítica (GA4) con consentimiento previo (RGPD/AEPD): el script de Google
+// SOLO se carga si el usuario pulsa "Aceptar". Sin ID configurado, no se renderiza nada.
+// Configura el ID con la variable de entorno PUBLIC_GA_ID en Netlify (o pásamelo y lo pongo).
+import { COOKIES_BANNER } from "../data/nav.js";
+const { lang = "es" } = Astro.props;
+const GA_ID = import.meta.env.PUBLIC_GA_ID || "";
+const c = COOKIES_BANNER[lang] || COOKIES_BANNER.es;
+---
+{GA_ID && (
+  <>
+    <div class="cookie-banner" id="cookieBanner" role="dialog" aria-label="Cookies" hidden>
+      <p class="cb-text">{c.text} <a href={c.moreUrl}>{c.more}</a></p>
+      <div class="cb-actions">
+        <button type="button" class="cb-btn cb-reject" data-cc="denied">{c.reject}</button>
+        <button type="button" class="cb-btn cb-accept" data-cc="granted">{c.accept}</button>
+      </div>
+    </div>
+
+    <script define:vars={{ GA_ID }}>
+      (function () {
+        var KEY = "lng:consent";
+        function loadGA() {
+          if (window.__gaLoaded) return;
+          window.__gaLoaded = true;
+          var s = document.createElement("script");
+          s.async = true;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          window.gtag = gtag;
+          gtag("js", new Date());
+          gtag("config", GA_ID, { anonymize_ip: true });
+        }
+        var banner = document.getElementById("cookieBanner");
+        var choice = null;
+        try { choice = localStorage.getItem(KEY); } catch (e) {}
+        if (choice === "granted") { loadGA(); }
+        else if (choice !== "denied" && banner) { banner.hidden = false; }
+        if (banner) {
+          banner.querySelectorAll("[data-cc]").forEach(function (b) {
+            b.addEventListener("click", function () {
+              var v = b.getAttribute("data-cc");
+              try { localStorage.setItem(KEY, v); } catch (e) {}
+              banner.hidden = true;
+              if (v === "granted") loadGA();
+            });
+          });
+        }
+      })();
+    </script>
+
+    <style>
+      .cookie-banner {
+        position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 4000;
+        max-width: 580px; margin: 0 auto;
+        background: #14121a; color: #fff; border-radius: 14px; padding: 15px 18px;
+        box-shadow: 0 16px 44px rgba(0, 0, 0, .35);
+        display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
+      }
+      .cookie-banner[hidden] { display: none; }
+      .cb-text { margin: 0; font-size: 13px; line-height: 1.5; flex: 1 1 240px; }
+      .cb-text a { color: var(--gold-light, #e7cf93); text-decoration: underline; }
+      .cb-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+      .cb-btn { border: 0; cursor: pointer; padding: 9px 17px; border-radius: 999px; font-weight: 700; font-size: 13px; font-family: var(--font-body); }
+      .cb-reject { background: transparent; color: #cfc9d6; border: 1px solid rgba(255, 255, 255, .3); }
+      .cb-accept { background: var(--gold, #cda23a); color: #14121a; }
+    </style>
+  </>
+)}
