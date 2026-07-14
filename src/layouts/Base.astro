@@ -5,6 +5,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import WhatsApp from "../components/WhatsApp.astro";
 import { routeFor } from "../data/routes.js";
+import { img } from "../data/img.js";
 
 const DEFAULT_DESC = {
   es: "Festival y campeonato internacional de Salsa y Bachata. Del 21 al 25 de octubre del 2026 en Calpe (España).",
@@ -23,6 +24,7 @@ const {
   description,
   lang = "es",
   heroOverlay = false,
+  image,
 } = Astro.props;
 
 const desc = description || DEFAULT_DESC[lang] || DEFAULT_DESC.es;
@@ -31,7 +33,8 @@ const fullTitle = title.includes("La Negra") ? title : `${title} — La Negra Da
 // URLs absolutas para canonical / og / hreflang
 const site = Astro.site ?? new URL("https://campeonatopasoslibres.com");
 const canonical = new URL(Astro.url.pathname, site);
-const ogImage = new URL("/img/2025/03/logotipo-def-lanegra-dance-festival.png", site);
+// og:image: foto por página (prop `image`) o, por defecto, una foto del festival
+const ogImage = new URL(image ? img(image) : img("festival-negra-dance-home-1.jpg"), site);
 const alternates = routeFor(Astro.url.pathname);
 const OG_LOCALE = { es: "es_ES", en: "en_US", it: "it_IT" };
 ---
@@ -60,6 +63,7 @@ const OG_LOCALE = { es: "es_ES", en: "en_US", it: "it_IT" };
     <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content={OG_LOCALE[lang] || "es_ES"} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="theme-color" content="#0f0b1e" />
     <link rel="icon" href="/img/2025/03/favicon-180.png" />
     <link rel="apple-touch-icon" href="/img/2025/03/favicon-180.png" />

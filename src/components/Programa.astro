@@ -389,11 +389,29 @@ const describe = (s) => {
     amSocial.hidden = amSocial.children.length === 0;
     amodal.hidden = false;
     document.body.style.overflow = "hidden";
+    amLastFocus = btn; // para devolver el foco al cerrar
+    const closeBtn = amodal.querySelector(".pr-am-close");
+    if (closeBtn) closeBtn.focus();
   };
-  const closeArtist = () => { amodal.hidden = true; document.body.style.overflow = ""; };
+  let amLastFocus = null;
+  const closeArtist = () => {
+    if (amodal.hidden) return;
+    amodal.hidden = true; document.body.style.overflow = "";
+    if (amLastFocus && amLastFocus.focus) amLastFocus.focus();
+    amLastFocus = null;
+  };
   document.querySelectorAll(".pr-teacher-link").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); openArtist(b); }));
   amodal.querySelectorAll("[data-am-close]").forEach((x) => x.addEventListener("click", closeArtist));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeArtist(); });
+  // Foco atrapado dentro de la modal (Tab cicla entre sus elementos)
+  amodal.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab" || amodal.hidden) return;
+    const foci = [...amodal.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])')].filter((el) => !el.hidden && el.offsetParent !== null);
+    if (!foci.length) return;
+    const first = foci[0], last = foci[foci.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
 
   // Click en una tarjeta -> crece y muestra el texto explicativo
   document.querySelector(".pr-body").addEventListener("click", (e) => {
