@@ -2,8 +2,8 @@
 const { lang = "es" } = Astro.props;
 const number = "34639501310";
 const msg = lang === "en"
-  ? "Hi! I have a question about La Negra World Championship"
-  : "¡Hola! Tengo una consulta sobre La Negra World Championship";
+  ? "Hi! I have a question about La Negra Dance Festival"
+  : "¡Hola! Tengo una consulta sobre La Negra Dance Festival";
 const tip = lang === "en" ? "Any questions?" : "¿Tienes alguna duda?";
 const href = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
 ---

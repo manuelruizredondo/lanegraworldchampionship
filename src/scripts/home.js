@@ -1,4 +1,4 @@
-// Efectos e interacciones de la home (La Negra World Championship).
+// Efectos e interacciones de la home (La Negra Dance Festival).
 // DOM-based; se importa desde cada home (es / en / it).
 
     // Marquee estilo sundayapp: desplazamiento continuo que ACELERA con el scroll + skew según dirección

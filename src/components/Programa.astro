@@ -30,16 +30,16 @@ const bioFor = (a, name) => {
   if (a && a.country) {
     const [style, place] = a.country.split("|").map((s) => s.trim());
     const T = {
-      es: `${a.name} es artista de ${style} de ${place}. Forma parte del cartel de La Negra World Championship, donde imparte sus talleres y sube al escenario en los shows del festival.`,
-      en: `${a.name} is a ${style} artist from ${place}. Part of the La Negra World Championship line-up, teaching workshops and performing in the festival shows.`,
-      it: `${a.name} è un artista di ${style} da ${place}. Fa parte del cast di La Negra World Championship, con i suoi workshop e gli show del festival.`,
+      es: `${a.name} es artista de ${style} de ${place}. Forma parte del cartel de La Negra Dance Festival, donde imparte sus talleres y sube al escenario en los shows del festival.`,
+      en: `${a.name} is a ${style} artist from ${place}. Part of the La Negra Dance Festival line-up, teaching workshops and performing in the festival shows.`,
+      it: `${a.name} è un artista di ${style} da ${place}. Fa parte del cast di La Negra Dance Festival, con i suoi workshop e gli show del festival.`,
     };
     return T[lang] || T.es;
   }
   const T2 = {
-    es: `${name} forma parte del equipo de profes de La Negra World Championship, impartiendo clases durante el festival.`,
-    en: `${name} is part of the La Negra World Championship teaching team during the festival.`,
-    it: `${name} fa parte del team di insegnanti di La Negra World Championship durante il festival.`,
+    es: `${name} forma parte del equipo de profes de La Negra Dance Festival, impartiendo clases durante el festival.`,
+    en: `${name} is part of the La Negra Dance Festival teaching team during the festival.`,
+    it: `${name} fa parte del team di insegnanti di La Negra Dance Festival durante il festival.`,
   };
   return T2[lang] || T2.es;
 };
