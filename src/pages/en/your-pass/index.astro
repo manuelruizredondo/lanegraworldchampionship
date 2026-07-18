@@ -16,97 +16,99 @@ const fiestaImgs = [
   description="Get your Full Pass for La Negra Dance Festival. Workshops, competition and party in Calpe."
   lang="en"
 >
-  <!-- PASS / COUNTDOWN -->
-  <section class="section pass-hero text-center">
-    <div class="container">
-      <p class="eyebrow">Full Pass</p>
-      <h2 class="script-title white">See you on October 21, 2026</h2>
-      <div class="p-hero-count" role="timer" aria-label="Countdown to the event">
-        <div class="p-hc"><span class="p-hc-n" data-cd-days>0</span><span class="p-hc-l">Days</span></div>
-        <div class="p-hc"><span class="p-hc-n" data-cd-hours>00</span><span class="p-hc-l">Hours</span></div>
-        <div class="p-hc"><span class="p-hc-n" data-cd-mins>00</span><span class="p-hc-l">Min</span></div>
-        <div class="p-hc"><span class="p-hc-n" data-cd-secs>00</span><span class="p-hc-l">Sec</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TICKETING (embedded go&dance widget) -->
-  <section class="section tickets text-center" id="tickets">
-    <div class="container">
-      <p class="eyebrow dark">Buy your ticket</p>
-      <h3 class="script-title">Get your pass</h3>
-      <p class="tickets-intro">Book your Full Pass to enjoy the workshops, the competition and the party at La Negra Dance Festival. Secure checkout via go&amp;dance.</p>
-      <div class="goandance-embed">
-        <div class="goandance-tickets" id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff">
-          <div id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff-iframe"><iframe height="100px" width="100%" frameborder="0" scrolling="auto" src="https://www.goandance.com/en/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"></iframe></div>
+  <div class="prop">
+    <!-- PASS / COUNTDOWN -->
+    <section class="p-section pass-hero p-center">
+      <div class="p-container">
+        <p class="p-eyebrow">Full Pass</p>
+        <h1 class="p-display p-white">See you on October 21, 2026</h1>
+        <div class="p-hero-count" role="timer" aria-label="Countdown to the event">
+          <div class="p-hc"><span class="p-hc-n" data-cd-days>0</span><span class="p-hc-l">Days</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-cd-hours>00</span><span class="p-hc-l">Hours</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-cd-mins>00</span><span class="p-hc-l">Min</span></div>
+          <div class="p-hc"><span class="p-hc-n" data-cd-secs>00</span><span class="p-hc-l">Sec</span></div>
         </div>
       </div>
-      <p class="gd-credit">Powered by <a href={ticketsPage} target="_blank" rel="noopener">go&amp;dance</a></p>
-      <a class="gd-link" href={ticketsPage} target="_blank" rel="noopener">Go to the tickets page ↗</a>
-    </div>
-  </section>
+    </section>
 
-  <!-- HOTEL OFICIAL (sede del festival) -->
-  <section class="section hotel" id="hotel">
-    <div class="container">
-      <div class="hotel-ficha">
-        <div class="hotel-body">
-          <p class="eyebrow dark">Official accommodation</p>
-          <h3 class="script-title">Venue of La Negra Dance Festival</h3>
-          <p class="hotel-sub">AR Diamante Beach · 4★ Superior · Calpe</p>
-          <p>Enjoy an unbeatable stay at <strong>AR Diamante Beach</strong>, a landmark on the Costa Blanca with spectacular views of the sea and the Peñón de Ifach. Our elegant rooms combine comfort and style to make every morning special.</p>
-          <p>Relax in our <strong>three pools</strong>, including a children's pool, in an exclusive setting with palm trees, sun loungers, cocktails and entertainment. Beach or pool? Don't choose — enjoy it all, just steps from the sea.</p>
-          <p>If you have any issue with your booking, please contact: <a href="mailto:reservas@galaxtur.com">reservas@galaxtur.com</a></p>
-          <p class="hotel-note">IMPORTANT: EXCLUSIVE RATE FOR EVENT ATTENDEES. IF THE CONTRARY IS IDENTIFIED AND THE FULLPASS IS NOT PRESENTED AT CHECK-IN, THE BOOKING WILL BE CANCELLED.</p>
-          <a class="btn btn-solid" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Book your hotel</a>
-        </div>
-        <div class="hotel-video-wrap">
-          <video class="hotel-video" autoplay muted loop playsinline poster={img("ciudad-calpes-la-negra-dance-festival.webp")}>
-            <source src="/video/ar-diamante-beach.mp4" type="video/mp4" />
-          </video>
-          <span class="hotel-badge">Official festival venue</span>
-        </div>
-      </div>
-
-      <div class="transfers">
-        <div class="transfers-grid">
-          <div class="hotel-map">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3115.9332867988783!2d0.07065367592495361!3d38.65041427177794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129dfe00f86d3eef%3A0x8f672c62926e85bf!2sAR%20Diamante%20Beach!5e0!3m2!1ses!2ses!4v1742755084006!5m2!1ses!2ses" width="100%" height="440" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="AR Diamante Beach"></iframe>
-          </div>
-          <div class="transfers-text">
-            <h3 class="script-title">How do you get to the hotel from the airport or the train station?</h3>
-            <div class="transfer-card">
-              <h4>Transfers Alicante airport - Calpe</h4>
-              <p>Arrival or departure between 7:00 and 23:55: Shared transfer price €23.50 per person per trip</p>
-            </div>
-            <div class="transfer-card">
-              <h4>Transfers Alicante train station - Calpe</h4>
-              <p>Arrival or departure between 9:00 and 20:15: Shared transfer price €18 per person per trip</p>
-            </div>
-            <p class="transfers-note">Once we receive your details, we'll make the reservation and send you the confirmation and a link to pay for the transfer.</p>
-            <a class="btn btn-solid" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Book your hotel</a>
+    <!-- TICKETING (embedded go&dance widget) -->
+    <section class="p-section p-center" id="tickets">
+      <div class="p-container">
+        <p class="p-eyebrow">Buy your ticket</p>
+        <h2 class="p-h2">Get your pass</h2>
+        <p class="p-lead p-narrow">Book your Full Pass to enjoy the workshops, the competition and the party at La Negra Dance Festival. Secure checkout via go&amp;dance.</p>
+        <div class="goandance-embed">
+          <div class="goandance-tickets" id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff">
+            <div id="goandance-tickets-106ef4d5-c8be-4fce-8660-ea6854726bff-iframe"><iframe height="100px" width="100%" frameborder="0" scrolling="auto" src="https://www.goandance.com/en/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"></iframe></div>
           </div>
         </div>
+        <p class="gd-credit">Powered by <a href={ticketsPage} target="_blank" rel="noopener">go&amp;dance</a></p>
+        <a class="p-link gd-link" href={ticketsPage} target="_blank" rel="noopener">Go to the tickets page ↗</a>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- PARTY -->
-  <section class="section fiesta">
-    <div class="container fiesta-inner">
-      <div class="fiesta-gallery">
-        {fiestaImgs.map((name) => (
-          <div class="fiesta-img"><img src={img(name)} alt="La Negra Dance Festival party" loading="lazy" /></div>
-        ))}
+    <!-- HOTEL OFICIAL (sede del festival) -->
+    <section class="p-section p-gray" id="hotel">
+      <div class="p-container">
+        <div class="hotel-ficha">
+          <div class="hotel-body">
+            <p class="p-eyebrow">Official accommodation</p>
+            <h2 class="p-h2">Venue of La Negra Dance Festival</h2>
+            <p class="hotel-sub">AR Diamante Beach · 4★ Superior · Calpe</p>
+            <p>Enjoy an unbeatable stay at <strong>AR Diamante Beach</strong>, a landmark on the Costa Blanca with spectacular views of the sea and the Peñón de Ifach. Our elegant rooms combine comfort and style to make every morning special.</p>
+            <p>Relax in our <strong>three pools</strong>, including a children's pool, in an exclusive setting with palm trees, sun loungers, cocktails and entertainment. Beach or pool? Don't choose — enjoy it all, just steps from the sea.</p>
+            <p>If you have any issue with your booking, please contact: <a href="mailto:reservas@galaxtur.com">reservas@galaxtur.com</a></p>
+            <p class="hotel-note">IMPORTANT: EXCLUSIVE RATE FOR EVENT ATTENDEES. IF THE CONTRARY IS IDENTIFIED AND THE FULLPASS IS NOT PRESENTED AT CHECK-IN, THE BOOKING WILL BE CANCELLED.</p>
+            <a class="p-btn p-btn-dark" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Book your hotel</a>
+          </div>
+          <div class="hotel-video-wrap">
+            <video class="hotel-video" autoplay muted loop playsinline poster={img("ciudad-calpes-la-negra-dance-festival.webp")}>
+              <source src="/video/ar-diamante-beach.mp4" type="video/mp4" />
+            </video>
+            <span class="hotel-badge">Official festival venue</span>
+          </div>
+        </div>
+
+        <div class="transfers">
+          <div class="transfers-grid">
+            <div class="hotel-map">
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3115.9332867988783!2d0.07065367592495361!3d38.65041427177794!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129dfe00f86d3eef%3A0x8f672c62926e85bf!2sAR%20Diamante%20Beach!5e0!3m2!1ses!2ses!4v1742755084006!5m2!1ses!2ses" width="100%" height="440" style="border:0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="AR Diamante Beach"></iframe>
+            </div>
+            <div class="transfers-text">
+              <h3 class="p-h2 transfers-title">How do you get to the hotel from the airport or the train station?</h3>
+              <div class="transfer-card">
+                <h4>Transfers Alicante airport - Calpe</h4>
+                <p>Arrival or departure between 7:00 and 23:55: Shared transfer price €23.50 per person per trip</p>
+              </div>
+              <div class="transfer-card">
+                <h4>Transfers Alicante train station - Calpe</h4>
+                <p>Arrival or departure between 9:00 and 20:15: Shared transfer price €18 per person per trip</p>
+              </div>
+              <p class="transfers-note">Once we receive your details, we'll make the reservation and send you the confirmation and a link to pay for the transfer.</p>
+              <a class="p-btn p-btn-light" href="https://ar-hotels.actpages.com/la-negra-festival.html" target="_blank" rel="noopener">Book your hotel</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="fiesta-text">
-        <p class="eyebrow dark">At night…</p>
-        <h3 class="script-title">Enjoy the party !</h3>
-        <p>After an intense day of workshops, learning and rest…we have a party! The workshops and the competition are just the beginning. Get ready for nights of pure energy in our theme parties, where the best atmosphere, the best dancers and the best music will make you live an unforgettable experience.</p>
-        <a class="btn btn-outline" href="/en/fiesta/">Learn more</a>
+    </section>
+
+    <!-- PARTY -->
+    <section class="p-section">
+      <div class="p-container fiesta-inner">
+        <div class="fiesta-gallery">
+          {fiestaImgs.map((name) => (
+            <div class="fiesta-img"><img src={img(name)} alt="La Negra Dance Festival party" loading="lazy" /></div>
+          ))}
+        </div>
+        <div class="fiesta-text">
+          <p class="p-eyebrow">At night…</p>
+          <h2 class="p-h2">Enjoy the party !</h2>
+          <p>After an intense day of workshops, learning and rest…we have a party! The workshops and the competition are just the beginning. Get ready for nights of pure energy in our theme parties, where the best atmosphere, the best dancers and the best music will make you live an unforgettable experience.</p>
+          <a class="p-btn p-btn-dark" href="/en/fiesta/">Learn more</a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <script>
     // Countdown to the start of the festival: October 21, 2026 (Spain time)
@@ -130,34 +132,37 @@ const fiestaImgs = [
 </Base>
 
 <style>
-  .eyebrow.dark { color: var(--gold); }
+  /* PASS / COUNTDOWN (hero oscuro del sistema Board) */
+  .pass-hero {
+    background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 65%);
+    color: #fff;
+  }
+  .pass-hero .p-eyebrow { color: var(--gold); }
 
   /* TICKETING (go&dance) */
-  .tickets-intro { max-width: 680px; margin: 0 auto 28px; font-size: 16px; }
-  .goandance-embed { width: 100%; margin: 0 auto; }
+  .goandance-embed { width: 100%; max-width: 900px; margin: 8px auto 0; }
   /* El auto-resize de go&dance (postMessage) puede no dispararse; fijamos una altura razonable */
   .goandance-embed :global(iframe) {
     display: block; width: 100%; border: 0;
     min-height: 430px;
+    border-radius: var(--p-radius);
   }
-  .ticket-powered { font-size: 14px; color: var(--blue); margin-top: 18px; }
-  .ticket-powered a { color: var(--gold-dark); font-weight: 700; }
+  .gd-credit { margin: 18px 0 6px; font-size: 13px; color: var(--p-muted); }
+  .gd-credit a { color: var(--gold-dark); font-weight: 700; }
+  .gd-link { display: inline-block; }
 
-  /* HOTEL WITH DISCOUNT */
-  /* HOTEL OFICIAL — sede del festival (fondo cálido) */
-  .section.hotel { background: var(--cream); }
+  /* HOTEL OFICIAL — sede del festival */
   .hotel-ficha { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; }
-  .hotel-body .script-title { color: #14121a; margin: 4px 0 4px; }
-  .hotel-sub { font-size: 15px; font-weight: 700; color: var(--gold-dark); margin: 0 0 20px; }
-  .hotel-body > p { font-size: 15px; line-height: 1.6; color: var(--text); margin: 0 0 16px; }
+  .hotel-sub { font-size: 15px; font-weight: 700; color: var(--gold-dark); margin: -6px 0 20px; }
+  .hotel-body > p { font-size: 16px; line-height: 1.6; color: var(--p-muted); margin: 0 0 16px; }
   .hotel-body p a { color: var(--gold-dark); font-weight: 600; }
   .hotel-note {
-    font-size: 13px; font-weight: 700; color: var(--navy);
-    background: #fff; border: 1px solid var(--gold-light);
-    padding: 14px 16px; border-radius: 10px; margin: 0 0 22px;
+    font-size: 13px; font-weight: 700; color: #5a4a22;
+    background: #faf3e2; border-left: 4px solid var(--gold);
+    padding: 14px 18px; border-radius: 16px; margin: 0 0 22px;
   }
   .hotel-video-wrap {
-    position: relative; border-radius: 26px; overflow: hidden;
+    position: relative; border-radius: var(--p-radius); overflow: hidden;
     min-height: 460px; box-shadow: 0 24px 60px rgba(20, 18, 26, .14);
   }
   .hotel-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -169,49 +174,26 @@ const fiestaImgs = [
   }
   .transfers { margin-top: clamp(42px, 5vw, 68px); }
   .transfers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 4vw, 56px); align-items: start; }
-  .hotel-map { border-radius: 20px; overflow: hidden; line-height: 0; box-shadow: 0 18px 44px rgba(20, 18, 26, .12); }
+  .hotel-map { border-radius: var(--p-radius); overflow: hidden; line-height: 0; box-shadow: 0 18px 44px rgba(20, 18, 26, .12); }
   .hotel-map iframe { display: block; width: 100%; min-height: 440px; }
-  .transfers-text .script-title { font-size: clamp(22px, 2.6vw, 30px); color: #14121a; margin: 0 0 20px; }
-  .transfer-card { background: #fff; border: 1px solid var(--gold-light); border-radius: 14px; padding: 20px 22px; margin-bottom: 16px; }
+  .transfers-title { font-size: clamp(22px, 2.6vw, 30px); margin: 0 0 20px; }
+  .transfer-card { background: #fff; border: 1px solid var(--p-line); border-radius: 16px; padding: 20px 22px; margin-bottom: 16px; }
   .transfer-card h4 { font-weight: 700; color: var(--gold-dark); margin: 0 0 8px; font-size: 16px; }
-  .transfer-card p { margin: 0; font-size: 15px; line-height: 1.5; }
-  .transfers-note { font-size: 14px; color: #6a6a74; margin: 0 0 20px; }
+  .transfer-card p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--p-muted); }
+  .transfers-note { font-size: 14px; color: var(--p-muted); margin: 0 0 20px; }
   @media (max-width: 900px) {
     .hotel-ficha, .transfers-grid { grid-template-columns: 1fr; }
     .hotel-video-wrap { min-height: 0; aspect-ratio: 16 / 9; }
     .hotel-map { order: -1; }
   }
 
-  /* PASS / COUNTDOWN */
-  .pass-hero {
-    background: linear-gradient(135deg, #14102b 0%, #1d1640 60%, #2a1f57 100%);
-    color: #fff;
-  }
-  .pass-hero .eyebrow { color: var(--gold); }
-  /* Contador: mismo estilo que la home (.p-hero-count / .p-hc, en proposal.css) */
-
-  /* TICKETING */
-  .ticket-box {
-    max-width: 640px; margin: 0 auto;
-    background: var(--cream);
-    border: 1px solid var(--gold-light);
-    border-radius: 16px;
-    padding: 48px 40px;
-  }
-  .ticket-box p { font-size: 16px; }
-  .ticket-btn { margin-top: 20px; }
-  .ticket-powered { font-size: 14px; color: var(--blue); margin-top: 22px; }
-  .ticket-powered a { color: var(--gold-dark); font-weight: 700; }
-
   /* PARTY */
   .fiesta-inner { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
   .fiesta-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .fiesta-img { border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; }
+  .fiesta-img { border-radius: 18px; overflow: hidden; aspect-ratio: 3/4; }
   .fiesta-img:first-child { grid-column: 1 / -1; aspect-ratio: 16/9; }
   .fiesta-img img { width: 100%; height: 100%; object-fit: cover; }
-  .fiesta-text .script-title { color: var(--gold); margin: 6px 0 16px; }
-  .fiesta-text p { font-size: 16px; margin-bottom: 22px; }
-
+  .fiesta-text > p { font-size: 16px; line-height: 1.6; color: var(--p-muted); margin: 0 0 22px; }
   @media (max-width: 900px) {
     .fiesta-inner { grid-template-columns: 1fr; gap: 30px; }
   }

@@ -80,6 +80,22 @@
   .p-hero-date span:last-child { font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: clamp(12px, 1.5vw, 15px); color: rgba(255,255,255,.75); }
   .p-hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
+  /* PAGE HERO interior: imagen de fondo + overlay oscuro + título centrado en blanco */
+  .p-phero {
+    position: relative; overflow: hidden;
+    background-color: #0f0b1e; background-position: center; background-size: cover; background-repeat: no-repeat;
+    color: #fff; text-align: center; padding: clamp(72px, 12vw, 140px) 24px;
+  }
+  .p-phero::after {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background: linear-gradient(180deg, rgba(10, 8, 20, .62) 0%, rgba(10, 8, 20, .5) 48%, rgba(10, 8, 20, .74) 100%);
+  }
+  .p-phero-inner { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; }
+  .p-phero .p-eyebrow { color: var(--gold); }
+  .p-phero-title { font-weight: 600; font-size: clamp(40px, 7.2vw, 88px); line-height: .98; letter-spacing: -.045em; margin: 0 0 18px; color: #fff; }
+  .p-phero-sub { max-width: 640px; margin: 0 auto; font-size: clamp(16px, 2vw, 21px); line-height: 1.55; color: rgba(255, 255, 255, .86); }
+  .p-phero-cta { margin-top: 28px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
   /* INTRO */
   .p-intro { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(30px, 5vw, 70px); align-items: end; }
   .p-intro-cols { display: grid; gap: 20px; }

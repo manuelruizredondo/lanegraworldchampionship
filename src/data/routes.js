@@ -4,6 +4,7 @@
 export const ROUTES = [
   { es: "/", en: "/en/", it: "/it/" },
   { es: "/competicion/", en: "/en/competition/", it: "/it/competition/" },
+  { es: "/mundial/", en: "/en/world-championship/", it: "/it/mondiale/" },
   { es: "/bases-y-reglamento/", en: "/en/competition-rules/", it: "/it/regolamento/" },
   { es: "/festival/", en: "/en/festival/", it: "/it/festival/" },
   { es: "/artistas/", en: "/en/artists/", it: "/it/artists/" },
@@ -15,6 +16,7 @@ export const ROUTES = [
   { es: "/ganadores/", en: "/en/winners/", it: "/it/winners/" },
   { es: "/ediciones/", en: "/en/editions/", it: "/it/edizioni/" },
   { es: "/videos/", en: "/en/videos/", it: "/it/videos/" },
+  { es: "/galeria/", en: "/en/gallery/", it: "/it/gallery/" },
   { es: "/galeria-2024/", en: "/en/gallery-2024/", it: "/it/gallery-2024/" },
   { es: "/galeria-2023/", en: "/en/gallery-2023/", it: "/it/gallery-2023/" },
   { es: "/tu-pase/", en: "/en/your-pass/", it: "/it/your-pass/" },

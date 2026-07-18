@@ -1,0 +1,83 @@
+---
+// Modal de vídeo reutilizable: cualquier elemento con [data-video="ID_YT"] abre
+// el vídeo de YouTube en una ventana centrada. Cierra con ✕, click fuera o Escape.
+// El iframe se crea al pulsar (no carga cookies de YouTube hasta entonces).
+---
+<div class="vm-overlay" data-video-overlay hidden aria-hidden="true">
+  <button class="vm-close" type="button" aria-label="Cerrar">&times;</button>
+  <div class="vm-frame" data-video-frame></div>
+</div>
+
+<style>
+  .vm-overlay {
+    position: fixed; inset: 0; z-index: 4000;
+    display: flex; align-items: center; justify-content: center;
+    padding: clamp(16px, 4vw, 56px);
+    background: rgba(10, 8, 20, .9);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    opacity: 0; transition: opacity .25s ease;
+  }
+  .vm-overlay[hidden] { display: none; }
+  .vm-overlay.open { opacity: 1; }
+  .vm-frame {
+    width: min(92vw, 960px);
+    transform: scale(.96); transition: transform .28s cubic-bezier(.22, 1, .36, 1);
+  }
+  .vm-overlay.open .vm-frame { transform: scale(1); }
+  .vm-close {
+    position: absolute; top: 18px; right: 22px;
+    width: 46px; height: 46px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: rgba(255, 255, 255, .14); color: #fff;
+    font-size: 30px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .vm-close:hover { background: rgba(255, 255, 255, .3); }
+  @media (prefers-reduced-motion: reduce) {
+    .vm-overlay, .vm-frame { transition: none; }
+  }
+</style>
+
+<script>
+  const overlay = document.querySelector("[data-video-overlay]");
+  if (overlay) {
+    const frame = overlay.querySelector("[data-video-frame]");
+    const open = (id) => {
+      frame.innerHTML = "";
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+      iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+      iframe.allowFullscreen = true;
+      iframe.title = "Vídeo";
+      // Estilos en línea: el iframe se crea por JS y no recibe el scope de Astro.
+      iframe.style.width = "100%";
+      iframe.style.aspectRatio = "16 / 9";
+      iframe.style.height = "auto";
+      iframe.style.border = "0";
+      iframe.style.borderRadius = "12px";
+      iframe.style.display = "block";
+      iframe.style.boxShadow = "0 24px 70px rgba(0,0,0,.55)";
+      frame.appendChild(iframe);
+      overlay.hidden = false;
+      overlay.setAttribute("aria-hidden", "false");
+      requestAnimationFrame(() => overlay.classList.add("open"));
+      document.body.style.overflow = "hidden";
+    };
+    const close = () => {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      setTimeout(() => { overlay.hidden = true; frame.innerHTML = ""; }, 260);
+    };
+    document.addEventListener("click", (e) => {
+      const trigger = e.target.closest("[data-video]");
+      if (trigger) { e.preventDefault(); open(trigger.getAttribute("data-video")); return; }
+      if (overlay.hidden) return;
+      if (e.target === overlay || e.target.closest(".vm-close")) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !overlay.hidden) close();
+    });
+  }
+</script>

@@ -1,9 +1,16 @@
 ---
-import Base from "@/layouts/Base.astro";
-import Programa from "@/components/Programa.astro";
-import { I18N } from "@/data/programa.js";
-const t = I18N.es;
+// La programación pasó a ser Talleres. Redirección a /talleres/.
 ---
-<Base title={t.metaTitle} description={t.metaDesc} lang="es">
-  <Programa lang="es" />
-</Base>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0; url=/talleres/" />
+    <link rel="canonical" href="/talleres/" />
+    <meta name="robots" content="noindex" />
+    <title>Talleres — La Negra Dance Festival</title>
+  </head>
+  <body>
+    <p>Esta página se ha movido. Redirigiendo a <a href="/talleres/">Talleres</a>…</p>
+  </body>
+</html>

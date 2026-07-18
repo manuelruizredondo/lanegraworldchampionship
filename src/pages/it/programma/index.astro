@@ -1,9 +1,16 @@
 ---
-import Base from "@/layouts/Base.astro";
-import Programa from "@/components/Programa.astro";
-import { I18N } from "@/data/programa.js";
-const t = I18N.it;
+// Il programma è diventato Workshop. Reindirizzamento a /it/workshops/.
 ---
-<Base title={t.metaTitle} description={t.metaDesc} lang="it">
-  <Programa lang="it" />
-</Base>
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0; url=/it/workshops/" />
+    <link rel="canonical" href="/it/workshops/" />
+    <meta name="robots" content="noindex" />
+    <title>Workshop — La Negra Dance Festival</title>
+  </head>
+  <body>
+    <p>Questa pagina è stata spostata. Reindirizzamento a <a href="/it/workshops/">Workshop</a>…</p>
+  </body>
+</html>

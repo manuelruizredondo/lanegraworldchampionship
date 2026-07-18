@@ -1,9 +1,16 @@
 ---
-import Base from "@/layouts/Base.astro";
-import Programa from "@/components/Programa.astro";
-import { I18N } from "@/data/programa.js";
-const t = I18N.en;
+// The schedule became Workshops. Redirect to /en/workshops/.
 ---
-<Base title={t.metaTitle} description={t.metaDesc} lang="en">
-  <Programa lang="en" />
-</Base>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0; url=/en/workshops/" />
+    <link rel="canonical" href="/en/workshops/" />
+    <meta name="robots" content="noindex" />
+    <title>Workshops — La Negra Dance Festival</title>
+  </head>
+  <body>
+    <p>This page has moved. Redirecting to <a href="/en/workshops/">Workshops</a>…</p>
+  </body>
+</html>

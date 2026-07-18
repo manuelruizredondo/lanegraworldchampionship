@@ -3,6 +3,7 @@
 export const MENU = {
   es: [
     { label: "MUNDIAL", href: "/competicion/", sub: [
+      { t: "EL MUNDIAL", h: "/mundial/" },
       { t: "INSCRIPCIÓN", h: "/competicion/#inscripcion" },
       { t: "BASES Y REGLAMENTO", h: "/bases-y-reglamento/" },
       { t: "PASE COMPETIDOR", h: "/competicion/#fullpass" },
@@ -17,7 +18,7 @@ export const MENU = {
       { t: "FULL PASS", h: "/festival/#fullpass" },
       { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
-    { label: "GALERÍA", href: "#", sub: [
+    { label: "GALERÍA", href: "/galeria/", sub: [
       { t: "FOTOS 2024", h: "/galeria-2024/" },
       { t: "FOTOS 2023", h: "/galeria-2023/" },
     ]},
@@ -25,6 +26,7 @@ export const MENU = {
   ],
   en: [
     { label: "WORLD CUP", href: "/en/competition/", sub: [
+      { t: "THE CHAMPIONSHIP", h: "/en/world-championship/" },
       { t: "REGISTRATION", h: "/en/competition/#registration" },
       { t: "RULES", h: "/en/competition-rules/" },
       { t: "COMPETITOR PASS", h: "/en/competition/#fullpass" },
@@ -39,7 +41,7 @@ export const MENU = {
       { t: "FULL PASS", h: "/en/festival/#fullpass" },
       { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
-    { label: "GALLERY", href: "#", sub: [
+    { label: "GALLERY", href: "/en/gallery/", sub: [
       { t: "PHOTOS 2024", h: "/en/gallery-2024/" },
       { t: "PHOTOS 2023", h: "/en/gallery-2023/" },
     ]},
@@ -47,6 +49,7 @@ export const MENU = {
   ],
   it: [
     { label: "MONDIALE", href: "/it/competition/", sub: [
+      { t: "IL MONDIALE", h: "/it/mondiale/" },
       { t: "ISCRIZIONE", h: "/it/competition/#registration" },
       { t: "REGOLAMENTO", h: "/it/regolamento/" },
       { t: "PASS CONCORRENTE", h: "/it/competition/#fullpass" },
@@ -61,7 +64,7 @@ export const MENU = {
       { t: "FULL PASS", h: "/it/festival/#fullpass" },
       { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
-    { label: "GALLERIA", href: "#", sub: [
+    { label: "GALLERIA", href: "/it/gallery/", sub: [
       { t: "FOTO 2024", h: "/it/gallery-2024/" },
       { t: "FOTO 2023", h: "/it/gallery-2023/" },
     ]},

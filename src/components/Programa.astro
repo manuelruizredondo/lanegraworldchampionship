@@ -4,7 +4,7 @@ import { ARTISTS } from "@/data/artists.js";
 import { BIOS } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
 
-const { lang = "es" } = Astro.props;
+const { lang = "es", comingSoon = false } = Astro.props;
 const t = I18N[lang] || I18N.es;
 
 // Artistas: si el nombre de un artista aparece en el texto del profe, la card enlaza a su ficha
@@ -67,11 +67,17 @@ const describe = (s) => {
 
 <section class="pr-hero">
   <div class="container">
-    <p class="eyebrow dark">{t.eyebrow}</p>
-    <h1 class="script-title">{t.h1}</h1>
-    <p class="pr-sub">{t.sub}</p>
+    {comingSoon && <span class="pr-soon-badge">{t.tallBadge}</span>}
+    <p class="eyebrow dark">{comingSoon ? t.tallEyebrow : t.eyebrow}</p>
+    <h1 class="script-title">{comingSoon ? t.tallH1 : t.h1}</h1>
+    <p class="pr-sub">{comingSoon ? t.tallSub : t.sub}</p>
   </div>
 </section>
+{comingSoon && (
+  <div class="pr-soon">
+    <div class="container"><p>{t.tallBanner}</p></div>
+  </div>
+)}
 
 <!-- Salones: 4 cajas con imagen, borde de color y la bolita arriba a la izquierda -->
 <section class="pr-rooms">
@@ -431,6 +437,9 @@ const describe = (s) => {
   .pr-hero { padding: clamp(40px, 6vw, 72px) 0 clamp(20px, 3vw, 32px); text-align: center; }
   .pr-hero .script-title { margin: 0 0 14px; }
   .pr-sub { max-width: 640px; margin: 0 auto; color: #6a6a74; font-size: 16px; line-height: 1.6; }
+  .pr-soon-badge { display: inline-block; background: var(--gold); color: #fff; font-weight: 800; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 15px; border-radius: 999px; margin-bottom: 16px; }
+  .pr-soon { background: #faf3e2; border-top: 1px solid #f0e6cf; border-bottom: 1px solid #f0e6cf; }
+  .pr-soon p { max-width: 860px; margin: 0 auto; padding: 15px 24px; text-align: center; color: #5a4a22; font-weight: 600; font-size: 15px; line-height: 1.5; }
 
   .pr-controls {
     position: sticky; top: var(--header-h, 88px); z-index: 500;
