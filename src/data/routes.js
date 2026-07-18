@@ -13,6 +13,7 @@ export const ROUTES = [
   { es: "/competidores/", en: "/en/competitors/", it: "/it/competitors/" },
   { es: "/ganadores-2025/", en: "/en/winners-2025/", it: "/it/winners-2025/" },
   { es: "/ganadores/", en: "/en/winners/", it: "/it/winners/" },
+  { es: "/ediciones/", en: "/en/editions/", it: "/it/edizioni/" },
   { es: "/galeria-2024/", en: "/en/gallery-2024/", it: "/it/gallery-2024/" },
   { es: "/galeria-2023/", en: "/en/gallery-2023/", it: "/it/gallery-2023/" },
   { es: "/tu-pase/", en: "/en/your-pass/", it: "/it/your-pass/" },

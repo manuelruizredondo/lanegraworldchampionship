@@ -58,7 +58,7 @@ const T = {
                 {item.sub.map((s) => (
                   s.group
                     ? <li class="submenu-head">{s.group}</li>
-                    : <li><a href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
+                    : <li class={s.sep ? "sep-top" : undefined}><a href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
                 ))}
               </ul>
             )}
@@ -197,6 +197,7 @@ const T = {
     color: var(--gold); border-top: 1px solid rgba(219, 200, 168, .16);
   }
   .submenu li:first-child.submenu-head { border-top: 0; margin-top: 0; }
+  .submenu li.sep-top { border-top: 1px solid rgba(219, 200, 168, .16); margin-top: 6px; padding-top: 4px; }
   .lang a { color: var(--gold); font-weight: 700; }
 
   @media (max-width: 1000px) {

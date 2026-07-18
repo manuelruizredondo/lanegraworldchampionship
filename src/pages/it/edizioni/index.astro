@@ -1,0 +1,93 @@
+---
+import Base from "@/layouts/Base.astro";
+
+const EDITIONS = [
+  {
+    year: "2025",
+    title: "Mondiale 2025",
+    sub: "L'ultima edizione del Mondiale di Pasos Libres. Rivivi chi ha gareggiato e chi ha conquistato il titolo.",
+    links: [
+      { t: "Competitori", h: "/it/competitors/" },
+      { t: "Vincitori 2025", h: "/it/winners-2025/" },
+    ],
+  },
+  {
+    year: "2024",
+    title: "Mondiale 2024",
+    sub: "I campioni che hanno segnato l'edizione del 2024.",
+    links: [
+      { t: "Vincitori 2024", h: "/it/winners/" },
+    ],
+  },
+];
+
+const GALLERIES = [
+  { t: "Foto 2024", h: "/it/gallery-2024/" },
+  { t: "Foto 2023", h: "/it/gallery-2023/" },
+];
+---
+
+<Base title="Edizioni precedenti" description="L'albo d'oro del Mondiale di Pasos Libres di La Negra Dance Festival: competitori e vincitori di ogni edizione." lang="it">
+  <section class="section intro text-center">
+    <div class="container">
+      <p class="eyebrow dark">Il Mondiale di Pasos Libres</p>
+      <h1 class="script-title">Edizioni precedenti</h1>
+      <p class="intro-sub">Competitori e vincitori di ogni edizione del Mondiale. L'albo d'oro di La Negra Dance Festival, anno dopo anno.</p>
+    </div>
+  </section>
+
+  <section class="section editions">
+    <div class="container ed-list">
+      {EDITIONS.map((ed) => (
+        <article class="ed-card">
+          <div class="ed-year">{ed.year}</div>
+          <div class="ed-body">
+            <h2 class="ed-title">{ed.title}</h2>
+            <p class="ed-sub">{ed.sub}</p>
+            <div class="ed-links">
+              {ed.links.map((l) => <a class="btn btn-outline" href={l.h}>{l.t}</a>)}
+            </div>
+          </div>
+        </article>
+      ))}
+
+      <p class="ed-galleries">
+        Cerchi le foto?
+        {GALLERIES.map((g, i) => <a href={g.h}>{g.t}{i < GALLERIES.length - 1 ? " ·" : ""}</a>)}
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .eyebrow.dark { color: var(--gold); }
+  .intro-sub { max-width: 640px; margin: 8px auto 0; color: #6a6a74; font-size: 17px; line-height: 1.6; }
+
+  .ed-list { max-width: 780px; }
+  .ed-card {
+    display: flex; align-items: center; gap: clamp(20px, 4vw, 44px);
+    padding: clamp(24px, 3.5vw, 36px) clamp(22px, 3vw, 36px);
+    border: 1px solid #ece8e1; border-radius: 18px; background: #fff;
+    margin-bottom: 22px; transition: box-shadow .2s ease, transform .2s ease;
+  }
+  .ed-card:hover { box-shadow: 0 18px 40px rgba(20, 18, 26, .08); transform: translateY(-3px); }
+  .ed-year {
+    flex: 0 0 auto; font-family: var(--font-body); font-weight: 800;
+    font-size: clamp(44px, 7vw, 76px); line-height: 1; letter-spacing: -.03em;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .ed-body { flex: 1; }
+  .ed-title { font-size: clamp(20px, 2.4vw, 26px); font-weight: 700; letter-spacing: -.02em; color: #14121a; margin: 0 0 6px; }
+  .ed-sub { color: #5a5a64; font-size: 15.5px; line-height: 1.6; margin: 0 0 16px; }
+  .ed-links { display: flex; flex-wrap: wrap; gap: 12px; }
+  .ed-links .btn { padding: 9px 22px; font-size: 14px; }
+
+  .ed-galleries { text-align: center; margin: 30px 0 0; font-size: 15px; color: #8a8a92; }
+  .ed-galleries a { color: var(--gold-dark); font-weight: 600; margin-left: 8px; }
+  .ed-galleries a:hover { text-decoration: underline; }
+
+  @media (max-width: 560px) {
+    .ed-card { flex-direction: column; align-items: flex-start; text-align: left; gap: 6px; }
+  }
+</style>
