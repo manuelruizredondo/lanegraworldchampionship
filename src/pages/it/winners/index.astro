@@ -1,6 +1,7 @@
 ---
 import Base from "@/layouts/Base.astro";
 import SubNav from "@/components/SubNav.astro";
+import VideoModal from "@/components/VideoModal.astro";
 
 const subNav = [
   { label: "Iscrizione", href: "/it/competition/#registration" },
@@ -16,6 +17,7 @@ const categories = [
   {
     title: "Solista femminile SALSA",
     image: "solista-femenino-salsa-2024-1.jpg",
+    video: "VNKEAmRJYgU",
     podium: [
       "1° posto: Yaiza Melero (Spagna)",
       "2° posto: Yolieth Barragán (USA-Messico)",
@@ -25,6 +27,7 @@ const categories = [
   {
     title: "Solista maschile salsa",
     image: "solista-masculino-salsa-2024.jpg",
+    video: "6vWxGDpG4cQ",
     podium: [
       "1° posto: Tony El Haber (Italia)",
       "2° posto: Henry Pinzón (Colombia)",
@@ -34,6 +37,7 @@ const categories = [
   {
     title: "Solista femminile bachata",
     image: "solista-femenino-bachata-2024.jpg",
+    video: "mZRIGD0KS-8",
     podium: [
       "1° posto: Paula Lozano (Spagna)",
       "2° posto: Elena Khamsi (Spagna)",
@@ -43,6 +47,7 @@ const categories = [
   {
     title: "Solista maschile bachata",
     image: "solista-masculino-bachata-2024.jpg",
+    video: "cO0t1H46Jgk",
     podium: [
       "1° posto: Juan Camilo Rojas (Colombia)",
       "2° posto: Andrés Murillo (Colombia)",
@@ -52,6 +57,7 @@ const categories = [
   {
     title: "Coppie salsa",
     image: "parejas-salsa-2024.jpg",
+    video: "9_ZQvdLh7Pk",
     podium: [
       "1° posto: Tony El Haber & Sheida (Italia)",
       "2° posto: Adrián Oliver e Carmen Sanz (Spagna)",
@@ -61,6 +67,7 @@ const categories = [
   {
     title: "Duo salsa femminile",
     image: "duo-salsa-famenino-2024.jpg",
+    video: "UndZHNhtKF8",
     podium: [
       "1° posto: Federica e Miriam (Italia)",
       "2° posto: Alicia e Vesna (Svizzera)",
@@ -70,6 +77,7 @@ const categories = [
   {
     title: "Coppie bachata",
     image: "parejas-bachata-2024.jpg",
+    video: "ix8ecrqVRNc",
     podium: [
       "1° posto: Micaela e Francisco (Argentina)",
       "2° posto: Cristian e Shery (Messico)",
@@ -79,6 +87,7 @@ const categories = [
   {
     title: "Gruppi salsa",
     image: "grupo-salsa-2024.jpg",
+    video: "jRtHgz_AWBs",
     podium: [
       "1° posto: Mambo a lo Ayala di: The Ayala Brothers (USA)",
       "2° posto: Rincón Salsero di Yénier Jiménez (Costa Rica)",
@@ -88,6 +97,7 @@ const categories = [
   {
     title: "Gruppi bachata",
     image: "grupo-bachata-2024.jpg",
+    video: "ydB8U8nAseY",
     podium: [
       "1° posto: Latin Attitude di Filipa y Pedro (Portogallo)",
       "2° posto: Impulso Dominicano di Leif Candela (Spagna)",
@@ -125,7 +135,14 @@ const gallery = [
       <div class="p-container winners-grid">
         {categories.map((c) => (
           <article class="winner-card">
-            <div class="winner-img"><img src={img(c.image)} alt={c.title} loading="lazy" /></div>
+            {c.video ? (
+              <button class="winner-img has-video" type="button" data-video={c.video} aria-label={`Guarda il video del campione: ${c.title}`}>
+                <img src={img(c.image)} alt={c.title} loading="lazy" />
+                <span class="winner-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+              </button>
+            ) : (
+              <div class="winner-img"><img src={img(c.image)} alt={c.title} loading="lazy" /></div>
+            )}
             <h2 class="winner-title">{c.title}</h2>
             <ol class="podium">
               {c.podium.map((p, i) => <li class={`pos-${i + 1}`}>{p}</li>)}
@@ -160,6 +177,8 @@ const gallery = [
       </div>
     </section>
   </div>
+
+  <VideoModal />
 </Base>
 
 <style>
@@ -168,8 +187,20 @@ const gallery = [
   /* WINNERS GRID */
   .winners-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 44px 28px; }
   .winner-card { text-align: left; }
-  .winner-img { border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; margin-bottom: 18px; background: var(--p-card); }
+  .winner-img { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; margin-bottom: 18px; background: var(--p-card); }
   .winner-img img { width: 100%; height: 100%; object-fit: cover; }
+  button.winner-img { display: block; width: 100%; padding: 0; border: 0; background: var(--p-ink); cursor: pointer; }
+  button.winner-img img { transition: transform .4s ease, opacity .2s; }
+  button.winner-img:hover img { transform: scale(1.05); opacity: .92; }
+  .winner-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 54px; height: 54px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(220, 30, 40, .92); color: #fff; box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+    transition: transform .2s, background .2s;
+  }
+  .winner-play svg { width: 26px; height: 26px; margin-left: 2px; }
+  button.winner-img:hover .winner-play { transform: translate(-50%, -50%) scale(1.08); background: rgb(220, 30, 40); }
   .winner-title {
     font-family: var(--font-body); font-weight: 700; text-transform: uppercase;
     font-size: clamp(16px, 1.4vw, 20px); letter-spacing: .04em; color: var(--gold); margin: 0 0 14px;
