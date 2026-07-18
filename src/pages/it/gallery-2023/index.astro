@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import Lightbox from "@/components/Lightbox.astro";
 import { img } from "@/data/img.js";
 
 const photos = [
@@ -56,12 +57,14 @@ const photos = [
       <div class="gallery-grid">
         {photos.map((name) => (
           <div class="gallery-item">
-            <img src={img(name)} alt="La Negra Dance Festival 2023" loading="lazy" />
+            <img src={img(name)} alt="La Negra Dance Festival 2023" loading="lazy" data-lightbox />
           </div>
         ))}
       </div>
     </div>
   </section>
+
+  <Lightbox />
 </Base>
 
 <style>
@@ -84,6 +87,7 @@ const photos = [
     height: 100%;
     object-fit: cover;
     display: block;
+    cursor: zoom-in;
     transition: transform .4s ease;
   }
   .gallery-item:hover img { transform: scale(1.05); }
