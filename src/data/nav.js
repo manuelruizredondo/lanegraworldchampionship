@@ -6,7 +6,7 @@ export const MENU = {
       { t: "INSCRIPCIÓN", h: "/competicion/#inscripcion" },
       { t: "BASES Y REGLAMENTO", h: "/bases-y-reglamento/" },
       { t: "PASE COMPETIDOR", h: "/competicion/#fullpass" },
-      { t: "VÍDEOS", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
+      { t: "VÍDEOS", h: "/videos/" },
       { t: "EDICIONES ANTERIORES", h: "/ediciones/", sep: true },
     ]},
     { label: "FESTIVAL", href: "/festival/", sub: [
@@ -28,7 +28,7 @@ export const MENU = {
       { t: "REGISTRATION", h: "/en/competition/#registration" },
       { t: "RULES", h: "/en/competition-rules/" },
       { t: "COMPETITOR PASS", h: "/en/competition/#fullpass" },
-      { t: "VIDEOS", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
+      { t: "VIDEOS", h: "/en/videos/" },
       { t: "PAST EDITIONS", h: "/en/editions/", sep: true },
     ]},
     { label: "FESTIVAL", href: "/en/festival/", sub: [
@@ -50,7 +50,7 @@ export const MENU = {
       { t: "ISCRIZIONE", h: "/it/competition/#registration" },
       { t: "REGOLAMENTO", h: "/it/regolamento/" },
       { t: "PASS CONCORRENTE", h: "/it/competition/#fullpass" },
-      { t: "VIDEO", h: "https://www.youtube.com/c/LaNegraDanceFestival/playlists" },
+      { t: "VIDEO", h: "/it/videos/" },
       { t: "EDIZIONI PRECEDENTI", h: "/it/edizioni/", sep: true },
     ]},
     { label: "FESTIVAL", href: "/it/festival/", sub: [
