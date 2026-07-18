@@ -119,6 +119,14 @@ const ytIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
       iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
       iframe.allowFullscreen = true;
       iframe.title = btn.getAttribute("aria-label") || "Vídeo";
+      // Estilos en línea: el iframe se crea por JS y no recibe el scope de Astro,
+      // así que las reglas .vid-card iframe no le aplicarían.
+      iframe.style.width = "100%";
+      iframe.style.aspectRatio = "16 / 9";
+      iframe.style.height = "auto";
+      iframe.style.border = "0";
+      iframe.style.borderRadius = "12px";
+      iframe.style.display = "block";
       card.classList.add("playing");
       btn.replaceWith(iframe);
     });
