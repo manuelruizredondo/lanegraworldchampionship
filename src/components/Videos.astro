@@ -4,17 +4,15 @@ import { VIDEOS, VIDEOS_META, VIDEOS_CHANNEL } from "@/data/videos.js";
 const { lang = "es" } = Astro.props;
 const t = VIDEOS_META[lang] || VIDEOS_META.es;
 
-// Agrupa por categoría respetando el orden de aparición
+// Agrupa por edición (año), más reciente primero
 const groups = [];
 for (const v of VIDEOS) {
-  const cat = v.category || "";
-  let g = groups.find((x) => x.cat === cat);
-  if (!g) { g = { cat, items: [] }; groups.push(g); }
+  let g = groups.find((x) => x.year === v.year);
+  if (!g) { g = { year: v.year, items: [] }; groups.push(g); }
   g.items.push(v);
 }
-groups.forEach((g) => g.items.sort((a, b) => (a.place || 9) - (b.place || 9)));
+groups.sort((a, b) => b.year - a.year);
 
-const medal = { 1: "🥇", 2: "🥈", 3: "🥉" };
 const ytIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12zM9.7 15.3V8.7l5.8 3.3-5.8 3.3z"/></svg>`;
 ---
 
@@ -32,25 +30,24 @@ const ytIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
 
 {VIDEOS.length === 0 ? (
   <section class="section-tight text-center">
-    <div class="container vid-empty">
-      <p>{t.emptyNote}</p>
-    </div>
+    <div class="container vid-empty"><p>{t.emptyNote}</p></div>
   </section>
 ) : (
   <section class="section-tight">
     <div class="container">
       {groups.map((g) => (
         <div class="vid-group">
-          {g.cat && <h2 class="vid-cat">{g.cat}</h2>}
+          <h2 class="vid-year">{t.edition(g.year)}</h2>
           <div class="vid-grid">
             {g.items.map((v) => (
               <article class="vid-card">
-                <button class="vid-play" type="button" data-yt={v.id} aria-label={`${t.places[v.place] || ""} ${v.title || ""}`.trim()}>
-                  <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt={v.title || ""} loading="lazy" />
+                <button class="vid-play" type="button" data-yt={v.id} aria-label={`${v.category} — ${v.name}`}>
+                  <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt={v.name} loading="lazy" />
                   <span class="vid-icon" set:html={ytIcon}></span>
-                  {v.place && <span class={"vid-badge place-" + v.place}>{medal[v.place]} {t.places[v.place]}</span>}
+                  <span class="vid-win" title={t.winner}>🥇</span>
                 </button>
-                {v.title && <p class="vid-title">{v.title}</p>}
+                <p class="vid-cat">{v.category}</p>
+                <p class="vid-title">{v.name}</p>
               </article>
             ))}
           </div>
@@ -68,12 +65,12 @@ const ytIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
 
   .vid-empty { max-width: 560px; color: #6a6a74; font-size: 16px; line-height: 1.7; }
 
-  .vid-group { margin-bottom: clamp(30px, 5vw, 52px); }
-  .vid-cat {
-    font-size: clamp(18px, 2.4vw, 24px); font-weight: 700; letter-spacing: -.02em; color: #14121a;
-    margin: 0 0 18px; padding-bottom: 10px; border-bottom: 2px solid #ece8e1;
+  .vid-group { margin-bottom: clamp(34px, 5vw, 58px); }
+  .vid-year {
+    font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -.02em; color: #14121a;
+    margin: 0 0 20px; padding-bottom: 12px; border-bottom: 2px solid #ece8e1;
   }
-  .vid-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .vid-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px 24px; }
 
   .vid-card { margin: 0; }
   .vid-play {
@@ -84,22 +81,25 @@ const ytIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
   .vid-play:hover img { transform: scale(1.05); opacity: .9; }
   .vid-icon {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 62px; height: 62px; border-radius: 50%;
+    width: 60px; height: 60px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     background: rgba(220, 30, 40, .92); color: #fff;
     box-shadow: 0 6px 20px rgba(0, 0, 0, .35); transition: transform .2s, background .2s;
   }
   .vid-icon svg { width: 30px; height: 30px; margin-left: 2px; }
   .vid-play:hover .vid-icon { transform: translate(-50%, -50%) scale(1.08); background: rgb(220, 30, 40); }
-  .vid-badge {
-    position: absolute; top: 10px; left: 10px;
-    padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
-    background: rgba(20, 18, 26, .82); color: #fff; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  .vid-win {
+    position: absolute; top: 9px; left: 9px;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 18px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #f5cf5a, #c8912a);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .3);
   }
-  .vid-badge.place-1 { background: linear-gradient(135deg, #f5cf5a, #c8912a); color: #3a2a00; }
-  .vid-badge.place-2 { background: linear-gradient(135deg, #d7dbe0, #a3a8b0); color: #2a2d33; }
-  .vid-badge.place-3 { background: linear-gradient(135deg, #e0a878, #b5773f); color: #3a1e00; }
-  .vid-title { margin: 12px 0 0; font-weight: 600; font-size: 15.5px; color: #14121a; line-height: 1.4; }
+  .vid-cat {
+    margin: 12px 0 2px; font-size: 12px; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--gold-dark);
+  }
+  .vid-title { margin: 0; font-weight: 600; font-size: 16px; color: #14121a; line-height: 1.35; }
 
   .vid-card.playing .vid-play { cursor: default; }
   .vid-card iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 12px; display: block; }
