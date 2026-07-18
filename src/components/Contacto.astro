@@ -10,8 +10,8 @@ const T = {
     f: { name: "Nombre", surname: "Apellidos", email: "Email", phone: "Teléfono", subject: "Asunto", message: "Mensaje", privacy1: "He leído y acepto la ", privacyLink: "política de privacidad", privacyUrl: "/politica-de-privacidad/", send: "Enviar mensaje", hp: "No rellenar" },
     ok: "¡Gracias! Hemos recibido tu mensaje, te responderemos pronto.",
     err: "Ups, algo falló. Inténtalo de nuevo o escríbenos por WhatsApp.",
-    infoTitle: "Escríbenos o llámanos",
-    infoText: "Estamos disponibles por teléfono y WhatsApp para cualquier consulta.",
+    infoTitle: "Escríbenos",
+    infoText: "Estamos disponibles por WhatsApp para cualquier consulta.",
     waText: "Escríbenos por WhatsApp",
     followTitle: "Síguenos",
   },
@@ -22,8 +22,8 @@ const T = {
     f: { name: "First name", surname: "Last name", email: "Email", phone: "Phone", subject: "Subject", message: "Message", privacy1: "I have read and accept the ", privacyLink: "privacy policy", privacyUrl: "/en/privacy-policy/", send: "Send message", hp: "Do not fill" },
     ok: "Thanks! We've received your message and will get back to you soon.",
     err: "Oops, something went wrong. Please try again or message us on WhatsApp.",
-    infoTitle: "Write or call us",
-    infoText: "We're available by phone and WhatsApp for any question.",
+    infoTitle: "Write to us",
+    infoText: "We're available on WhatsApp for any question.",
     waText: "Message us on WhatsApp",
     followTitle: "Follow us",
   },
@@ -34,18 +34,14 @@ const T = {
     f: { name: "Nome", surname: "Cognome", email: "Email", phone: "Telefono", subject: "Oggetto", message: "Messaggio", privacy1: "Ho letto e accetto la ", privacyLink: "informativa sulla privacy", privacyUrl: "/it/privacy-policy/", send: "Invia messaggio", hp: "Non compilare" },
     ok: "Grazie! Abbiamo ricevuto il tuo messaggio, ti risponderemo presto.",
     err: "Ops, qualcosa è andato storto. Riprova o scrivici su WhatsApp.",
-    infoTitle: "Scrivici o chiamaci",
-    infoText: "Siamo disponibili per telefono e WhatsApp per qualsiasi domanda.",
+    infoTitle: "Scrivici",
+    infoText: "Siamo disponibili su WhatsApp per qualsiasi domanda.",
     waText: "Scrivici su WhatsApp",
     followTitle: "Seguici",
   },
 };
 const t = T[lang] || T.es;
 
-const CONTACTS = [
-  { name: "Evelyn", tel: "+34 659 090 696", num: "34659090696" },
-  { name: "Alberto", tel: "+34 639 501 310", num: "34639501310" },
-];
 const WA = "34639501310";
 const SOCIAL = {
   instagram: "https://www.instagram.com/pasoslibreslanegrasalsa/",
@@ -92,14 +88,6 @@ const waIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
     <aside class="ct-info">
       <h2 class="ct-info-title">{t.infoTitle}</h2>
       <p class="ct-info-text">{t.infoText}</p>
-      <ul class="ct-phones">
-        {CONTACTS.map((c) => (
-          <li>
-            <span class="ct-phone-name">{c.name}</span>
-            <a class="ct-phone-tel" href={`tel:${c.tel.replace(/\s/g, "")}`}>{c.tel}</a>
-          </li>
-        ))}
-      </ul>
       <a class="ct-wa" href={`https://wa.me/${WA}`} target="_blank" rel="noopener">
         <Fragment set:html={waIcon} />
         {t.waText}
