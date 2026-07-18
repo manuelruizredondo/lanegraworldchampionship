@@ -60,12 +60,20 @@ const DOCS = [
 <script>
   const tabs = [...document.querySelectorAll(".rg-tab")];
   const panels = [...document.querySelectorAll("[data-doc-panel]")];
-  tabs.forEach((tab) => tab.addEventListener("click", () => {
-    const key = tab.dataset.doc;
-    tabs.forEach((x) => x.classList.toggle("active", x === tab));
+  const activate = (key, scroll) => {
+    if (!tabs.some((t) => t.dataset.doc === key)) return;
+    tabs.forEach((x) => x.classList.toggle("active", x.dataset.doc === key));
     panels.forEach((p) => p.classList.toggle("active", p.dataset.docPanel === key));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  tabs.forEach((tab) => tab.addEventListener("click", () => {
+    activate(tab.dataset.doc, true);
+    history.replaceState(null, "", "#" + tab.dataset.doc);
   }));
+  // Abrir la pestaña indicada en la URL (ej. /bases-y-reglamento/#bachata)
+  const fromHash = () => activate((location.hash || "").replace("#", ""), false);
+  fromHash();
+  window.addEventListener("hashchange", fromHash);
 </script>
 
 <style>
