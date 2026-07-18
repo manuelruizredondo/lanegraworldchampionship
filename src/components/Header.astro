@@ -56,7 +56,9 @@ const T = {
             {item.sub.length > 0 && (
               <ul class="submenu">
                 {item.sub.map((s) => (
-                  <li><a href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
+                  s.group
+                    ? <li class="submenu-head">{s.group}</li>
+                    : <li><a href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
                 ))}
               </ul>
             )}
@@ -189,6 +191,12 @@ const T = {
   .submenu { max-height: 0; overflow: hidden; transition: max-height .25s ease; background: rgba(0,0,0,.18); }
   .has-sub.open .submenu { max-height: 640px; }
   .submenu a { font-size: 16px; padding: 12px 4px 12px 22px; color: var(--gold-light); }
+  .submenu-head {
+    padding: 14px 4px 6px 22px; margin-top: 4px;
+    font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gold); border-top: 1px solid rgba(219, 200, 168, .16);
+  }
+  .submenu li:first-child.submenu-head { border-top: 0; margin-top: 0; }
   .lang a { color: var(--gold); font-weight: 700; }
 
   @media (max-width: 1000px) {
