@@ -2,11 +2,11 @@
 
 export const MENU = {
   es: [
-    { label: "MUNDIAL", href: "/competicion/", sub: [
+    { label: "MUNDIAL", href: "/mundial/", sub: [
       { t: "EL MUNDIAL", h: "/mundial/" },
       { t: "INSCRIPCIÓN", h: "/competicion/#inscripcion" },
       { t: "BASES Y REGLAMENTO", h: "/bases-y-reglamento/" },
-      { t: "PASE COMPETIDOR", h: "/competicion/#fullpass" },
+      { t: "PASE COMPETIDOR", h: "/tu-pase/" },
       { t: "VÍDEOS", h: "/videos/" },
       { t: "EDICIONES ANTERIORES", h: "/ediciones/", sep: true },
     ]},
@@ -15,7 +15,7 @@ export const MENU = {
       { t: "ARTISTAS", h: "/artistas/" },
       { t: "TALLERES", h: "/talleres/" },
       { t: "FIESTA", h: "/fiesta/" },
-      { t: "FULL PASS", h: "/festival/#fullpass" },
+      { t: "FULL PASS", h: "/tu-pase/" },
       { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
     { label: "GALERÍA", href: "/galeria/", sub: [
@@ -25,11 +25,11 @@ export const MENU = {
     { label: "CONTACTO", href: "/festival/#contactar", sub: [] },
   ],
   en: [
-    { label: "WORLD CUP", href: "/en/competition/", sub: [
+    { label: "WORLD CUP", href: "/en/world-championship/", sub: [
       { t: "THE CHAMPIONSHIP", h: "/en/world-championship/" },
       { t: "REGISTRATION", h: "/en/competition/#registration" },
       { t: "RULES", h: "/en/competition-rules/" },
-      { t: "COMPETITOR PASS", h: "/en/competition/#fullpass" },
+      { t: "COMPETITOR PASS", h: "/en/your-pass/" },
       { t: "VIDEOS", h: "/en/videos/" },
       { t: "PAST EDITIONS", h: "/en/editions/", sep: true },
     ]},
@@ -38,7 +38,7 @@ export const MENU = {
       { t: "ARTISTS", h: "/en/artists/" },
       { t: "WORKSHOPS", h: "/en/workshops/" },
       { t: "PARTY", h: "/en/fiesta/" },
-      { t: "FULL PASS", h: "/en/festival/#fullpass" },
+      { t: "FULL PASS", h: "/en/your-pass/" },
       { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
     { label: "GALLERY", href: "/en/gallery/", sub: [
@@ -48,11 +48,11 @@ export const MENU = {
     { label: "CONTACT", href: "/en/festival/#contact", sub: [] },
   ],
   it: [
-    { label: "MONDIALE", href: "/it/competition/", sub: [
+    { label: "MONDIALE", href: "/it/mondiale/", sub: [
       { t: "IL MONDIALE", h: "/it/mondiale/" },
       { t: "ISCRIZIONE", h: "/it/competition/#registration" },
       { t: "REGOLAMENTO", h: "/it/regolamento/" },
-      { t: "PASS CONCORRENTE", h: "/it/competition/#fullpass" },
+      { t: "PASS CONCORRENTE", h: "/it/your-pass/" },
       { t: "VIDEO", h: "/it/videos/" },
       { t: "EDIZIONI PRECEDENTI", h: "/it/edizioni/", sep: true },
     ]},
@@ -61,7 +61,7 @@ export const MENU = {
       { t: "ARTISTI", h: "/it/artists/" },
       { t: "WORKSHOP", h: "/it/workshops/" },
       { t: "FESTA", h: "/it/fiesta/" },
-      { t: "FULL PASS", h: "/it/festival/#fullpass" },
+      { t: "FULL PASS", h: "/it/your-pass/" },
       { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
     ]},
     { label: "GALLERIA", href: "/it/gallery/", sub: [
