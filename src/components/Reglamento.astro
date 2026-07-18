@@ -12,6 +12,16 @@ const DOCS = [
   { key: "salsa", label: t.tabs.salsa, blocks: salsa, pdf: REGLAMENTO_PDF.salsa },
   { key: "bachata", label: t.tabs.bachata, blocks: bachata, pdf: REGLAMENTO_PDF.bachata },
 ];
+
+// Resalta en negrita la hora, la disciplina y palabras clave de cada línea de horario
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const fmtSchedule = (s) => {
+  let out = esc(s);
+  out = out.replace(/^(\s*\d{1,2}:\d{2}(?:\s*a\s*\d{1,2}:\d{2}h?)?)/, "<strong>$1</strong>");
+  out = out.replace(/\b(SALSA|BACHATA)\b/g, "<strong>$1</strong>");
+  out = out.replace(/\b(Descanso[-\s]?\w*|Premiaci[oó]n\b[^,.]*|Ceremonia\b[^,.]*|DANI J[^,.]*)/gi, "<strong>$1</strong>");
+  return out;
+};
 ---
 
 <section class="rg-hero">
@@ -47,7 +57,7 @@ const DOCS = [
           b.type === "schedule" ? (
             <div class="rg-sched">
               <p class="rg-sched-day">{b.day}</p>
-              <ul class="rg-sched-list">{b.items.map((it) => <li>{it}</li>)}</ul>
+              <ul class="rg-sched-list">{b.items.map((it) => <li set:html={fmtSchedule(it)}></li>)}</ul>
             </div>
           ) : null
         ))}
@@ -127,6 +137,7 @@ const DOCS = [
   .rg-sched-day { margin: 0 0 8px; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; color: var(--gold-dark); }
   .rg-sched-list { margin: 0; padding: 0; list-style: none; }
   .rg-sched-list li { font-size: 14.5px; line-height: 1.7; color: #3a3a44; padding-left: 2px; }
+  .rg-sched-list strong { color: #14121a; font-weight: 800; }
 
   .rg-updated { margin: 40px 0 0; font-size: 12.5px; color: #9a9aa2; }
 
