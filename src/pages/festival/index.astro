@@ -203,15 +203,15 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
           <input type="hidden" name="form-name" value="contact" />
           <p class="f-hp" hidden><label>No rellenar: <input name="bot-field" /></label></p>
           <div class="f-row">
-            <input type="text" name="nombre" placeholder="Nombre" required />
-            <input type="text" name="apellidos" placeholder="Apellidos" required />
+            <input type="text" name="nombre" placeholder="Nombre" aria-label="Nombre" required />
+            <input type="text" name="apellidos" placeholder="Apellidos" aria-label="Apellidos" required />
           </div>
           <div class="f-row">
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="tel" name="telefono" placeholder="Teléfono" />
+            <input type="email" name="email" placeholder="Email" aria-label="Email" required />
+            <input type="tel" name="telefono" placeholder="Teléfono" aria-label="Teléfono" />
           </div>
-          <input type="text" name="asunto" placeholder="Asunto" />
-          <textarea name="mensaje" rows="6" placeholder="Mensaje" required></textarea>
+          <input type="text" name="asunto" placeholder="Asunto" aria-label="Asunto" />
+          <textarea name="mensaje" rows="6" placeholder="Mensaje" aria-label="Mensaje" required></textarea>
           <label class="f-privacy">
             <input type="checkbox" name="privacidad" required />
             <span>He leído y acepto <a href="/politica-de-privacidad/">la política de privacidad y envíos electrónicos.</a></span>

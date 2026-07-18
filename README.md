@@ -1,58 +1,91 @@
 # La Negra Dance Festival — sitio en Astro
 
-Réplica estática y responsive de [campeonatopasoslibres.com](https://campeonatopasoslibres.com/),
-reconstruida desde cero con **Astro**. Sin WordPress, sin PHP, sin Avada y **sin ninguna
-referencia a `wp-content`/`fusion`/`avada`**. Bilingüe (ES / EN). 0 JS por defecto (solo un
-pequeño script para el menú flyout).
-
-## Requisitos
-- Node 18+ (recomendado 20)
+Reconstrucción completa de [campeonatopasoslibres.com](https://campeonatopasoslibres.com/)
+(WordPress/Avada) a un **sitio estático Astro**, **trilingüe (ES / EN / IT)**, rápido y sin
+dependencias de PHP/plugins. Diseño propio "Board" (tipografía Inter, acento dorado).
 
 ## Comandos
 ```bash
-npm install      # instalar dependencias
-npm run dev      # servidor de desarrollo (http://localhost:4321)
-npm run build    # genera el sitio estático en dist/
+npm install      # dependencias
+npm run dev      # desarrollo (http://localhost:4321)
+npm run build    # sitio estático en dist/
 npm run preview  # sirve dist/ en local
 ```
+Despliegue en **Netlify** (`netlify.toml`: build `npm run build`, publish `dist`).
 
-## Desplegar en Netlify
-El repo incluye `netlify.toml` (build `npm run build`, publish `dist`). Conecta el repositorio
-en Netlify o arrastra la carpeta tras `npm run build`. Astro genera `404.html` automáticamente.
+---
+
+## Novedades frente a la web original
+
+> Resumen breve de todo lo que diferencia esta versión de la WordPress original.
+
+### Base técnica
+- Reconstruido en **Astro estático** (sin WordPress/PHP/Avada): más rápido, seguro y barato.
+- **Trilingüe real** (ES/EN/IT) con rutas por idioma, `hreflang` y selector que mantiene la página.
+- `sitemap.xml`, `robots`, metadatos y `og:image`/`twitter:image` por página.
+
+### Diseño ("Board")
+- Tipografía **Inter**, acento dorado, botones píldora, tarjetas redondeadas y más aire.
+- **Homes** con hero en **vídeo**, marquesina de fuego, artistas en **"bolas" orgánicas**,
+  **mapa de nacionalidades** interactivo, **cuenta atrás** y bloque de valores.
+- **Todas** las páginas internas migradas a este diseño (antes eran el layout Avada).
+- **Heros con imagen de fondo** en Festival y El Mundial (clase reutilizable `.p-phero`).
+
+### Navegación / arquitectura
+- Menú en 4 bloques: **Mundial · Festival · Galería · Contacto**, en minúscula con inicial mayúscula.
+- **Mundial** lleva a su portada `/mundial/`; submenú con hubs (**Ediciones anteriores**, **Vídeos**).
+- **Pases unificados**: Full Pass, Pase competidor y CTA apuntan al mismo destino `/tu-pase/`.
+- **Hotel** del menú lleva a la sección interna (info + reserva) en vez de saltar fuera.
+- Menú móvil (drawer) con un único fondo (se quitó el doble azul del submenú).
+
+### Secciones y páginas nuevas
+- **El Mundial** (`/mundial/`): qué es el campeonato, disciplinas (Salsa XV / Bachata V) **con
+  botón a sus bases**, categorías, formato, historia e **Instagram** del Mundial.
+- **Bases y Reglamento**: los PDF de salsa y bachata convertidos en **páginas web** (con pestañas),
+  **traducidas a EN e IT**, enlazadas desde el menú.
+- **Vídeos** (`/videos/`): **47 vídeos ganadores** de 6 ediciones (2025→2018), reproducción **inline**.
+- **Ediciones anteriores** (`/ediciones/`) y **portada de Galería** (`/galeria/`): hubs por año.
+- **Contacto** (`/contacto/`): página propia con formulario, WhatsApp y redes (antes era un ancla).
+
+### Funcionalidades
+- **Programación → Talleres**: horario tipo Google Calendar (eje de horas, días en pestañas, salas,
+  filtros, buscador, **favoritos**, **fichas de artista**). En modo **"Próximamente"** (atenuado y
+  sin interacción) hasta conocer los talleres 2026; `/programacion/` redirige a `/talleres/`.
+- **Galerías** con lightbox: abrir en grande + **flechas, contador, teclado y swipe**.
+- **Ganadores 2025/2024**: pulsar la foto de una categoría **abre el vídeo del campeón** en una ventana.
+- **Artistas**: fotos en "bolas" + fichas/bios en modal.
+
+### Multimedia / rendimiento
+- Vídeo del hero servido por **Cloudinary** con `poster` (sin flash negro) y **−32 MB** de vídeos sin usar eliminados.
+- Imágenes locales optimizadas (WebP), `loading="lazy"` y `alt` en todas.
+
+### Formularios / RGPD / analítica
+- **Formulario de contacto** conectado a **Netlify Forms** (antes no enviaba nada) y **newsletter** en el pie.
+- **Banner de cookies + Google Tag Manager** con **consentimiento previo** (opt-in RGPD).
+
+### SEO / accesibilidad
+- **Un solo H1** por página, títulos localizados, descripciones en todas.
+- **JSON-LD** (schema Festival/Organización), foco atrapado en modales, enlace "saltar al contenido",
+  navegación por teclado y `aria-label` en los campos de formulario.
+
+### Marca / contenido
+- Nombre corregido: **"La Negra World Championship" → "La Negra Dance Festival"**.
+- Botón de hotel **"Reserva tu hotel"**, foto real del **Gran Salón del Mundial**, tarjetas del horario
+  por tipo (Mundial dorado / Social azul noche / etc.) y subtítulos de galería traducidos.
+
+---
 
 ## Estructura
 ```
 src/
-  layouts/Base.astro        # layout (head, Header, Footer) con prop `lang`
-  components/Header.astro    # cabecera + menú flyout lateral (derecha, 1/3, con easing)
-  components/Footer.astro    # patrocinadores, redes, legales
-  data/nav.js                # menús, CTA, legales y conmutador de idioma (ES/EN)
-  data/img.js + img-manifest.json  # helper img() que resuelve nombres → /img/...
-  styles/global.css          # tokens de diseño + clases utilitarias
-  pages/                     # una carpeta por ruta (index.astro -> /ruta/)
-public/
-  img/                       # imágenes y vídeos del sitio
-  fonts/                     # Anja Eliane (títulos) y Amarillo (cursiva)
+  layouts/Base.astro         # head, Header, Footer, Analytics, WhatsApp
+  components/                # Header, Footer, Programa, Reglamento, Videos, Mundial, Contacto, Lightbox, VideoModal…
+  data/                      # nav.js, routes.js, programa.js, reglamento.js, videos.js, artist-bios.js, img.js
+  styles/                    # global.css + proposal.css (sistema Board `.p-*`)
+  pages/                     # una carpeta por ruta, ×3 idiomas
+public/img/                  # imágenes (WebP) y assets
 ```
 
-## Páginas (30 — ES + EN)
-**Español:** `/`, `/competicion/`, `/festival/`, `/artistas/`, `/competidores/`,
-`/ganadores/`, `/ganadores-2025/`, `/tu-pase/`, `/talleres/`, `/fiesta/`,
-`/galeria-2023/`, `/galeria-2024/`, `/aviso-legal/`, `/politica-de-privacidad/`, `/cookies/`.
-
-**English (`/en/`):** `/en/`, `/en/competition/`, `/en/festival/`, `/en/artists/`,
-`/en/competitors/`, `/en/winners/`, `/en/winners-2025/`, `/en/your-pass/`, `/en/workshops/`,
-`/en/fiesta/`, `/en/gallery-2023/`, `/en/gallery-2024/`, `/en/legal-notice/`,
-`/en/privacy-policy/`, `/en/cookie-policy/`.
-
-## Diseño
-- Tipografías: **Anja Eliane** (títulos grandes), **Amarillo** (cursiva de las etiquetas),
-  **Roboto Condensed** (cuerpo). Las dos primeras se sirven en local desde `public/fonts/`.
-- Paleta: oro `#cc9933`, oro oscuro `#a28243`, navy `#0f0b1e`, azul `#3d436d`, crema `#f6f2ec`.
-- Helper `img("nombre.ext")` para no depender de rutas; resuelve al archivo correcto en `/img/`.
-
-## Notas
-- El vídeo de cabecera se reproduce en bucle (como el original). Para congelarlo a una imagen,
-  cambia el `<video autoplay…>` de la home por un `<img>` con su póster.
-- La página *Tu Pase / Your Pass* incluye un bloque de compra que enlaza al sistema de
-  entradas externo (go&dance); la cuenta atrás es estática.
+## Pendiente (fuera del código)
+- Apuntar el **DNS** de `campeonatopasoslibres.com` a Netlify (ahora sirve la WordPress vieja).
+- Activar **notificaciones de Netlify Forms** (contacto + newsletter) y crear la propiedad **GA4** en GTM.

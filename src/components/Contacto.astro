@@ -68,15 +68,15 @@ const waIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
       <input type="hidden" name="form-name" value="contact" />
       <p class="ct-hp" hidden><label>{t.f.hp}: <input name="bot-field" /></label></p>
       <div class="ct-row">
-        <input type="text" name="nombre" placeholder={t.f.name} required />
-        <input type="text" name="apellidos" placeholder={t.f.surname} required />
+        <input type="text" name="nombre" placeholder={t.f.name} aria-label={t.f.name} required />
+        <input type="text" name="apellidos" placeholder={t.f.surname} aria-label={t.f.surname} required />
       </div>
       <div class="ct-row">
-        <input type="email" name="email" placeholder={t.f.email} required />
-        <input type="tel" name="telefono" placeholder={t.f.phone} />
+        <input type="email" name="email" placeholder={t.f.email} aria-label={t.f.email} required />
+        <input type="tel" name="telefono" placeholder={t.f.phone} aria-label={t.f.phone} />
       </div>
-      <input type="text" name="asunto" placeholder={t.f.subject} />
-      <textarea name="mensaje" rows="6" placeholder={t.f.message} required></textarea>
+      <input type="text" name="asunto" placeholder={t.f.subject} aria-label={t.f.subject} />
+      <textarea name="mensaje" rows="6" placeholder={t.f.message} aria-label={t.f.message} required></textarea>
       <label class="ct-privacy">
         <input type="checkbox" name="privacidad" required />
         <span>{t.f.privacy1}<a href={t.f.privacyUrl}>{t.f.privacyLink}</a>.</span>
