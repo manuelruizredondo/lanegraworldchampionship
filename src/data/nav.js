@@ -4,7 +4,7 @@ export const MENU = {
   es: [
     { label: "MUNDIAL", href: "/competicion/", sub: [
       { t: "INSCRIPCIÓN", h: "/competicion/#inscripcion" },
-      { t: "BASES Y REGLAMENTO", h: "/competicion/#bases" },
+      { t: "BASES Y REGLAMENTO", h: "/bases-y-reglamento/" },
       { t: "PASE COMPETIDOR", h: "/competicion/#fullpass" },
       { t: "COMPETIDORES", h: "/competidores/" },
       { t: "GANADORES 2025", h: "/ganadores-2025/" },
@@ -28,7 +28,7 @@ export const MENU = {
   en: [
     { label: "WORLD CUP", href: "/en/competition/", sub: [
       { t: "REGISTRATION", h: "/en/competition/#registration" },
-      { t: "RULES", h: "/en/competition/#rules" },
+      { t: "RULES", h: "/en/competition-rules/" },
       { t: "COMPETITOR PASS", h: "/en/competition/#fullpass" },
       { t: "COMPETITORS", h: "/en/competitors/" },
       { t: "WINNERS 2025", h: "/en/winners-2025/" },
@@ -52,7 +52,7 @@ export const MENU = {
   it: [
     { label: "MONDIALE", href: "/it/competition/", sub: [
       { t: "ISCRIZIONE", h: "/it/competition/#registration" },
-      { t: "REGOLAMENTO", h: "/it/competition/#rules" },
+      { t: "REGOLAMENTO", h: "/it/regolamento/" },
       { t: "PASS CONCORRENTE", h: "/it/competition/#fullpass" },
       { t: "COMPETITORI", h: "/it/competitors/" },
       { t: "VINCITORI 2025", h: "/it/winners-2025/" },

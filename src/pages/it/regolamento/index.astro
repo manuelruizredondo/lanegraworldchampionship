@@ -1,0 +1,9 @@
+---
+import Base from "@/layouts/Base.astro";
+import Reglamento from "@/components/Reglamento.astro";
+import { REGLAMENTO_META } from "@/data/reglamento.js";
+const t = REGLAMENTO_META.it;
+---
+<Base title={t.h1} description={t.sub} lang="it">
+  <Reglamento lang="it" />
+</Base>
