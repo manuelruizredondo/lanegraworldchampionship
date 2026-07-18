@@ -130,11 +130,20 @@ const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentCol
   /* ARTISTS */
   .bachata-section { padding-top: 0; }
   .artists-intro { max-width: 820px; margin: 0 auto 36px; }
-  .artists-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 24px; }
-  .artist-img { border-radius: 10px; overflow: hidden; aspect-ratio: 3/4; margin-bottom: 14px; }
+  .artists-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px 30px; }
+  .artist { display: flex; flex-direction: column; align-items: center; }
+  .artist-img {
+    width: 82%; aspect-ratio: 1; overflow: hidden; margin-bottom: 18px;
+    border-radius: 42% 58% 47% 53% / 52% 43% 57% 48%;
+    transition: border-radius .7s ease, transform .4s ease;
+  }
+  .artist:nth-child(2n) .artist-img { border-radius: 58% 42% 55% 45% / 45% 57% 43% 55%; }
+  .artist:nth-child(3n) .artist-img { border-radius: 50% 50% 42% 58% / 60% 40% 55% 45%; }
+  .artist:nth-child(4n) .artist-img { border-radius: 46% 54% 60% 40% / 48% 58% 42% 55%; }
+  .artist:hover .artist-img { border-radius: 50%; transform: translateY(-5px) scale(1.03); }
   .artist-img img { width: 100%; height: 100%; object-fit: cover; }
-  .artist-name { font-family: var(--font-body); font-weight: 700; text-transform: uppercase; font-size: 17px; letter-spacing: .03em; margin: 0 0 4px; color: var(--navy); }
-  .artist-country { color: var(--gold-dark); font-size: 15px; margin: 0 0 10px; }
+  .artist-name { font-family: var(--font-body); font-weight: 600; font-size: clamp(19px, 1.6vw, 25px); letter-spacing: -.02em; margin: 0 0 2px; color: #14121a; }
+  .artist-country { color: var(--gold-dark); font-size: 14px; margin: 0 0 10px; }
   .artist-social { display: flex; gap: 8px; justify-content: center; }
   .artist-social a {
     display: inline-flex; align-items: center; justify-content: center;
