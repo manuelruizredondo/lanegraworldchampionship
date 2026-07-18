@@ -80,7 +80,7 @@ const describe = (s) => {
 )}
 
 <!-- Salones: 4 cajas con imagen, borde de color y la bolita arriba a la izquierda -->
-<section class="pr-rooms">
+<section class:list={["pr-rooms", { "pr-off": comingSoon }]}>
   <div class="container">
     <p class="pr-rooms-label">{t.roomsLabel}</p>
     <div class="pr-rooms-grid">
@@ -99,7 +99,7 @@ const describe = (s) => {
 </section>
 
 <!-- Controles sticky: filtros + buscador, y abajo los días como tabs con barra deslizante -->
-<div class="pr-controls">
+<div class:list={["pr-controls", { "pr-off": comingSoon }]}>
   <div class="container">
     <label class="pr-search">
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -126,7 +126,7 @@ const describe = (s) => {
   </div>
 </div>
 
-<section class="pr-body">
+<section class:list={["pr-body", { "pr-off": comingSoon }]}>
   <div class="container">
     <p class="pr-fav-empty" hidden>{t.favEmpty}</p>
     {days.map((d, di) => (
@@ -440,6 +440,9 @@ const describe = (s) => {
   .pr-soon-badge { display: inline-block; background: var(--gold); color: #fff; font-weight: 800; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 15px; border-radius: 999px; margin-bottom: 16px; }
   .pr-soon { background: #faf3e2; border-top: 1px solid #f0e6cf; border-bottom: 1px solid #f0e6cf; }
   .pr-soon p { max-width: 860px; margin: 0 auto; padding: 15px 24px; text-align: center; color: #5a4a22; font-weight: 600; font-size: 15px; line-height: 1.5; }
+  /* Modo "Próximamente": el horario se ve como referencia, atenuado y sin interacción */
+  .pr-off { opacity: .45; pointer-events: none; user-select: none; }
+  .pr-off .pr-controls, .pr-off.pr-controls { position: static; }
 
   .pr-controls {
     position: sticky; top: var(--header-h, 88px); z-index: 500;
