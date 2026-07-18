@@ -16,13 +16,13 @@ export const MENU = {
       { t: "TALLERES", h: "/talleres/" },
       { t: "FIESTA", h: "/fiesta/" },
       { t: "FULL PASS", h: "/tu-pase/" },
-      { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
+      { t: "HOTEL", h: "/festival/#hotel" },
     ]},
     { label: "GALERÍA", href: "/galeria/", sub: [
       { t: "FOTOS 2024", h: "/galeria-2024/" },
       { t: "FOTOS 2023", h: "/galeria-2023/" },
     ]},
-    { label: "CONTACTO", href: "/festival/#contactar", sub: [] },
+    { label: "CONTACTO", href: "/contacto/", sub: [] },
   ],
   en: [
     { label: "WORLD CUP", href: "/en/world-championship/", sub: [
@@ -39,13 +39,13 @@ export const MENU = {
       { t: "WORKSHOPS", h: "/en/workshops/" },
       { t: "PARTY", h: "/en/fiesta/" },
       { t: "FULL PASS", h: "/en/your-pass/" },
-      { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
+      { t: "HOTEL", h: "/en/festival/#hotel" },
     ]},
     { label: "GALLERY", href: "/en/gallery/", sub: [
       { t: "PHOTOS 2024", h: "/en/gallery-2024/" },
       { t: "PHOTOS 2023", h: "/en/gallery-2023/" },
     ]},
-    { label: "CONTACT", href: "/en/festival/#contact", sub: [] },
+    { label: "CONTACT", href: "/en/contact/", sub: [] },
   ],
   it: [
     { label: "MONDIALE", href: "/it/mondiale/", sub: [
@@ -62,13 +62,13 @@ export const MENU = {
       { t: "WORKSHOP", h: "/it/workshops/" },
       { t: "FESTA", h: "/it/fiesta/" },
       { t: "FULL PASS", h: "/it/your-pass/" },
-      { t: "HOTEL", h: "https://ar-hotels.actpages.com/la-negra-festival.html" },
+      { t: "HOTEL", h: "/it/festival/#hotel" },
     ]},
     { label: "GALLERIA", href: "/it/gallery/", sub: [
       { t: "FOTO 2024", h: "/it/gallery-2024/" },
       { t: "FOTO 2023", h: "/it/gallery-2023/" },
     ]},
-    { label: "CONTATTI", href: "/it/festival/#contact", sub: [] },
+    { label: "CONTATTI", href: "/it/contact/", sub: [] },
   ],
 };
 

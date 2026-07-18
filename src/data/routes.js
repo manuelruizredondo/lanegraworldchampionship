@@ -17,6 +17,7 @@ export const ROUTES = [
   { es: "/ediciones/", en: "/en/editions/", it: "/it/edizioni/" },
   { es: "/videos/", en: "/en/videos/", it: "/it/videos/" },
   { es: "/galeria/", en: "/en/gallery/", it: "/it/gallery/" },
+  { es: "/contacto/", en: "/en/contact/", it: "/it/contact/" },
   { es: "/galeria-2024/", en: "/en/gallery-2024/", it: "/it/gallery-2024/" },
   { es: "/galeria-2023/", en: "/en/gallery-2023/", it: "/it/gallery-2023/" },
   { es: "/tu-pase/", en: "/en/your-pass/", it: "/it/your-pass/" },

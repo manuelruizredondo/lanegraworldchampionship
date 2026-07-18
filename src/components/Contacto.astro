@@ -1,0 +1,180 @@
+---
+// Página de contacto propia (ES/EN/IT). Formulario Netlify + datos de contacto y redes.
+const { lang = "es" } = Astro.props;
+
+const T = {
+  es: {
+    eyebrow: "Estamos para ayudarte",
+    h1: "Contacta con nosotros",
+    lead: "¿Tienes dudas sobre el festival, la competición, los pases o el hotel? Escríbenos y te respondemos lo antes posible.",
+    f: { name: "Nombre", surname: "Apellidos", email: "Email", phone: "Teléfono", subject: "Asunto", message: "Mensaje", privacy1: "He leído y acepto la ", privacyLink: "política de privacidad", privacyUrl: "/politica-de-privacidad/", send: "Enviar mensaje", hp: "No rellenar" },
+    ok: "¡Gracias! Hemos recibido tu mensaje, te responderemos pronto.",
+    err: "Ups, algo falló. Inténtalo de nuevo o escríbenos por WhatsApp.",
+    infoTitle: "Escríbenos o llámanos",
+    infoText: "Estamos disponibles por teléfono y WhatsApp para cualquier consulta.",
+    waText: "Escríbenos por WhatsApp",
+    followTitle: "Síguenos",
+  },
+  en: {
+    eyebrow: "We're here to help",
+    h1: "Contact us",
+    lead: "Have questions about the festival, the competition, passes or the hotel? Write to us and we'll get back to you as soon as possible.",
+    f: { name: "First name", surname: "Last name", email: "Email", phone: "Phone", subject: "Subject", message: "Message", privacy1: "I have read and accept the ", privacyLink: "privacy policy", privacyUrl: "/en/privacy-policy/", send: "Send message", hp: "Do not fill" },
+    ok: "Thanks! We've received your message and will get back to you soon.",
+    err: "Oops, something went wrong. Please try again or message us on WhatsApp.",
+    infoTitle: "Write or call us",
+    infoText: "We're available by phone and WhatsApp for any question.",
+    waText: "Message us on WhatsApp",
+    followTitle: "Follow us",
+  },
+  it: {
+    eyebrow: "Siamo qui per aiutarti",
+    h1: "Contattaci",
+    lead: "Hai domande sul festival, la gara, i pass o l'hotel? Scrivici e ti risponderemo il prima possibile.",
+    f: { name: "Nome", surname: "Cognome", email: "Email", phone: "Telefono", subject: "Oggetto", message: "Messaggio", privacy1: "Ho letto e accetto la ", privacyLink: "informativa sulla privacy", privacyUrl: "/it/privacy-policy/", send: "Invia messaggio", hp: "Non compilare" },
+    ok: "Grazie! Abbiamo ricevuto il tuo messaggio, ti risponderemo presto.",
+    err: "Ops, qualcosa è andato storto. Riprova o scrivici su WhatsApp.",
+    infoTitle: "Scrivici o chiamaci",
+    infoText: "Siamo disponibili per telefono e WhatsApp per qualsiasi domanda.",
+    waText: "Scrivici su WhatsApp",
+    followTitle: "Seguici",
+  },
+};
+const t = T[lang] || T.es;
+
+const CONTACTS = [
+  { name: "Evelyn", tel: "+34 659 090 696", num: "34659090696" },
+  { name: "Alberto", tel: "+34 639 501 310", num: "34639501310" },
+];
+const WA = "34639501310";
+const SOCIAL = {
+  instagram: "https://www.instagram.com/pasoslibreslanegrasalsa/",
+  facebook: "https://www.facebook.com/lanegradancefestival",
+  youtube: "https://www.youtube.com/user/LaNegraSalsa1",
+};
+const igIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8zm0 8.1a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm6.3-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"/></svg>`;
+const fbIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>`;
+const ytIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12zM9.7 15.3V8.7l5.8 3.3-5.8 3.3z"/></svg>`;
+const waIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M.5 23.5l1.6-6A11.6 11.6 0 1 1 12 23.6a11.6 11.6 0 0 1-5.5-1.4L.5 23.5zM6.8 20l.4.2a9.6 9.6 0 1 0-3.3-3.5l.2.4-1 3.5 3.7-1zm11.4-5.6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a7.8 7.8 0 0 1-3.9-3.4c-.1-.3 0-.4.1-.5l.4-.5c.1-.2.1-.3.2-.5s0-.3 0-.4l-.7-1.7c-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4 0-.6.3a3.2 3.2 0 0 0-1 2.4 5.6 5.6 0 0 0 1.2 3 12.8 12.8 0 0 0 4.9 4.3c2 .8 2 .5 2.4.5a2.9 2.9 0 0 0 1.9-1.3c.2-.4.2-.8.2-.9s-.2-.2-.4-.3z"/></svg>`;
+---
+
+<section class="section intro text-center">
+  <div class="container">
+    <p class="eyebrow dark">{t.eyebrow}</p>
+    <h1 class="script-title">{t.h1}</h1>
+    <p class="ct-lead">{t.lead}</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container ct-grid">
+    <form class="ct-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-contact>
+      <input type="hidden" name="form-name" value="contact" />
+      <p class="ct-hp" hidden><label>{t.f.hp}: <input name="bot-field" /></label></p>
+      <div class="ct-row">
+        <input type="text" name="nombre" placeholder={t.f.name} required />
+        <input type="text" name="apellidos" placeholder={t.f.surname} required />
+      </div>
+      <div class="ct-row">
+        <input type="email" name="email" placeholder={t.f.email} required />
+        <input type="tel" name="telefono" placeholder={t.f.phone} />
+      </div>
+      <input type="text" name="asunto" placeholder={t.f.subject} />
+      <textarea name="mensaje" rows="6" placeholder={t.f.message} required></textarea>
+      <label class="ct-privacy">
+        <input type="checkbox" name="privacidad" required />
+        <span>{t.f.privacy1}<a href={t.f.privacyUrl}>{t.f.privacyLink}</a>.</span>
+      </label>
+      <button class="btn btn-solid" type="submit">{t.f.send}</button>
+      <p class="ct-msg" data-contact-msg hidden></p>
+    </form>
+
+    <aside class="ct-info">
+      <h2 class="ct-info-title">{t.infoTitle}</h2>
+      <p class="ct-info-text">{t.infoText}</p>
+      <ul class="ct-phones">
+        {CONTACTS.map((c) => (
+          <li>
+            <span class="ct-phone-name">{c.name}</span>
+            <a class="ct-phone-tel" href={`tel:${c.tel.replace(/\s/g, "")}`}>{c.tel}</a>
+          </li>
+        ))}
+      </ul>
+      <a class="ct-wa" href={`https://wa.me/${WA}`} target="_blank" rel="noopener">
+        <Fragment set:html={waIcon} />
+        {t.waText}
+      </a>
+      <div class="ct-follow">
+        <p class="ct-follow-title">{t.followTitle}</p>
+        <div class="ct-social">
+          <a href={SOCIAL.instagram} target="_blank" rel="noopener" aria-label="Instagram" set:html={igIcon}></a>
+          <a href={SOCIAL.facebook} target="_blank" rel="noopener" aria-label="Facebook" set:html={fbIcon}></a>
+          <a href={SOCIAL.youtube} target="_blank" rel="noopener" aria-label="YouTube" set:html={ytIcon}></a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script is:inline define:vars={{ okMsg: t.ok, errMsg: t.err }}>
+  (function () {
+    var form = document.querySelector("[data-contact]");
+    if (!form) return;
+    var msg = form.querySelector("[data-contact-msg]");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var data = new URLSearchParams(new FormData(form)).toString();
+      fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data })
+        .then(function (r) { if (!r.ok) throw new Error(); form.reset(); msg.textContent = okMsg; msg.className = "ct-msg ok"; msg.hidden = false; })
+        .catch(function () { msg.textContent = errMsg; msg.className = "ct-msg err"; msg.hidden = false; });
+    });
+  })();
+</script>
+
+<style>
+  .eyebrow.dark { color: var(--gold); }
+  .ct-lead { max-width: 620px; margin: 8px auto 0; color: #5a5a64; font-size: 17px; line-height: 1.6; }
+
+  .ct-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(30px, 5vw, 56px); align-items: start; max-width: 1080px; }
+
+  .ct-form { display: flex; flex-direction: column; gap: 14px; }
+  .ct-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ct-form input[type="text"], .ct-form input[type="email"], .ct-form input[type="tel"], .ct-form textarea {
+    width: 100%; font-family: var(--font-body); font-size: 16px; color: #14121a;
+    padding: 13px 16px; border: 1px solid #e6e3dd; border-radius: 12px; background: #fff;
+  }
+  .ct-form input:focus, .ct-form textarea:focus { outline: 2px solid var(--gold); border-color: var(--gold); }
+  .ct-privacy { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: #6a6a74; }
+  .ct-privacy a { color: var(--gold-dark); font-weight: 600; }
+  .ct-form .btn { align-self: flex-start; }
+  .ct-msg { margin: 4px 0 0; font-size: 14px; font-weight: 600; }
+  .ct-msg.ok { color: #1c7a3f; }
+  .ct-msg.err { color: #c0392b; }
+
+  .ct-info { background: var(--cream); border: 1px solid #ece8e1; border-radius: 18px; padding: 30px 30px 34px; }
+  .ct-info-title { font-size: clamp(20px, 2.4vw, 26px); font-weight: 700; letter-spacing: -.02em; color: #14121a; margin: 0 0 8px; }
+  .ct-info-text { color: #5a5a64; font-size: 15px; line-height: 1.6; margin: 0 0 20px; }
+  .ct-phones { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 12px; }
+  .ct-phones li { display: flex; flex-direction: column; }
+  .ct-phone-name { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--gold-dark); font-weight: 700; }
+  .ct-phone-tel { font-size: 19px; font-weight: 600; color: #14121a; text-decoration: none; letter-spacing: -.01em; }
+  .ct-phone-tel:hover { color: var(--gold-dark); }
+  .ct-wa {
+    display: inline-flex; align-items: center; gap: 9px; text-decoration: none;
+    background: #25d366; color: #fff; font-weight: 700; font-size: 15px;
+    padding: 12px 22px; border-radius: 999px; transition: opacity .2s, transform .15s;
+  }
+  .ct-wa:hover { opacity: .9; transform: translateY(-2px); }
+  .ct-follow { margin-top: 26px; }
+  .ct-follow-title { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #6a6a74; font-weight: 700; margin: 0 0 12px; }
+  .ct-social { display: flex; gap: 12px; }
+  .ct-social a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; background: var(--gold); color: #fff; transition: background .2s; }
+  .ct-social a:hover { background: var(--gold-dark); }
+
+  @media (max-width: 820px) {
+    .ct-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ct-row { grid-template-columns: 1fr; }
+  }
+</style>
