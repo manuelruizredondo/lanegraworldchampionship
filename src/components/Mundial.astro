@@ -263,8 +263,15 @@ const st = STATEMENT[lang] || STATEMENT.es;
 <style>
   .eyebrow.dark { color: var(--gold); }
 
-  /* Hero del Mundial: contenido alineado arriba */
-  .mu-hero { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: clamp(340px, 52vh, 520px); padding-top: clamp(40px, 7vw, 78px); padding-bottom: clamp(56px, 9vw, 110px); }
+  /* Hero del Mundial: sube bajo el header (que queda transparente hasta el scroll),
+     contenido alineado arriba y con hueco para no quedar tapado por el header */
+  .mu-hero {
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    margin-top: calc(-1 * var(--header-bar, 76px));
+    min-height: clamp(420px, 64vh, 640px);
+    padding-top: calc(var(--header-bar, 76px) + clamp(20px, 4vw, 44px));
+    padding-bottom: clamp(56px, 9vw, 110px);
+  }
 
   /* Declaración (statement) — insignia y texto en dorado */
   .mu-statement .p-badge { margin-bottom: 30px; }
