@@ -77,17 +77,21 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       </div>
     </section>
 
-    <!-- INFO + GALLERY -->
-    <section class="p-section p-center">
-      <div class="p-container">
-        <div class="f-info p-narrow">
-          <p><strong>Location:</strong> Calpe, Alicante (Spagna) — Hotel ufficiale AR Diamante Beach 4* superior. <a href="https://maps.app.goo.gl/1Upi3tNxMANnCbZ87" target="_blank" rel="noopener">Vedi mappa</a></p>
-          <p><strong>Aeroporti più vicini:</strong> Alicante (50 min dall'hotel) · Valencia (1h 20min dall'hotel)</p>
+    <!-- LUOGO + COME ARRIVARE -->
+    <section class="p-section fx-loc">
+      <div class="p-container fx-loc-grid">
+        <div class="fx-media" data-slideshow>
+          {introGallery.map((src, i) => <img class={"fx-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
+          <div class="fx-bars">{introGallery.map((_, i) => <span class={i === 0 ? "is-on" : undefined}></span>)}</div>
         </div>
-      </div>
-      <div class="p-container">
-        <div class="f-gallery">
-          {introGallery.map((src) => <div class="f-g-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+        <div class="fx-loc-text">
+          <p class="p-eyebrow">Dove ci troviamo</p>
+          <h2 class="p-h2">Il luogo e come arrivare</h2>
+          <ul class="fx-loc-list">
+            <li><span class="fx-loc-k">Il luogo</span> Calpe, Alicante (Spagna) — Hotel ufficiale AR Diamante Beach 4* superior.</li>
+            <li><span class="fx-loc-k">Aeroporti più vicini</span> Alicante (50 min dall'hotel) · Valencia (1h 20min dall'hotel)</li>
+          </ul>
+          <a class="p-btn p-btn-dark" href="https://maps.app.goo.gl/1Upi3tNxMANnCbZ87" target="_blank" rel="noopener">Vedi mappa</a>
         </div>
       </div>
     </section>
@@ -250,6 +254,17 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       });
     })();
   </script>
+  <script>
+    document.querySelectorAll("[data-slideshow]").forEach((box, boxIdx) => {
+      const slides = [...box.querySelectorAll(".fx-slide")];
+      if (slides.length < 2) return;
+      const bars = [...box.querySelectorAll(".fx-bars span")];
+      let i = 0;
+      const show = (n) => { slides.forEach((s, k) => s.classList.toggle("is-on", k === n)); bars.forEach((b, k) => b.classList.toggle("is-on", k === n)); };
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      setTimeout(() => setInterval(() => { i = (i + 1) % slides.length; show(i); }, 3800), boxIdx * 700);
+    });
+  </script>
 </Base>
 
 <style>
@@ -259,6 +274,20 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   .f-info p { font-size: 16px; line-height: 1.6; color: var(--p-muted); margin: 0 0 8px; }
   .f-info strong { color: var(--p-ink); }
   .f-info a, .f-a { color: var(--gold-dark); font-weight: 600; }
+
+  /* Lugar + cómo llegar (imágenes que van cambiando a la izquierda, info a la derecha) */
+  .fx-loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; text-align: left; }
+  .fx-media { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 5/4; background: #14121a; box-shadow: 0 30px 70px rgba(20, 18, 26, .14); }
+  .fx-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s ease; }
+  .fx-slide.is-on { opacity: 1; }
+  .fx-bars { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 2; display: flex; gap: 6px; }
+  .fx-bars span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .38); transition: background .3s; }
+  .fx-bars span.is-on { background: rgba(255, 255, 255, .95); }
+  .fx-loc-text .p-h2 { margin-bottom: 22px; }
+  .fx-loc-list { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 18px; }
+  .fx-loc-list li { font-size: 16px; line-height: 1.55; color: #3a3a44; }
+  .fx-loc-k { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); margin-bottom: 3px; }
+  @media (max-width: 900px) { .fx-loc-grid { grid-template-columns: 1fr; } .fx-media { aspect-ratio: 4/3; } }
 
   /* Galerías */
   .f-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
