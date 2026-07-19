@@ -168,8 +168,8 @@ const st = STATEMENT[lang] || STATEMENT.es;
   <section class="p-section p-center mu-statement">
     <div class="p-container p-narrow">
       <div class="p-badge" aria-hidden="true">
-        <img class="p-badge-ring" src="/img/logo-lanegra-ring.svg" alt="" />
-        <img class="p-badge-face" src="/img/logo-lanegra-face.svg" alt="" />
+        <span class="mu-badge-ring"></span>
+        <span class="mu-badge-face"></span>
       </div>
       <h2 class="p-h2" set:html={st.h}></h2>
       <p class="p-lead p-quote">{st.sub}</p>
@@ -266,10 +266,25 @@ const st = STATEMENT[lang] || STATEMENT.es;
   /* Hero del Mundial: contenido alineado arriba */
   .mu-hero { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: clamp(340px, 52vh, 520px); padding-top: clamp(40px, 7vw, 78px); padding-bottom: clamp(56px, 9vw, 110px); }
 
-  /* Declaración (statement) */
+  /* Declaración (statement) — insignia y texto en dorado */
   .mu-statement .p-badge { margin-bottom: 30px; }
-  .mu-statement .p-h2 { font-size: clamp(28px, 4.4vw, 52px); }
+  .mu-statement .p-h2 { font-size: clamp(28px, 4.4vw, 52px); color: var(--gold); }
+  .mu-statement .p-hl { color: var(--gold); }
+  .mu-statement .p-hl-line { display: none; }
   .mu-statement .p-quote { max-width: 620px; margin-left: auto; margin-right: auto; }
+  .mu-statement .mu-badge-ring {
+    position: absolute; inset: 0; background: var(--gold);
+    -webkit-mask: url("/img/logo-lanegra-ring.svg") center / contain no-repeat;
+    mask: url("/img/logo-lanegra-ring.svg") center / contain no-repeat;
+    animation: p-spin 24s linear infinite;
+  }
+  .mu-statement .mu-badge-face {
+    position: absolute; left: 50%; top: 50%; width: 56%; aspect-ratio: 180 / 145;
+    transform: translate(-50%, -50%); background: var(--gold);
+    -webkit-mask: url("/img/logo-lanegra-face.svg") center / contain no-repeat;
+    mask: url("/img/logo-lanegra-face.svg") center / contain no-repeat;
+  }
+  @media (prefers-reduced-motion: reduce) { .mu-statement .mu-badge-ring { animation: none; } }
   .mu-h2 { font-size: clamp(24px, 3.4vw, 38px); }
 
   .mu-lead { max-width: 660px; margin: 8px auto 22px; color: #5a5a64; font-size: clamp(17px, 2vw, 20px); line-height: 1.55; }
