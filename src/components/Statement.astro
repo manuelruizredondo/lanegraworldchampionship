@@ -1,0 +1,49 @@
+---
+// Bloque "declaración": insignia (logo) girando en oro + frase grande con
+// palabras subrayadas en dorado (el subrayado se dibuja al aparecer).
+// Compartido por Mundial y Festival para que ambos vayan seguidos del hero
+// con el mismo bloque. Props:
+//   html: HTML de la frase (usa <span class="p-hl">…<svg class="p-hl-line">…)
+//   sub:  subtítulo opcional
+//   id:   ancla opcional para el SubNav
+const { html, sub, id } = Astro.props;
+---
+
+<div class="prop">
+  <section class={"p-section p-center st-block"} id={id}>
+    <div class="p-container p-narrow">
+      <div class="p-badge st-badge" aria-hidden="true">
+        <span class="st-ring"></span>
+        <span class="st-face"></span>
+      </div>
+      <h2 class="p-h2 st-h" set:html={html}></h2>
+      {sub && <p class="p-lead p-quote st-sub">{sub}</p>}
+    </div>
+  </section>
+</div>
+
+<style>
+  /* Insignia dorada girando (logo enmascarado sobre color oro) */
+  .st-badge { position: relative; }
+  .st-ring {
+    position: absolute; inset: 0; background: var(--gold);
+    -webkit-mask: url("/img/logo-lanegra-ring.svg") center / contain no-repeat;
+    mask: url("/img/logo-lanegra-ring.svg") center / contain no-repeat;
+    animation: p-spin 24s linear infinite;
+  }
+  .st-face {
+    position: absolute; left: 50%; top: 50%; width: 56%; aspect-ratio: 180 / 145;
+    transform: translate(-50%, -50%); background: var(--gold);
+    -webkit-mask: url("/img/logo-lanegra-face.svg") center / contain no-repeat;
+    mask: url("/img/logo-lanegra-face.svg") center / contain no-repeat;
+  }
+  @media (prefers-reduced-motion: reduce) { .st-ring { animation: none; } }
+
+  /* Frase grande: texto en color normal; solo las palabras .p-hl en oro,
+     con el subrayado dibujándose */
+  .st-h { font-size: clamp(28px, 4.4vw, 52px); }
+  .st-h :global(.p-hl) { color: var(--gold); }
+  .st-h :global(.p-hl-line path) { animation: st-hl-draw 1.1s cubic-bezier(.22, 1, .36, 1) .5s both; }
+  @keyframes st-hl-draw { from { stroke-dashoffset: 500; } to { stroke-dashoffset: 0; } }
+  .st-sub { max-width: 620px; margin-left: auto; margin-right: auto; }
+</style>

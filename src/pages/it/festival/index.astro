@@ -1,7 +1,13 @@
 ---
 import Base from "@/layouts/Base.astro";
 import SubNav from "@/components/SubNav.astro";
+import Statement from "@/components/Statement.astro";
 import { img } from "@/data/img.js";
+
+// Blocco dichiarazione (come il Mondiale): parole sottolineate in oro
+const hl = (w, second) => `<span class="p-hl${second ? " p-hl-2" : ""}">${w}<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span>`;
+const stmtHtml = `Il punto d'incontro mondiale di ${hl("salsa")} e ${hl("bachata", true)}: workshop, competizione e feste per cinque giorni indimenticabili.`;
+const stmtSub = "Dal 21 al 25 ottobre 2026, a Calpe, davanti al mare.";
 
 const anchorNav = [
   { label: "FESTIVAL", href: "#info" },
@@ -76,6 +82,9 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
     </section>
 
     <SubNav items={anchorNav} label="Sezioni del festival" />
+
+    <!-- Dichiarazione (badge rotante + frase grande), come il Mondiale -->
+    <Statement html={stmtHtml} sub={stmtSub} />
 
     <!-- LUOGO + COME ARRIVARE -->
     <section class="p-section fx-loc">

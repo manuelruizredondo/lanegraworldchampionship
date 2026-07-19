@@ -2,8 +2,30 @@
 // Página insignia del Mundial: explica qué es el Campeonato Mundial de Pasos Libres.
 // Primer ítem del submenú MUNDIAL. Contenido trilingüe (ES/EN/IT).
 import { img } from "@/data/img.js";
+import SubNav from "@/components/SubNav.astro";
+import Statement from "@/components/Statement.astro";
 
 const { lang = "es" } = Astro.props;
+
+// Menú de secciones (píldora sticky) — mismo patrón que el Festival
+const NAV = {
+  es: { label: "Secciones del Mundial", items: [
+    { label: "QUÉ ES", href: "#que-es" }, { label: "DISCIPLINAS", href: "#disciplinas" },
+    { label: "CATEGORÍAS", href: "#categorias" }, { label: "CÓMO SE COMPITE", href: "#competir" },
+    { label: "HISTORIA", href: "#historia" },
+  ] },
+  en: { label: "Championship sections", items: [
+    { label: "WHAT IT IS", href: "#que-es" }, { label: "DISCIPLINES", href: "#disciplinas" },
+    { label: "CATEGORIES", href: "#categorias" }, { label: "HOW IT WORKS", href: "#competir" },
+    { label: "HISTORY", href: "#historia" },
+  ] },
+  it: { label: "Sezioni del Mondiale", items: [
+    { label: "COS'È", href: "#que-es" }, { label: "DISCIPLINE", href: "#disciplinas" },
+    { label: "CATEGORIE", href: "#categorias" }, { label: "COME SI COMPETE", href: "#competir" },
+    { label: "STORIA", href: "#historia" },
+  ] },
+};
+const nav = NAV[lang] || NAV.es;
 
 const IG_URL = "https://www.instagram.com/lanegraworldchampionship/";
 
@@ -163,19 +185,11 @@ const st = STATEMENT[lang] || STATEMENT.es;
   </div>
 </section>
 
-<!-- Declaración (insignia + statement con subrayado dorado) -->
-<div class="prop">
-  <section class="p-section p-center mu-statement">
-    <div class="p-container p-narrow">
-      <div class="p-badge" aria-hidden="true">
-        <span class="mu-badge-ring"></span>
-        <span class="mu-badge-face"></span>
-      </div>
-      <h2 class="p-h2" set:html={st.h}></h2>
-      <p class="p-lead p-quote">{st.sub}</p>
-    </div>
-  </section>
-</div>
+<!-- Menú de secciones (justo después del hero) -->
+<SubNav items={nav.items} label={nav.label} />
+
+<!-- Declaración (insignia girando + frase grande con subrayado dorado) -->
+<Statement html={st.h} sub={st.sub} id="que-es" />
 
 <section class="section-tight">
   <div class="container mu-intro">
@@ -191,7 +205,7 @@ const st = STATEMENT[lang] || STATEMENT.es;
   </div>
 </section>
 
-<section class="section mu-disc-sec">
+<section id="disciplinas" class="section mu-disc-sec">
   <div class="container text-center">
     <h2 class="script-title mu-h2">{t.discTitle}</h2>
   </div>
@@ -207,7 +221,7 @@ const st = STATEMENT[lang] || STATEMENT.es;
   </div>
 </section>
 
-<section class="section-tight">
+<section id="categorias" class="section-tight">
   <div class="container mu-cat">
     <div class="mu-cat-head">
       <h2 class="script-title mu-h2">{t.catTitle}</h2>
@@ -219,7 +233,7 @@ const st = STATEMENT[lang] || STATEMENT.es;
   </div>
 </section>
 
-<section class="section mu-format-sec">
+<section id="competir" class="section mu-format-sec">
   <div class="container text-center">
     <h2 class="script-title mu-h2">{t.formatTitle}</h2>
   </div>
@@ -234,7 +248,7 @@ const st = STATEMENT[lang] || STATEMENT.es;
   </div>
 </section>
 
-<section class="section-tight text-center">
+<section id="historia" class="section-tight text-center">
   <div class="container">
     <h2 class="script-title mu-h2">{t.histTitle}</h2>
     <p class="mu-cat-intro mu-center">{t.histText}</p>
@@ -268,31 +282,11 @@ const st = STATEMENT[lang] || STATEMENT.es;
   .mu-hero {
     display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
     margin-top: calc(-1 * var(--header-bar, 76px));
-    min-height: clamp(420px, 64vh, 640px);
-    padding-top: calc(var(--header-bar, 76px) + clamp(20px, 4vw, 44px));
+    min-height: clamp(460px, 76vh, 720px);
+    padding-top: calc(var(--header-bar, 76px) + clamp(28px, 6vw, 70px));
     padding-bottom: clamp(56px, 9vw, 110px);
   }
 
-  /* Declaración (statement) — texto normal; solo 'salsa'/'bachata' en oro con subrayado que se dibuja */
-  .mu-statement .p-badge { margin-bottom: 30px; }
-  .mu-statement .p-h2 { font-size: clamp(28px, 4.4vw, 52px); }
-  .mu-statement .p-hl { color: var(--gold); }
-  .mu-statement .p-hl-line path { animation: mu-hl-draw 1.1s cubic-bezier(.22, 1, .36, 1) .5s both; }
-  @keyframes mu-hl-draw { from { stroke-dashoffset: 500; } to { stroke-dashoffset: 0; } }
-  .mu-statement .p-quote { max-width: 620px; margin-left: auto; margin-right: auto; }
-  .mu-statement .mu-badge-ring {
-    position: absolute; inset: 0; background: var(--gold);
-    -webkit-mask: url("/img/logo-lanegra-ring.svg") center / contain no-repeat;
-    mask: url("/img/logo-lanegra-ring.svg") center / contain no-repeat;
-    animation: p-spin 24s linear infinite;
-  }
-  .mu-statement .mu-badge-face {
-    position: absolute; left: 50%; top: 50%; width: 56%; aspect-ratio: 180 / 145;
-    transform: translate(-50%, -50%); background: var(--gold);
-    -webkit-mask: url("/img/logo-lanegra-face.svg") center / contain no-repeat;
-    mask: url("/img/logo-lanegra-face.svg") center / contain no-repeat;
-  }
-  @media (prefers-reduced-motion: reduce) { .mu-statement .mu-badge-ring { animation: none; } }
   .mu-h2 { font-size: clamp(24px, 3.4vw, 38px); }
 
   .mu-lead { max-width: 660px; margin: 8px auto 22px; color: #5a5a64; font-size: clamp(17px, 2vw, 20px); line-height: 1.55; }
