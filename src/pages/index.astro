@@ -84,6 +84,9 @@ const artists = ARTISTS_ES.map((a) => {
   description="La comunidad mundial de la salsa y la bachata. Talleres, shows, fiestas y el único Mundial con coreografías 100% de estreno. Calpe 2026."
   heroOverlay={true}
 >
+  <Fragment slot="head">
+    <link rel="preload" as="image" href={img("la-negra-dance-festival-festival-img-12.webp")} fetchpriority="high" />
+  </Fragment>
   <EventSchema lang="es" />
   <div class="prop">
     <!-- HERO (oscuro) -->
@@ -92,7 +95,7 @@ const artists = ARTISTS_ES.map((a) => {
       <div class="p-hero-inner">
         <p class="p-hero-date"><span>21–25 OCT 2026</span><span>Calpe · España</span></p>
         <div class="p-hero-cta">
-          <a class="p-btn p-btn-light" href="/competicion/">Descubre el Mundial</a>
+          <a class="p-btn p-btn-light" href="/mundial/">Descubre el Mundial</a>
           <a class="p-btn p-btn-outline" href="/festival/">Descubre el festival</a>
         </div>
         <div class="p-hero-count" role="timer" aria-label="Cuenta atrás para el evento">

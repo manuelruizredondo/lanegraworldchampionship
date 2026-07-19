@@ -115,12 +115,6 @@ export const FOOTER_COPYRIGHT = {
   it: "Tutti i diritti riservati",
 };
 
-export const FOOTER_DESIGNED_BY = {
-  es: "Diseñado por",
-  en: "Designed by",
-  it: "Progettato da",
-};
-
 export const HOME_HREF = { es: "/", en: "/en/", it: "/it/" };
 
 // Banner de consentimiento de cookies (GA4 solo se carga si el usuario acepta)

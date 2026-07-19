@@ -1,11 +1,10 @@
 ---
-import { FOOTER_LEGAL, FOOTER_SOCIAL_TITLE, FOOTER_COPYRIGHT, FOOTER_DESIGNED_BY, NEWSLETTER } from "../data/nav.js";
+import { FOOTER_LEGAL, FOOTER_SOCIAL_TITLE, FOOTER_COPYRIGHT, NEWSLETTER } from "../data/nav.js";
 const { lang = "es" } = Astro.props;
 const nl = NEWSLETTER[lang] || NEWSLETTER.es;
 const legal = FOOTER_LEGAL[lang];
 const socialTitle = FOOTER_SOCIAL_TITLE[lang];
 const copyright = FOOTER_COPYRIGHT[lang];
-const designedBy = FOOTER_DESIGNED_BY[lang];
 const gallery = [
   "/img/2025/03/lanegra-dance-festival-home-3-12.webp",
   "/img/2025/03/lanegra-dance-festival-home-3-11.webp",
