@@ -5,11 +5,20 @@ import { img } from "@/data/img.js";
 
 const anchorNav = [
   { label: "FESTIVAL", href: "#info" },
-  { label: "ARTISTAS", href: "#artistas" },
   { label: "TALLERES", href: "#talleres" },
-  { label: "FULL PASS", href: "#fullpass" },
+  { label: "MUNDIAL", href: "#mundial" },
+  { label: "ARTISTAS", href: "#artistas" },
+  { label: "FIESTA", href: "#fiesta" },
   { label: "HOTEL", href: "#hotel" },
-  { label: "CONTACTAR", href: "#contactar" },
+  { label: "PASE", href: "#fullpass" },
+  { label: "CONTACTO", href: "#contactar" },
+];
+
+const stats = [
+  { n: "XV", l: "Ediciones" },
+  { n: "+20", l: "Países" },
+  { n: "+90", l: "Artistas" },
+  { n: "4", l: "Noches de fiesta" },
 ];
 
 const introGallery = [
@@ -51,11 +60,10 @@ const hotelGallery = [
 ];
 
 const fiestaGallery = [
-  "la-negra-dance-festival-festival-img-1.webp",
-  "lanegra-dance-festival-comepeticion-2.webp",
   "la-negra-dance-festival-fiesta-img-12.webp",
   "la-negra-dance-festival-fiesta-img-7.webp",
   "la-negra-dance-festival-fiesta-img-10.webp",
+  "la-negra-dance-festival-fiesta-img-1.webp",
 ];
 
 const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata";
@@ -65,43 +73,68 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   <SubNav items={anchorNav} label="Secciones del festival" />
 
   <div class="prop">
-    <!-- HERO -->
+    <!-- 1 · HERO -->
     <section id="info" class="p-phero" style={`background-image:url(${img("la-negra-dance-festival-festival-img-12.webp")})`}>
       <div class="p-phero-inner">
-        <p class="p-eyebrow">Salsa · Bachata</p>
+        <p class="p-eyebrow">Del 21 al 25 de octubre de 2026 · Calpe</p>
         <h1 class="p-phero-title">La Negra Dance Festival</h1>
-        <p class="p-phero-sub">Festival de salsa y bachata con workshops, baile social y Campeonato Mundial. Del 21 al 25 de octubre de 2026 · Calpe (España).</p>
+        <p class="p-phero-sub">Cinco días en los que Calpe se convierte en la capital mundial de la salsa y la bachata.</p>
         <div class="p-phero-cta">
-          <a class="p-btn p-btn-light" href="#fullpass">Comprar pase</a>
+          <a class="p-btn p-btn-light" href="#fullpass">Compra tu pase</a>
         </div>
       </div>
     </section>
 
-    <!-- LUGAR + CÓMO LLEGAR (imágenes que van cambiando + info) -->
-    <section class="p-section fx-loc">
-      <div class="p-container fx-loc-grid">
-        <div class="fx-media" data-slideshow>
-          {introGallery.map((src, i) => <img class={"fx-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
-          <div class="fx-bars">{introGallery.map((_, i) => <span class={i === 0 ? "is-on" : undefined}></span>)}</div>
-        </div>
-        <div class="fx-loc-text">
-          <p class="p-eyebrow">Dónde nos vemos</p>
-          <h2 class="p-h2">El sitio y cómo llegar</h2>
-          <ul class="fx-loc-list">
-            <li><span class="fx-loc-k">El lugar</span> Calpe, Alicante (España) — Hotel sede AR Diamante Beach 4* superior.</li>
-            <li><span class="fx-loc-k">Aeropuertos más cercanos</span> Alicante (50 min del hotel) · Valencia (1h 20min del hotel)</li>
-          </ul>
-          <a class="p-btn p-btn-dark" href="https://maps.app.goo.gl/1Upi3tNxMANnCbZ87" target="_blank" rel="noopener">Ver mapa</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ARTISTS -->
-    <section id="artistas" class="p-section p-center p-gray">
+    <!-- 2 · QUÉ ES + NÚMEROS -->
+    <section class="p-section p-center">
       <div class="p-container">
-        <p class="p-eyebrow">Salsa · Bachata</p>
+        <p class="p-eyebrow">El festival</p>
+        <h2 class="p-h2 p-narrow">Festival y Mundial, en un mismo escenario</h2>
+        <p class="p-lead p-narrow">Talleres con leyendas de la salsa y la bachata, el Campeonato Mundial de Pasos Libres y las noches más bailadas del año. Todo en un mismo hotel frente al mar, vengas solo, con amigos o en pareja.</p>
+      </div>
+      <div class="p-container f-stats">
+        <div class="p-stats">
+          <div class="p-stats-row">
+            {stats.map((s) => (
+              <div class="p-stat"><span class="p-stat-n">{s.n}</span><span class="p-stat-l">{s.l}</span></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · EL DÍA · TALLERES -->
+    <section id="talleres" class="p-section p-gray">
+      <div class="p-container f-split">
+        <div class="f-split-imgs">
+          {talleresGallery.map((src) => <div class="f-g-item f-g-tall"><img src={img(src)} alt="" loading="lazy" /></div>)}
+        </div>
+        <div class="f-split-text">
+          <p class="p-eyebrow">El día · Aprende</p>
+          <h2 class="p-h2">Talleres donde disfrutar</h2>
+          <p class="p-lead">Desde aficionados hasta competidores y profesionales: talleres básicos, intermedios y avanzados en Salsa Cubana, On1, On2, Bachata Sensual, Tradicional, Fusión y las últimas tendencias. Masterclass solo para profesionales.</p>
+          <a class="p-btn p-btn-dark" href="/talleres/">Ver todos los talleres</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · LA COMPETICIÓN · EL MUNDIAL -->
+    <section id="mundial" class="p-band f-band">
+      <div class="p-band-media"><img src={img("ganadores_grupos_salsa_2025.jpg")} alt="Mundial de Pasos Libres" loading="lazy" /></div>
+      <div class="p-band-content">
+        <p class="p-band-eyebrow">La competición</p>
+        <h2 class="p-band-title">El Mundial de Pasos Libres</h2>
+        <p class="p-band-sub">El corazón competitivo del festival: los mejores bailarines de salsa y bachata del planeta se juegan el título mundial sobre el gran escenario.</p>
+        <a class="p-btn p-btn-light f-band-cta" href="/mundial/">Descubre el Mundial</a>
+      </div>
+    </section>
+
+    <!-- 5 · ARTISTAS -->
+    <section id="artistas" class="p-section p-center">
+      <div class="p-container">
+        <p class="p-eyebrow">Quién lo hace posible</p>
         <h2 class="p-h2">Nuestros artistas invitados</h2>
-        <p class="p-lead p-narrow">Cada año traemos de distintos rincones del mundo a artistas y bailarines de reconocido prestigio. Élite, talleres, playa, piscinas, fiestas y competidores de más de 20 países se unen en este gran evento.</p>
+        <p class="p-lead p-narrow">Cada año traemos de distintos rincones del mundo a artistas y bailarines de reconocido prestigio: maestros, jueces del Mundial y compañeros de baile de más de 20 países.</p>
         <div class="f-artists">
           {artists.map((a) => (
             <article class="f-artist">
@@ -115,45 +148,27 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       </div>
     </section>
 
-    <!-- WORKSHOPS -->
-    <section id="talleres" class="p-section">
-      <div class="p-container f-split">
-        <div class="f-split-imgs">
-          {talleresGallery.map((src) => <div class="f-g-item f-g-tall"><img src={img(src)} alt="" loading="lazy" /></div>)}
+    <!-- 6 · LA NOCHE · FIESTA -->
+    <section id="fiesta" class="p-section f-night">
+      <div class="p-container f-night-grid">
+        <div class="f-night-imgs">
+          {fiestaGallery.map((src) => <div class="f-g-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
         </div>
-        <div class="f-split-text">
-          <p class="p-eyebrow">Salsa · Bachata</p>
-          <h2 class="p-h2">Talleres donde disfrutar</h2>
-          <p class="p-lead">Desde aficionados hasta competidores y profesionales pueden disfrutar de talleres básicos, intermedios y avanzados en disciplinas como Salsa Cubana, On1, On2, Bachata Sensual, Tradicional, Fusión y las últimas tendencias. Masterclass solo para profesionales.</p>
-          <a class="p-btn p-btn-dark" href="/talleres/">Ver todos los talleres</a>
+        <div class="f-night-text">
+          <p class="p-eyebrow">La noche</p>
+          <h2 class="p-h2 p-white">¡Empieza la fiesta!</h2>
+          <p class="p-white-70">Cuando cae el sol llega lo mejor: dos salas de baile social —salsa y bachata—, los mejores DJs y fiestas temáticas cada noche. Baila hasta el amanecer.</p>
+          <a class="p-btn p-btn-light" href="/fiesta/">Descubre la fiesta</a>
         </div>
       </div>
     </section>
 
-    <!-- FULL PASS -->
-    <section id="fullpass" class="p-section p-center p-gray">
-      <div class="p-container">
-        <p class="p-eyebrow">Full Pass</p>
-        <h2 class="p-h2">Nos vemos en La Negra</h2>
-        <p class="p-lead p-narrow">Venta de entradas gestionada a través de <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a>.</p>
-        <div class="f-widget">
-          <iframe
-            src="https://www.goandance.com/es/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"
-            title="Compra de Full Pass — go&dance"
-            loading="lazy"
-          ></iframe>
-        </div>
-        <p class="f-credit">Powered by <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a></p>
-        <a class="p-link f-gd-link" href={gdEvent} target="_blank" rel="noopener">Ir a la página de entradas ↗</a>
-      </div>
-    </section>
-
-    <!-- HOTEL -->
+    <!-- 7 · LA SEDE · HOTEL -->
     <section id="hotel" class="p-section">
       <div class="p-container p-center">
-        <p class="p-eyebrow">AR Diamante Beach</p>
-        <h2 class="p-h2">Reserva ya tu hotel</h2>
-        <p class="p-lead">Sede de La Negra Dance Festival</p>
+        <p class="p-eyebrow">La sede · AR Diamante Beach</p>
+        <h2 class="p-h2">Duermes, bailas y compites sin moverte</h2>
+        <p class="p-lead p-narrow">El hotel sede es el centro de todo: talleres, competición, fiestas, playa y piscina a solo unos pasos.</p>
       </div>
       <div class="p-container f-hotel-grid">
         <div class="f-hotel-text">
@@ -196,10 +211,47 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       </div>
     </section>
 
-    <!-- CONTACT -->
+    <!-- 8 · CÓMO LLEGAR (imágenes que van cambiando + info) -->
+    <section class="p-section fx-loc p-gray">
+      <div class="p-container fx-loc-grid">
+        <div class="fx-media" data-slideshow>
+          {introGallery.map((src, i) => <img class={"fx-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
+          <div class="fx-bars">{introGallery.map((_, i) => <span class={i === 0 ? "is-on" : undefined}></span>)}</div>
+        </div>
+        <div class="fx-loc-text">
+          <p class="p-eyebrow">Dónde nos vemos</p>
+          <h2 class="p-h2">El sitio y cómo llegar</h2>
+          <ul class="fx-loc-list">
+            <li><span class="fx-loc-k">El lugar</span> Calpe, Alicante (España) — Hotel sede AR Diamante Beach 4* superior.</li>
+            <li><span class="fx-loc-k">Aeropuertos más cercanos</span> Alicante (50 min del hotel) · Valencia (1h 20min del hotel)</li>
+          </ul>
+          <a class="p-btn p-btn-dark" href="https://maps.app.goo.gl/1Upi3tNxMANnCbZ87" target="_blank" rel="noopener">Ver mapa</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · EL PASE · FULL PASS -->
+    <section id="fullpass" class="p-section p-center">
+      <div class="p-container">
+        <p class="p-eyebrow">El pase</p>
+        <h2 class="p-h2">Una entrada a todo: el Full Pass</h2>
+        <p class="p-lead p-narrow">Talleres, competición, shows y fiestas con un único pase. Venta gestionada a través de <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a>.</p>
+        <div class="f-widget">
+          <iframe
+            src="https://www.goandance.com/es/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"
+            title="Compra de Full Pass — go&dance"
+            loading="lazy"
+          ></iframe>
+        </div>
+        <p class="f-credit">Powered by <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a></p>
+        <a class="p-link f-gd-link" href={gdEvent} target="_blank" rel="noopener">Ir a la página de entradas ↗</a>
+      </div>
+    </section>
+
+    <!-- 10 · CONTACTO -->
     <section id="contactar" class="p-section p-gray">
       <div class="p-container p-center">
-        <p class="p-eyebrow">La Negra Dance Festival</p>
+        <p class="p-eyebrow">¿Tienes dudas?</p>
         <h2 class="p-h2">Contacta con nosotros</h2>
       </div>
       <div class="p-container f-contact-grid">
@@ -228,16 +280,6 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
         </div>
       </div>
     </section>
-
-    <!-- FIESTA CTA -->
-    <section class="p-final">
-      <div class="f-final-inner">
-        <p class="p-eyebrow">Por la noche…</p>
-        <h2 class="p-h2 p-white">¡Disfruta la fiesta!</h2>
-        <p class="p-white-70">Después de una jornada intensa de talleres, aprendizaje y descanso… ¡tenemos fiesta! Prepárate para noches de pura energía en nuestras fiestas temáticas, con el mejor ambiente, los mejores bailarines y la mejor música.</p>
-        <a class="p-btn p-btn-light" href="/fiesta/">Saber más</a>
-      </div>
-    </section>
   </div>
 
   <script is:inline define:vars={{ okMsg: "¡Gracias! Hemos recibido tu mensaje, te responderemos pronto.", errMsg: "Ups, algo falló. Inténtalo de nuevo o escríbenos por email." }}>
@@ -255,7 +297,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
     })();
   </script>
   <script>
-    // Imágenes que van cambiando en el bloque de "Lugar + cómo llegar"
+    // Imágenes que van cambiando en el bloque de "Cómo llegar"
     document.querySelectorAll("[data-slideshow]").forEach((box, boxIdx) => {
       const slides = [...box.querySelectorAll(".fx-slide")];
       if (slides.length < 2) return;
@@ -269,33 +311,19 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
 </Base>
 
 <style>
-  /* Intro */
-  .f-date { font-weight: 600; color: var(--gold-dark); font-size: clamp(16px, 2vw, 20px); margin: -6px 0 22px; }
-  .f-info { margin: 0 auto 26px; }
-  .f-info p { font-size: 16px; line-height: 1.6; color: var(--p-muted); margin: 0 0 8px; }
-  .f-info strong { color: var(--p-ink); }
-  .f-info a, .f-a { color: var(--gold-dark); font-weight: 600; }
+  .f-a { color: var(--gold-dark); font-weight: 600; }
 
-  /* Lugar + cómo llegar (imágenes que van cambiando a la izquierda, info a la derecha) */
-  .fx-loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; text-align: left; }
-  .fx-media { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 5/4; background: #14121a; box-shadow: 0 30px 70px rgba(20, 18, 26, .14); }
-  .fx-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s ease; }
-  .fx-slide.is-on { opacity: 1; }
-  .fx-bars { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 2; display: flex; gap: 6px; }
-  .fx-bars span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .38); transition: background .3s; }
-  .fx-bars span.is-on { background: rgba(255, 255, 255, .95); }
-  .fx-loc-text .p-h2 { margin-bottom: 22px; }
-  .fx-loc-list { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 18px; }
-  .fx-loc-list li { font-size: 16px; line-height: 1.55; color: #3a3a44; }
-  .fx-loc-k { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); margin-bottom: 3px; }
-  @media (max-width: 900px) { .fx-loc-grid { grid-template-columns: 1fr; } .fx-media { aspect-ratio: 4/3; } }
+  /* Números */
+  .f-stats { margin-top: 20px; }
 
-  /* Galerías */
-  .f-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
-  .f-g-item { border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; background: var(--p-card); }
-  .f-g-item img { width: 100%; height: 100%; object-fit: cover; }
-  .f-g-tall { aspect-ratio: 3/4; }
-  .f-g-sq { aspect-ratio: 1/1; }
+  /* El Mundial (banda de foto) */
+  .f-band .p-band-media img { height: 100%; }
+  .f-band-cta { margin-top: 24px; }
+
+  /* Split (talleres) */
+  .f-split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 5vw, 64px); align-items: center; }
+  .f-split-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .f-split-text .p-lead { margin-bottom: 26px; }
 
   /* Artistas (bolas) */
   .f-artists { display: grid; grid-template-columns: repeat(4, 1fr); gap: 38px 28px; margin: 44px 0 36px; }
@@ -313,10 +341,14 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   .f-artist-n { font-weight: 600; font-size: clamp(16px, 1.4vw, 21px); letter-spacing: -.02em; color: var(--p-ink); margin: 0 0 2px; }
   .f-artist-c { font-size: 13px; color: var(--gold-dark); margin: 0; }
 
-  /* Split (talleres) */
-  .f-split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 5vw, 64px); align-items: center; }
-  .f-split-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .f-split-text .p-lead { margin-bottom: 26px; }
+  /* La noche (fiesta) — sección oscura */
+  .f-night { background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 65%); }
+  .f-night-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 5vw, 64px); align-items: center; }
+  .f-night-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .f-night-imgs .f-g-item { aspect-ratio: 1/1; }
+  .f-night-text { text-align: left; }
+  .f-night-text .p-h2 { margin-bottom: 16px; }
+  .f-night-text .p-white-70 { margin-bottom: 26px; }
 
   /* Full pass */
   .f-widget { max-width: 900px; margin: 8px auto 0; border-radius: var(--p-radius); overflow: hidden; box-shadow: 0 14px 40px rgba(15, 11, 30, .14); }
@@ -338,6 +370,26 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   .f-transfer p { margin: 0; color: var(--p-muted); font-size: 15px; line-height: 1.55; }
   .f-transfers-note { text-align: center; max-width: 720px; margin: 0 auto 24px; }
 
+  /* Cómo llegar (imágenes que van cambiando a la izquierda, info a la derecha) */
+  .fx-loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; text-align: left; }
+  .fx-media { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 5/4; background: #14121a; box-shadow: 0 30px 70px rgba(20, 18, 26, .14); }
+  .fx-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s ease; }
+  .fx-slide.is-on { opacity: 1; }
+  .fx-bars { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 2; display: flex; gap: 6px; }
+  .fx-bars span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .38); transition: background .3s; }
+  .fx-bars span.is-on { background: rgba(255, 255, 255, .95); }
+  .fx-loc-text .p-h2 { margin-bottom: 22px; }
+  .fx-loc-list { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 18px; }
+  .fx-loc-list li { font-size: 16px; line-height: 1.55; color: #3a3a44; }
+  .fx-loc-k { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark); margin-bottom: 3px; }
+
+  /* Galerías */
+  .f-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
+  .f-g-item { border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; background: var(--p-card); }
+  .f-g-item img { width: 100%; height: 100%; object-fit: cover; }
+  .f-g-tall { aspect-ratio: 3/4; }
+  .f-g-sq { aspect-ratio: 1/1; }
+
   /* Contacto */
   .f-contact-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(30px, 5vw, 60px); align-items: start; margin-top: 8px; }
   .f-form { display: flex; flex-direction: column; gap: 14px; }
@@ -355,15 +407,13 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   .f-msg.err { color: #c0392b; }
   .f-contact-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-  /* Fiesta CTA */
-  .f-final-inner { max-width: 760px; margin: 0 auto; text-align: center; }
-
   /* Responsive */
   @media (max-width: 900px) {
     .f-gallery { grid-template-columns: repeat(2, 1fr); }
     .f-artists { grid-template-columns: repeat(2, 1fr); }
-    .f-split, .f-hotel-grid, .f-transfers-grid, .f-contact-grid { grid-template-columns: 1fr; }
+    .f-split, .f-hotel-grid, .f-transfers-grid, .f-contact-grid, .fx-loc-grid, .f-night-grid { grid-template-columns: 1fr; }
     .f-split-imgs { grid-template-columns: 1fr 1fr; }
+    .fx-media { aspect-ratio: 4/3; }
   }
   @media (max-width: 600px) {
     .f-row { grid-template-columns: 1fr; }
