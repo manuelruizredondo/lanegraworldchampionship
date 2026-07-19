@@ -86,7 +86,8 @@ const gallery = [
         <div class="fi-sala-body">
           <p class="fi-sala-tag">Baile social</p>
           <h3 class="fi-sala-t">Sala Salsa</h3>
-          <p class="fi-sala-d">90% salsa de todas las épocas: romántica, clásicos, timba, sones, salsatones, animaciones y ruedas con los artistas del festival. Y un 10% de bachata para un auténtico fiestón.</p>
+          <p class="fi-sala-hl">90% salsa y 10% de bachata</p>
+          <p class="fi-sala-d">Salsa de todas las épocas: romántica, clásicos, timba, sones, salsatones, animaciones y ruedas con los artistas del festival, para un auténtico fiestón.</p>
         </div>
       </article>
       <article class="fi-sala" data-slideshow>
@@ -94,7 +95,8 @@ const gallery = [
         <div class="fi-sala-body">
           <p class="fi-sala-tag">Baile social</p>
           <h3 class="fi-sala-t">Sala Bachata</h3>
-          <p class="fi-sala-d">90% bachata de todos los estilos y 10% de salsa romántica. Solo los mejores éxitos de todos los tiempos y lo más reciente de tu género favorito.</p>
+          <p class="fi-sala-hl">90% bachata de todos los estilos y 10% de salsa romántica</p>
+          <p class="fi-sala-d">Solo los mejores éxitos de todos los tiempos y lo más reciente de tu género favorito.</p>
         </div>
       </article>
     </div>
@@ -225,7 +227,9 @@ const gallery = [
   .fi-sala-body { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: clamp(24px, 3vw, 34px); color: #fff; }
   .fi-sala-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--gold); margin: 0 0 8px; }
   .fi-sala-t { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; letter-spacing: -.02em; margin: 0 0 10px; }
-  .fi-sala-d { font-size: 14.5px; line-height: 1.6; color: rgba(255, 255, 255, .85); margin: 0; max-width: 46ch; }
+  .fi-sala-hl { font-size: clamp(20px, 2.5vw, 30px); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: #fff; margin: 0 0 10px; max-width: 20ch; }
+  .fi-sala-hl b, .fi-sala-hl strong { color: var(--gold); }
+  .fi-sala-d { font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, .78); margin: 0; max-width: 46ch; }
 
   /* DJs */
   .djs-title { font-size: clamp(24px, 3vw, 34px); max-width: 820px; margin: 0 auto 40px; }

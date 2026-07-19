@@ -11,6 +11,17 @@ const heroImgs = [
   "la-negra-dance-festival-fiesta-img-4.webp",
 ];
 
+const salaSalsaImgs = [
+  "fiesta-la-negra-dance-festival-foto-1.jpeg",
+  "la-negra-dance-festival-fiesta-img-1.webp",
+  "la-negra-dance-festival-fiesta-img-10.webp",
+];
+const salaBachataImgs = [
+  "fiesta-la-negra-dance-festival-foto-2.jpeg",
+  "la-negra-dance-festival-fiesta-img-3.webp",
+  "la-negra-dance-festival-fiesta-img-12.webp",
+];
+
 const djs = [
   { name: "Fabrizio Zoro", country: "Italy", img: "fabrizio-la-negra-dance-musica-1.jpg", ig: "https://www.instagram.com/fabriziozoro/", yt: "https://www.youtube.com/channel/UCg9WHKNhujZQmfPreORPEWA" },
   { name: "DJ Legendary", country: "Spain", img: "WhatsApp-Image-2025-05-26-at-16.36.39.jpeg", ig: "https://www.instagram.com/alberz_legendario/" },
@@ -43,36 +54,51 @@ const gallery = [
 <Base title="Party" description="The most danced nights of the year: four nights, four themes and two social dancing rooms at La Negra Dance Festival." lang="en">
   <div class="prop">
   <!-- HERO -->
-  <section class="p-section p-center">
-    <div class="p-container">
-      <p class="p-eyebrow">When the sun goes down…</p>
-      <h1 class="p-display">The real magic of the festival begins!</h1>
-      <h2 class="hero-sub">The most danced nights of the year are here</h2>
-      <div class="hero-cols">
-        <p>The workshops and competition are just the beginning. Get ready for nights of pure energy at our theme parties, where the best atmosphere, the best dancers and the best music will make you live an unforgettable experience.</p>
-        <p>No matter if you come alone, with friends or as a couple: on the dance floor you will always find someone to share the rhythm with. Four nights, four themes, only one goal: that you don’t stop dancing.</p>
+  <section class="p-section fi-hero">
+    <div class="p-container fi-hero-grid">
+      <div class="fi-hero-media" data-slideshow>
+        {heroImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading={i === 0 ? "eager" : "lazy"} />)}
+        <div class="fi-bars">{heroImgs.map((_, i) => <span class={i === 0 ? "is-on" : undefined}></span>)}</div>
+        <div class="fi-card">
+          <p class="fi-card-top">On the floor</p>
+          <p class="fi-card-main">Don't stop dancing!</p>
+          <p class="fi-card-foot"><span class="fi-card-emoji">🎶</span> Salsa &amp; Bachata until dawn</p>
+        </div>
       </div>
-    </div>
-    <div class="p-container hero-gallery">
-      {heroImgs.map((src) => <div class="hg-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+      <div class="fi-hero-text">
+        <p class="p-eyebrow">When the sun goes down…</p>
+        <h1 class="p-display fi-h1">The real magic of the festival begins!</h1>
+        <p class="p-lead">The most danced nights of the year: four nights, four themes and two social dancing rooms. The best atmosphere, the best dancers and the best music so you don't stop dancing, whether you come alone, with friends or as a couple.</p>
+        <a class="p-btn p-btn-dark" href="/en/your-pass/">Get your pass</a>
+      </div>
     </div>
   </section>
 
   <!-- TWO ROOMS -->
-  <section class="p-section p-center p-gray">
-    <div class="p-container">
+  <section class="p-section p-gray">
+    <div class="p-container p-center">
       <p class="p-eyebrow">Two rooms, double the dance</p>
       <h2 class="p-h2">For your maximum enjoyment</h2>
-      <div class="rooms-grid">
-        <article class="room">
-          <h3 class="room-title">Salsa Room</h3>
-          <p>90% Salsa of all times: romantic, great classics, timba, sones, salsatones, animations and ruedas with all the artists of the festival and 10% of bachata so you can enjoy a real party.</p>
-        </article>
-        <article class="room">
-          <h3 class="room-title">Bachata Room</h3>
-          <p>90% bachata of all styles and 10% salsa romántica. You will only hear the best hits of all times and the most recent of your favorite genre.</p>
-        </article>
-      </div>
+    </div>
+    <div class="p-container fi-salas">
+      <article class="fi-sala" data-slideshow>
+        {salaSalsaImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
+        <div class="fi-sala-body">
+          <p class="fi-sala-tag">Social dancing</p>
+          <h3 class="fi-sala-t">Sala Salsa</h3>
+          <p class="fi-sala-hl">90% salsa and 10% bachata</p>
+          <p class="fi-sala-d">Salsa of all times: romantic, great classics, timba, sones, salsatones, animations and ruedas with all the festival artists, for a real party.</p>
+        </div>
+      </article>
+      <article class="fi-sala" data-slideshow>
+        {salaBachataImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
+        <div class="fi-sala-body">
+          <p class="fi-sala-tag">Social dancing</p>
+          <h3 class="fi-sala-t">Sala Bachata</h3>
+          <p class="fi-sala-hl">90% bachata of all styles and 10% romantic salsa</p>
+          <p class="fi-sala-d">You will only hear the best hits of all time and the latest of your favorite genre.</p>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -152,22 +178,57 @@ const gallery = [
   <script>
     import "@/scripts/artists-slider.js";
   </script>
+  <script>
+    // Slideshow: las imágenes de cada bloque [data-slideshow] van cambiando en bucle
+    document.querySelectorAll("[data-slideshow]").forEach((box, boxIdx) => {
+      const slides = [...box.querySelectorAll(".fi-slide")];
+      if (slides.length < 2) return;
+      const bars = [...box.querySelectorAll(".fi-bars span")];
+      let i = 0;
+      const show = (n) => {
+        slides.forEach((s, k) => s.classList.toggle("is-on", k === n));
+        bars.forEach((b, k) => b.classList.toggle("is-on", k === n));
+      };
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return;
+      setTimeout(() => {
+        setInterval(() => { i = (i + 1) % slides.length; show(i); }, 3800);
+      }, boxIdx * 700);
+    });
+  </script>
 </Base>
 
 <style>
-  /* HERO */
-  .hero-sub { font-weight: 600; font-size: clamp(18px, 2vw, 24px); letter-spacing: -.02em; color: var(--gold-dark); margin: 4px 0 8px; }
-  .hero-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align: left; max-width: 1000px; margin: 26px auto 0; }
-  .hero-cols p { font-size: 16px; line-height: 1.6; color: var(--p-muted); margin: 0; }
-  .hero-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
-  .hg-item { border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; background: var(--p-card); }
-  .hg-item img { width: 100%; height: 100%; object-fit: cover; }
+  /* HERO (imagen que va cambiando + tarjeta flotante + titular al lado) */
+  .fi-hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+  .fi-hero-media { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 4/5; background: #14121a; box-shadow: 0 30px 70px rgba(20, 18, 26, .18); }
+  .fi-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s ease; }
+  .fi-slide.is-on { opacity: 1; }
+  .fi-bars { position: absolute; top: 16px; left: 16px; right: 16px; z-index: 3; display: flex; gap: 6px; }
+  .fi-bars span { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .38); transition: background .3s; }
+  .fi-bars span.is-on { background: rgba(255, 255, 255, .95); }
+  .fi-card {
+    position: absolute; left: 18px; right: 18px; bottom: 18px; z-index: 3;
+    background: rgba(20, 18, 26, .5); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, .12); border-radius: 18px; padding: 16px 18px; color: #fff;
+  }
+  .fi-card-top { font-size: 13px; color: rgba(255, 255, 255, .7); margin: 0 0 4px; }
+  .fi-card-main { font-size: clamp(17px, 2vw, 20px); font-weight: 600; letter-spacing: -.01em; margin: 0 0 12px; }
+  .fi-card-foot { display: flex; align-items: center; gap: 8px; font-size: 14px; color: rgba(255, 255, 255, .9); margin: 0; }
+  .fi-card-emoji { font-size: 18px; }
+  .fi-hero-text { text-align: left; }
+  .fi-h1 { font-size: clamp(34px, 4.6vw, 58px); margin-bottom: 18px; }
+  .fi-hero-text .p-lead { margin-bottom: 28px; }
 
-  /* ROOMS */
-  .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px; }
-  .room { background: #fff; border: 1px solid var(--p-line); border-radius: 18px; padding: 32px 30px; text-align: center; }
-  .room-title { font-weight: 600; font-size: clamp(24px, 3vw, 32px); letter-spacing: -.02em; color: var(--gold-dark); margin: 0 0 14px; }
-  .room p { font-size: 15px; line-height: 1.6; color: var(--p-muted); margin: 0; }
+  /* SALAS (tarjetas de imagen que va cambiando, texto sobre degradado) */
+  .fi-salas { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+  .fi-sala { position: relative; border-radius: 24px; overflow: hidden; min-height: clamp(360px, 42vw, 460px); background: #14121a; }
+  .fi-sala::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(12, 9, 20, .92) 0%, rgba(12, 9, 20, .45) 45%, rgba(12, 9, 20, .1) 100%); }
+  .fi-sala-body { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: clamp(24px, 3vw, 34px); color: #fff; }
+  .fi-sala-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--gold); margin: 0 0 8px; }
+  .fi-sala-t { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; letter-spacing: -.02em; margin: 0 0 10px; }
+  .fi-sala-hl { font-size: clamp(20px, 2.5vw, 30px); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: #fff; margin: 0 0 10px; max-width: 20ch; }
+  .fi-sala-d { font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, .78); margin: 0; max-width: 46ch; }
 
   /* DJs */
   .djs-title { font-size: clamp(24px, 3vw, 34px); max-width: 820px; margin: 0 auto 40px; }
@@ -197,16 +258,13 @@ const gallery = [
 
   /* responsive */
   @media (max-width: 900px) {
-    .hero-cols { grid-template-columns: 1fr; gap: 14px; }
-    .hero-gallery { grid-template-columns: repeat(2, 1fr); }
-    .rooms-grid { grid-template-columns: 1fr; gap: 30px; }
-    .djs-grid { grid-template-columns: repeat(3, 1fr); }
+    .fi-hero-grid { grid-template-columns: 1fr; }
+    .fi-hero-media { aspect-ratio: 4/3; max-height: 68vh; }
+    .fi-salas { grid-template-columns: 1fr; }
     .nights-grid { grid-template-columns: repeat(2, 1fr); }
     .past-gallery { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 600px) {
-    .hero-gallery { grid-template-columns: 1fr; }
-    .djs-grid { grid-template-columns: repeat(2, 1fr); }
     .nights-grid { grid-template-columns: 1fr; }
     .past-gallery { grid-template-columns: repeat(2, 1fr); }
   }
