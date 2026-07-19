@@ -13,6 +13,8 @@ const anchorNav = [
   { label: "FESTIVAL", href: "#info" },
   { label: "ARTISTI", href: "#artistas" },
   { label: "WORKSHOP", href: "#talleres" },
+  { label: "MONDIALE", href: "#mundial" },
+  { label: "FESTA", href: "#fiesta" },
   { label: "FULL PASS", href: "#fullpass" },
   { label: "HOTEL", href: "#hotel" },
   { label: "CONTATTI", href: "#contactar" },
@@ -135,6 +137,32 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
           <h2 class="p-h2">Workshop da vivere</h2>
           <p class="p-lead">Dagli amatori ai concorrenti e ai professionisti, tutti possono godersi workshop di livello base, intermedio e avanzato in discipline come Salsa Cubana, On1, On2, Bachata Sensual, Tradizionale, Fusion e le ultime tendenze. Masterclass riservata ai professionisti.</p>
           <a class="p-btn p-btn-dark" href="/it/workshops/">Vedi tutti i workshop</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- LA COMPETIZIONE · IL MONDIALE -->
+    <section id="mundial" class="p-band f-band">
+      <div class="p-band-media"><img src={img("ganadores_grupos_salsa_2025.jpg")} alt="Mondiale di Pasos Libres" loading="lazy" /></div>
+      <div class="p-band-content">
+        <p class="p-band-eyebrow">La competizione</p>
+        <h2 class="p-band-title">Il Mondiale di Pasos Libres</h2>
+        <p class="p-band-sub">Il cuore competitivo del festival: i migliori ballerini di salsa e bachata del pianeta si contendono il titolo mondiale sul grande palco.</p>
+        <a class="p-btn p-btn-light f-band-cta" href="/it/mondiale/">Scopri il Mondiale</a>
+      </div>
+    </section>
+
+    <!-- LA NOTTE · FESTA -->
+    <section id="fiesta" class="p-section f-night">
+      <div class="p-container f-night-grid">
+        <div class="f-night-imgs">
+          {fiestaGallery.map((src) => <div class="f-g-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+        </div>
+        <div class="f-night-text">
+          <p class="p-eyebrow">La notte</p>
+          <h2 class="p-h2 p-white">Che la festa abbia inizio!</h2>
+          <p class="p-white-70">Quando il sole tramonta arriva il meglio: due sale di ballo sociale —salsa e bachata—, i migliori DJ e feste a tema ogni notte. Balla fino all'alba.</p>
+          <a class="p-btn p-btn-light" href="/it/fiesta/">Scopri la festa</a>
         </div>
       </div>
     </section>
@@ -310,6 +338,19 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   .f-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
   .f-g-item { border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; background: var(--p-card); }
   .f-g-item img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Il Mondiale (banda di foto) */
+  .f-band .p-band-media img { height: 100%; }
+  .f-band-cta { margin-top: 24px; }
+
+  /* La notte · Festa */
+  .f-night { background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 65%); }
+  .f-night-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px, 5vw, 64px); align-items: center; }
+  .f-night-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .f-night-imgs .f-g-item { aspect-ratio: 1/1; }
+  .f-night-text { text-align: left; }
+  .f-night-text .p-h2 { margin-bottom: 16px; }
+  .f-night-text .p-white-70 { margin-bottom: 26px; }
   .f-g-tall { aspect-ratio: 3/4; }
   .f-g-sq { aspect-ratio: 1/1; }
 
@@ -378,7 +419,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   @media (max-width: 900px) {
     .f-gallery { grid-template-columns: repeat(2, 1fr); }
     .f-artists { grid-template-columns: repeat(2, 1fr); }
-    .f-split, .f-hotel-grid, .f-transfers-grid, .f-contact-grid { grid-template-columns: 1fr; }
+    .f-split, .f-hotel-grid, .f-transfers-grid, .f-contact-grid, .f-night-grid { grid-template-columns: 1fr; }
     .f-split-imgs { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 600px) {
