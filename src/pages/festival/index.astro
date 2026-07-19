@@ -313,6 +313,10 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
 <style>
   .f-a { color: var(--gold-dark); font-weight: 600; }
 
+  /* Centrar los titulares estrechos (p-narrow) en secciones centradas:
+     .p-h2 trae margin:0 y pisa los márgenes automáticos de .p-narrow */
+  .p-center .p-h2.p-narrow { margin-left: auto; margin-right: auto; }
+
   /* Números */
   .f-stats { margin-top: 20px; }
 
