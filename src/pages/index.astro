@@ -260,14 +260,25 @@ const artists = ARTISTS_ES.map((a) => {
           ))}
         </div>
       </div>
-      {/* Móvil: rejilla de cifras siempre visible (sin hover, sin solapes) */}
-      <div class="p-container p-map-grid">
-        {[...mapPins].sort((a, b) => b.n - a.n).map((p) => (
-          <div class="p-map-chip">
-            <span class="p-map-chip-n">{String(p.n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
-            <span class="p-map-chip-l">{p.l}</span>
-          </div>
-        ))}
+      {/* Móvil: 9 bolas con su cifra · el mapa · 9 bolas más */}
+      <div class="p-container p-map-m">
+        <div class="p-map-bolas">
+          {[...mapPins].sort((a, b) => b.n - a.n).slice(0, 9).map((p) => (
+            <div class="p-bola">
+              <span class="p-bola-n">{String(p.n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
+              <span class="p-bola-l">{p.l}</span>
+            </div>
+          ))}
+        </div>
+        <img class="p-map-m-img" src="/img/world-map-dots.svg" alt="Mapa de nacionalidades de los asistentes" width="2370" height="1104" loading="lazy" />
+        <div class="p-map-bolas">
+          {[...mapPins].sort((a, b) => b.n - a.n).slice(9).map((p) => (
+            <div class="p-bola">
+              <span class="p-bola-n">{String(p.n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
+              <span class="p-bola-l">{p.l}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
 

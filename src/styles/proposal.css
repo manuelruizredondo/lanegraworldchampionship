@@ -315,27 +315,27 @@
   .p-pin:hover .p-pin-bubble, .p-pin:hover .p-pin-l { opacity: 1; transform: scale(1); }
   .p-pin:hover .p-pin-stem { transform: scaleY(1); }
   .p-pin:hover { z-index: 5; }
+  /* En móvil: 9 bolas con su cifra, el mapa, y 9 bolas más (sin hover) */
+  .p-map-m { display: none; }
   @media (max-width: 700px) {
-    /* En móvil no hay hover: ocultamos el mapa 3D con piruletas y mostramos
-       una rejilla de cifras siempre visible y legible, sin solapes. */
     .p-map { display: none; }
+    .p-map-grid { display: none; }
     .p-map-sec { padding: calc(var(--p-gap) * .5) 0 0; }
-    .p-map-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 26px;
+    .p-map-m { display: block; margin-top: 24px; }
+    .p-map-bolas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px 8px; }
+    .p-bola { display: flex; flex-direction: column; align-items: center; gap: 7px; text-align: center; }
+    .p-bola-n {
+      width: 66px; height: 66px; border-radius: 50%;
+      border: 3px solid var(--gold); background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 15px; letter-spacing: -.02em; color: var(--p-ink);
+      font-variant-numeric: tabular-nums; box-shadow: 0 8px 20px rgba(20, 18, 26, .1);
     }
-    .p-map-chip {
-      display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
-      padding: 12px 12px; border: 1px solid var(--p-line); border-radius: 14px;
-      background: #fff;
-    }
-    .p-map-chip-n { font-weight: 800; font-size: 20px; letter-spacing: -.02em; color: var(--p-ink); font-variant-numeric: tabular-nums; }
-    .p-map-chip-l { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--p-muted); line-height: 1.15; }
+    .p-bola-l { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--p-muted); line-height: 1.15; }
+    .p-map-m-img { width: 100%; height: auto; display: block; margin: 24px 0; }
   }
   @media (max-width: 420px) {
-    .p-map-grid { grid-template-columns: repeat(2, 1fr); }
+    .p-bola-n { width: 60px; height: 60px; font-size: 14px; }
   }
 
   /* Resaltado dorado con subrayado curvo que se dibuja */
