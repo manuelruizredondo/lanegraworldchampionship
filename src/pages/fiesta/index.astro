@@ -83,18 +83,22 @@ const gallery = [
     <div class="p-container fi-salas">
       <article class="fi-sala" data-slideshow>
         {salaSalsaImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
-        <div class="fi-sala-body">
+        <div class="fi-sala-head">
           <p class="fi-sala-tag">Baile social</p>
           <h3 class="fi-sala-t">Sala Salsa</h3>
+        </div>
+        <div class="fi-sala-body">
           <p class="fi-sala-hl"><span class="fi-hl-line"><b>90%</b><span class="fi-hl-w">salsa</span></span><span class="fi-hl-line"><b>10%</b><span class="fi-hl-w">bachata</span></span></p>
           <p class="fi-sala-d">Salsa de todas las épocas: romántica, clásicos, timba, sones, salsatones, animaciones y ruedas con los artistas del festival, para un auténtico fiestón.</p>
         </div>
       </article>
       <article class="fi-sala" data-slideshow>
         {salaBachataImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
-        <div class="fi-sala-body">
+        <div class="fi-sala-head">
           <p class="fi-sala-tag">Baile social</p>
           <h3 class="fi-sala-t">Sala Bachata</h3>
+        </div>
+        <div class="fi-sala-body">
           <p class="fi-sala-hl"><span class="fi-hl-line"><b>90%</b><span class="fi-hl-w">bachata</span></span><span class="fi-hl-line"><b>10%</b><span class="fi-hl-w">salsa</span></span></p>
           <p class="fi-sala-d">Solo los mejores éxitos de todos los tiempos y lo más reciente de tu género favorito.</p>
         </div>
@@ -224,7 +228,8 @@ const gallery = [
   /* SALAS (tarjetas de imagen que va cambiando, texto sobre degradado) */
   .fi-salas { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
   .fi-sala { position: relative; border-radius: 24px; overflow: hidden; min-height: clamp(360px, 42vw, 460px); background: #14121a; }
-  .fi-sala::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(12, 9, 20, .92) 0%, rgba(12, 9, 20, .45) 45%, rgba(12, 9, 20, .1) 100%); }
+  .fi-sala::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(12, 9, 20, .72) 0%, rgba(12, 9, 20, .18) 38%, rgba(12, 9, 20, .22) 56%, rgba(12, 9, 20, .92) 100%); }
+  .fi-sala-head { position: absolute; z-index: 2; top: 0; left: 0; right: 0; padding: clamp(24px, 3vw, 34px) clamp(24px, 3vw, 34px) 0; text-align: left; }
   .fi-sala-body { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: clamp(24px, 3vw, 34px); color: #fff; }
   .fi-sala-tag { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--gold); margin: 0 0 2px; }
   .fi-sala-t { font-size: clamp(26px, 3.4vw, 38px); font-weight: 700; letter-spacing: -.02em; margin: 0 0 10px; }
