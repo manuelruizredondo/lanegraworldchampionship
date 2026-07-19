@@ -61,12 +61,10 @@ const fiestaGallery = [
 const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata";
 ---
 
-<Base title="The Festival" description="Salsa and bachata festival with workshops, social dancing and World Championship. From October 21 to 25, 2026 in Calpe (Spain)." lang="en">
-  <SubNav items={anchorNav} label="Festival sections" />
-
+<Base title="The Festival" description="Salsa and bachata festival with workshops, social dancing and World Championship. From October 21 to 25, 2026 in Calpe (Spain)." lang="en" heroOverlay={true}>
   <div class="prop">
     <!-- HERO -->
-    <section id="info" class="p-phero" style={`background-image:url(${img("la-negra-dance-festival-festival-img-12.webp")})`}>
+    <section id="info" class="p-phero f-hero" style={`background-image:url(${img("la-negra-dance-festival-festival-img-12.webp")})`}>
       <div class="p-phero-inner">
         <p class="p-eyebrow">Salsa · Bachata</p>
         <h1 class="p-phero-title">La Negra Dance Festival</h1>
@@ -76,6 +74,8 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
         </div>
       </div>
     </section>
+
+    <SubNav items={anchorNav} label="Festival sections" />
 
     <!-- LOCATION + HOW TO GET THERE -->
     <section class="p-section fx-loc">
@@ -274,6 +274,14 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
   .f-info p { font-size: 16px; line-height: 1.6; color: var(--p-muted); margin: 0 0 8px; }
   .f-info strong { color: var(--p-ink); }
   .f-info a, .f-a { color: var(--gold-dark); font-weight: 600; }
+
+  /* Hero stuck to the top: slides under the (transparent-until-scroll) header
+     and keeps top room so the content isn't covered by the header */
+  .f-hero {
+    margin-top: calc(-1 * var(--header-bar, 76px));
+    min-height: clamp(460px, 76vh, 720px);
+    padding-top: calc(var(--header-bar, 76px) + clamp(28px, 6vw, 70px));
+  }
 
   /* Lugar + cómo llegar (imágenes que van cambiando a la izquierda, info a la derecha) */
   .fx-loc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: center; text-align: left; }

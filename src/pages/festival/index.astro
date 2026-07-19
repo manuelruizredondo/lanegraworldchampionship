@@ -69,12 +69,10 @@ const fiestaGallery = [
 const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata";
 ---
 
-<Base title="Festival" description="Festival de salsa y bachata con workshops, baile social y Campeonato Mundial. Del 21 al 25 de octubre del 2026 en Calpe (España).">
-  <SubNav items={anchorNav} label="Secciones del festival" />
-
+<Base title="Festival" description="Festival de salsa y bachata con workshops, baile social y Campeonato Mundial. Del 21 al 25 de octubre del 2026 en Calpe (España)." heroOverlay={true}>
   <div class="prop">
-    <!-- 1 · HERO -->
-    <section id="info" class="p-phero" style={`background-image:url(${img("la-negra-dance-festival-festival-img-12.webp")})`}>
+    <!-- 1 · HERO (pegado arriba, bajo el header transparente) -->
+    <section id="info" class="p-phero f-hero" style={`background-image:url(${img("la-negra-dance-festival-festival-img-12.webp")})`}>
       <div class="p-phero-inner">
         <p class="p-eyebrow">Del 21 al 25 de octubre de 2026 · Calpe</p>
         <h1 class="p-phero-title">La Negra Dance Festival</h1>
@@ -84,6 +82,8 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
         </div>
       </div>
     </section>
+
+    <SubNav items={anchorNav} label="Secciones del festival" />
 
     <!-- 2 · QUÉ ES + NÚMEROS -->
     <section class="p-section p-center">
@@ -312,6 +312,14 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
 
 <style>
   .f-a { color: var(--gold-dark); font-weight: 600; }
+
+  /* Hero pegado arriba: sube bajo el header (transparente hasta el scroll)
+     y deja hueco arriba para que el contenido no quede tapado por el header */
+  .f-hero {
+    margin-top: calc(-1 * var(--header-bar, 76px));
+    min-height: clamp(460px, 76vh, 720px);
+    padding-top: calc(var(--header-bar, 76px) + clamp(28px, 6vw, 70px));
+  }
 
   /* Centrar los titulares estrechos (p-narrow) en secciones centradas:
      .p-h2 trae margin:0 y pisa los márgenes automáticos de .p-narrow */

@@ -273,11 +273,12 @@ const st = STATEMENT[lang] || STATEMENT.es;
     padding-bottom: clamp(56px, 9vw, 110px);
   }
 
-  /* Declaración (statement) — insignia y texto en dorado */
+  /* Declaración (statement) — texto normal; solo 'salsa'/'bachata' en oro con subrayado que se dibuja */
   .mu-statement .p-badge { margin-bottom: 30px; }
-  .mu-statement .p-h2 { font-size: clamp(28px, 4.4vw, 52px); color: var(--gold); }
+  .mu-statement .p-h2 { font-size: clamp(28px, 4.4vw, 52px); }
   .mu-statement .p-hl { color: var(--gold); }
-  .mu-statement .p-hl-line { display: none; }
+  .mu-statement .p-hl-line path { animation: mu-hl-draw 1.1s cubic-bezier(.22, 1, .36, 1) .5s both; }
+  @keyframes mu-hl-draw { from { stroke-dashoffset: 500; } to { stroke-dashoffset: 0; } }
   .mu-statement .p-quote { max-width: 620px; margin-left: auto; margin-right: auto; }
   .mu-statement .mu-badge-ring {
     position: absolute; inset: 0; background: var(--gold);
