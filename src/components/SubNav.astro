@@ -1,11 +1,13 @@
 ---
 // Submenú "píldora" sticky para páginas con secciones (Festival, Competición…)
 // items: [{ label, href }]  — href puede ser ancla (#id) o ruta (/...)
+// Marca la sección activa según se hace scroll, con una barra dorada que se desliza.
 const { items = [], label = "Secciones" } = Astro.props;
 const ext = (h) => h.startsWith("http");
 ---
 <nav class="subnav" aria-label={label}>
-  <div class="subnav-pill">
+  <div class="subnav-pill" data-subnav>
+    <span class="subnav-ink" aria-hidden="true"></span>
     {items.map((it) => (
       <a
         href={it.href}
@@ -28,6 +30,7 @@ const ext = (h) => h.startsWith("http");
     pointer-events: none;
   }
   .subnav-pill {
+    position: relative;
     pointer-events: auto;
     display: flex;
     align-items: center;
@@ -44,7 +47,23 @@ const ext = (h) => h.startsWith("http");
     scrollbar-width: none;
   }
   .subnav-pill::-webkit-scrollbar { display: none; }
+  /* Barra deslizante (fondo dorado que se mueve a la sección activa) */
+  .subnav-ink {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: 0;
+    background: var(--gold);
+    border-radius: 999px;
+    transform: translateX(0);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+    pointer-events: none;
+  }
   .subnav-pill a {
+    position: relative;
+    z-index: 1;
     white-space: nowrap;
     color: #14121a;
     text-decoration: none;
@@ -55,18 +74,85 @@ const ext = (h) => h.startsWith("http");
     text-transform: capitalize;
     padding: 7px 15px;
     border-radius: 999px;
-    transition: background 0.2s, color 0.2s;
+    transition: color 0.2s;
   }
-  .subnav-pill a:hover {
-    color: #fff;
-    background: var(--gold);
-  }
-  .subnav-pill a.is-active {
-    color: #fff;
-    background: var(--gold);
-  }
+  .subnav-pill a:hover { color: var(--gold-dark); }
+  .subnav-pill a.is-active { color: #fff; }
+  .subnav-pill a.is-active:hover { color: #fff; }
   @media (max-width: 640px) {
     .subnav { padding: 8px 10px; }
     .subnav-pill a { font-size: 13px; padding: 6px 12px; }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .subnav-ink { transition: none; }
+  }
 </style>
+
+<script>
+  document.querySelectorAll("[data-subnav]").forEach((pill) => {
+    const ink = pill.querySelector(".subnav-ink");
+    const links = [...pill.querySelectorAll("a")];
+    if (!ink || !links.length) return;
+
+    let active = null;
+
+    const moveInk = (link, animate = true) => {
+      if (!link) return;
+      if (!animate) ink.style.transition = "none";
+      ink.style.width = link.offsetWidth + "px";
+      ink.style.transform = `translateX(${link.offsetLeft}px)`;
+      if (!animate) requestAnimationFrame(() => { ink.style.transition = ""; });
+    };
+
+    const setActive = (link, animate = true) => {
+      if (!link || link === active) { if (link && !active) active = link; return; }
+      active = link;
+      links.forEach((a) => a.classList.toggle("is-active", a === link));
+      moveInk(link, animate);
+      // Centrar el activo dentro de la píldora scrollable (móvil)
+      if (pill.scrollWidth > pill.clientWidth) {
+        pill.scrollTo({ left: link.offsetLeft - pill.clientWidth / 2 + link.offsetWidth / 2, behavior: "smooth" });
+      }
+    };
+
+    // Enlaces que apuntan a una sección de esta misma página
+    const spyLinks = links
+      .map((link) => {
+        const href = link.getAttribute("href") || "";
+        const id = href.startsWith("#") ? href.slice(1) : null;
+        const sec = id ? document.getElementById(id) : null;
+        return sec ? { link, sec } : null;
+      })
+      .filter(Boolean);
+
+    // Posición inicial (sin animar): el marcado como activo, o el primero
+    const preActive = links.find((a) => a.classList.contains("is-active"));
+    requestAnimationFrame(() => setActive(preActive || (spyLinks[0] && spyLinks[0].link) || links[0], false));
+
+    // Scroll-spy: la sección activa es la última cuya cima ha cruzado la línea al ~32%
+    if (spyLinks.length) {
+      let ticking = false;
+      const spy = () => {
+        ticking = false;
+        const line = window.scrollY + window.innerHeight * 0.32;
+        let current = spyLinks[0].link;
+        for (const s of spyLinks) {
+          const top = s.sec.getBoundingClientRect().top + window.scrollY;
+          if (top - 2 <= line) current = s.link;
+        }
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+          current = spyLinks[spyLinks.length - 1].link;
+        }
+        setActive(current);
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      spy();
+    }
+
+    // Click: marca al instante
+    spyLinks.forEach(({ link }) => link.addEventListener("click", () => setActive(link)));
+    window.addEventListener("resize", () => moveInk(active, false));
+    window.addEventListener("load", () => moveInk(active, false));
+  });
+</script>
