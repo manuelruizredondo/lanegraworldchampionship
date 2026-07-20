@@ -74,6 +74,20 @@ const gallery = [
     </div>
   </section>
 
+  <!-- CLOSING CONCERT · DANI J -->
+  <section id="danij" class="dj-c" style={`background-image:url(${img("la-negra-dance-festival-fiesta-img-3.webp")})`}>
+    <div class="dj-c-inner">
+      <span class="dj-c-badge">Closing concert</span>
+      <p class="dj-c-eyebrow">Sunday · special concert</p>
+      <h2 class="dj-c-title">Dani J, live</h2>
+      <p class="dj-c-sub">Widely regarded as the biggest name in European bachata, Seville's Dani J has revolutionised the genre by fusing it with pop, flamenco, trap and R&amp;B. With anthems like «Piscina», «Caprichito» and «7 pecados» and concerts in more than 30 countries, he'll bring La Negra to a close with a live show on Sunday.</p>
+      <div class="dj-c-tags">
+        <span>Piscina</span><span>Caprichito</span><span>7 pecados</span><span>Rosas</span>
+      </div>
+      <a class="p-btn p-btn-light" href="/en/your-pass/">Get your pass</a>
+    </div>
+  </section>
+
   <!-- TWO ROOMS -->
   <section class="p-section p-gray">
     <div class="p-container p-center">
@@ -203,6 +217,17 @@ const gallery = [
 </Base>
 
 <style>
+  /* Concierto de cierre · Dani J (banda oscura con foto de fondo) */
+  .dj-c { position: relative; padding: clamp(64px, 10vw, 130px) 20px; background-size: cover; background-position: center; overflow: hidden; }
+  .dj-c::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15, 11, 30, .78), rgba(15, 11, 30, .93)); }
+  .dj-c-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; text-align: center; color: #fff; }
+  .dj-c-badge { display: inline-block; padding: 7px 16px; border-radius: 999px; background: var(--gold); color: #1a1206; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 22px; }
+  .dj-c-eyebrow { color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: .14em; font-size: 13px; margin: 0 0 12px; }
+  .dj-c-title { font-weight: 800; font-size: clamp(42px, 8.5vw, 92px); line-height: .95; letter-spacing: -.03em; margin: 0 0 18px; color: #fff; }
+  .dj-c-sub { font-size: clamp(15px, 1.6vw, 18px); line-height: 1.65; color: rgba(255, 255, 255, .82); max-width: 600px; margin: 0 auto 22px; }
+  .dj-c-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; }
+  .dj-c-tags span { padding: 7px 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .28); font-size: 13px; font-weight: 600; color: #fff; }
+
   /* HERO (imagen que va cambiando + tarjeta flotante + titular al lado) */
   .fi-hero { padding-top: clamp(10px, 2vw, 26px); }
   .fi-hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(28px, 5vw, 64px); align-items: start; }
