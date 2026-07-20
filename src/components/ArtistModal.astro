@@ -1,0 +1,125 @@
+---
+// Modal de artista: se abre al pulsar la foto de un artista (cualquier
+// botón con [data-artist]). Lee nombre/país/bio/redes de sus data-* y de
+// la <img> que contiene. Accesible: role=dialog, foco atrapado, Escape y
+// clic en el fondo para cerrar, devuelve el foco al botón de origen.
+const { closeLabel = "Cerrar" } = Astro.props;
+---
+
+<div class="am-ov" id="artistModal" hidden>
+  <div class="am-box" role="dialog" aria-modal="true" aria-labelledby="am-name" tabindex="-1">
+    <button class="am-x" type="button" aria-label={closeLabel}>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+    </button>
+    <div class="am-photo"><img id="am-img" src="" alt="" /></div>
+    <h2 class="am-name" id="am-name"></h2>
+    <p class="am-country" id="am-country"></p>
+    <p class="am-bio" id="am-bio"></p>
+    <div class="am-social" id="am-social"></div>
+  </div>
+</div>
+
+<style>
+  .am-ov {
+    position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center;
+    padding: 20px; background: rgba(12, 9, 24, .62); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    animation: am-fade .2s ease;
+  }
+  .am-ov[hidden] { display: none; }
+  @keyframes am-fade { from { opacity: 0; } to { opacity: 1; } }
+  .am-box {
+    position: relative; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto;
+    background: #fff; border-radius: 22px; padding: 30px 30px 28px; text-align: center;
+    box-shadow: 0 30px 80px rgba(12, 9, 24, .45); animation: am-pop .25s cubic-bezier(.22, 1, .36, 1);
+  }
+  @keyframes am-pop { from { transform: translateY(12px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }
+  .am-x {
+    position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border: 0; border-radius: 50%;
+    background: #f1eee9; color: #4a4a52; display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .2s, color .2s;
+  }
+  .am-x:hover { background: var(--gold); color: #fff; }
+  .am-photo {
+    width: 132px; height: 132px; margin: 4px auto 18px; overflow: hidden;
+    border-radius: 46% 54% 47% 53% / 52% 43% 57% 48%; background: #f1eee9;
+  }
+  .am-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .am-name { font-family: var(--font-body); font-weight: 700; font-size: clamp(21px, 2.4vw, 27px); letter-spacing: -.02em; color: var(--p-ink); margin: 0 0 4px; }
+  .am-country { color: var(--gold-dark); font-size: 14px; font-weight: 600; margin: 0 0 16px; }
+  .am-bio { font-size: 15px; line-height: 1.6; color: #4a4a52; text-align: left; margin: 0 0 20px; }
+  .am-bio[hidden] { display: none; }
+  .am-social { display: flex; gap: 10px; justify-content: center; }
+  .am-social:empty { display: none; }
+  .am-social a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: #fff;
+    transition: background .2s, transform .15s;
+  }
+  .am-social a:hover { background: var(--gold-dark); transform: translateY(-2px); }
+  @media (prefers-reduced-motion: reduce) { .am-ov, .am-box { animation: none; } }
+</style>
+
+<script>
+  const ICONS = {
+    ig: '<svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 4.9a4.9 4.9 0 1 0 0 9.8 4.9 4.9 0 0 0 0-9.8zm0 8.1a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4zm6.3-8.3a1.1 1.1 0 1 1-2.3 0 1.1 1.1 0 0 1 2.3 0z"/></svg>',
+    fb: '<svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>',
+    yt: '<svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.7 1.7c1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4a2.5 2.5 0 0 0 1.7-1.7C23 15.2 23 12 23 12zM9.7 15.3V8.7l5.8 3.3-5.8 3.3z"/></svg>',
+  };
+  const LABEL = { ig: "Instagram", fb: "Facebook", yt: "YouTube" };
+
+  const ov = document.getElementById("artistModal");
+  if (ov) {
+    const box = ov.querySelector(".am-box");
+    const imgEl = document.getElementById("am-img");
+    const nameEl = document.getElementById("am-name");
+    const countryEl = document.getElementById("am-country");
+    const bioEl = document.getElementById("am-bio");
+    const socialEl = document.getElementById("am-social");
+    const closeBtn = ov.querySelector(".am-x");
+    let lastFocused = null;
+
+    function socialLink(kind, href) {
+      if (!href) return "";
+      return '<a href="' + href + '" target="_blank" rel="noopener" aria-label="' + LABEL[kind] + '">' + ICONS[kind] + "</a>";
+    }
+
+    function open(btn) {
+      const d = btn.dataset;
+      const src = btn.querySelector("img") ? btn.querySelector("img").getAttribute("src") : "";
+      imgEl.src = src; imgEl.alt = d.aname || "";
+      nameEl.textContent = d.aname || "";
+      countryEl.textContent = d.acountry || "";
+      bioEl.textContent = d.abio || "";
+      bioEl.hidden = !d.abio;
+      socialEl.innerHTML = socialLink("ig", d.aig) + socialLink("fb", d.afb) + socialLink("yt", d.ayt);
+      lastFocused = btn;
+      ov.hidden = false;
+      document.body.style.overflow = "hidden";
+      closeBtn.focus();
+    }
+
+    function close() {
+      ov.hidden = true;
+      document.body.style.overflow = "";
+      if (lastFocused) lastFocused.focus();
+    }
+
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-artist]");
+      if (btn) { e.preventDefault(); open(btn); }
+    });
+    closeBtn.addEventListener("click", close);
+    ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
+    document.addEventListener("keydown", (e) => {
+      if (ov.hidden) return;
+      if (e.key === "Escape") { close(); return; }
+      if (e.key === "Tab") {
+        const foci = ov.querySelectorAll('button, a[href]');
+        if (!foci.length) return;
+        const first = foci[0], last = foci[foci.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
+</script>

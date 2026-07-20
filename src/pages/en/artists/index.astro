@@ -1,6 +1,8 @@
 ---
 import Base from "@/layouts/Base.astro";
 import { img } from "@/data/img.js";
+import { BIOS, IMG_TO_NAME } from "@/data/artist-bios.js";
+import ArtistModal from "@/components/ArtistModal.astro";
 
 const salsa = [
   { name: "Tito Ortos", country: "Salsa | Puerto Rico", img: "la-negra-festival-tito-ortos.webp", ig: "https://www.instagram.com/titoortos/?hl=es", fb: "https://www.facebook.com/titoortos.gutierrez/?locale=es_ES" },
@@ -82,7 +84,9 @@ const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentCol
       <div class="artists-grid">
         {salsa.map((a) => (
           <article class="artist">
-            <div class="artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <button type="button" class="artist-img" data-artist data-aname={a.name} data-acountry={a.country} data-abio={BIOS[a.name] || BIOS[IMG_TO_NAME[a.img]] || ""} data-aig={a.ig || ""} data-afb={a.fb || ""} data-ayt={a.yt || ""}>
+              <img src={img(a.img)} alt={a.name} loading="lazy" />
+            </button>
             <h3 class="artist-name">{a.name}</h3>
             <p class="artist-country">{a.country}</p>
             <div class="artist-social">
@@ -105,7 +109,9 @@ const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentCol
       <div class="artists-grid">
         {bachata.map((a) => (
           <article class="artist">
-            <div class="artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <button type="button" class="artist-img" data-artist data-aname={a.name} data-acountry={a.country} data-abio={BIOS[a.name] || BIOS[IMG_TO_NAME[a.img]] || ""} data-aig={a.ig || ""} data-afb={a.fb || ""} data-ayt={a.yt || ""}>
+              <img src={img(a.img)} alt={a.name} loading="lazy" />
+            </button>
             <h3 class="artist-name">{a.name}</h3>
             <p class="artist-country">{a.country}</p>
             <div class="artist-social">
@@ -119,6 +125,7 @@ const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentCol
     </div>
   </section>
   </div>
+  <ArtistModal closeLabel="Close" />
 </Base>
 
 <style>
@@ -130,10 +137,17 @@ const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentCol
   .artists-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px 30px; margin-top: 44px; }
   .artist { display: flex; flex-direction: column; align-items: center; }
   .artist-img {
-    width: 82%; aspect-ratio: 1; overflow: hidden; margin-bottom: 18px;
+    position: relative; width: 82%; aspect-ratio: 1; overflow: hidden; margin-bottom: 18px;
+    padding: 0; border: 0; background: none; cursor: pointer; display: block;
     border-radius: 42% 58% 47% 53% / 52% 43% 57% 48%;
     transition: border-radius .7s ease, transform .4s ease;
   }
+  .artist-img::after {
+    content: "+"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 42px; font-weight: 300; line-height: 1; color: #fff; background: rgba(15, 11, 30, .34);
+    opacity: 0; transition: opacity .3s;
+  }
+  .artist-img:hover::after, .artist-img:focus-visible::after { opacity: 1; }
   .artist:nth-child(2n) .artist-img { border-radius: 58% 42% 55% 45% / 45% 57% 43% 55%; }
   .artist:nth-child(3n) .artist-img { border-radius: 50% 50% 42% 58% / 60% 40% 55% 45%; }
   .artist:nth-child(4n) .artist-img { border-radius: 46% 54% 60% 40% / 48% 58% 42% 55%; }
