@@ -227,8 +227,8 @@ const st = STATEMENT[lang] || STATEMENT.es;
       <h2 class="script-title mu-h2">{t.catTitle}</h2>
       <p class="mu-cat-intro">{t.catIntro}</p>
     </div>
-    <div class="mu-chips">
-      {t.categories.map((c) => <span class="mu-chip">{c}</span>)}
+    <div class="mu-cats">
+      {t.categories.map((c) => <article class="mu-cat-card">{c}</article>)}
     </div>
   </div>
 </section>
@@ -325,8 +325,18 @@ const st = STATEMENT[lang] || STATEMENT.es;
   .mu-cat-head { text-align: center; margin-bottom: 26px; }
   .mu-cat-intro { color: #5a5a64; font-size: 16px; line-height: 1.6; max-width: 620px; margin: 8px auto 0; }
   .mu-center { margin-left: auto; margin-right: auto; }
-  .mu-chips { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-  .mu-chip { padding: 10px 20px; border-radius: 999px; border: 1.5px solid #e6e3dd; background: #fff; font-weight: 600; font-size: 15px; color: #14121a; }
+  /* Categorías: rejilla ordenada de tarjetas (4×2), en vez de píldoras descolgadas */
+  .mu-cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .mu-cat-card {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    min-height: 86px; padding: 20px 16px;
+    background: #fff; border: 1px solid #ece8e1; border-radius: 16px;
+    font-weight: 600; font-size: clamp(15px, 1.3vw, 17px); line-height: 1.3;
+    letter-spacing: -.01em; color: #14121a;
+    transition: border-color .2s, transform .15s, box-shadow .2s;
+  }
+  .mu-cat-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 10px 26px rgba(20, 18, 26, .07); }
+  @media (prefers-reduced-motion: reduce) { .mu-cat-card:hover { transform: none; } }
 
   .mu-format-sec { background: var(--cream); }
   .mu-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 28px; }
@@ -356,5 +366,7 @@ const st = STATEMENT[lang] || STATEMENT.es;
     .mu-stats { grid-template-columns: repeat(2, 1fr); gap: 26px 20px; }
     .mu-disc { grid-template-columns: 1fr; }
     .mu-steps { grid-template-columns: 1fr; }
+    .mu-cats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .mu-cat-card { min-height: 72px; }
   }
 </style>
