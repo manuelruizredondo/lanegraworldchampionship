@@ -48,12 +48,9 @@ const T = {
     <nav class="flyout-inner" aria-label={T.nav}>
       <ul class="flyout-menu">
         {menu.map((item) => (
-          <li class={item.sub.length ? "has-sub" : ""}>
-            <div class="row">
-              <a href={item.href} {...(ext(item.href) ? { target: "_blank", rel: "noopener" } : {})}>{item.label}</a>
-              {item.sub.length > 0 && <button class="sub-toggle" type="button" aria-label={T.sub}></button>}
-            </div>
-            {item.sub.length > 0 && (
+          item.sub.length > 0 ? (
+            <li class="menu-group">
+              <a class="cat-label" href={item.href} {...(ext(item.href) ? { target: "_blank", rel: "noopener" } : {})}>{item.label}</a>
               <ul class="submenu">
                 {item.sub.map((s) => (
                   s.group
@@ -61,8 +58,12 @@ const T = {
                     : <li class={s.sep ? "sep-top" : undefined}><a href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
                 ))}
               </ul>
-            )}
-          </li>
+            </li>
+          ) : (
+            <li class="menu-single">
+              <a href={item.href} {...(ext(item.href) ? { target: "_blank", rel: "noopener" } : {})}>{item.label}</a>
+            </li>
+          )
         ))}
       </ul>
     </nav>
@@ -162,7 +163,7 @@ const T = {
   }
   .flyout.open .flyout-panel { transform: translateX(0); }
 
-  .flyout-inner { padding: 92px 36px 56px; }
+  .flyout-inner { padding: 92px 36px 56px; height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .flyout-close {
     position: absolute; top: 24px; right: 28px; width: 46px; height: 46px;
     background: transparent; border: 0; cursor: pointer; z-index: 1;
@@ -175,31 +176,29 @@ const T = {
   .flyout-close::after { transform: rotate(-45deg); }
 
   .flyout-menu, .submenu { list-style: none; margin: 0; padding: 0; }
-  .flyout-menu > li { border-bottom: 1px solid rgba(219,200,168,.18); }
-  .row { display: flex; align-items: center; justify-content: space-between; }
-  .flyout-menu a {
-    display: block; flex: 1; padding: 16px 4px;
-    color: var(--cream); text-decoration: none;
-    font-size: 20px; letter-spacing: .02em; text-transform: lowercase;
+  /* Cada bloque abierto: etiqueta de categoría + enlaces grandes debajo */
+  .menu-group { margin-bottom: 30px; }
+  .menu-group:last-child, .menu-single:last-child { margin-bottom: 0; }
+  .cat-label {
+    display: inline-block; text-decoration: none; margin: 0 0 8px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--gold); opacity: .85; transition: opacity .2s;
   }
-  /* Solo la primera letra en mayúscula (el resto en minúscula) */
-  .flyout-menu a::first-letter { text-transform: uppercase; }
-  .flyout-menu a:hover { color: var(--gold); }
-  .sub-toggle { position: relative; width: 44px; height: 44px; background: transparent; border: 0; cursor: pointer; flex: 0 0 auto; }
-  .sub-toggle::before, .sub-toggle::after { content: ""; position: absolute; top: 50%; left: 50%; background: var(--gold); transition: transform .2s; }
-  .sub-toggle::before { width: 16px; height: 2px; transform: translate(-50%,-50%); }
-  .sub-toggle::after { width: 2px; height: 16px; transform: translate(-50%,-50%); }
-  .has-sub.open .sub-toggle::after { transform: translate(-50%,-50%) scaleY(0); }
-  .submenu { max-height: 0; overflow: hidden; transition: max-height .25s ease; }
-  .has-sub.open .submenu { max-height: 640px; }
-  .submenu a { font-size: 16px; padding: 12px 4px 12px 22px; color: var(--gold-light); }
+  .cat-label:hover { opacity: 1; }
+  .submenu a, .menu-single > a {
+    display: inline-block; text-decoration: none; padding: 6px 0;
+    color: var(--cream); font-size: clamp(24px, 3.4vw, 30px); line-height: 1.12;
+    letter-spacing: -.01em; text-transform: lowercase; transition: color .2s;
+  }
+  .menu-single { margin-bottom: 30px; }
+  /* Solo la primera letra en mayúscula */
+  .submenu a::first-letter, .menu-single > a::first-letter { text-transform: uppercase; }
+  .submenu a:hover, .menu-single > a:hover { color: var(--gold); }
   .submenu-head {
-    padding: 14px 4px 6px 22px; margin-top: 4px;
-    font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--gold); border-top: 1px solid rgba(219, 200, 168, .16);
+    padding: 10px 0 4px; margin-top: 6px;
+    font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--gold);
   }
-  .submenu li:first-child.submenu-head { border-top: 0; margin-top: 0; }
-  .submenu li.sep-top { border-top: 1px solid rgba(219, 200, 168, .16); margin-top: 6px; padding-top: 4px; }
+  .submenu li.sep-top { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(219, 200, 168, .16); }
   .lang a { color: var(--gold); font-weight: 700; }
 
   @media (max-width: 1000px) {
@@ -276,16 +275,6 @@ const T = {
   document.querySelectorAll("[data-menu-open]").forEach((b) => b.addEventListener("click", open));
   document.querySelectorAll("[data-menu-close]").forEach((b) => b.addEventListener("click", close));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
-  fly.querySelectorAll(".sub-toggle").forEach((t) => {
-    t.addEventListener("click", () => t.closest(".has-sub").classList.toggle("open"));
-  });
-  // En ítems con submenú, pulsar el texto también abre/cierra el acordeón
-  fly.querySelectorAll(".has-sub > .row > a").forEach((a) => {
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      a.closest(".has-sub").classList.toggle("open");
-    });
-  });
 
   // Selector de idioma: navegar al cambiar de opción
   const langSelect = document.querySelector("[data-lang-select]");
