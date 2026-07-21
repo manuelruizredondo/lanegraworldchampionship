@@ -88,9 +88,9 @@ const T = {
      Al hacer scroll solo aparece el fondo. */
   .header-inner {
     position: relative;
-    max-width: var(--container);
-    margin: 0 auto;
-    padding: 6px 24px;
+    max-width: none;
+    margin: 0;
+    padding: 6px clamp(24px, 6vw, 80px);
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -98,7 +98,7 @@ const T = {
   }
   /* Logo centrado y de tamaño fijo (ya no encoge) */
   .logo {
-    position: absolute; left: 24px; top: 50%; transform: translateY(-50%); line-height: 0;
+    position: absolute; left: clamp(24px, 6vw, 80px); top: 50%; transform: translateY(-50%); line-height: 0;
   }
   .logo img {
     width: clamp(150px, 18vw, 200px); height: auto;
