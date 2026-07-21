@@ -38,6 +38,23 @@ const canonical = new URL(Astro.url.pathname, site);
 const ogImage = new URL(image ? img(image) : img("festival-negra-dance-home-1.jpg"), site);
 const alternates = routeFor(Astro.url.pathname);
 const OG_LOCALE = { es: "es_ES", en: "en_US", it: "it_IT" };
+
+// Entidad de marca (JSON-LD Organization) en todas las páginas: ayuda a
+// buscadores y motores de IA a identificar la marca y sus perfiles oficiales.
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "La Negra Dance Festival",
+  alternateName: ["Campeonato Mundial de Pasos Libres", "La Negra World Championship"],
+  url: site.href,
+  logo: new URL("/img/2025/03/logotipo-def-lanegra-dance-festival.png", site).href,
+  sameAs: [
+    "https://www.instagram.com/pasoslibreslanegrasalsa/",
+    "https://www.instagram.com/lanegraworldchampionship/",
+    "https://www.facebook.com/lanegradancefestival",
+    "https://www.youtube.com/user/LaNegraSalsa1",
+  ],
+};
 ---
 
 <!doctype html>
@@ -82,6 +99,7 @@ const OG_LOCALE = { es: "es_ES", en: "en_US", it: "it_IT" };
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
     </noscript>
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} is:inline />
     <slot name="head" />
   </head>
   <body class={heroOverlay ? "hero-overlay" : undefined}>

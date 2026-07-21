@@ -1,6 +1,7 @@
 ---
 import Base from "@/layouts/Base.astro";
 import EventSchema from "@/components/EventSchema.astro";
+import Faq from "@/components/Faq.astro";
 import { img } from "@/data/img.js";
 import { ARTISTS_ES } from "@/data/artists.js";
 
@@ -343,6 +344,8 @@ const artists = ARTISTS_ES.map((a) => {
         <a class="p-btn p-btn-dark" href="/artistas/">Ver todos los artistas</a>
       </div>
     </section>
+
+    <Faq lang="es" />
 
     <!-- FINAL CTA (oscuro) -->
     <section class="p-final">
