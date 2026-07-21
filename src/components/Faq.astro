@@ -99,7 +99,7 @@ const schema = {
 };
 ---
 
-<section class="p-section faq">
+<section class="p-section p-gray faq">
   <div class="p-container p-narrow">
     <p class="p-eyebrow">{t.eyebrow}</p>
     <h2 class="p-h2">{t.title}</h2>
@@ -122,15 +122,15 @@ const schema = {
 <style>
   .faq .p-h2 { margin-bottom: 26px; }
   .faq-list { display: grid; gap: 12px; text-align: left; }
-  .faq-item { background: #fff; border: 1px solid var(--p-line); border-radius: 16px; padding: 0 22px; transition: border-color .2s; }
-  .faq-item[open] { border-color: var(--gold); }
+  .faq-item { background: #fff; border: 0; border-radius: 16px; padding: 2px 24px; transition: box-shadow .2s; }
+  .faq-item[open] { box-shadow: 0 10px 30px rgba(20, 18, 26, .07); }
   .faq-item summary {
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 18px 0; cursor: pointer; list-style: none;
-    font-weight: 600; font-size: 16.5px; letter-spacing: -.01em; color: var(--p-ink);
+    padding: 20px 0; cursor: pointer; list-style: none;
+    font-weight: 600; font-size: 19px; letter-spacing: -.01em; color: var(--p-ink);
   }
   .faq-item summary::-webkit-details-marker { display: none; }
-  .faq-item summary svg { flex: 0 0 auto; color: var(--gold-dark); transition: transform .25s; }
+  .faq-item summary svg { flex: 0 0 auto; width: 20px; height: 20px; color: var(--gold-dark); transition: transform .25s; }
   .faq-item[open] summary svg { transform: rotate(180deg); }
-  .faq-item p { margin: 0; padding: 0 0 20px; color: var(--p-muted); font-size: 15.5px; line-height: 1.65; }
+  .faq-item p { margin: 0; padding: 0 0 22px; color: var(--p-muted); font-size: 16px; line-height: 1.65; }
 </style>
