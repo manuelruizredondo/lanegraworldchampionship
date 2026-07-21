@@ -286,7 +286,15 @@
   }
 
   /* Contador del hero */
-  .p-hero-count { display: flex; justify-content: flex-start; align-items: stretch; margin-top: 40px; flex-wrap: wrap; }
+  .p-hero-count {
+    position: absolute; z-index: 2; margin: 0;
+    right: clamp(24px, 6vw, 80px); bottom: clamp(48px, 7vw, 88px);
+    display: flex; justify-content: flex-end; align-items: stretch; flex-wrap: wrap;
+  }
+  @media (max-width: 640px) {
+    .p-hero { padding-bottom: 132px; }
+    .p-hero-count { right: clamp(16px, 5vw, 24px); bottom: clamp(36px, 8vw, 52px); }
+  }
   .p-hc { display: flex; flex-direction: column; align-items: center; padding: 0 clamp(14px, 3vw, 30px); }
   .p-hc + .p-hc { border-left: 1px solid rgba(255, 255, 255, .28); }
   .p-hc-n { font-weight: 600; font-size: clamp(24px, 3.4vw, 42px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: #fff; }
