@@ -47,7 +47,7 @@
   .p-hero-inner { max-width: 940px; width: 100%; }
   .p-hero-title {
     font-family: var(--font-heavy); font-weight: 400; font-size: clamp(30px, 5.4vw, 66px);
-    line-height: 1.02; letter-spacing: -.02em; text-transform: lowercase; margin: 0 0 22px;
+    line-height: 1.16; letter-spacing: -.02em; text-transform: lowercase; margin: 0 0 18px; padding-bottom: .06em;
     background: linear-gradient(100deg, #9c6f1c 0%, #d3a53c 20%, #f6e099 42%, #fff7db 50%, #f6e099 58%, #d3a53c 80%, #9c6f1c 100%);
     background-size: 220% 100%;
     -webkit-background-clip: text; background-clip: text;
