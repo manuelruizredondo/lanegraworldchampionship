@@ -45,7 +45,8 @@
   /* HERO oscuro */
   .p-hero { position: relative; overflow: hidden; background: radial-gradient(120% 120% at 50% 0%, #211c33 0%, #0f0b1e 60%); color: #fff; min-height: 100vh; min-height: 100svh; display: flex; align-items: flex-end; justify-content: flex-start; text-align: left; margin-top: calc(-1 * var(--header-bar, 64px)); padding: 140px clamp(24px, 6vw, 80px) clamp(48px, 7vw, 88px); }
   .p-hero-inner { max-width: 940px; width: 100%; }
-  .p-hero-title { font-family: var(--font-heavy); font-weight: 800; font-size: clamp(30px, 5.4vw, 66px); line-height: 1.02; letter-spacing: -.02em; text-transform: uppercase; margin: 0 0 22px; color: #fff; }
+  .p-hero-title { font-family: var(--font-heavy); font-weight: 400; font-size: clamp(30px, 5.4vw, 66px); line-height: 1.02; letter-spacing: -.02em; text-transform: lowercase; margin: 0 0 22px; color: #fff; }
+  .p-hero-title::first-letter { text-transform: uppercase; }
   .p-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
   /* Oscurecido para legibilidad del contenido sobre el vídeo */
   .p-hero::after { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(10, 8, 20, .55) 0%, rgba(10, 8, 20, .35) 45%, rgba(10, 8, 20, .6) 100%); pointer-events: none; }
