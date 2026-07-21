@@ -87,9 +87,8 @@
     30% { transform: scaleY(1.22) scaleX(.88); }
     60% { transform: scaleY(.82) scaleX(1.12); }
   }
-  .p-hero-date { display: flex; flex-direction: column; gap: 4px; margin: 0 0 34px; }
-  .p-hero-date span:first-child { font-family: var(--font-heavy); font-weight: 800; font-size: clamp(34px, 7vw, 86px); line-height: 1; letter-spacing: .01em; color: transparent; -webkit-text-stroke: 1.6px #fff; text-transform: uppercase; }
-  .p-hero-date span:last-child { font-weight: 700; letter-spacing: .18em; text-transform: uppercase; font-size: clamp(12px, 1.5vw, 15px); color: rgba(255,255,255,.75); }
+  .p-hero-date { margin: 2px 0 30px; }
+  .p-hero-date span { font-weight: 700; letter-spacing: .16em; text-transform: uppercase; font-size: clamp(12px, 1.5vw, 15px); color: rgba(255, 255, 255, .8); }
   .p-hero-cta { display: flex; gap: 14px; justify-content: flex-start; flex-wrap: wrap; }
 
   /* PAGE HERO interior: imagen de fondo + overlay oscuro + título centrado en blanco */
