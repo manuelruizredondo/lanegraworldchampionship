@@ -33,10 +33,10 @@ const features = [
 
 // Why it's the best salsa & bachata event: 4 proof points with their page
 const reasons = [
-  { n: "01", t: "World-class artists", d: "More than 90 salsa and bachata legends every year as teachers, judges and dance partners. A line-up no other festival brings together.", cta: "Meet the artists", href: "/en/artists/" },
-  { n: "02", t: "The one and only Pasos Libres World Cup", d: "The most prestigious Latin dance championship: 100% brand-new choreographies, an elite jury and competitors from more than 20 countries.", cta: "Discover the Championship", href: "/en/world-championship/" },
-  { n: "03", t: "A resort by the sea", d: "Everything happens in one 4★ spa hotel on the Mediterranean: you sleep, learn, compete and dance without ever leaving the festival.", cta: "See the hotel", href: "/en/festival/#hotel" },
-  { n: "04", t: "15 editions of history", d: "Growing every year since 2010. Fifteen editions back the veteran, benchmark festival of salsa and bachata.", cta: "Past editions", href: "/en/editions/" },
+  { n: "01", t: "World-class artists", d: "More than 90 salsa and bachata legends every year as teachers, judges and dance partners. A line-up no other festival brings together.", cta: "Meet the artists", href: "/en/artists/", img: img("la-negra-dance-festival-galeria-2023-23.webp") },
+  { n: "02", t: "The one and only Pasos Libres World Cup", d: "The most prestigious Latin dance championship: 100% brand-new choreographies, an elite jury and competitors from more than 20 countries.", cta: "Discover the Championship", href: "/en/world-championship/", img: img("ganadores_grupos_salsa_2025.jpg") },
+  { n: "03", t: "A resort by the sea", d: "Everything happens in one 4★ spa hotel on the Mediterranean: you sleep, learn, compete and dance without ever leaving the festival.", cta: "See the hotel", href: "/en/festival/#hotel", img: img("la-negra-dance-festival-festival-img-19.webp") },
+  { n: "04", t: "15 editions of history", d: "Growing every year since 2010. Fifteen editions back the veteran, benchmark festival of salsa and bachata.", cta: "Past editions", href: "/en/editions/", img: img("lanegra-dance-festival-comepeticion-2.webp") },
 ];
 
 const values = [
@@ -165,10 +165,13 @@ const artists = ARTISTS_EN.map((a) => {
       <div class="p-container why-grid">
         {reasons.map((r) => (
           <a class="why-card" href={r.href}>
-            <span class="why-n">{r.n}</span>
-            <h3 class="why-t">{r.t}</h3>
-            <p class="why-d">{r.d}</p>
-            <span class="p-card-link">{r.cta} →</span>
+            <img class="why-img" src={r.img} alt="" loading="lazy" />
+            <div class="why-body">
+              <span class="why-n">{r.n}</span>
+              <h3 class="why-t">{r.t}</h3>
+              <p class="why-d">{r.d}</p>
+              <span class="p-card-link">{r.cta} →</span>
+            </div>
           </a>
         ))}
       </div>
