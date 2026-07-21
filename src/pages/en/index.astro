@@ -30,6 +30,14 @@ const features = [
   { title: "The party", desc: "Two social dance floors until dawn: salsa and bachata in all their variants with the best DJs.", cta: "See the party", href: "/en/fiesta/", img: "/img/2025/03/lanegra-dance-festival-slide-2.webp" },
 ];
 
+// Why it's the best salsa & bachata event: 4 proof points with their page
+const reasons = [
+  { n: "01", t: "World-class artists", d: "More than 90 salsa and bachata legends every year as teachers, judges and dance partners. A line-up no other festival brings together.", cta: "Meet the artists", href: "/en/artists/" },
+  { n: "02", t: "The one and only Pasos Libres World Cup", d: "The most prestigious Latin dance championship: 100% brand-new choreographies, an elite jury and competitors from more than 20 countries.", cta: "Discover the Championship", href: "/en/world-championship/" },
+  { n: "03", t: "A resort by the sea", d: "Everything happens in one 4★ spa hotel on the Mediterranean: you sleep, learn, compete and dance without ever leaving the festival.", cta: "See the hotel", href: "/en/festival/#hotel" },
+  { n: "04", t: "15 editions of history", d: "Growing every year since 2010. Fifteen editions back the veteran, benchmark festival of salsa and bachata.", cta: "Past editions", href: "/en/editions/" },
+];
+
 const values = [
   { t: "Level", d: "The only World Cup with 100% brand-new choreographies and a top-tier jury.", img: img("lanegra-dance-festival-comepeticion-19.webp") },
   { t: "Community", d: "Dancers from more than 35 countries united by the same passion.", img: img("festival-pasos-negra-dance-2.jpeg") },
@@ -81,8 +89,8 @@ const artists = ARTISTS_EN.map((a) => {
 
 <Base
   lang="en"
-  title="La Negra Dance Festival — Salsa & Bachata World Championship · Calpe 2026"
-  description="The global community of salsa and bachata. Workshops, shows, parties and the only World Cup with 100% brand-new choreographies. Calpe 2026."
+  title="La Negra Dance Festival — The best Salsa & Bachata festival · Calpe 2026"
+  description="The best salsa & bachata event: 90+ elite artists, the only World Cup with 100% brand-new choreographies, a seafront resort and 15 editions. Calpe, October 21–25, 2026."
   heroOverlay={true}
 >
   <Fragment slot="head">
@@ -129,8 +137,8 @@ const artists = ARTISTS_EN.map((a) => {
       <div class="p-container p-intro">
         <h1 class="p-h2">Learn from the best.<br />Compete against the best.<br /><span class="p-accent">Dance with everyone.</span></h1>
         <div class="p-intro-cols">
-          <p>Since 2010, La Negra Dance Festival has brought together the best of a dance congress and the spectacle of a world competition, with the finest dancers from more than 35 countries in salsa and bachata.</p>
-          <p>Workshops for every level, training for professionals, parties until dawn and the only World Cup with 100% brand-new choreographies, right by the sea in Calpe.</p>
+          <p>Since 2010, La Negra Dance Festival has earned its place as the best salsa & bachata event: the most important artist line-up, a World Cup unlike any other and dancers from more than 35 countries.</p>
+          <p>Workshops for every level, parties until dawn and the only World Cup with 100% brand-new choreographies. All in one seafront resort in Calpe, fifteen editions on.</p>
         </div>
       </div>
     </section>
@@ -144,6 +152,24 @@ const artists = ARTISTS_EN.map((a) => {
         </div>
         <h2 class="p-h2">An international community of dancers united by <span class="p-hl">salsa<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span> and <span class="p-nb"><span class="p-hl p-hl-2">bachata<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span>,</span> devoted to skill, emotion and celebration.</h2>
         <p class="p-lead p-quote">A place where, whatever country you come from, the moment you step onto the floor you're among your own.</p>
+      </div>
+    </section>
+
+    <!-- WHY THE BEST (positioning: artists · World Cup · hotel · editions) -->
+    <section class="p-section p-gray why">
+      <div class="p-container p-split">
+        <h2 class="p-h2">The best salsa &amp; bachata<br />festival?</h2>
+        <p class="p-lead">Don't take our word for it: the artists who come, the World Cup nobody else has, the resort where it all happens and fifteen editions say it for us.</p>
+      </div>
+      <div class="p-container why-grid">
+        {reasons.map((r) => (
+          <a class="why-card" href={r.href}>
+            <span class="why-n">{r.n}</span>
+            <h3 class="why-t">{r.t}</h3>
+            <p class="why-d">{r.d}</p>
+            <span class="p-card-link">{r.cta} →</span>
+          </a>
+        ))}
       </div>
     </section>
 

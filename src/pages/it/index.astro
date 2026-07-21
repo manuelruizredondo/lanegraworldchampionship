@@ -30,6 +30,14 @@ const features = [
   { title: "La festa", desc: "Due sale di ballo social fino all'alba: salsa e bachata in tutte le loro varianti con i migliori DJ.", cta: "Scopri la festa", href: "/it/fiesta/", img: "/img/2025/03/lanegra-dance-festival-slide-2.webp" },
 ];
 
+// Perché è il miglior evento di salsa e bachata: 4 argomenti con la loro pagina
+const reasons = [
+  { n: "01", t: "Artisti di livello mondiale", d: "Più di 90 leggende della salsa e della bachata ogni anno come maestri, giudici e compagni di pista. Un cartellone che nessun altro festival riunisce.", cta: "Scopri gli artisti", href: "/it/artists/" },
+  { n: "02", t: "L'unico Mondiale di Pasos Libres", d: "Il campionato più prestigioso del ballo latino: coreografie 100% in anteprima, giuria d'élite e concorrenti da più di 20 paesi.", cta: "Scopri il Mondiale", href: "/it/mondiale/" },
+  { n: "03", t: "Un resort fronte mare", d: "Tutto accade in un unico hotel 4★ con spa sul Mediterraneo: dormi, impari, competi e balli senza mai uscire dal festival.", cta: "Vedi l'hotel", href: "/it/festival/#hotel" },
+  { n: "04", t: "XV edizioni di storia", d: "Dal 2010, crescendo ogni anno. Quindici edizioni fanno del festival il punto di riferimento veterano della salsa e della bachata.", cta: "Edizioni precedenti", href: "/it/edizioni/" },
+];
+
 const values = [
   { t: "Livello", d: "L'unico Mondiale con coreografie 100% in anteprima e una giuria di primo livello.", img: img("lanegra-dance-festival-comepeticion-19.webp") },
   { t: "Comunità", d: "Ballerini di oltre 35 paesi uniti dalla stessa passione.", img: img("festival-pasos-negra-dance-2.jpeg") },
@@ -81,8 +89,8 @@ const artists = ARTISTS_IT.map((a) => {
 
 <Base
   lang="it"
-  title="La Negra Dance Festival — Campionato Mondiale di Salsa e Bachata · Calpe 2026"
-  description="La comunità mondiale della salsa e della bachata. Workshop, show, feste e l'unico Mondiale con coreografie 100% in anteprima. Calpe 2026."
+  title="La Negra Dance Festival — Il miglior festival di Salsa e Bachata · Calpe 2026"
+  description="Il miglior evento di salsa e bachata: più di 90 artisti d'élite, l'unico Mondiale con coreografie 100% in anteprima, resort fronte mare e XV edizioni. Calpe, 21–25 ottobre 2026."
   heroOverlay={true}
 >
   <Fragment slot="head">
@@ -129,8 +137,8 @@ const artists = ARTISTS_IT.map((a) => {
       <div class="p-container p-intro">
         <h1 class="p-h2">Impara con i migliori.<br />Compete contro i migliori.<br /><span class="p-accent">Balla con tutti.</span></h1>
         <div class="p-intro-cols">
-          <p>Dal 2010, La Negra Dance Festival riunisce il meglio di un congresso di ballo e la spettacolarità di una competizione mondiale, con i migliori ballerini di oltre 35 paesi in salsa e bachata.</p>
-          <p>Workshop per tutti i livelli, formazione per professionisti, feste fino all'alba e l'unico Mondiale con coreografie 100% in anteprima, fronte mare a Calpe.</p>
+          <p>Dal 2010, La Negra Dance Festival si è guadagnato il titolo di miglior evento di salsa e bachata: il cartellone di artisti più importante, un Mondiale unico al mondo e ballerini da più di 35 paesi.</p>
+          <p>Workshop per tutti i livelli, feste fino all'alba e l'unico Mondiale con coreografie 100% in anteprima. Tutto in un unico resort fronte mare a Calpe, quindici edizioni dopo.</p>
         </div>
       </div>
     </section>
@@ -144,6 +152,24 @@ const artists = ARTISTS_IT.map((a) => {
         </div>
         <h2 class="p-h2">Una comunità internazionale di ballerini unita dalla <span class="p-hl">salsa<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span> e dalla <span class="p-nb"><span class="p-hl p-hl-2">bachata<svg class="p-hl-line" viewBox="0 0 500 150" preserveAspectRatio="none" aria-hidden="true"><path d="M8.1,146.2c0,0,240.6-55.6,479-13.8" pathLength="500"></path></svg></span>,</span> dedita al livello, all'emozione e alla celebrazione.</h2>
         <p class="p-lead p-quote">Un luogo dove, da qualunque paese tu venga, appena metti piede in pista sei tra i tuoi.</p>
+      </div>
+    </section>
+
+    <!-- PERCHÉ IL MIGLIORE (posizionamento: artisti · Mondiale · hotel · edizioni) -->
+    <section class="p-section p-gray why">
+      <div class="p-container p-split">
+        <h2 class="p-h2">Il miglior festival<br />di salsa e bachata?</h2>
+        <p class="p-lead">Non lo diciamo noi: lo dicono gli artisti che vengono, il Mondiale che nessun altro ha, il resort dove si vive e quindici edizioni che lo dimostrano.</p>
+      </div>
+      <div class="p-container why-grid">
+        {reasons.map((r) => (
+          <a class="why-card" href={r.href}>
+            <span class="why-n">{r.n}</span>
+            <h3 class="why-t">{r.t}</h3>
+            <p class="why-d">{r.d}</p>
+            <span class="p-card-link">{r.cta} →</span>
+          </a>
+        ))}
       </div>
     </section>
 

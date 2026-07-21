@@ -162,6 +162,22 @@
   .p-card-d { color: rgba(255, 255, 255, .85); font-size: 15px; line-height: 1.55; margin: 0 0 16px; }
   .p-card-link { color: #fff; font-weight: 700; }
 
+  /* WHY (posicionamiento: 4 razones numeradas — artistas · Mundial · hotel · ediciones) */
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: clamp(28px, 4vw, 48px); }
+  .why-card {
+    display: flex; flex-direction: column; align-items: flex-start; text-decoration: none;
+    background: #fff; border: 1px solid var(--p-line); border-radius: 20px;
+    padding: clamp(24px, 3vw, 36px) clamp(22px, 2.6vw, 34px);
+    transition: border-color .2s, transform .2s, box-shadow .25s;
+  }
+  .why-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(20, 18, 26, .08); }
+  .why-n { font-weight: 800; font-size: 14px; letter-spacing: .08em; color: var(--gold-dark); margin-bottom: 14px; }
+  .why-t { font-weight: 700; font-size: clamp(20px, 2vw, 26px); letter-spacing: -.02em; color: var(--p-ink); margin: 0 0 10px; }
+  .why-d { color: var(--p-muted); font-size: 15.5px; line-height: 1.6; margin: 0 0 18px; }
+  .why-card .p-card-link { color: var(--gold-dark); margin-top: auto; }
+  @media (max-width: 800px) { .why-grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .why-card:hover { transform: none; } }
+
   /* VALUES */
   .p-values { display: grid; grid-template-columns: 0.8fr 1fr 1fr; gap: clamp(30px, 4vw, 60px); align-items: start; }
   .p-values-list { display: grid; gap: 4px; }
