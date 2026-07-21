@@ -193,11 +193,6 @@ p { margin: 0 0 16px; }
   .section { padding: 48px 0; }
 }
 
-/* Páginas con hero a sangre: fondo oscuro en el body para que, mientras carga,
-   el hueco superior (antes de que el JS ajuste la altura del header) no se vea
-   blanco sino del color del hero. */
-body.hero-overlay { background: #0f0b1e; }
-
 /* En la home, el header va sobre el vídeo: arriba del todo los iconos en blanco
    para que se vean; al hacer scroll (.scrolled) vuelven a dorado. */
 body.hero-overlay .site-header:not(.scrolled) .burger span { background: #fff; }
