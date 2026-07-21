@@ -6,6 +6,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Redirección 301: el dominio de Netlify redirige al dominio definitivo
+# (evita contenido duplicado; www→raíz ya lo gestiona Netlify automáticamente).
+[[redirects]]
+  from = "https://lanegraworld.netlify.app/*"
+  to = "https://campeonatopasoslibres.com/:splat"
+  status = 301
+  force = true
+
 # Astro genera 404.html automáticamente desde src/pages/404.astro.
 [[headers]]
   for = "/img/*"

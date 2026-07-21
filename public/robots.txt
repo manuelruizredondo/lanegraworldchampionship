@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lanegraworld.netlify.app/sitemap.xml
+Sitemap: https://campeonatopasoslibres.com/sitemap.xml
