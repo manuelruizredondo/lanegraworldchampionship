@@ -72,13 +72,15 @@
 </style>
 
 <script>
-  const overlay = document.querySelector("[data-lightbox-overlay]");
+  const overlay = document.querySelector<HTMLElement>("[data-lightbox-overlay]");
   if (overlay) {
-    const imgEl = overlay.querySelector(".lightbox-img");
-    const countEl = overlay.querySelector("[data-lightbox-count]");
-    const prevBtn = overlay.querySelector(".lightbox-prev");
-    const nextBtn = overlay.querySelector(".lightbox-next");
-    let items = [];
+    const imgEl = overlay.querySelector<HTMLImageElement>(".lightbox-img");
+    const countEl = overlay.querySelector<HTMLElement>("[data-lightbox-count]");
+    const prevBtn = overlay.querySelector<HTMLButtonElement>(".lightbox-prev");
+    const nextBtn = overlay.querySelector<HTMLButtonElement>(".lightbox-next");
+    if (!imgEl || !countEl || !prevBtn || !nextBtn) throw new Error("Lightbox markup incomplete");
+
+    let items: HTMLImageElement[] = [];
     let idx = 0;
 
     const render = () => {
@@ -91,8 +93,8 @@
       prevBtn.hidden = !multi;
       nextBtn.hidden = !multi;
     };
-    const open = (trigger) => {
-      items = [...document.querySelectorAll("img[data-lightbox]")];
+    const open = (trigger: HTMLImageElement) => {
+      items = [...document.querySelectorAll<HTMLImageElement>("img[data-lightbox]")];
       idx = Math.max(0, items.indexOf(trigger));
       overlay.hidden = false;
       overlay.setAttribute("aria-hidden", "false");
@@ -106,7 +108,7 @@
       document.body.style.overflow = "";
       setTimeout(() => { overlay.hidden = true; imgEl.removeAttribute("src"); }, 280);
     };
-    const go = (dir) => {
+    const go = (dir: number) => {
       if (items.length < 2) return;
       idx = (idx + dir + items.length) % items.length;
       imgEl.classList.remove("swap");
@@ -116,18 +118,23 @@
     };
 
     document.addEventListener("click", (e) => {
-      const trigger = e.target.closest("img[data-lightbox]");
+      const target = e.target as Element | null;
+      if (!target?.closest) return;
+      const trigger = target.closest("img[data-lightbox]") as HTMLImageElement | null;
       if (trigger) { e.preventDefault(); open(trigger); return; }
       if (overlay.hidden) return;
-      if (e.target.closest(".lightbox-prev")) { e.stopPropagation(); go(-1); return; }
-      if (e.target.closest(".lightbox-next")) { e.stopPropagation(); go(1); return; }
-      if (e.target === overlay || e.target.closest(".lightbox-close")) close();
+      if (target.closest(".lightbox-prev")) { e.stopPropagation(); go(-1); return; }
+      if (target.closest(".lightbox-next")) { e.stopPropagation(); go(1); return; }
+      if (target === overlay || target.closest(".lightbox-close")) close();
     });
     document.addEventListener("keydown", (e) => {
       if (overlay.hidden) {
         if (e.key === "Enter" || e.key === " ") {
           const t = document.activeElement;
-          if (t && t.matches && t.matches("img[data-lightbox]")) { e.preventDefault(); open(t); }
+          if (t instanceof HTMLImageElement && t.matches("img[data-lightbox]")) {
+            e.preventDefault();
+            open(t);
+          }
         }
         return;
       }

@@ -20,13 +20,21 @@ const SKIP_LABEL = {
   it: "Vai al contenuto",
 };
 
+type Lang = keyof typeof DEFAULT_DESC;
+
 const {
   title = "La Negra Dance Festival",
   description,
   lang = "es",
   heroOverlay = false,
   image,
-} = Astro.props;
+} = Astro.props as {
+  title?: string;
+  description?: string;
+  lang?: Lang;
+  heroOverlay?: boolean;
+  image?: string;
+};
 
 const desc = description || DEFAULT_DESC[lang] || DEFAULT_DESC.es;
 const fullTitle = title.includes("La Negra") ? title : `${title} — La Negra Dance Festival`;
