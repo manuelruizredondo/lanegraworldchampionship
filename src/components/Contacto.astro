@@ -1,6 +1,6 @@
 ---
 // Página de contacto propia (ES/EN/IT). Formulario Netlify + datos de contacto y redes.
-const { lang = "es" } = Astro.props;
+const { lang = "es" } = Astro.props as { lang?: "es" | "en" | "it" };
 
 const T = {
   es: {
@@ -104,19 +104,28 @@ const waIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
   </div>
 </section>
 
-<script is:inline define:vars={{ okMsg: t.ok, errMsg: t.err }}>
-  (function () {
-    var form = document.querySelector("[data-contact]");
-    if (!form) return;
-    var msg = form.querySelector("[data-contact-msg]");
-    form.addEventListener("submit", function (e) {
+<script define:vars={{ okMsg: t.ok, errMsg: t.err }}>
+  const form = document.querySelector("[data-contact]");
+  if (form) {
+    const msg = form.querySelector("[data-contact-msg]");
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      var data = new URLSearchParams(new FormData(form)).toString();
+      const data = new URLSearchParams(new FormData(form)).toString();
       fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data })
-        .then(function (r) { if (!r.ok) throw new Error(); form.reset(); msg.textContent = okMsg; msg.className = "ct-msg ok"; msg.hidden = false; })
-        .catch(function () { msg.textContent = errMsg; msg.className = "ct-msg err"; msg.hidden = false; });
+        .then((r) => {
+          if (!r.ok) throw new Error();
+          form.reset();
+          msg.textContent = okMsg;
+          msg.className = "ct-msg ok";
+          msg.hidden = false;
+        })
+        .catch(() => {
+          msg.textContent = errMsg;
+          msg.className = "ct-msg err";
+          msg.hidden = false;
+        });
     });
-  })();
+  }
 </script>
 
 <style>
