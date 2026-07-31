@@ -12,7 +12,7 @@ const T = {
     err: "Ups, algo falló. Inténtalo de nuevo o escríbenos por WhatsApp.",
     infoTitle: "Escríbenos",
     infoText: "Estamos disponibles por WhatsApp para cualquier consulta.",
-    waText: "Escríbenos por WhatsApp",
+    waText: "Escríbenos por WhatsApp", phoneLabel: "Teléfono / WhatsApp",
     followTitle: "Síguenos",
   },
   en: {
@@ -24,7 +24,7 @@ const T = {
     err: "Oops, something went wrong. Please try again or message us on WhatsApp.",
     infoTitle: "Write to us",
     infoText: "We're available on WhatsApp for any question.",
-    waText: "Message us on WhatsApp",
+    waText: "Message us on WhatsApp", phoneLabel: "Phone / WhatsApp",
     followTitle: "Follow us",
   },
   it: {
@@ -36,13 +36,15 @@ const T = {
     err: "Ops, qualcosa è andato storto. Riprova o scrivici su WhatsApp.",
     infoTitle: "Scrivici",
     infoText: "Siamo disponibili su WhatsApp per qualsiasi domanda.",
-    waText: "Scrivici su WhatsApp",
+    waText: "Scrivici su WhatsApp", phoneLabel: "Telefono / WhatsApp",
     followTitle: "Seguici",
   },
 };
 const t = T[lang] || T.es;
 
-const WA = "34639501310";
+const WA = "34621074054";
+const PHONE_TEL = "+34621074054";
+const PHONE_DISPLAY = "+34 621 07 40 54";
 const SOCIAL = {
   instagram: "https://www.instagram.com/lanegraworldchampionship/",
   facebook: "https://www.facebook.com/lanegradancefestival",
@@ -92,6 +94,7 @@ const waIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
         <Fragment set:html={waIcon} />
         {t.waText}
       </a>
+      <a class="ct-phone" href={`tel:${PHONE_TEL}`}>{t.phoneLabel}: <strong>{PHONE_DISPLAY}</strong></a>
       <div class="ct-follow">
         <p class="ct-follow-title">{t.followTitle}</p>
         <div class="ct-social">
@@ -162,6 +165,9 @@ const waIcon = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentCol
     padding: 12px 22px; border-radius: 999px; transition: opacity .2s, transform .15s;
   }
   .ct-wa:hover { opacity: .9; transform: translateY(-2px); }
+  .ct-phone { display: block; margin-top: 14px; font-size: 15px; color: #4a4a52; text-decoration: none; }
+  .ct-phone strong { color: #14121a; font-size: 17px; }
+  .ct-phone:hover strong { color: var(--gold-dark); }
   .ct-follow { margin-top: 26px; }
   .ct-follow-title { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #6a6a74; font-weight: 700; margin: 0 0 12px; }
   .ct-social { display: flex; gap: 12px; }
