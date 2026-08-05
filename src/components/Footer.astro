@@ -22,6 +22,13 @@ const social = {
   instagram: "https://www.instagram.com/lanegraworldchampionship/",
   youtube: "https://www.youtube.com/user/LaNegraSalsa1",
 };
+// Red de proyectos La Negra (enlaces cruzados para backlinking; sin nofollow)
+const networkTitle = { es: "Nuestros proyectos", en: "Our projects", it: "I nostri progetti" }[lang] || "Nuestros proyectos";
+const network = [
+  { t: "La Negra Salsa", h: "https://lanegrasalsa.com/" },
+  { t: "Campeonato Pasos Libres", h: "https://campeonatopasoslibres.com/" },
+  { t: "Evelyn La Negra", h: "https://evelynlanegra.com/" },
+];
 ---
 
 <footer class="site-footer">
@@ -78,6 +85,17 @@ const social = {
     </div>
   </div>
 
+  <div class="footer-network">
+    <div class="container network-inner">
+      <p class="network-title">{networkTitle}</p>
+      <nav class="network-links">
+        {network.map((n) => (
+          <a href={n.h} target="_blank" rel="noopener">{n.t}</a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
   <div class="footer-legal">
     <div class="container legal-inner">
       <nav class="legal-links">
@@ -112,6 +130,13 @@ const social = {
     background: var(--gold); color: #fff;
   }
   .social-icons a:hover { background: var(--gold-dark); }
+
+  .footer-network { background: var(--cream); border-top: 1px solid rgba(15,11,30,.08); padding: 24px 0 6px; }
+  .network-inner { text-align: center; }
+  .network-title { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: #6a6a74; font-weight: 700; margin: 0 0 12px; }
+  .network-links { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; }
+  .network-links a { color: #212934; text-decoration: none; font-size: 15px; font-weight: 600; transition: color .2s; }
+  .network-links a:hover { color: var(--gold); }
 
   .footer-legal { background: var(--cream); border-top: 1px solid rgba(15,11,30,.08); padding: 22px 0 34px; }
   .legal-inner { text-align: center; }
