@@ -47,12 +47,13 @@
   .p-hero-inner { max-width: 940px; width: 100%; }
   .p-hero-title {
     font-family: var(--font-heavy); font-weight: 800;
-    line-height: 1.05; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 18px;
+    line-height: 1.18; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 18px;
   }
-  /* Titular en outline blanco (Agrandir GrandHeavy) */
+  /* Titular en outline blanco (Agrandir GrandHeavy) — con separación suficiente
+     para que los contornos de las letras no se crucen entre sí */
   .p-hero-title-main {
-    display: block; font-size: clamp(34px, 6.2vw, 80px); line-height: 1.06;
-    color: transparent; -webkit-text-stroke: 1.4px #fff; text-stroke: 1.4px #fff;
+    display: block; font-size: clamp(32px, 5.8vw, 74px); line-height: 1.18;
+    color: transparent; -webkit-text-stroke: 1.3px #fff; text-stroke: 1.3px #fff;
     filter: drop-shadow(0 2px 10px rgba(0, 0, 0, .5));
   }
   .p-hero-title-sub {
