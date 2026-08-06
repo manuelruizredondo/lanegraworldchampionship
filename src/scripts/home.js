@@ -357,3 +357,22 @@
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectValue(v); }
       });
     });
+
+    // Botón de audio del hero: activa/silencia el sonido del vídeo
+    (function () {
+      const v = document.querySelector(".p-hero-video");
+      const btn = document.querySelector(".p-hero-audio");
+      if (!v || !btn) return;
+      const sync = () => {
+        const on = !v.muted && v.volume > 0;
+        btn.classList.toggle("is-on", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+        btn.setAttribute("aria-label", on ? btn.dataset.labelOff : btn.dataset.labelOn);
+      };
+      btn.addEventListener("click", () => {
+        v.muted = !v.muted;
+        if (!v.muted) { v.volume = 1; v.play().catch(() => {}); }
+        sync();
+      });
+      sync();
+    })();
