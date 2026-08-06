@@ -53,7 +53,7 @@
   .p-hero-title-main {
     display: block; font-size: clamp(30px, 5.4vw, 70px); line-height: 1.12;
     color: transparent; -webkit-text-stroke: 1.5px #fff; text-stroke: 1.5px #fff;
-    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, .5));
+    mix-blend-mode: difference;
   }
   .p-hero-title-sub {
     display: block; margin-top: 12px; text-transform: none;
