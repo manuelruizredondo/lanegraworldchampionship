@@ -422,19 +422,27 @@
     opacity: 0; transform: translateY(28px);
     animation: p-hero-in .9s cubic-bezier(.22, 1, .36, 1) forwards;
   }
-  /* Título: entra el primero */
-  html.js-fx .p-hero-title {
-    opacity: 0; transform: translateY(28px);
-    animation: p-hero-in .9s cubic-bezier(.22, 1, .36, 1) .1s forwards;
+  /* Título en cascada: cada palabra entra una tras otra (La Negra → World →
+     Championship → subtítulo), y luego la fecha, botones y cuenta atrás */
+  .p-hero-title-main .htl { display: block; }
+  html.js-fx .p-hero-title .htl {
+    opacity: 0; transform: translateY(34px);
+    animation: p-hero-in .8s cubic-bezier(.22, 1, .36, 1) both;
   }
-  html.js-fx .p-hero-date span:first-child { animation-delay: .34s; }
-  html.js-fx .p-hero-date span:last-child { animation-delay: .38s; }
-  html.js-fx .p-hero-cta { animation-delay: .56s; }
-  html.js-fx .p-hero-count { animation-delay: .74s; }
+  html.js-fx .p-hero-title-main .htl:nth-child(1) { animation-delay: .15s; }
+  html.js-fx .p-hero-title-main .htl:nth-child(2) { animation-delay: .38s; }
+  html.js-fx .p-hero-title-main .htl:nth-child(3) { animation-delay: .61s; }
+  html.js-fx .p-hero-title-sub.htl { animation-delay: .84s; }
+  html.js-fx .p-hero-date span:first-child { animation-delay: 1.06s; }
+  html.js-fx .p-hero-date span:last-child { animation-delay: 1.1s; }
+  html.js-fx .p-hero-cta { animation-delay: 1.26s; }
+  html.js-fx .p-hero-count { animation-delay: 1.46s; }
   @keyframes p-hero-in { to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .p-hero-title, html.js-fx .p-hero-title { animation: none; opacity: 1; transform: none; }
-    .p-hero-title-main { animation: none; }
+    html.js-fx .p-hero-title .htl,
+    html.js-fx .p-hero-date span, html.js-fx .p-hero-cta, html.js-fx .p-hero-count {
+      animation: none; opacity: 1; transform: none;
+    }
   }
 
   /* Reveal on scroll (las clases las añade JS; sin JS todo queda visible) */
