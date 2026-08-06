@@ -24,6 +24,14 @@
   font-weight: 800;
   font-display: swap;
 }
+/* Titular del hero: Archivo Expanded Black (extended + gruesa), para el outline */
+@font-face {
+  font-family: "Archivo Expanded";
+  src: url("/fonts/Archivo-Expanded-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-stretch: 125%;
+  font-display: swap;
+}
 
 :root {
   --gold: #cc9933;
