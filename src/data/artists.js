@@ -48,6 +48,8 @@ export const ARTISTS_ES = [
   { name: "Juan Pablo Paredes", country: "Bachata | República Dominicana", img: "juan-pablo-paredees-bachata-festival-pasos-libres.png", ig: "https://www.instagram.com/juanparedes_tu_bachatero/", fb: "https://www.facebook.com/juan.pablo.paredes.bachata/photos_by?locale=es_ES" },
   { name: "Oscar e Inés", country: "Bachata | España", img: "festival-la-negra-dance-oscar-e-ines.jpg", ig: "https://www.instagram.com/oscareines_bachata/", yt: "https://www.youtube.com/channel/UCaLYKLMAcyJID-EprCAD7sw" },
   { name: "Jose y Yoli Conuco", country: "Bachata | España", img: "jose-evelyn-bachata-festival-pasos-libres-1.jpg", ig: "https://www.instagram.com/conucodance", yt: "https://www.youtube.com/c/ConucoDanceBenidorm" },
+  { name: "Andrés y Jessica", country: "Bachata | Colombia", img: "artistas/andresyyessica_colombia.webp" },
+  { name: "Gon y Bella", country: "Bachata | Argentina", img: "artistas/gonbella_argentina.webp" },
 ];
 
 export const ARTISTS_EN = [
@@ -96,6 +98,8 @@ export const ARTISTS_EN = [
   { name: "Juan Pablo Paredes", country: "Bachata | Dominican Republic", img: "juan-pablo-paredees-bachata-festival-pasos-libres.png", ig: "https://www.instagram.com/juanparedes_tu_bachatero/", fb: "https://www.facebook.com/juan.pablo.paredes.bachata/photos_by?locale=es_ES" },
   { name: "Oscar and Inés", country: "Bachata | Spain", img: "festival-la-negra-dance-oscar-e-ines.jpg", ig: "https://www.instagram.com/oscareines_bachata/", yt: "https://www.youtube.com/channel/UCaLYKLMAcyJID-EprCAD7sw" },
   { name: "Jose and Yoli Conuco", country: "Bachata | Spain", img: "jose-evelyn-bachata-festival-pasos-libres-1.jpg", ig: "https://www.instagram.com/conucodance", yt: "https://www.youtube.com/c/ConucoDanceBenidorm" },
+  { name: "Andrés and Jessica", country: "Bachata | Colombia", img: "artistas/andresyyessica_colombia.webp" },
+  { name: "Gon and Bella", country: "Bachata | Argentina", img: "artistas/gonbella_argentina.webp" },
 ];
 
 // Lista IT derivada de la EN: se traduce el país (la etiqueta visible) y el "and" de los dúos.
@@ -121,4 +125,15 @@ export const ARTISTS_IT = ARTISTS_EN.map((a) => {
   return { ...a, name: a.name.replace(/ and /g, " e "), country: `${style} | ${c}` };
 });
 
+const splitByStyle = (list) => {
+  const i = list.findIndex((a) => a.country.startsWith("Bachata"));
+  return { salsa: list.slice(0, i), bachata: list.slice(i) };
+};
+
+const esSplit = splitByStyle(ARTISTS_ES);
+const enSplit = splitByStyle(ARTISTS_EN);
+const itSplit = splitByStyle(ARTISTS_IT);
+
+export const SALSA = { es: esSplit.salsa, en: enSplit.salsa, it: itSplit.salsa };
+export const BACHATA = { es: esSplit.bachata, en: enSplit.bachata, it: itSplit.bachata };
 export const ARTISTS = { es: ARTISTS_ES, en: ARTISTS_EN, it: ARTISTS_IT };

@@ -6,5 +6,5 @@ export function img(name) {
   if (!name) return "";
   if (name.startsWith("/img/") || name.startsWith("http")) return name;
   const file = name.split("/").pop();
-  return manifest[file] || `/img/${file}`;
+  return manifest[file] || `/img/${name}`;
 }
