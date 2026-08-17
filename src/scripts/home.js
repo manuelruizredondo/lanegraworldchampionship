@@ -1,6 +1,19 @@
 // Efectos e interacciones de la home (La Negra Dance Festival).
 // DOM-based; se importa desde cada home (es / en / it).
 
+    // Vídeo del hero: aunque lleva `autoplay muted loop playsinline`, algunos
+    // móviles pausan el autoplay (modo ahorro, cambio de pestaña). Empujón defensivo:
+    // intenta reproducir al cargar y al volver a la pestaña. Es idempotente y silencioso.
+    (function heroVideo() {
+      const hv = document.querySelector(".p-hero-video");
+      if (!hv) return;
+      const kick = () => { const p = hv.play(); if (p && p.catch) p.catch(() => {}); };
+      kick();
+      hv.addEventListener("canplay", kick, { once: true });
+      hv.addEventListener("loadeddata", kick, { once: true });
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) kick(); });
+    })();
+
     // Marquee estilo sundayapp: desplazamiento continuo que ACELERA con el scroll + skew según dirección
     const mq = document.querySelector("[data-marquee]");
     const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
