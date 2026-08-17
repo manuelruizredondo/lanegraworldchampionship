@@ -41,6 +41,8 @@ export const ARTISTS_ES = [
   { name: "Evelyn La Negra", country: "Bachata | Venezuela", img: "evelyn-la-negra-bachata-festival-pasos-libres_1.jpg", ig: "https://www.instagram.com/evelynlanegrasalsa/?hl=es", yt: "https://www.youtube.com/watch?v=BdjG8_loPmM" },
   { name: "Alfonso y Mónica", country: "Bachata | España", img: "festival-evelin-la-negra-alfonso-monica.jpg", ig: "https://www.instagram.com/alfonsoymonicaoficial/", yt: "https://www.youtube.com/channel/UCoE7rixJbJx0JnZ_lHP5Ylg" },
   { name: "Berra y Reyes", country: "Bachata | España", img: "IMG_7831.webp", ig: "https://www.instagram.com/berrayreyesoficial/" },
+  { name: "Andrés y Jessica", country: "Bachata | Colombia", img: "artistas/andresyyessica_colombia.webp" },
+  { name: "Gon y Bella", country: "Bachata | Argentina", img: "artistas/gonbella_argentina.webp" },
   { name: "Gabriele Di Marzo", country: "Bachata | Italia", img: "gabriele-Di-marzo.jpeg", ig: "https://www.instagram.com/gabrieledimarzodancer/" },
   { name: "Oscar El Niño", country: "Bachata | República Dominicana", img: "festival-la-negra-dance-oscar-kids.jpg", ig: "https://www.instagram.com/oscarofficial_18/", yt: "https://www.youtube.com/@oscarnino8285" },
   { name: "Irene y Tomás", country: "Bachata | España", img: "irene-y-tomas.jpeg", ig: "https://www.instagram.com/ireneytomas/?hl=es" },
@@ -48,8 +50,6 @@ export const ARTISTS_ES = [
   { name: "Juan Pablo Paredes", country: "Bachata | República Dominicana", img: "juan-pablo-paredees-bachata-festival-pasos-libres.png", ig: "https://www.instagram.com/juanparedes_tu_bachatero/", fb: "https://www.facebook.com/juan.pablo.paredes.bachata/photos_by?locale=es_ES" },
   { name: "Oscar e Inés", country: "Bachata | España", img: "festival-la-negra-dance-oscar-e-ines.jpg", ig: "https://www.instagram.com/oscareines_bachata/", yt: "https://www.youtube.com/channel/UCaLYKLMAcyJID-EprCAD7sw" },
   { name: "Jose y Yoli Conuco", country: "Bachata | España", img: "jose-evelyn-bachata-festival-pasos-libres-1.jpg", ig: "https://www.instagram.com/conucodance", yt: "https://www.youtube.com/c/ConucoDanceBenidorm" },
-  { name: "Andrés y Jessica", country: "Bachata | Colombia", img: "artistas/andresyyessica_colombia.webp" },
-  { name: "Gon y Bella", country: "Bachata | Argentina", img: "artistas/gonbella_argentina.webp" },
 ];
 
 export const ARTISTS_EN = [
@@ -91,6 +91,8 @@ export const ARTISTS_EN = [
   { name: "Evelyn La Negra", country: "Bachata | Venezuela", img: "evelyn-la-negra-bachata-festival-pasos-libres_1.jpg", ig: "https://www.instagram.com/evelynlanegrasalsa/?hl=es", yt: "https://www.youtube.com/watch?v=BdjG8_loPmM" },
   { name: "Alfonso and Monica", country: "Bachata | Spain", img: "festival-evelin-la-negra-alfonso-monica.jpg", ig: "https://www.instagram.com/alfonsoymonicaoficial/", yt: "https://www.youtube.com/channel/UCoE7rixJbJx0JnZ_lHP5Ylg" },
   { name: "Berra and Reyes", country: "Bachata | Spain", img: "IMG_7831.webp", ig: "https://www.instagram.com/berrayreyesoficial/" },
+  { name: "Andrés and Jessica", country: "Bachata | Colombia", img: "artistas/andresyyessica_colombia.webp" },
+  { name: "Gon and Bella", country: "Bachata | Argentina", img: "artistas/gonbella_argentina.webp" },
   { name: "Gabriele Di Marzo", country: "Bachata | Italy", img: "gabriele-Di-marzo.jpeg", ig: "https://www.instagram.com/gabrieledimarzodancer/" },
   { name: "Oscar El Niño", country: "Bachata | Dominican Republic", img: "festival-la-negra-dance-oscar-kids.jpg", ig: "https://www.instagram.com/oscarofficial_18/", yt: "https://www.youtube.com/@oscarnino8285" },
   { name: "Irene and Tomás", country: "Bachata | Spain", img: "irene-y-tomas.jpeg", ig: "https://www.instagram.com/ireneytomas/?hl=es" },
@@ -98,8 +100,6 @@ export const ARTISTS_EN = [
   { name: "Juan Pablo Paredes", country: "Bachata | Dominican Republic", img: "juan-pablo-paredees-bachata-festival-pasos-libres.png", ig: "https://www.instagram.com/juanparedes_tu_bachatero/", fb: "https://www.facebook.com/juan.pablo.paredes.bachata/photos_by?locale=es_ES" },
   { name: "Oscar and Inés", country: "Bachata | Spain", img: "festival-la-negra-dance-oscar-e-ines.jpg", ig: "https://www.instagram.com/oscareines_bachata/", yt: "https://www.youtube.com/channel/UCaLYKLMAcyJID-EprCAD7sw" },
   { name: "Jose and Yoli Conuco", country: "Bachata | Spain", img: "jose-evelyn-bachata-festival-pasos-libres-1.jpg", ig: "https://www.instagram.com/conucodance", yt: "https://www.youtube.com/c/ConucoDanceBenidorm" },
-  { name: "Andrés and Jessica", country: "Bachata | Colombia", img: "artistas/andresyyessica_colombia.webp" },
-  { name: "Gon and Bella", country: "Bachata | Argentina", img: "artistas/gonbella_argentina.webp" },
 ];
 
 // Lista IT derivada de la EN: se traduce el país (la etiqueta visible) y el "and" de los dúos.
