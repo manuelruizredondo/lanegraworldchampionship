@@ -136,14 +136,15 @@ const gallery = [
   /* COMPETIDORES 2026 */
   .comp26 .p-display { margin-bottom: 14px; }
   .comp26 .p-lead { margin-bottom: 30px; }
-  .comp-nav-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 44px; max-width: 1000px; margin: 4px auto 8px; text-align: left; }
+  .comp-nav-wrap { max-width: 1000px; margin: 4px auto 8px; text-align: left; }
+  .comp-nav-group { margin-top: 26px; }
   .comp-nav-h { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; color: var(--gold); margin: 0 0 14px; padding-bottom: 9px; border-bottom: 1px solid rgba(0, 0, 0, .1); }
-  .comp-nav { display: flex; flex-wrap: wrap; gap: 9px; justify-content: flex-start; margin: 0; }
-  .comp-nav a { display: flex; align-items: center; justify-content: center; text-align: center; gap: 6px; width: 160px; min-height: 52px; padding: 8px 10px; border-radius: 10px; font-size: 12.5px; font-weight: 600; line-height: 1.25; background: var(--p-card, #f1eee9); color: var(--p-ink); text-decoration: none; transition: background .2s, color .2s; }
+  .comp-nav { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-start; margin: 0; }
+  .comp-nav a { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex: 0 0 calc(33.333% - 8px); box-sizing: border-box; min-height: 50px; padding: 8px 12px 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; line-height: 1.25; text-align: left; background: var(--p-card, #f1eee9); color: var(--p-ink); text-decoration: none; transition: background .2s, color .2s; }
   .comp-nav a:hover { background: var(--gold); color: #fff; }
-  .comp-nav-n { font-size: 11px; opacity: .6; }
-  .comp-nav a:hover .comp-nav-n { opacity: .85; }
-  @media (max-width: 720px) { .comp-nav-wrap { grid-template-columns: 1fr; gap: 22px; } }
+  .comp-nav-n { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: var(--p-ink); font-size: 12px; font-weight: 700; }
+  @media (max-width: 720px) { .comp-nav a { flex: 0 0 calc(50% - 6px); } }
+  @media (max-width: 520px) { .comp-nav a { flex: 0 0 100%; } }
   .comp-cat { margin-top: 52px; }
   .comp-cat-title { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: clamp(20px, 2.4vw, 28px); font-weight: 700; letter-spacing: -.02em; color: var(--p-ink); margin: 0 0 26px; }
   .comp-cat-n { font-size: 14px; font-weight: 700; color: #fff; background: var(--gold); border-radius: 999px; padding: 2px 10px; }
