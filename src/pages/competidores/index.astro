@@ -14,6 +14,9 @@ const subNav = [
 import { img } from "@/data/img.js";
 import { COMP_BASE, COMP_CATS, COMP_BY_CAT } from "@/data/competidores2026.js";
 const anchor = (key) => "cat-" + key.replace("/", "-");
+// Chip corto: quita "Bachata"/"Salsa" del texto (ya va en la cabecera del grupo).
+const shortCat = (s) => s.replace(/\b(Bachata|Salsa)\b/gi, "").replace(/\s{2,}/g, " ").replace(/^\s*·\s*/, "").replace(/\s*·\s*$/, "").replace(/\s+·/g, " ·").trim();
+const STYLES = [{ key: "bachata", label: "Bachata" }, { key: "salsa", label: "Salsa" }];
 
 const categories = [
   { label: "Dúos Masculinos salsa", img: "DUOS-MASCULINO-SALSA-2025.jpeg" },
@@ -53,11 +56,18 @@ const gallery = [
         <p class="p-eyebrow">Mundial de Pasos Libres · 2026</p>
         <h1 class="p-display">Competidores 2026</h1>
         <p class="p-lead p-narrow">Los 411 bailarines y bailarinas de todo el mundo que competirán en Calpe, del 21 al 25 de octubre. Salsa y bachata, de la preeliminatoria a la gran final.</p>
-        <nav class="comp-nav" aria-label="Categorías de competición">
-          {COMP_CATS.map((c) => (
-            <a href={`#${anchor(c.key)}`}>{c.es}<span class="comp-nav-n">{c.n}</span></a>
+        <div class="comp-nav-wrap">
+          {STYLES.map((st) => (
+            <div class="comp-nav-group">
+              <h3 class="comp-nav-h">{st.label}</h3>
+              <nav class="comp-nav" aria-label={`Categorías ${st.label}`}>
+                {COMP_CATS.filter((c) => c.style === st.key).map((c) => (
+                  <a href={`#${anchor(c.key)}`}>{shortCat(c.es)}<span class="comp-nav-n">{c.n}</span></a>
+                ))}
+              </nav>
+            </div>
           ))}
-        </nav>
+        </div>
         {COMP_CATS.map((c) => (
           <div class="comp-cat" id={anchor(c.key)}>
             <h2 class="comp-cat-title">{c.es}<span class="comp-cat-n">{c.n}</span></h2>
@@ -126,11 +136,14 @@ const gallery = [
   /* COMPETIDORES 2026 */
   .comp26 .p-display { margin-bottom: 14px; }
   .comp26 .p-lead { margin-bottom: 30px; }
-  .comp-nav { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 0 auto 24px; max-width: 1040px; }
+  .comp-nav-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 44px; max-width: 1000px; margin: 4px auto 8px; text-align: left; }
+  .comp-nav-h { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; color: var(--gold); margin: 0 0 14px; padding-bottom: 9px; border-bottom: 1px solid rgba(0, 0, 0, .1); }
+  .comp-nav { display: flex; flex-wrap: wrap; gap: 9px; justify-content: flex-start; margin: 0; }
   .comp-nav a { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px; background: var(--p-card, #f1eee9); color: var(--p-ink); text-decoration: none; transition: background .2s, color .2s; }
   .comp-nav a:hover { background: var(--gold); color: #fff; }
   .comp-nav-n { font-size: 11px; opacity: .6; }
   .comp-nav a:hover .comp-nav-n { opacity: .85; }
+  @media (max-width: 720px) { .comp-nav-wrap { grid-template-columns: 1fr; gap: 22px; } }
   .comp-cat { margin-top: 52px; }
   .comp-cat-title { display: flex; align-items: center; justify-content: center; gap: 12px; font-size: clamp(20px, 2.4vw, 28px); font-weight: 700; letter-spacing: -.02em; color: var(--p-ink); margin: 0 0 26px; }
   .comp-cat-n { font-size: 14px; font-weight: 700; color: #fff; background: var(--gold); border-radius: 999px; padding: 2px 10px; }
