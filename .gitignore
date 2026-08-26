@@ -5,3 +5,6 @@ dist/
 
 # Vídeo pesado del hotel — no versionar (subir aparte)
 public/video/
+
+# Copia local temporal para previsualizar competidores (no versionar)
+public/comp-preview/
