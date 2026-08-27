@@ -6,6 +6,11 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Funciones serverless (inscripción de competidores → Airtable)
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Redirección 301: el dominio de Netlify redirige al dominio definitivo
 # (evita contenido duplicado; www→raíz ya lo gestiona Netlify automáticamente).
 [[redirects]]

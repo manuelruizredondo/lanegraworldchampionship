@@ -1,0 +1,239 @@
+---
+import Base from "@/layouts/Base.astro";
+
+// Especialidades para el desplegable (modalidades del Mundial, sin las rondas).
+const ESPECIALIDADES = [
+  "Bachata · Solista Femenino",
+  "Bachata · Solista Masculino",
+  "Bachata · Dúos",
+  "Bachata · Parejas",
+  "Bachata · Equipos",
+  "Salsa · Solista Femenino",
+  "Salsa · Solista Masculino",
+  "Salsa · Dúos Femeninos",
+  "Salsa · Dúos Masculinos",
+  "Salsa · Parejas",
+  "Salsa · Equipos",
+];
+---
+
+<Base title="Inscripción de competidores" description="Acceso privado para inscribir competidores en el Mundial de Pasos Libres 2026." lang="es">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+
+  <div class="prop">
+    <section class="p-section p-center ins">
+      <div class="p-container">
+        <p class="p-eyebrow">Mundial de Pasos Libres · 2026</p>
+        <h1 class="p-display">Inscripción de competidores</h1>
+
+        <!-- PUERTA DE ACCESO -->
+        <div id="ins-gate" class="ins-box">
+          <p class="p-lead p-narrow">Zona privada. Introduce la contraseña que te ha facilitado la organización para acceder al formulario de inscripción.</p>
+          <div class="gate-row">
+            <input id="gate-pass" type="password" placeholder="Contraseña" autocomplete="off" />
+            <button id="gate-btn" type="button" class="p-btn p-btn-solid">Entrar</button>
+          </div>
+          <p id="gate-msg" class="ins-msg" role="alert"></p>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form id="ins-form" class="ins-form" hidden novalidate>
+          <p class="ins-intro">Rellena todos los campos marcados con <span class="req">*</span>. Los datos se usan solo para la organización del campeonato.</p>
+
+          <div class="grid2">
+            <label class="fld"><span>Nombre <span class="req">*</span></span><input name="nombre" type="text" required /></label>
+            <label class="fld"><span>Apellidos <span class="req">*</span></span><input name="apellidos" type="text" required /></label>
+            <label class="fld"><span>Email <span class="req">*</span></span><input name="email" type="email" required /></label>
+            <label class="fld"><span>Teléfono / WhatsApp <span class="req">*</span></span><input name="telefono" type="tel" required /></label>
+            <label class="fld"><span>País <span class="req">*</span></span><input name="pais" type="text" required /></label>
+            <label class="fld"><span>Ciudad</span><input name="ciudad" type="text" /></label>
+            <label class="fld"><span>Fecha de nacimiento <span class="req">*</span></span><input name="nacimiento" type="date" required /></label>
+            <label class="fld"><span>Academia / Escuela</span><input name="academia" type="text" /></label>
+          </div>
+
+          <label class="fld"><span>Especialidad <span class="req">*</span></span>
+            <select name="especialidad" required>
+              <option value="" disabled selected>Elige tu categoría…</option>
+              {ESPECIALIDADES.map((e) => <option value={e}>{e}</option>)}
+            </select>
+          </label>
+
+          <label class="fld" id="fld-pareja" hidden><span>Nombre de la pareja / equipo <span class="req">*</span></span><input name="pareja" type="text" /></label>
+
+          <!-- FOTO -->
+          <div class="fld foto-fld">
+            <span>Foto del competidor <span class="req">*</span></span>
+            <div class="foto-wrap">
+              <div class="foto-help">
+                <p><strong>Cómo debe ser la foto:</strong></p>
+                <ul>
+                  <li>Vertical (retrato), de cintura para arriba.</li>
+                  <li>Fondo neutro y buena iluminación, cara bien visible.</li>
+                  <li>Formato JPG o PNG. Se mostrará recortada en 3:4.</li>
+                </ul>
+                <figure class="foto-ejemplo">
+                  <img src="/img/inscripcion-ejemplo.jpg" alt="Ejemplo de foto" loading="lazy" onerror="this.closest('.foto-ejemplo').classList.add('sin-img')" />
+                  <figcaption>Ejemplo</figcaption>
+                </figure>
+              </div>
+              <div class="foto-drop">
+                <input id="foto-input" name="foto" type="file" accept="image/jpeg,image/png" required />
+                <div class="foto-preview" id="foto-preview" hidden><img id="foto-preview-img" alt="Vista previa" /></div>
+              </div>
+            </div>
+          </div>
+
+          <label class="fld"><span>Enlace a un vídeo bailando (YouTube o Instagram) <span class="req">*</span></span>
+            <input name="video" type="url" placeholder="https://…" required />
+          </label>
+          <label class="fld"><span>Instagram del competidor</span><input name="instagram" type="text" placeholder="@usuario" /></label>
+          <label class="fld"><span>Observaciones</span><textarea name="observaciones" rows="3"></textarea></label>
+
+          <label class="chk"><input type="checkbox" name="acepta_bases" required /> <span>He leído y acepto las <a href="/bases-y-reglamento/" target="_blank" rel="noopener">bases y el reglamento</a> del campeonato. <span class="req">*</span></span></label>
+          <label class="chk"><input type="checkbox" name="acepta_rgpd" required /> <span>Acepto la <a href="/politica-de-privacidad/" target="_blank" rel="noopener">política de privacidad</a> y el uso de mi imagen para la promoción del festival. <span class="req">*</span></span></label>
+
+          <button type="submit" id="ins-submit" class="p-btn p-btn-solid ins-submit">Enviar inscripción</button>
+          <p id="ins-msg" class="ins-msg" role="alert"></p>
+        </form>
+
+        <!-- ÉXITO -->
+        <div id="ins-ok" class="ins-box ins-ok" hidden>
+          <h2 class="ins-ok-title">¡Inscripción enviada! ✅</h2>
+          <p class="p-narrow">Hemos recibido los datos del competidor. La organización los revisará. ¡Gracias!</p>
+          <button type="button" id="ins-again" class="p-btn p-btn-light">Inscribir a otro competidor</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .ins .p-display { margin-bottom: 22px; }
+  .ins-box { max-width: 560px; margin: 0 auto; background: var(--p-card, #f6f2ec); border-radius: 16px; padding: clamp(24px, 4vw, 40px); text-align: center; }
+  .gate-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+  .gate-row input { flex: 1 1 240px; max-width: 300px; padding: 13px 16px; border: 1.5px solid #d8d2c7; border-radius: 10px; font-size: 16px; }
+  .ins-msg { min-height: 20px; margin: 14px 0 0; font-size: 14px; font-weight: 600; color: #c0392b; }
+  .ins-msg.ok { color: #1e8449; }
+
+  /* FORMULARIO */
+  .ins-form { max-width: 720px; margin: 0 auto; text-align: left; }
+  .ins-intro { font-size: 14px; color: var(--p-ink); opacity: .75; margin: 0 0 24px; text-align: center; }
+  .req { color: var(--gold-dark, #a2823f); font-weight: 700; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .fld { display: block; margin: 16px 0 0; }
+  .fld > span { display: block; font-size: 13px; font-weight: 600; color: var(--p-ink); margin: 0 0 6px; }
+  .fld input, .fld select, .fld textarea {
+    width: 100%; padding: 12px 14px; border: 1.5px solid #d8d2c7; border-radius: 10px;
+    font-size: 15px; font-family: inherit; background: #fff; color: var(--text); box-sizing: border-box;
+  }
+  .fld input:focus, .fld select:focus, .fld textarea:focus { outline: none; border-color: var(--gold); }
+  .grid2 .fld { margin: 0; }
+
+  /* FOTO */
+  .foto-fld > span { display: block; font-size: 13px; font-weight: 600; color: var(--p-ink); margin: 0 0 6px; }
+  .foto-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; background: #fff; border: 1.5px dashed #d8d2c7; border-radius: 12px; padding: 16px; }
+  .foto-help p { margin: 0 0 8px; font-size: 13px; }
+  .foto-help ul { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--p-ink); opacity: .85; line-height: 1.5; }
+  .foto-ejemplo { margin: 0; width: 120px; }
+  .foto-ejemplo img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; }
+  .foto-ejemplo.sin-img img { display: none; }
+  .foto-ejemplo.sin-img::before { content: "Ejemplo"; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 3/4; border-radius: 8px; background: repeating-linear-gradient(45deg, #eee, #eee 8px, #e4e4e4 8px, #e4e4e4 16px); color: #999; font-size: 12px; }
+  .foto-ejemplo figcaption { font-size: 11px; color: #999; text-align: center; margin-top: 4px; }
+  .foto-drop { display: flex; flex-direction: column; gap: 12px; }
+  .foto-preview img { width: 140px; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; border: 1px solid #e2ddd3; }
+
+  /* CHECKBOX */
+  .chk { display: flex; gap: 10px; align-items: flex-start; margin: 18px 0 0; font-size: 14px; line-height: 1.45; }
+  .chk input { margin-top: 3px; flex: none; width: 18px; height: 18px; accent-color: var(--gold); }
+  .chk a { color: var(--gold-dark, #a2823f); font-weight: 700; text-decoration: underline; }
+
+  .ins-submit { margin-top: 28px; width: 100%; }
+  .ins-ok-title { color: var(--p-ink); }
+
+  @media (max-width: 620px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .foto-wrap { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  const $ = (s) => document.querySelector(s);
+  const FN = "/.netlify/functions/inscripcion";
+  let pass = "";
+  let photo = null; // { base64, type, name }
+
+  // --- Puerta de acceso ---
+  const gate = $("#ins-gate"), gateMsg = $("#gate-msg"), form = $("#ins-form");
+  async function tryLogin() {
+    const val = ($("#gate-pass") as HTMLInputElement).value.trim();
+    if (!val) return;
+    gateMsg.textContent = "Comprobando…"; gateMsg.classList.remove("ok");
+    try {
+      const r = await fetch(FN, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "auth", password: val }) });
+      const d = await r.json();
+      if (r.ok && d.ok) { pass = val; gate.hidden = true; form.hidden = false; window.scrollTo({ top: 0, behavior: "smooth" }); }
+      else { gateMsg.textContent = d.error || "Contraseña incorrecta."; }
+    } catch { gateMsg.textContent = "No se pudo conectar. Inténtalo de nuevo."; }
+  }
+  $("#gate-btn").addEventListener("click", tryLogin);
+  $("#gate-pass").addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Enter") tryLogin(); });
+
+  // --- Campo condicional pareja/equipo ---
+  const sel = form.querySelector('[name="especialidad"]') as HTMLSelectElement;
+  const fldPareja = $("#fld-pareja"), inpPareja = fldPareja.querySelector("input") as HTMLInputElement;
+  sel.addEventListener("change", () => {
+    const needs = /Dúos|Parejas|Equipos/.test(sel.value);
+    fldPareja.hidden = !needs;
+    inpPareja.required = needs;
+    if (!needs) inpPareja.value = "";
+  });
+
+  // --- Foto: reducir tamaño en el navegador y previsualizar ---
+  $("#foto-input").addEventListener("change", (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) { photo = null; return; }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const max = 1200;
+      let { width: w, height: h } = img;
+      if (w > max || h > max) { const s = max / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+      const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+      cv.getContext("2d")!.drawImage(img, 0, 0, w, h);
+      const dataUrl = cv.toDataURL("image/jpeg", 0.85);
+      photo = { base64: dataUrl.split(",")[1], type: "image/jpeg", name: (file.name.replace(/\.[^.]+$/, "") || "foto") + ".jpg" };
+      const pv = $("#foto-preview"); (pv.querySelector("img") as HTMLImageElement).src = dataUrl; pv.hidden = false;
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  });
+
+  // --- Envío ---
+  const msg = $("#ins-msg"), submitBtn = $("#ins-submit") as HTMLButtonElement;
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = ""; msg.classList.remove("ok");
+    if (!(form as HTMLFormElement).checkValidity()) { (form as HTMLFormElement).reportValidity(); return; }
+    if (!photo) { msg.textContent = "Adjunta una foto del competidor."; return; }
+    const fd = new FormData(form as HTMLFormElement);
+    const fields = Object.fromEntries(fd.entries());
+    fields.acepta_bases = (form.querySelector('[name="acepta_bases"]') as HTMLInputElement).checked;
+    fields.acepta_rgpd = (form.querySelector('[name="acepta_rgpd"]') as HTMLInputElement).checked;
+    delete fields.foto;
+    submitBtn.disabled = true; submitBtn.textContent = "Enviando…";
+    try {
+      const r = await fetch(FN, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "submit", password: pass, fields, photo }) });
+      const d = await r.json();
+      if (r.ok && d.ok) { form.hidden = true; $("#ins-ok").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" }); }
+      else { msg.textContent = d.error || "No se pudo enviar. Inténtalo de nuevo."; }
+    } catch { msg.textContent = "Error de conexión. Inténtalo de nuevo."; }
+    finally { submitBtn.disabled = false; submitBtn.textContent = "Enviar inscripción"; }
+  });
+
+  // --- Inscribir a otro ---
+  $("#ins-again").addEventListener("click", () => {
+    (form as HTMLFormElement).reset();
+    photo = null; $("#foto-preview").hidden = true; fldPareja.hidden = true; inpPareja.required = false;
+    $("#ins-ok").hidden = true; form.hidden = false;
+  });
+</script>
