@@ -107,7 +107,7 @@ const ESPECIALIDADES = [
             </label>
 
             <div class="grid2">
-              <label class="fld"><span>Email de contacto <span class="req">*</span></span><input name="email" type="email" required /></label>
+              <label class="fld" id="fld-email"><span id="email-label">Email de contacto <span class="req">*</span></span><input name="email" type="email" required /></label>
               <label class="fld"><span>Teléfono / WhatsApp <span class="req">*</span></span><input name="telefono" type="tel" required /></label>
               <label class="fld"><span>Academia / Escuela</span><input name="academia" type="text" /></label>
               <label class="fld"><span>Ciudad</span><input name="ciudad" type="text" /></label>
@@ -209,6 +209,7 @@ const ESPECIALIDADES = [
   .chk { display: flex; gap: 10px; align-items: flex-start; margin: 18px 0 0; font-size: 14px; line-height: 1.45; }
   .chk input { margin-top: 3px; flex: none; width: 18px; height: 18px; accent-color: var(--gold); }
   .chk a { color: var(--gold-dark, #a2823f); font-weight: 700; text-decoration: underline; }
+  .lbl-mini { font-weight: 400; opacity: .65; }
 
   .ins-submit { margin-top: 28px; width: 100%; }
   .ins-ok-title { color: var(--p-ink); }
@@ -261,6 +262,7 @@ const ESPECIALIDADES = [
         <label class="int-f"><span>Fecha de nacimiento *</span><input data-c="nacimiento" type="date" required /></label>
         <label class="int-f"><span>País *</span><input data-c="pais" type="text" required /></label>
         <label class="int-f"><span>Documento (DNI/Pasaporte) *</span><input data-c="documento" type="text" required /></label>
+        <label class="int-f"><span>Email *</span><input data-c="email" type="email" required /></label>
         <label class="int-f"><span>Instagram</span><input data-c="instagram" type="text" placeholder="@usuario" /></label>
       </div>`;
     return c;
@@ -299,6 +301,13 @@ const ESPECIALIDADES = [
         : "Rellena los mismos datos para los dos integrantes.");
     intAdd.hidden = max <= min;
     $("#foto-label").innerHTML = (max === 1 ? "Foto del competidor" : esGrupo ? "Foto del grupo (una sola, con todos)" : "Foto de la pareja (una sola, con los dos)") + ' <span class="req">*</span>';
+    // En solistas el email ya se pide en la ficha del competidor: no se repite aquí.
+    const fldEmail = $("#fld-email"), inpEmail = fldEmail.querySelector("input") as HTMLInputElement;
+    fldEmail.hidden = max === 1;
+    inpEmail.required = max !== 1;
+    if (max === 1) inpEmail.value = "";
+    else $("#email-label").innerHTML = 'Email de contacto <span class="req">*</span> <span class="lbl-mini">(persona responsable de la inscripción)</span>';
+
     stepInt.hidden = false; stepComun.hidden = false;
     $("#esp-hint").hidden = true;
     // Si ya había foto, se vuelve a recortar con la proporción de la nueva categoría
@@ -315,6 +324,7 @@ const ESPECIALIDADES = [
       if (g("nacimiento")) bits.push("nac. " + g("nacimiento"));
       if (g("pais")) bits.push(g("pais"));
       if (g("documento")) bits.push("doc. " + g("documento"));
+      if (g("email")) bits.push(g("email"));
       if (g("instagram")) bits.push(g("instagram"));
       return bits.join(" · ");
     }).filter(Boolean).join("\n");
@@ -396,6 +406,8 @@ const ESPECIALIDADES = [
     fields.nacimiento = g1("nacimiento");
     fields.pais = g1("pais");
     fields.instagram = g1("instagram");
+    // En solistas, el email de contacto es el del propio competidor
+    if (max === 1) fields.email = g1("email");
     fields.integrantes = buildIntegrantes();
     fields.n_integrantes = String(intList.children.length);
     fields.acepta_bases = (form.querySelector('[name="acepta_bases"]') as HTMLInputElement).checked;
