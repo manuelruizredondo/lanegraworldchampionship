@@ -49,7 +49,9 @@ import Base from "@/layouts/Base.astro";
           <p id="adm-count" class="adm-count"></p>
           <div class="adm-tabla-wrap"><table class="adm-tabla"><thead><tr>
             <th>Foto</th><th>Nombre</th><th>Categoría</th><th>Grupo</th><th>Nº</th>
-            <th>País</th><th>Contacto</th><th>Vídeo</th><th>Estado</th>
+            <th>Integrantes</th><th>País / Ciudad</th><th>Academia</th>
+            <th>Email</th><th>Teléfono</th><th>Instagram</th><th>Vídeo</th>
+            <th>Fecha</th><th>Estado</th>
           </tr></thead><tbody id="adm-tbody"></tbody></table></div>
           <p id="adm-msg" class="adm-msg"></p>
         </div>
@@ -68,6 +70,9 @@ import Base from "@/layouts/Base.astro";
 </Base>
 
 <style>
+  /* Ancho completo, con el mismo margen lateral que la cabecera (clamp(24px, 6vw, 80px))
+     para que el panel quede alineado con el logo. */
+  .adm :global(.p-container) { max-width: none; width: 100%; padding-left: clamp(24px, 6vw, 80px); padding-right: clamp(24px, 6vw, 80px); }
   .adm-title { font-size: clamp(28px, 4vw, 44px); margin-bottom: 24px; }
   .adm-box { max-width: 480px; background: var(--p-card, #f6f2ec); border-radius: 16px; padding: 32px; text-align: center; }
   .gate-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
@@ -102,6 +107,9 @@ import Base from "@/layouts/Base.astro";
   :global(.est-Aprobado) { border-color: #7cb87c; color: #1e7a1e; }
   :global(.est-Rechazado) { border-color: #d9a1a1; color: #b03535; }
   :global(.adm-tabla a) { color: var(--gold-dark, #a2823f); font-weight: 600; }
+  :global(.adm-tabla .sub) { font-size: 12px; opacity: .6; }
+  :global(.adm-tabla .nw) { white-space: nowrap; }
+  :global(.adm-tabla .col-int) { max-width: 220px; font-size: 12.5px; line-height: 1.35; }
 
   /* Modal detalle */
   .adm-modal { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -175,6 +183,11 @@ import Base from "@/layouts/Base.astro";
   }
 
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // "1) Ana Ruiz · nac…" → "Ana Ruiz, Luis Gil" (el detalle completo va en el title y en la ficha)
+  const nombresCortos = (txt) => String(txt || "").split("\n")
+    .map((l) => l.replace(/^\s*\d+\)\s*/, "").split(" · ")[0].trim())
+    .filter(Boolean).join(", ");
+  const fecha = (iso) => { if (!iso) return ""; const d = new Date(iso); return isNaN(+d) ? "" : d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "2-digit" }); };
 
   // --- Tabla ---
   function visibles() {
@@ -198,9 +211,14 @@ import Base from "@/layouts/Base.astro";
         <td>${esc(it.especialidad)}</td>
         <td>${esc(it.grupo)}</td>
         <td>${it.n}</td>
-        <td>${esc(it.pais)}</td>
-        <td>${it.email ? `<a href="mailto:${esc(it.email)}">${esc(it.email)}</a><br>` : ""}${esc(it.telefono)}</td>
+        <td class="col-int">${it.integrantes ? `<span title="${esc(it.integrantes)}">${esc(nombresCortos(it.integrantes))}</span>` : ""}</td>
+        <td>${esc(it.pais)}${it.ciudad ? `<br><span class="sub">${esc(it.ciudad)}</span>` : ""}</td>
+        <td>${esc(it.academia)}</td>
+        <td>${it.email ? `<a href="mailto:${esc(it.email)}">${esc(it.email)}</a>` : ""}</td>
+        <td class="nw">${it.telefono ? `<a href="https://wa.me/${esc(String(it.telefono).replace(/[^0-9]/g, ""))}" target="_blank" rel="noopener">${esc(it.telefono)}</a>` : ""}</td>
+        <td>${it.instagram ? `<a href="https://instagram.com/${esc(String(it.instagram).replace(/^@/, ""))}" target="_blank" rel="noopener">${esc(it.instagram)}</a>` : ""}</td>
         <td>${it.video ? `<a href="${esc(it.video)}" target="_blank" rel="noopener">ver</a>` : ""}</td>
+        <td class="nw">${esc(fecha(it.creado))}</td>
         <td><select class="adm-est est-${esc(it.estado)}" data-est>
           ${["Pendiente", "Aprobado", "Rechazado"].map((s) => `<option${s === it.estado ? " selected" : ""}>${s}</option>`).join("")}
         </select></td>
@@ -254,8 +272,8 @@ import Base from "@/layouts/Base.astro";
 
   // --- CSV ---
   $("#adm-csv").addEventListener("click", () => {
-    const cols = ["nombre", "especialidad", "grupo", "n", "pais", "ciudad", "email", "telefono", "academia", "instagram", "video", "estado", "integrantes", "observaciones"];
-    const cab = ["Nombre", "Categoría", "Grupo", "Nº", "País", "Ciudad", "Email", "Teléfono", "Academia", "Instagram", "Vídeo", "Estado", "Integrantes", "Observaciones"];
+    const cols = ["creado", "nombre", "especialidad", "grupo", "n", "integrantes", "pais", "ciudad", "email", "telefono", "academia", "instagram", "video", "observaciones", "estado", "foto"];
+    const cab = ["Fecha", "Nombre", "Categoría", "Grupo", "Nº", "Integrantes", "País", "Ciudad", "Email", "Teléfono", "Academia", "Instagram", "Vídeo", "Observaciones", "Estado", "Foto"];
     const q = (v) => '"' + String(v ?? "").replace(/"/g, '""') + '"';
     const csv = "﻿" + [cab.map(q).join(";"), ...visibles().map((it) => cols.map((c) => q(it[c])).join(";"))].join("\n");
     const a = document.createElement("a");
