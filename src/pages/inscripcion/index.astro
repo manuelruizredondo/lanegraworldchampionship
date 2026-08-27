@@ -74,9 +74,9 @@ const ESPECIALIDADES = [
                 <div class="foto-help">
                   <p><strong>Cómo debe ser la foto:</strong></p>
                   <ul>
-                    <li>Vertical (retrato), de cintura para arriba.</li>
-                    <li>Fondo neutro y buena iluminación, caras bien visibles.</li>
-                    <li>Formato JPG o PNG. Se mostrará recortada en 3:4.</li>
+                    <li>De cintura para arriba, con las caras bien visibles.</li>
+                    <li>Fondo neutro y buena iluminación. Formato JPG o PNG.</li>
+                    <li>Se recorta sola por el centro: <strong>1:1</strong> en solistas y dúos, <strong>4:3</strong> en grupos.</li>
                   </ul>
                   <figure class="foto-ejemplo">
                     <img src="/img/inscripcion-ejemplo.jpg" alt="Ejemplo de foto" loading="lazy" onerror="this.closest('.foto-ejemplo').classList.add('sin-img')" />
@@ -85,7 +85,16 @@ const ESPECIALIDADES = [
                 </div>
                 <div class="foto-drop">
                   <input id="foto-input" name="foto" type="file" accept="image/jpeg,image/png" />
-                  <div class="foto-preview" id="foto-preview" hidden><img alt="Vista previa" /></div>
+                  <p class="foto-ratio" id="foto-ratio"></p>
+                  <!-- Previsualización sobre el cartel real: la plantilla va encima y su
+                       ventana transparente deja ver la foto recortada debajo. -->
+                  <figure class="cartel" id="cartel" hidden>
+                    <div class="cartel-inner">
+                      <div class="cartel-foto" id="cartel-foto"><img id="cartel-foto-img" alt="Tu foto en el cartel" /></div>
+                      <img class="cartel-marco" src="/img/preview.webp" alt="" />
+                    </div>
+                    <figcaption>Así quedará en el cartel</figcaption>
+                  </figure>
                 </div>
               </div>
             </div>
@@ -181,7 +190,19 @@ const ESPECIALIDADES = [
   .foto-ejemplo.sin-img::before { content: "Ejemplo"; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 3/4; border-radius: 8px; background: repeating-linear-gradient(45deg, #eee, #eee 8px, #e4e4e4 8px, #e4e4e4 16px); color: #999; font-size: 12px; }
   .foto-ejemplo figcaption { font-size: 11px; color: #999; text-align: center; margin-top: 4px; }
   .foto-drop { display: flex; flex-direction: column; gap: 12px; }
-  .foto-preview img { width: 140px; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; border: 1px solid #e2ddd3; }
+  .foto-ratio { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--gold-dark, #a2823f); line-height: 1.4; }
+
+  /* Previsualización sobre el cartel oficial (plantilla PNG con ventana transparente) */
+  .cartel { margin: 0; }
+  .cartel-inner { position: relative; width: 100%; max-width: 260px; aspect-ratio: 1080 / 1296; }
+  .cartel-marco { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  /* Hueco transparente medido sobre la plantilla (1080×1296): círculo de 676×678 centrado */
+  .cartel-foto {
+    position: absolute; left: 18.70%; top: 23.61%; width: 62.59%; height: 52.31%;
+    border-radius: 50%; overflow: hidden; background: #0d1b24;
+  }
+  .cartel-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cartel figcaption { font-size: 11px; color: #999; margin-top: 6px; }
 
   /* CHECKBOX */
   .chk { display: flex; gap: 10px; align-items: flex-start; margin: 18px 0 0; font-size: 14px; line-height: 1.45; }
@@ -279,6 +300,9 @@ const ESPECIALIDADES = [
     $("#foto-label").innerHTML = (max === 1 ? "Foto del competidor" : esGrupo ? "Foto del grupo (una sola, con todos)" : "Foto de la pareja (una sola, con los dos)") + ' <span class="req">*</span>';
     stepInt.hidden = false; stepComun.hidden = false;
     $("#esp-hint").hidden = true;
+    // Si ya había foto, se vuelve a recortar con la proporción de la nueva categoría
+    paintRatioHint();
+    if (lastFile) processPhoto(lastFile);
   });
   intAdd.addEventListener("click", addCard);
 
@@ -295,24 +319,42 @@ const ESPECIALIDADES = [
     }).filter(Boolean).join("\n");
   }
 
-  // --- Foto: reducir tamaño en el navegador y previsualizar ---
-  $("#foto-input").addEventListener("change", (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) { photo = null; return; }
+  // --- Foto: recorte centrado a la proporción de la categoría + preview sobre el cartel ---
+  // Solistas y dúos/parejas → 1:1 (la ventana del cartel es circular).
+  // Grupos → 4:3 (en los carteles de equipos la foto es apaisada).
+  function ratio() { return max > 2 ? 4 / 3 : 1; }
+  function ratioLabel() { return max > 2 ? "4:3 (apaisada)" : "1:1 (cuadrada)"; }
+  function paintRatioHint() {
+    $("#foto-ratio").textContent = sel.value
+      ? `La foto se recortará automáticamente a ${ratioLabel()} para esta categoría.`
+      : "";
+  }
+
+  let lastFile = null;
+  function processPhoto(file) {
+    if (!file) { photo = null; $("#cartel").hidden = true; return; }
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      const max2 = 1200;
-      let { width: w, height: h } = img;
-      if (w > max2 || h > max2) { const s = max2 / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
-      const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
-      cv.getContext("2d")!.drawImage(img, 0, 0, w, h);
+      const r = ratio();
+      // Recorte centrado a la proporción pedida
+      let sw = img.width, sh = Math.round(sw / r);
+      if (sh > img.height) { sh = img.height; sw = Math.round(sh * r); }
+      const sx = Math.round((img.width - sw) / 2), sy = Math.round((img.height - sh) / 2);
+      const outW = r === 1 ? 1200 : 1600, outH = Math.round(outW / r);
+      const cv = document.createElement("canvas"); cv.width = outW; cv.height = outH;
+      cv.getContext("2d")!.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
       const dataUrl = cv.toDataURL("image/jpeg", 0.85);
       photo = { base64: dataUrl.split(",")[1], type: "image/jpeg", name: (file.name.replace(/\.[^.]+$/, "") || "foto") + ".jpg" };
-      const pv = $("#foto-preview"); (pv.querySelector("img") as HTMLImageElement).src = dataUrl; pv.hidden = false;
+      ($("#cartel-foto-img") as HTMLImageElement).src = dataUrl;
+      $("#cartel").hidden = false;
       URL.revokeObjectURL(url);
     };
     img.src = url;
+  }
+  $("#foto-input").addEventListener("change", (e) => {
+    lastFile = (e.target as HTMLInputElement).files?.[0] || null;
+    processPhoto(lastFile);
   });
 
   // --- Envío ---
@@ -353,7 +395,7 @@ const ESPECIALIDADES = [
   // --- Otra inscripción ---
   $("#ins-again").addEventListener("click", () => {
     (form as HTMLFormElement).reset();
-    photo = null; $("#foto-preview").hidden = true;
+    photo = null; lastFile = null; $("#cartel").hidden = true; $("#foto-ratio").textContent = "";
     intList.innerHTML = ""; stepInt.hidden = true; stepComun.hidden = true;
     fldGrupo.hidden = true; grupoInput.required = false; $("#esp-hint").hidden = false;
     $("#ins-ok").hidden = true; form.hidden = false;
