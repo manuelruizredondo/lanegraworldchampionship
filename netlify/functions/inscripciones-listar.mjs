@@ -14,6 +14,21 @@ const json = (obj, status = 200) =>
 
 const ESTADOS = ["Pendiente", "Aprobado", "Rechazado"];
 
+// Actualiza campos de un registro de Airtable
+async function patch(api, auth, id, fields) {
+  try {
+    const res = await fetch(api, {
+      method: "PATCH",
+      headers: { ...auth, "content-type": "application/json" },
+      body: JSON.stringify({ records: [{ id, fields }], typecast: true }),
+    });
+    if (!res.ok) return json({ error: "Airtable rechazó el cambio.", detail: await res.text() }, 502);
+    return json({ ok: true });
+  } catch (e) {
+    return json({ error: "Error de conexión con Airtable.", detail: String(e) }, 502);
+  }
+}
+
 export default async (req) => {
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
 
@@ -35,17 +50,13 @@ export default async (req) => {
   // --- Cambiar el estado de una inscripción ---
   if (body.action === "estado") {
     if (!body.id || !ESTADOS.includes(body.estado)) return json({ error: "Datos no válidos." }, 400);
-    try {
-      const res = await fetch(api, {
-        method: "PATCH",
-        headers: { ...auth, "content-type": "application/json" },
-        body: JSON.stringify({ records: [{ id: body.id, fields: { Estado: body.estado } }], typecast: true }),
-      });
-      if (!res.ok) return json({ error: "Airtable rechazó el cambio.", detail: await res.text() }, 502);
-      return json({ ok: true });
-    } catch (e) {
-      return json({ error: "Error de conexión con Airtable.", detail: String(e) }, 502);
-    }
+    return patch(api, auth, body.id, { Estado: body.estado });
+  }
+
+  // --- Guardar las notas internas de la organización ---
+  if (body.action === "notas") {
+    if (!body.id) return json({ error: "Falta el identificador." }, 400);
+    return patch(api, auth, body.id, { "Notas": String(body.notas ?? "").slice(0, 5000) });
   }
 
   // --- Listar (paginando hasta agotar) ---
@@ -84,6 +95,7 @@ export default async (req) => {
         video: f["Vídeo"] || "",
         instagram: f.Instagram || "",
         observaciones: f.Observaciones || "",
+        notas: f.Notas || "",
         estado: f.Estado || "Pendiente",
         foto,
       };

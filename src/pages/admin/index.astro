@@ -51,7 +51,7 @@ import Base from "@/layouts/Base.astro";
             <th>Foto</th><th>Nombre</th><th>Categoría</th><th>Grupo</th><th>Nº</th>
             <th>Integrantes</th><th>País / Ciudad</th><th>Academia</th>
             <th>Email</th><th>Teléfono</th><th>Instagram</th><th>Vídeo</th>
-            <th>Fecha</th><th>Estado</th>
+            <th>Fecha</th><th>Notas</th><th>Estado</th>
           </tr></thead><tbody id="adm-tbody"></tbody></table></div>
           <p id="adm-msg" class="adm-msg"></p>
         </div>
@@ -103,9 +103,19 @@ import Base from "@/layouts/Base.astro";
   :global(.adm-foto) { width: 46px; height: 46px; object-fit: cover; border-radius: 8px; display: block; cursor: zoom-in; background: #eee; }
   :global(.adm-nombre) { font-weight: 700; cursor: pointer; }
   :global(.adm-nombre:hover) { color: var(--gold-dark, #a2823f); text-decoration: underline; }
-  :global(.adm-est) { border: 1.5px solid #ddd6c9; border-radius: 8px; padding: 5px 8px; font-size: 12.5px; font-family: inherit; background: #fff; }
-  :global(.est-Aprobado) { border-color: #7cb87c; color: #1e7a1e; }
-  :global(.est-Rechazado) { border-color: #d9a1a1; color: #b03535; }
+  /* Estados con color: se distinguen de un vistazo */
+  :global(.adm-est) { border: 1.5px solid transparent; border-radius: 8px; padding: 5px 8px; font-size: 12.5px; font-weight: 700; font-family: inherit; cursor: pointer; }
+  :global(.est-Pendiente) { background: #fff5db; border-color: #e8c76a; color: #8a6a12; }
+  :global(.est-Aprobado) { background: #e4f6e4; border-color: #7cb87c; color: #1a6b1a; }
+  :global(.est-Rechazado) { background: #fdeaea; border-color: #d9a1a1; color: #a82c2c; }
+  :global(.badge) { display: inline-block; border-radius: 999px; padding: 4px 12px; font-size: 12.5px; font-weight: 700; }
+  :global(.b-Pendiente) { background: #fff5db; color: #8a6a12; }
+  :global(.b-Aprobado) { background: #e4f6e4; color: #1a6b1a; }
+  :global(.b-Rechazado) { background: #fdeaea; color: #a82c2c; }
+  /* Botón de notas en la tabla */
+  :global(.adm-nota-btn) { border: 1.5px dashed #d8d2c7; background: #fff; border-radius: 8px; width: 32px; height: 30px; cursor: pointer; font-size: 14px; line-height: 1; color: #b3aa99; }
+  :global(.adm-nota-btn:hover) { border-color: var(--gold); color: var(--gold-dark, #a2823f); }
+  :global(.adm-nota-btn.tiene) { border-style: solid; border-color: var(--gold); background: #fdf6e8; }
   :global(.adm-tabla a) { color: var(--gold-dark, #a2823f); font-weight: 600; }
   :global(.adm-tabla .sub) { font-size: 12px; opacity: .6; }
   :global(.adm-tabla .nw) { white-space: nowrap; }
@@ -124,6 +134,16 @@ import Base from "@/layouts/Base.astro";
   :global(.adm-d dt) { font-weight: 700; color: var(--gold-dark, #a2823f); }
   :global(.adm-d dd) { margin: 0; }
   :global(.adm-d pre) { white-space: pre-wrap; font-family: inherit; margin: 0; }
+  /* Notas internas de la organización */
+  :global(.adm-notas) { margin-top: 22px; padding-top: 18px; border-top: 1px solid #efeae1; }
+  :global(.adm-notas label) { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--gold-dark, #a2823f); margin-bottom: 8px; }
+  :global(.adm-notas textarea) { width: 100%; padding: 12px 14px; border: 1.5px solid #d8d2c7; border-radius: 10px; font-size: 14px; font-family: inherit; box-sizing: border-box; resize: vertical; }
+  :global(.adm-notas textarea:focus) { outline: none; border-color: var(--gold); }
+  :global(.adm-notas-row) { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+  :global(.adm-notas-row .p-btn) { padding: 9px 20px; font-size: 14px; }
+  :global(.adm-notas-msg) { font-size: 13px; font-weight: 600; }
+  :global(.adm-notas-msg.ok) { color: #1a6b1a; }
+  :global(.adm-notas-msg.err) { color: #c0392b; }
 
   @media (max-width: 760px) {
     .adm-kpis { grid-template-columns: repeat(2, 1fr); }
@@ -219,6 +239,7 @@ import Base from "@/layouts/Base.astro";
         <td>${it.instagram ? `<a href="https://instagram.com/${esc(String(it.instagram).replace(/^@/, ""))}" target="_blank" rel="noopener">${esc(it.instagram)}</a>` : ""}</td>
         <td>${it.video ? `<a href="${esc(it.video)}" target="_blank" rel="noopener">ver</a>` : ""}</td>
         <td class="nw">${esc(fecha(it.creado))}</td>
+        <td><button type="button" class="adm-nota-btn${it.notas ? " tiene" : ""}" data-ver title="${it.notas ? esc(it.notas) : "Añadir notas"}">${it.notas ? "📝" : "＋"}</button></td>
         <td><select class="adm-est est-${esc(it.estado)}" data-est>
           ${["Pendiente", "Aprobado", "Rechazado"].map((s) => `<option${s === it.estado ? " selected" : ""}>${s}</option>`).join("")}
         </select></td>
@@ -257,14 +278,42 @@ import Base from "@/layouts/Base.astro";
           <dt>Email</dt><dd>${it.email ? `<a href="mailto:${esc(it.email)}">${esc(it.email)}</a>` : "—"}</dd>
           <dt>Teléfono</dt><dd>${esc(it.telefono) || "—"}</dd>
           <dt>Academia</dt><dd>${esc(it.academia) || "—"}</dd>
-          <dt>Instagram</dt><dd>${esc(it.instagram) || "—"}</dd>
+          <dt>Instagram</dt><dd>${it.instagram ? `<a href="https://instagram.com/${esc(String(it.instagram).replace(/^@/, ""))}" target="_blank" rel="noopener">${esc(it.instagram)}</a>` : "—"}</dd>
           <dt>Vídeo</dt><dd>${it.video ? `<a href="${esc(it.video)}" target="_blank" rel="noopener">${esc(it.video)}</a>` : "—"}</dd>
           <dt>Observaciones</dt><dd><pre>${esc(it.observaciones) || "—"}</pre></dd>
-          <dt>Estado</dt><dd>${esc(it.estado)}</dd>
-        </dl></div>`;
+          <dt>Estado</dt><dd><span class="badge b-${esc(it.estado)}">${esc(it.estado)}</span></dd>
+        </dl>
+        <div class="adm-notas">
+          <label for="adm-notas-txt">Notas de la organización</label>
+          <textarea id="adm-notas-txt" rows="4" placeholder="Anota aquí lo que necesites: revisión de la foto, pagos, dudas…">${esc(it.notas)}</textarea>
+          <div class="adm-notas-row">
+            <button type="button" class="p-btn p-btn-solid" id="adm-notas-save" data-id="${esc(it.id)}">Guardar notas</button>
+            <span id="adm-notas-msg" class="adm-notas-msg"></span>
+          </div>
+        </div></div>`;
       $("#adm-modal").hidden = false;
     }
   });
+  // Guardar notas internas en Airtable
+  $("#adm-modal").addEventListener("click", async (e) => {
+    const btn = (e.target as HTMLElement).closest("#adm-notas-save") as HTMLButtonElement;
+    if (!btn) return;
+    const txt = ($("#adm-notas-txt") as HTMLTextAreaElement).value;
+    const msg = $("#adm-notas-msg");
+    btn.disabled = true; msg.textContent = "Guardando…"; msg.className = "adm-notas-msg";
+    const { ok, data } = await api({ action: "notas", id: btn.dataset.id, notas: txt });
+    btn.disabled = false;
+    if (ok) {
+      const it = datos.find((d) => d.id === btn.dataset.id);
+      if (it) it.notas = txt;
+      msg.textContent = "Guardado ✓"; msg.className = "adm-notas-msg ok";
+      filtrar();
+    } else {
+      msg.textContent = data.error || "No se pudo guardar.";
+      msg.className = "adm-notas-msg err";
+    }
+  });
+
   $("#adm-modal").addEventListener("click", (e) => {
     if ((e.target as HTMLElement).closest("[data-cerrar]")) $("#adm-modal").hidden = true;
   });
@@ -272,8 +321,8 @@ import Base from "@/layouts/Base.astro";
 
   // --- CSV ---
   $("#adm-csv").addEventListener("click", () => {
-    const cols = ["creado", "nombre", "especialidad", "grupo", "n", "integrantes", "pais", "ciudad", "email", "telefono", "academia", "instagram", "video", "observaciones", "estado", "foto"];
-    const cab = ["Fecha", "Nombre", "Categoría", "Grupo", "Nº", "Integrantes", "País", "Ciudad", "Email", "Teléfono", "Academia", "Instagram", "Vídeo", "Observaciones", "Estado", "Foto"];
+    const cols = ["creado", "nombre", "especialidad", "grupo", "n", "integrantes", "pais", "ciudad", "email", "telefono", "academia", "instagram", "video", "observaciones", "notas", "estado", "foto"];
+    const cab = ["Fecha", "Nombre", "Categoría", "Grupo", "Nº", "Integrantes", "País", "Ciudad", "Email", "Teléfono", "Academia", "Instagram", "Vídeo", "Observaciones", "Notas", "Estado", "Foto"];
     const q = (v) => '"' + String(v ?? "").replace(/"/g, '""') + '"';
     const csv = "﻿" + [cab.map(q).join(";"), ...visibles().map((it) => cols.map((c) => q(it[c])).join(";"))].join("\n");
     const a = document.createElement("a");
