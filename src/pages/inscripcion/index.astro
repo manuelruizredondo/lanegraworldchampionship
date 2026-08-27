@@ -74,12 +74,13 @@ const ESPECIALIDADES = [
                 <div class="foto-help">
                   <p><strong>Cómo debe ser la foto:</strong></p>
                   <ul>
-                    <li>De cintura para arriba, con las caras bien visibles.</li>
-                    <li>Fondo neutro y buena iluminación. Formato JPG o PNG.</li>
-                    <li>Se recorta sola por el centro: <strong>1:1</strong> en solistas y dúos, <strong>4:3</strong> en grupos.</li>
+                    <li id="help-caras">Las caras deben quedar <strong>dentro del círculo</strong> que ves en el ejemplo, dejando algo de espacio con el borde de la foto (no peguéis las cabezas al filo).</li>
+                    <li>De cintura para arriba, fondo neutro y buena iluminación.</li>
+                    <li id="help-ratio">Formato JPG o PNG.</li>
                   </ul>
                   <figure class="foto-ejemplo">
-                    <img src="/img/preview-1-1.webp" alt="Ejemplo: las caras deben quedar dentro del círculo, con aire por arriba y a los lados" loading="lazy" />
+                    <!-- Si aún no existe la guía 4:3 de grupos, se muestra la 1:1 -->
+                    <img id="foto-ejemplo-img" src="/img/preview-1-1.webp" alt="Ejemplo: las caras dentro del círculo, con espacio hasta el borde" loading="lazy" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/img/preview-1-1.webp';}" />
                     <figcaption>Ejemplo: las caras, dentro del círculo verde</figcaption>
                   </figure>
                 </div>
@@ -185,7 +186,7 @@ const ESPECIALIDADES = [
   .foto-help p { margin: 0 0 8px; font-size: 13px; }
   .foto-help ul { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--p-ink); opacity: .85; line-height: 1.5; }
   .foto-ejemplo { margin: 0; width: 100%; max-width: 200px; }
-  .foto-ejemplo img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; }
+  .foto-ejemplo img { width: 100%; height: auto; border-radius: 8px; display: block; }
   .foto-ejemplo figcaption { font-size: 11px; color: #999; text-align: center; margin-top: 5px; line-height: 1.35; }
   .foto-drop { display: flex; flex-direction: column; gap: 12px; }
   .foto-ratio { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--gold-dark, #a2823f); line-height: 1.4; }
@@ -322,10 +323,16 @@ const ESPECIALIDADES = [
   // Grupos → 4:3 (en los carteles de equipos la foto es apaisada).
   function ratio() { return max > 2 ? 4 / 3 : 1; }
   function ratioLabel() { return max > 2 ? "4:3 (apaisada)" : "1:1 (cuadrada)"; }
+  // El texto solo menciona la proporción de la categoría elegida, para no confundir.
   function paintRatioHint() {
-    $("#foto-ratio").textContent = sel.value
-      ? `La foto se recortará automáticamente a ${ratioLabel()} para esta categoría.`
-      : "";
+    if (!sel.value) { $("#foto-ratio").textContent = ""; return; }
+    $("#foto-ratio").textContent = `La foto se recortará automáticamente a ${ratioLabel()} para esta categoría.`;
+    $("#help-ratio").innerHTML = `Formato JPG o PNG. Se recorta sola por el centro a <strong>${ratioLabel()}</strong>.`;
+    const esGrupo2 = max > 2;
+    ($("#foto-ejemplo-img") as HTMLImageElement).src = esGrupo2 ? "/img/preview-4-3.webp" : "/img/preview-1-1.webp";
+    $("#help-caras").innerHTML = esGrupo2
+      ? 'Todas las caras deben quedar <strong>dentro de la zona marcada</strong> del ejemplo, dejando algo de espacio con el borde de la foto.'
+      : 'Las caras deben quedar <strong>dentro del círculo</strong> que ves en el ejemplo, dejando algo de espacio con el borde de la foto (no peguéis las cabezas al filo).';
   }
 
   let lastFile = null;
