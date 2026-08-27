@@ -76,6 +76,9 @@ const ESPECIALIDADES = [
                   <ul>
                     <li id="help-caras">Las caras deben quedar <strong>dentro del círculo</strong> que ves en el ejemplo, dejando algo de espacio con el borde de la foto (no peguéis las cabezas al filo).</li>
                     <li>De cintura para arriba, fondo neutro y buena iluminación. <strong>¡Os queremos increíbles!</strong></li>
+                    <li>Mirando a cámara y con la cara bien visible. Podéis llevar gorra, siempre que no os tape la cara.</li>
+                    <li><strong>Sin texto, logos, marcos ni collages</strong>, y que no sea una captura de pantalla: mandad la foto original.</li>
+                    <li id="help-juntos">En dúos y parejas, los dos en la misma foto.</li>
                     <li id="help-ratio">Formato JPG o PNG.</li>
                   </ul>
                   <figure class="foto-ejemplo">
@@ -331,6 +334,15 @@ const ESPECIALIDADES = [
       ? "Formato JPG o PNG. Se recorta sola, no hace falta que la prepares."
       : 'Formato JPG o PNG, <strong>cuadrada (1:1)</strong> — por ejemplo <strong>1080 × 1080 px</strong>.';
     ($("#foto-ejemplo-img") as HTMLImageElement).src = esGrupo2 ? "/img/preview-4-3.webp" : "/img/preview-1-1.webp";
+    // "Los dos juntos" solo tiene sentido en dúos/parejas; en equipos, que quepan todos.
+    const juntos = $("#help-juntos");
+    if (max === 1) { juntos.hidden = true; }
+    else {
+      juntos.hidden = false;
+      juntos.innerHTML = esGrupo2
+        ? "Salid <strong>todos en la misma foto</strong>, enteros y sin cortar a nadie por los lados."
+        : "Los dos <strong>en la misma foto</strong>, no dos fotos sueltas ni un montaje.";
+    }
     $("#help-caras").innerHTML = esGrupo2
       ? 'Todas las caras deben quedar <strong>dentro de la zona marcada</strong> del ejemplo, dejando algo de espacio con el borde de la foto.'
       : 'Las caras deben quedar <strong>dentro del círculo</strong> que ves en el ejemplo, dejando algo de espacio con el borde de la foto (no peguéis las cabezas al filo).';
