@@ -79,8 +79,8 @@ const ESPECIALIDADES = [
                     <li>Se recorta sola por el centro: <strong>1:1</strong> en solistas y dúos, <strong>4:3</strong> en grupos.</li>
                   </ul>
                   <figure class="foto-ejemplo">
-                    <img src="/img/inscripcion-ejemplo.jpg" alt="Ejemplo de foto" loading="lazy" onerror="this.closest('.foto-ejemplo').classList.add('sin-img')" />
-                    <figcaption>Ejemplo</figcaption>
+                    <img src="/img/preview-1-1.webp" alt="Ejemplo: las caras deben quedar dentro del círculo, con aire por arriba y a los lados" loading="lazy" />
+                    <figcaption>Ejemplo: las caras, dentro del círculo verde</figcaption>
                   </figure>
                 </div>
                 <div class="foto-drop">
@@ -184,11 +184,9 @@ const ESPECIALIDADES = [
   .foto-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; background: #fff; border: 1.5px dashed #d8d2c7; border-radius: 12px; padding: 16px; }
   .foto-help p { margin: 0 0 8px; font-size: 13px; }
   .foto-help ul { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--p-ink); opacity: .85; line-height: 1.5; }
-  .foto-ejemplo { margin: 0; width: 120px; }
-  .foto-ejemplo img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px; }
-  .foto-ejemplo.sin-img img { display: none; }
-  .foto-ejemplo.sin-img::before { content: "Ejemplo"; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 3/4; border-radius: 8px; background: repeating-linear-gradient(45deg, #eee, #eee 8px, #e4e4e4 8px, #e4e4e4 16px); color: #999; font-size: 12px; }
-  .foto-ejemplo figcaption { font-size: 11px; color: #999; text-align: center; margin-top: 4px; }
+  .foto-ejemplo { margin: 0; width: 100%; max-width: 200px; }
+  .foto-ejemplo img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; }
+  .foto-ejemplo figcaption { font-size: 11px; color: #999; text-align: center; margin-top: 5px; line-height: 1.35; }
   .foto-drop { display: flex; flex-direction: column; gap: 12px; }
   .foto-ratio { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--gold-dark, #a2823f); line-height: 1.4; }
 
