@@ -22,6 +22,8 @@ export const MENU = {
     { label: "EDICIONES ANTERIORES", href: "/ediciones/", sub: [
       { t: "MUNDIAL 2025", h: "/ganadores-2025/" },
       { t: "MUNDIAL 2024", h: "/ganadores/" },
+      { t: "FOTOS 2024", h: "/galeria-2024/", sep: true },
+      { t: "FOTOS 2023", h: "/galeria-2023/" },
     ]},
   ],
   en: [
@@ -45,6 +47,8 @@ export const MENU = {
     { label: "PAST EDITIONS", href: "/en/editions/", sub: [
       { t: "WORLD CUP 2025", h: "/en/winners-2025/" },
       { t: "WORLD CUP 2024", h: "/en/winners/" },
+      { t: "PHOTOS 2024", h: "/en/gallery-2024/", sep: true },
+      { t: "PHOTOS 2023", h: "/en/gallery-2023/" },
     ]},
   ],
   it: [
@@ -68,6 +72,8 @@ export const MENU = {
     { label: "EDIZIONI PRECEDENTI", href: "/it/edizioni/", sub: [
       { t: "MONDIALE 2025", h: "/it/winners-2025/" },
       { t: "MONDIALE 2024", h: "/it/winners/" },
+      { t: "FOTO 2024", h: "/it/gallery-2024/", sep: true },
+      { t: "FOTO 2023", h: "/it/gallery-2023/" },
     ]},
   ],
 };
