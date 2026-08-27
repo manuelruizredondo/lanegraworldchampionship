@@ -1,19 +1,19 @@
 ---
 import Base from "@/layouts/Base.astro";
 
-// Especialidades para el desplegable (modalidades del Mundial, sin las rondas).
+// Especialidades. minInt/maxInt = nº de integrantes permitido en cada modalidad.
 const ESPECIALIDADES = [
-  "Bachata · Solista Femenino",
-  "Bachata · Solista Masculino",
-  "Bachata · Dúos",
-  "Bachata · Parejas",
-  "Bachata · Equipos",
-  "Salsa · Solista Femenino",
-  "Salsa · Solista Masculino",
-  "Salsa · Dúos Femeninos",
-  "Salsa · Dúos Masculinos",
-  "Salsa · Parejas",
-  "Salsa · Equipos",
+  { v: "Bachata · Solista Femenino", min: 1, max: 1 },
+  { v: "Bachata · Solista Masculino", min: 1, max: 1 },
+  { v: "Bachata · Dúos", min: 2, max: 2 },
+  { v: "Bachata · Parejas", min: 2, max: 2 },
+  { v: "Bachata · Equipos", min: 3, max: 30 },
+  { v: "Salsa · Solista Femenino", min: 1, max: 1 },
+  { v: "Salsa · Solista Masculino", min: 1, max: 1 },
+  { v: "Salsa · Dúos Femeninos", min: 2, max: 2 },
+  { v: "Salsa · Dúos Masculinos", min: 2, max: 2 },
+  { v: "Salsa · Parejas", min: 2, max: 2 },
+  { v: "Salsa · Equipos", min: 3, max: 30 },
 ];
 ---
 
@@ -38,78 +38,83 @@ const ESPECIALIDADES = [
 
         <!-- FORMULARIO -->
         <form id="ins-form" class="ins-form" hidden novalidate>
-          <p class="ins-intro">Rellena todos los campos marcados con <span class="req">*</span>. Los datos se usan solo para la organización del campeonato.</p>
 
-          <div class="grid2">
-            <label class="fld"><span>Nombre <span class="req">*</span></span><input name="nombre" type="text" required /></label>
-            <label class="fld"><span>Apellidos <span class="req">*</span></span><input name="apellidos" type="text" required /></label>
-            <label class="fld"><span>Email <span class="req">*</span></span><input name="email" type="email" required /></label>
-            <label class="fld"><span>Teléfono / WhatsApp <span class="req">*</span></span><input name="telefono" type="tel" required /></label>
-            <label class="fld"><span>País <span class="req">*</span></span><input name="pais" type="text" required /></label>
-            <label class="fld"><span>Ciudad</span><input name="ciudad" type="text" /></label>
-            <label class="fld"><span>Fecha de nacimiento <span class="req">*</span></span><input name="nacimiento" type="date" required /></label>
-            <label class="fld"><span>Academia / Escuela</span><input name="academia" type="text" /></label>
+          <!-- PASO 1 · ESPECIALIDAD -->
+          <div class="step">
+            <p class="step-n">Paso 1</p>
+            <label class="fld"><span>Especialidad <span class="req">*</span></span>
+              <select name="especialidad" id="especialidad" required>
+                <option value="" disabled selected>Elige la categoría…</option>
+                {ESPECIALIDADES.map((e) => <option value={e.v} data-min={e.min} data-max={e.max}>{e.v}</option>)}
+              </select>
+            </label>
+            <p class="step-hint" id="esp-hint">Elige primero la categoría: según la modalidad se pedirán los datos de uno o de varios integrantes.</p>
           </div>
 
-          <label class="fld"><span>Especialidad <span class="req">*</span></span>
-            <select name="especialidad" required>
-              <option value="" disabled selected>Elige tu categoría…</option>
-              {ESPECIALIDADES.map((e) => <option value={e}>{e}</option>)}
-            </select>
-          </label>
-
-          <!-- Componentes (pareja / equipo). La foto es una sola: individual, de pareja o de grupo. -->
-          <div id="miembros" hidden>
+          <!-- PASO 2 · INTEGRANTES (se genera al elegir especialidad) -->
+          <div class="step" id="step-int" hidden>
+            <p class="step-n">Paso 2</p>
             <label class="fld" id="fld-grupo" hidden><span id="grupo-label">Nombre del grupo <span class="req">*</span></span><input name="grupo" type="text" /></label>
-            <div class="comp-block">
-              <span class="comp-title" id="comp-title">Componentes</span>
-              <p class="comp-note" id="comp-note"></p>
-              <div id="comp-list"></div>
-              <button type="button" id="comp-add" class="comp-add" hidden>+ Añadir componente</button>
+            <div class="int-head">
+              <span class="int-title" id="int-title">Datos de los integrantes</span>
+              <p class="int-note" id="int-note"></p>
             </div>
+            <div id="int-list"></div>
+            <button type="button" id="int-add" class="int-add" hidden>+ Añadir integrante</button>
           </div>
 
-          <!-- FOTO -->
-          <div class="fld foto-fld">
-            <span>Foto — individual, de pareja o de grupo, según la categoría <span class="req">*</span></span>
-            <div class="foto-wrap">
-              <div class="foto-help">
-                <p><strong>Cómo debe ser la foto:</strong></p>
-                <ul>
-                  <li>Vertical (retrato), de cintura para arriba.</li>
-                  <li>Fondo neutro y buena iluminación, cara bien visible.</li>
-                  <li>Formato JPG o PNG. Se mostrará recortada en 3:4.</li>
-                </ul>
-                <figure class="foto-ejemplo">
-                  <img src="/img/inscripcion-ejemplo.jpg" alt="Ejemplo de foto" loading="lazy" onerror="this.closest('.foto-ejemplo').classList.add('sin-img')" />
-                  <figcaption>Ejemplo</figcaption>
-                </figure>
-              </div>
-              <div class="foto-drop">
-                <input id="foto-input" name="foto" type="file" accept="image/jpeg,image/png" required />
-                <div class="foto-preview" id="foto-preview" hidden><img id="foto-preview-img" alt="Vista previa" /></div>
+          <!-- PASO 3 · DATOS DE LA INSCRIPCIÓN -->
+          <div class="step" id="step-comun" hidden>
+            <p class="step-n">Paso 3</p>
+
+            <!-- FOTO -->
+            <div class="fld foto-fld">
+              <span id="foto-label">Foto <span class="req">*</span></span>
+              <div class="foto-wrap">
+                <div class="foto-help">
+                  <p><strong>Cómo debe ser la foto:</strong></p>
+                  <ul>
+                    <li>Vertical (retrato), de cintura para arriba.</li>
+                    <li>Fondo neutro y buena iluminación, caras bien visibles.</li>
+                    <li>Formato JPG o PNG. Se mostrará recortada en 3:4.</li>
+                  </ul>
+                  <figure class="foto-ejemplo">
+                    <img src="/img/inscripcion-ejemplo.jpg" alt="Ejemplo de foto" loading="lazy" onerror="this.closest('.foto-ejemplo').classList.add('sin-img')" />
+                    <figcaption>Ejemplo</figcaption>
+                  </figure>
+                </div>
+                <div class="foto-drop">
+                  <input id="foto-input" name="foto" type="file" accept="image/jpeg,image/png" />
+                  <div class="foto-preview" id="foto-preview" hidden><img alt="Vista previa" /></div>
+                </div>
               </div>
             </div>
+
+            <label class="fld"><span>Enlace a un vídeo bailando (YouTube o Instagram) <span class="req">*</span></span>
+              <input name="video" type="url" placeholder="https://…" required />
+            </label>
+
+            <div class="grid2">
+              <label class="fld"><span>Email de contacto <span class="req">*</span></span><input name="email" type="email" required /></label>
+              <label class="fld"><span>Teléfono / WhatsApp <span class="req">*</span></span><input name="telefono" type="tel" required /></label>
+              <label class="fld"><span>Academia / Escuela</span><input name="academia" type="text" /></label>
+              <label class="fld"><span>Ciudad</span><input name="ciudad" type="text" /></label>
+            </div>
+            <label class="fld"><span>Observaciones</span><textarea name="observaciones" rows="3"></textarea></label>
+
+            <label class="chk"><input type="checkbox" name="acepta_bases" required /> <span>He leído y acepto las <a href="/bases-y-reglamento/" target="_blank" rel="noopener">bases y el reglamento</a> del campeonato. <span class="req">*</span></span></label>
+            <label class="chk"><input type="checkbox" name="acepta_rgpd" required /> <span>Acepto la <a href="/politica-de-privacidad/" target="_blank" rel="noopener">política de privacidad</a> y el uso de la imagen para la promoción del festival. <span class="req">*</span></span></label>
+
+            <button type="submit" id="ins-submit" class="p-btn p-btn-solid ins-submit">Enviar inscripción</button>
+            <p id="ins-msg" class="ins-msg" role="alert"></p>
           </div>
-
-          <label class="fld"><span>Enlace a un vídeo bailando (YouTube o Instagram) <span class="req">*</span></span>
-            <input name="video" type="url" placeholder="https://…" required />
-          </label>
-          <label class="fld"><span>Instagram del competidor</span><input name="instagram" type="text" placeholder="@usuario" /></label>
-          <label class="fld"><span>Observaciones</span><textarea name="observaciones" rows="3"></textarea></label>
-
-          <label class="chk"><input type="checkbox" name="acepta_bases" required /> <span>He leído y acepto las <a href="/bases-y-reglamento/" target="_blank" rel="noopener">bases y el reglamento</a> del campeonato. <span class="req">*</span></span></label>
-          <label class="chk"><input type="checkbox" name="acepta_rgpd" required /> <span>Acepto la <a href="/politica-de-privacidad/" target="_blank" rel="noopener">política de privacidad</a> y el uso de mi imagen para la promoción del festival. <span class="req">*</span></span></label>
-
-          <button type="submit" id="ins-submit" class="p-btn p-btn-solid ins-submit">Enviar inscripción</button>
-          <p id="ins-msg" class="ins-msg" role="alert"></p>
         </form>
 
         <!-- ÉXITO -->
         <div id="ins-ok" class="ins-box ins-ok" hidden>
           <h2 class="ins-ok-title">¡Inscripción enviada! ✅</h2>
-          <p class="p-narrow">Hemos recibido los datos del competidor. La organización los revisará. ¡Gracias!</p>
-          <button type="button" id="ins-again" class="p-btn p-btn-light">Inscribir a otro competidor</button>
+          <p class="p-narrow">Hemos recibido los datos. La organización los revisará. ¡Gracias!</p>
+          <button type="button" id="ins-again" class="p-btn p-btn-light">Hacer otra inscripción</button>
         </div>
       </div>
     </section>
@@ -126,8 +131,11 @@ const ESPECIALIDADES = [
 
   /* FORMULARIO */
   .ins-form { max-width: 720px; margin: 0 auto; text-align: left; }
-  .ins-intro { font-size: 14px; color: var(--p-ink); opacity: .75; margin: 0 0 24px; text-align: center; }
   .req { color: var(--gold-dark, #a2823f); font-weight: 700; }
+  .step { margin-top: 30px; padding-top: 26px; border-top: 1px solid rgba(0, 0, 0, .09); }
+  .step:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+  .step-n { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; color: var(--gold); margin: 0 0 12px; }
+  .step-hint { font-size: 12.5px; color: var(--p-ink); opacity: .7; margin: 8px 0 0; line-height: 1.45; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .fld { display: block; margin: 16px 0 0; }
   .fld > span { display: block; font-size: 13px; font-weight: 600; color: var(--p-ink); margin: 0 0 6px; }
@@ -137,6 +145,30 @@ const ESPECIALIDADES = [
   }
   .fld input:focus, .fld select:focus, .fld textarea:focus { outline: none; border-color: var(--gold); }
   .grid2 .fld { margin: 0; }
+
+  /* INTEGRANTES */
+  .int-head { margin-top: 18px; }
+  .int-title { display: block; font-size: 13px; font-weight: 700; color: var(--p-ink); }
+  .int-note { font-size: 12.5px; color: var(--p-ink); opacity: .72; margin: 4px 0 0; line-height: 1.45; }
+  /* Las fichas de integrante las crea el JS, así que estos estilos deben ser
+     globales: el scope de Astro solo marca el HTML compilado, no el generado. */
+  :global(.int-card) { position: relative; margin-top: 14px; background: #fff; border: 1.5px solid #ece7dd; border-radius: 12px; padding: 16px; }
+  :global(.int-card-h) { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  :global(.int-card-t) { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--gold-dark, #a2823f); }
+  :global(.int-del) { border: none; background: #f0e9dd; color: var(--gold-dark, #a2823f); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 19px; line-height: 1; flex: none; }
+  :global(.int-del:hover) { background: #e6dcc8; }
+  :global(.int-grid) { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  :global(.int-f) { display: block; }
+  :global(.int-f > span) { display: block; font-size: 12px; font-weight: 600; color: var(--p-ink); opacity: .85; margin: 0 0 5px; }
+  :global(.int-f input), :global(.int-f select) {
+    width: 100%; padding: 10px 12px; border: 1.5px solid #d8d2c7; border-radius: 8px;
+    font-size: 14px; font-family: inherit; background: #fff; color: var(--text); box-sizing: border-box;
+  }
+  :global(.int-f input:focus), :global(.int-f select:focus) { outline: none; border-color: var(--gold); }
+  :global(.int-f.full) { grid-column: 1 / -1; }
+  .int-add { margin-top: 14px; background: transparent; border: 1.5px dashed #cbb98a; color: var(--gold-dark, #a2823f); padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+  .int-add:hover { background: #faf6ee; }
+  .int-add:disabled { opacity: .45; cursor: not-allowed; }
 
   /* FOTO */
   .foto-fld > span { display: block; font-size: 13px; font-weight: 600; color: var(--p-ink); margin: 0 0 6px; }
@@ -156,25 +188,13 @@ const ESPECIALIDADES = [
   .chk input { margin-top: 3px; flex: none; width: 18px; height: 18px; accent-color: var(--gold); }
   .chk a { color: var(--gold-dark, #a2823f); font-weight: 700; text-decoration: underline; }
 
-  /* COMPONENTES (pareja / equipo) */
-  .comp-block { margin-top: 16px; background: #fff; border: 1.5px solid #ece7dd; border-radius: 12px; padding: 16px; }
-  .comp-title { display: block; font-size: 13px; font-weight: 700; color: var(--p-ink); margin-bottom: 4px; }
-  .comp-note { font-size: 12.5px; color: var(--p-ink); opacity: .72; margin: 0 0 12px; line-height: 1.45; }
-  .comp-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px; }
-  .comp-row input { padding: 10px 12px; border: 1.5px solid #d8d2c7; border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; color: var(--text); }
-  .comp-row input:focus { outline: none; border-color: var(--gold); }
-  .comp-del { border: none; background: #f0e9dd; color: var(--gold-dark, #a2823f); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1; }
-  .comp-del:hover { background: #e6dcc8; }
-  .comp-add { margin-top: 4px; background: transparent; border: 1.5px dashed #cbb98a; color: var(--gold-dark, #a2823f); padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
-  .comp-add:hover { background: #faf6ee; }
-
   .ins-submit { margin-top: 28px; width: 100%; }
   .ins-ok-title { color: var(--p-ink); }
 
   @media (max-width: 620px) {
     .grid2 { grid-template-columns: 1fr; }
     .foto-wrap { grid-template-columns: 1fr; }
-    .comp-row { grid-template-columns: 1fr 1fr; }
+    :global(.int-grid) { grid-template-columns: 1fr; }
   }
 </style>
 
@@ -200,64 +220,79 @@ const ESPECIALIDADES = [
   $("#gate-btn").addEventListener("click", tryLogin);
   $("#gate-pass").addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Enter") tryLogin(); });
 
-  // --- Componentes según especialidad (solista / pareja / equipo) ---
-  const sel = form.querySelector('[name="especialidad"]') as HTMLSelectElement;
-  const miembros = $("#miembros"), fldGrupo = $("#fld-grupo");
-  const grupoInput = fldGrupo.querySelector("input") as HTMLInputElement;
-  const grupoLabel = $("#grupo-label"), compList = $("#comp-list"), compAdd = $("#comp-add");
-  const compTitle = $("#comp-title"), compNote = $("#comp-note");
-  let mode = "solo";
+  // --- Integrantes: mismos campos SIEMPRE para cada uno ---
+  const sel = $("#especialidad") as HTMLSelectElement;
+  const stepInt = $("#step-int"), stepComun = $("#step-comun");
+  const fldGrupo = $("#fld-grupo"), grupoInput = fldGrupo.querySelector("input") as HTMLInputElement;
+  const grupoLabel = $("#grupo-label");
+  const intList = $("#int-list"), intAdd = $("#int-add"), intTitle = $("#int-title"), intNote = $("#int-note");
+  let min = 1, max = 1;
 
-  function makeRow(required) {
-    const row = document.createElement("div");
-    row.className = "comp-row";
-    const mk = (c, ph, req) => { const i = document.createElement("input"); i.type = "text"; i.dataset.c = c; i.placeholder = ph; if (req) i.required = true; return i; };
-    row.append(mk("nombre", "Nombre", required), mk("apellidos", "Apellidos", required), mk("instagram", "@instagram", false));
-    if (mode === "equipo") {
-      const del = document.createElement("button");
-      del.type = "button"; del.className = "comp-del"; del.textContent = "×"; del.setAttribute("aria-label", "Quitar componente");
-      del.addEventListener("click", () => row.remove());
-      row.appendChild(del);
-    }
-    return row;
+  function card(n) {
+    const c = document.createElement("div");
+    c.className = "int-card";
+    c.innerHTML = `
+      <div class="int-card-h"><span class="int-card-t">Integrante ${n}</span></div>
+      <div class="int-grid">
+        <label class="int-f"><span>Nombre *</span><input data-c="nombre" type="text" required /></label>
+        <label class="int-f"><span>Apellidos *</span><input data-c="apellidos" type="text" required /></label>
+        <label class="int-f"><span>Fecha de nacimiento *</span><input data-c="nacimiento" type="date" required /></label>
+        <label class="int-f"><span>País *</span><input data-c="pais" type="text" required /></label>
+        <label class="int-f"><span>Documento (DNI/Pasaporte) *</span><input data-c="documento" type="text" required /></label>
+        <label class="int-f"><span>Instagram</span><input data-c="instagram" type="text" placeholder="@usuario" /></label>
+      </div>`;
+    return c;
   }
+  function renumber() {
+    [...intList.querySelectorAll(".int-card")].forEach((c, i) => {
+      c.querySelector(".int-card-t").textContent = "Integrante " + (i + 1);
+      const h = c.querySelector(".int-card-h");
+      const old = h.querySelector(".int-del"); if (old) old.remove();
+      if (intList.children.length > min) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "int-del"; b.textContent = "×"; b.setAttribute("aria-label", "Quitar integrante");
+        b.addEventListener("click", () => { c.remove(); renumber(); });
+        h.appendChild(b);
+      }
+    });
+    (intAdd as HTMLButtonElement).disabled = intList.children.length >= max;
+  }
+  function addCard() { intList.appendChild(card(intList.children.length + 1)); renumber(); }
 
   sel.addEventListener("change", () => {
-    mode = /Equipos/.test(sel.value) ? "equipo" : /Dúos|Parejas/.test(sel.value) ? "pareja" : "solo";
-    compList.innerHTML = ""; grupoInput.required = false; grupoInput.value = "";
-    if (mode === "solo") { miembros.hidden = true; fldGrupo.hidden = true; compAdd.hidden = true; return; }
-    miembros.hidden = false; fldGrupo.hidden = false;
-    if (mode === "pareja") {
-      grupoLabel.innerHTML = 'Nombre artístico del dúo (opcional)';
-      compTitle.textContent = "Componente 2 de la pareja";
-      compNote.textContent = "El componente 1 eres tú (los datos de arriba). Añade al segundo. La foto será de la pareja.";
-      compList.appendChild(makeRow(true));
-      compAdd.hidden = true;
-    } else {
-      grupoLabel.innerHTML = 'Nombre del grupo <span class="req">*</span>';
-      grupoInput.required = true;
-      compTitle.textContent = "Componentes del grupo";
-      compNote.textContent = "Añade a todos los integrantes (nombre, apellidos e Instagram). La foto será grupal.";
-      compList.appendChild(makeRow(true)); compList.appendChild(makeRow(true));
-      compAdd.hidden = false;
-    }
+    const opt = sel.selectedOptions[0];
+    min = Number(opt.dataset.min || 1); max = Number(opt.dataset.max || 1);
+    intList.innerHTML = "";
+    for (let i = 0; i < min; i++) addCard();
+    const esGrupo = max > 2;
+    fldGrupo.hidden = !(max > 1);
+    grupoInput.required = esGrupo;
+    grupoLabel.innerHTML = esGrupo ? 'Nombre del grupo <span class="req">*</span>' : "Nombre artístico del dúo/pareja (opcional)";
+    if (!(max > 1)) grupoInput.value = "";
+    intTitle.textContent = min === 1 ? "Datos del competidor" : "Datos de cada integrante";
+    intNote.textContent = max === 1
+      ? "Rellena los datos del competidor."
+      : (esGrupo
+        ? `Rellena los mismos datos para cada integrante. Mínimo ${min}; usa “+ Añadir integrante” para el resto.`
+        : "Rellena los mismos datos para los dos integrantes.");
+    intAdd.hidden = max <= min;
+    $("#foto-label").innerHTML = (max === 1 ? "Foto del competidor" : esGrupo ? "Foto del grupo (una sola, con todos)" : "Foto de la pareja (una sola, con los dos)") + ' <span class="req">*</span>';
+    stepInt.hidden = false; stepComun.hidden = false;
+    $("#esp-hint").hidden = true;
   });
-  compAdd.addEventListener("click", () => compList.appendChild(makeRow(false)));
+  intAdd.addEventListener("click", addCard);
 
-  function rowText(row, i) {
-    const g = (c) => ((row.querySelector('[data-c="' + c + '"]') as HTMLInputElement).value || "").trim();
-    if (!g("nombre") && !g("apellidos")) return null;
-    return (`${i}) ${g("nombre")} ${g("apellidos")}`).trim() + (g("instagram") ? " — " + g("instagram") : "");
-  }
-  function buildComponentes(fields) {
-    if (mode === "solo") return "";
-    const rows = [...compList.querySelectorAll(".comp-row")];
-    if (mode === "pareja") {
-      const first = (`1) ${fields.nombre} ${fields.apellidos}`).trim() + (fields.instagram ? " — " + fields.instagram : "");
-      const second = rowText(rows[0], 2);
-      return [first, second].filter(Boolean).join("\n");
-    }
-    return rows.map((r, i) => rowText(r, i + 1)).filter(Boolean).join("\n");
+  function buildIntegrantes() {
+    return [...intList.querySelectorAll(".int-card")].map((c, i) => {
+      const g = (k) => ((c.querySelector('[data-c="' + k + '"]') as HTMLInputElement).value || "").trim();
+      if (!g("nombre") && !g("apellidos")) return null;
+      const bits = [`${i + 1}) ${g("nombre")} ${g("apellidos")}`.trim()];
+      if (g("nacimiento")) bits.push("nac. " + g("nacimiento"));
+      if (g("pais")) bits.push(g("pais"));
+      if (g("documento")) bits.push("doc. " + g("documento"));
+      if (g("instagram")) bits.push(g("instagram"));
+      return bits.join(" · ");
+    }).filter(Boolean).join("\n");
   }
 
   // --- Foto: reducir tamaño en el navegador y previsualizar ---
@@ -267,9 +302,9 @@ const ESPECIALIDADES = [
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      const max = 1200;
+      const max2 = 1200;
       let { width: w, height: h } = img;
-      if (w > max || h > max) { const s = max / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
+      if (w > max2 || h > max2) { const s = max2 / Math.max(w, h); w = Math.round(w * s); h = Math.round(h * s); }
       const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
       cv.getContext("2d")!.drawImage(img, 0, 0, w, h);
       const dataUrl = cv.toDataURL("image/jpeg", 0.85);
@@ -286,13 +321,25 @@ const ESPECIALIDADES = [
     e.preventDefault();
     msg.textContent = ""; msg.classList.remove("ok");
     if (!(form as HTMLFormElement).checkValidity()) { (form as HTMLFormElement).reportValidity(); return; }
-    if (!photo) { msg.textContent = "Adjunta una foto del competidor."; return; }
+    if (!photo) { msg.textContent = "Adjunta la foto."; return; }
+    if (intList.children.length < min) { msg.textContent = `Esta categoría necesita al menos ${min} integrantes.`; return; }
+
     const fd = new FormData(form as HTMLFormElement);
     const fields = Object.fromEntries(fd.entries());
+    // El "titular" del registro es el integrante 1 (para poder listarlo en Airtable)
+    const first = intList.querySelector(".int-card");
+    const g1 = (k) => ((first.querySelector('[data-c="' + k + '"]') as HTMLInputElement).value || "").trim();
+    fields.nombre = g1("nombre");
+    fields.apellidos = g1("apellidos");
+    fields.nacimiento = g1("nacimiento");
+    fields.pais = g1("pais");
+    fields.instagram = g1("instagram");
+    fields.integrantes = buildIntegrantes();
+    fields.n_integrantes = String(intList.children.length);
     fields.acepta_bases = (form.querySelector('[name="acepta_bases"]') as HTMLInputElement).checked;
     fields.acepta_rgpd = (form.querySelector('[name="acepta_rgpd"]') as HTMLInputElement).checked;
-    fields.componentes = buildComponentes(fields);
     delete fields.foto;
+
     submitBtn.disabled = true; submitBtn.textContent = "Enviando…";
     try {
       const r = await fetch(FN, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "submit", password: pass, fields, photo }) });
@@ -303,11 +350,12 @@ const ESPECIALIDADES = [
     finally { submitBtn.disabled = false; submitBtn.textContent = "Enviar inscripción"; }
   });
 
-  // --- Inscribir a otro ---
+  // --- Otra inscripción ---
   $("#ins-again").addEventListener("click", () => {
     (form as HTMLFormElement).reset();
     photo = null; $("#foto-preview").hidden = true;
-    mode = "solo"; miembros.hidden = true; fldGrupo.hidden = true; compAdd.hidden = true; compList.innerHTML = ""; grupoInput.required = false;
+    intList.innerHTML = ""; stepInt.hidden = true; stepComun.hidden = true;
+    fldGrupo.hidden = true; grupoInput.required = false; $("#esp-hint").hidden = false;
     $("#ins-ok").hidden = true; form.hidden = false;
   });
 </script>
