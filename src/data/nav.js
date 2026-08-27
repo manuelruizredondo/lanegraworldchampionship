@@ -8,8 +8,7 @@ export const MENU = {
       { t: "BASES Y REGLAMENTO", h: "/bases-y-reglamento/" },
       { t: "COMPETIDORES 2026", h: "/competidores/" },
       { t: "PASE COMPETIDOR", h: "/tu-pase/" },
-      { t: "VÍDEOS", h: "/videos/" },
-      { t: "EDICIONES ANTERIORES", h: "/ediciones/", sep: true },
+      { t: "Hall of Fame", h: "/videos/", raw: true },
     ]},
     { label: "FESTIVAL", href: "/festival/", sub: [
       { t: "EL FESTIVAL", h: "/festival/#info" },
@@ -19,11 +18,11 @@ export const MENU = {
       { t: "FULL PASS", h: "/tu-pase/" },
       { t: "HOTEL", h: "/festival/#hotel" },
     ]},
-    { label: "GALERÍA", href: "/galeria/", sub: [
-      { t: "FOTOS 2024", h: "/galeria-2024/" },
-      { t: "FOTOS 2023", h: "/galeria-2023/" },
-    ]},
     { label: "CONTACTO", href: "/contacto/", sub: [] },
+    { label: "EDICIONES ANTERIORES", href: "/ediciones/", sub: [
+      { t: "MUNDIAL 2025", h: "/ganadores-2025/" },
+      { t: "MUNDIAL 2024", h: "/ganadores/" },
+    ]},
   ],
   en: [
     { label: "WORLD CUP", href: "/en/world-championship/", sub: [
@@ -32,8 +31,7 @@ export const MENU = {
       { t: "RULES", h: "/en/competition-rules/" },
       { t: "COMPETITORS 2026", h: "/en/competitors/" },
       { t: "COMPETITOR PASS", h: "/en/your-pass/" },
-      { t: "VIDEOS", h: "/en/videos/" },
-      { t: "PAST EDITIONS", h: "/en/editions/", sep: true },
+      { t: "Hall of Fame", h: "/en/videos/", raw: true },
     ]},
     { label: "FESTIVAL", href: "/en/festival/", sub: [
       { t: "THE FESTIVAL", h: "/en/festival/#info" },
@@ -43,11 +41,11 @@ export const MENU = {
       { t: "FULL PASS", h: "/en/your-pass/" },
       { t: "HOTEL", h: "/en/festival/#hotel" },
     ]},
-    { label: "GALLERY", href: "/en/gallery/", sub: [
-      { t: "PHOTOS 2024", h: "/en/gallery-2024/" },
-      { t: "PHOTOS 2023", h: "/en/gallery-2023/" },
-    ]},
     { label: "CONTACT", href: "/en/contact/", sub: [] },
+    { label: "PAST EDITIONS", href: "/en/editions/", sub: [
+      { t: "WORLD CUP 2025", h: "/en/winners-2025/" },
+      { t: "WORLD CUP 2024", h: "/en/winners/" },
+    ]},
   ],
   it: [
     { label: "MONDIALE", href: "/it/mondiale/", sub: [
@@ -56,8 +54,7 @@ export const MENU = {
       { t: "REGOLAMENTO", h: "/it/regolamento/" },
       { t: "CONCORRENTI 2026", h: "/it/competitors/" },
       { t: "PASS CONCORRENTE", h: "/it/your-pass/" },
-      { t: "VIDEO", h: "/it/videos/" },
-      { t: "EDIZIONI PRECEDENTI", h: "/it/edizioni/", sep: true },
+      { t: "Hall of Fame", h: "/it/videos/", raw: true },
     ]},
     { label: "FESTIVAL", href: "/it/festival/", sub: [
       { t: "IL FESTIVAL", h: "/it/festival/#info" },
@@ -67,11 +64,11 @@ export const MENU = {
       { t: "FULL PASS", h: "/it/your-pass/" },
       { t: "HOTEL", h: "/it/festival/#hotel" },
     ]},
-    { label: "GALLERIA", href: "/it/gallery/", sub: [
-      { t: "FOTO 2024", h: "/it/gallery-2024/" },
-      { t: "FOTO 2023", h: "/it/gallery-2023/" },
-    ]},
     { label: "CONTATTI", href: "/it/contact/", sub: [] },
+    { label: "EDIZIONI PRECEDENTI", href: "/it/edizioni/", sub: [
+      { t: "MONDIALE 2025", h: "/it/winners-2025/" },
+      { t: "MONDIALE 2024", h: "/it/winners/" },
+    ]},
   ],
 };
 

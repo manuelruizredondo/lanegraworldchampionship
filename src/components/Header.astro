@@ -55,7 +55,7 @@ const T = {
                 {item.sub.map((s) => (
                   s.group
                     ? <li class="submenu-head">{s.group}</li>
-                    : <li class={s.sep ? "sep-top" : undefined}><a href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
+                    : <li class={s.sep ? "sep-top" : undefined}><a class={s.raw ? "raw" : undefined} href={s.h} {...(ext(s.h) ? { target: "_blank", rel: "noopener" } : {})}>{s.t}</a></li>
                 ))}
               </ul>
             </li>
@@ -177,7 +177,7 @@ const T = {
 
   .flyout-menu, .submenu { list-style: none; margin: 0; padding: 0; }
   /* Cada bloque abierto: etiqueta de categoría + enlaces grandes debajo */
-  .menu-group { margin-bottom: 30px; }
+  .menu-group { margin-bottom: 22px; }
   .menu-group:last-child, .menu-single:last-child { margin-bottom: 0; }
   .cat-label {
     display: inline-block; text-decoration: none; margin: 0 0 8px;
@@ -186,14 +186,16 @@ const T = {
   }
   .cat-label:hover { opacity: 1; }
   .submenu a, .menu-single > a {
-    display: inline-block; text-decoration: none; padding: 6px 0;
-    color: var(--cream); font-size: clamp(24px, 3.4vw, 30px); line-height: 1.12;
+    display: inline-block; text-decoration: none; padding: 4px 0;
+    color: var(--cream); font-size: clamp(19px, 2.5vw, 24px); line-height: 1.15;
     letter-spacing: -.01em; text-transform: lowercase; transition: color .2s;
   }
-  .menu-single { margin-bottom: 30px; }
+  .menu-single { margin-bottom: 22px; }
   /* Solo la primera letra en mayúscula */
   .submenu a::first-letter, .menu-single > a::first-letter { text-transform: uppercase; }
   .submenu a:hover, .menu-single > a:hover { color: var(--gold); }
+  /* Nombres propios (p. ej. Hall of Fame): respetan sus mayúsculas */
+  .submenu a.raw { text-transform: none; }
   .submenu-head {
     padding: 10px 0 4px; margin-top: 6px;
     font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--gold);

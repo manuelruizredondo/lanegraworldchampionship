@@ -7,7 +7,7 @@ export const VIDEOS_CHANNEL = "https://www.youtube.com/@LaNegraDanceFestival/vid
 export const VIDEOS_META = {
   es: {
     eyebrow: "El Mundial",
-    h1: "Vídeos del Mundial",
+    h1: "Hall of Fame",
     sub: "Revive las actuaciones ganadoras del Mundial de Pasos Libres: los campeones de cada categoría, edición por edición.",
     channelBtn: "Ver el canal en YouTube",
     emptyNote: "Muy pronto publicaremos aquí los vídeos del pódium. Mientras tanto, puedes verlos en nuestro canal de YouTube.",
@@ -16,7 +16,7 @@ export const VIDEOS_META = {
   },
   en: {
     eyebrow: "The World Championship",
-    h1: "Championship videos",
+    h1: "Hall of Fame",
     sub: "Relive the winning performances of the Pasos Libres World Championship: the champions of each category, edition by edition.",
     channelBtn: "Visit our YouTube channel",
     emptyNote: "We'll post the podium videos here very soon. In the meantime, you can watch them on our YouTube channel.",
@@ -25,7 +25,7 @@ export const VIDEOS_META = {
   },
   it: {
     eyebrow: "Il Mondiale",
-    h1: "Video del Mondiale",
+    h1: "Hall of Fame",
     sub: "Rivivi le esibizioni vincitrici del Mondiale Pasos Libres: i campioni di ogni categoria, edizione per edizione.",
     channelBtn: "Vai al canale YouTube",
     emptyNote: "Pubblicheremo qui a breve i video del podio. Nel frattempo, puoi guardarli sul nostro canale YouTube.",
