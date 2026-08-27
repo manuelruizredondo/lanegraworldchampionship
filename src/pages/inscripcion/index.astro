@@ -94,7 +94,6 @@ const ESPECIALIDADES = [
                       <div class="cartel-foto" id="cartel-foto"><img id="cartel-foto-img" alt="Tu foto en el cartel" /></div>
                       <img class="cartel-marco" src="/img/preview.webp" alt="" />
                     </div>
-                    <figcaption>Así quedará en el cartel</figcaption>
                   </figure>
                 </div>
               </div>
@@ -322,12 +321,11 @@ const ESPECIALIDADES = [
   // Solistas y dúos/parejas → 1:1 (la ventana del cartel es circular).
   // Grupos → 4:3 (en los carteles de equipos la foto es apaisada).
   function ratio() { return max > 2 ? 4 / 3 : 1; }
-  function ratioLabel() { return max > 2 ? "4:3 (apaisada)" : "1:1 (cuadrada)"; }
-  // El texto solo menciona la proporción de la categoría elegida, para no confundir.
+  // Nada de proporciones técnicas (1:1, 4:3): al competidor le da igual, se recorta solo.
   function paintRatioHint() {
     if (!sel.value) { $("#foto-ratio").textContent = ""; return; }
-    $("#foto-ratio").textContent = `La foto se recortará automáticamente a ${ratioLabel()} para esta categoría.`;
-    $("#help-ratio").innerHTML = `Formato JPG o PNG. Se recorta sola por el centro a <strong>${ratioLabel()}</strong>.`;
+    $("#foto-ratio").textContent = "";
+    $("#help-ratio").innerHTML = "Formato JPG o PNG. Se recorta sola, no hace falta que la prepares.";
     const esGrupo2 = max > 2;
     ($("#foto-ejemplo-img") as HTMLImageElement).src = esGrupo2 ? "/img/preview-4-3.webp" : "/img/preview-1-1.webp";
     $("#help-caras").innerHTML = esGrupo2
@@ -353,6 +351,7 @@ const ESPECIALIDADES = [
       photo = { base64: dataUrl.split(",")[1], type: "image/jpeg", name: (file.name.replace(/\.[^.]+$/, "") || "foto") + ".jpg" };
       ($("#cartel-foto-img") as HTMLImageElement).src = dataUrl;
       $("#cartel").hidden = false;
+      $("#foto-ratio").textContent = "Aquí puedes ver cómo se verá tu foto en los carteles.";
       URL.revokeObjectURL(url);
     };
     img.src = url;
