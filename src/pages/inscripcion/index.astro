@@ -58,11 +58,20 @@ const ESPECIALIDADES = [
             </select>
           </label>
 
-          <label class="fld" id="fld-pareja" hidden><span>Nombre de la pareja / equipo <span class="req">*</span></span><input name="pareja" type="text" /></label>
+          <!-- Componentes (pareja / equipo). La foto es una sola: individual, de pareja o de grupo. -->
+          <div id="miembros" hidden>
+            <label class="fld" id="fld-grupo" hidden><span id="grupo-label">Nombre del grupo <span class="req">*</span></span><input name="grupo" type="text" /></label>
+            <div class="comp-block">
+              <span class="comp-title" id="comp-title">Componentes</span>
+              <p class="comp-note" id="comp-note"></p>
+              <div id="comp-list"></div>
+              <button type="button" id="comp-add" class="comp-add" hidden>+ Añadir componente</button>
+            </div>
+          </div>
 
           <!-- FOTO -->
           <div class="fld foto-fld">
-            <span>Foto del competidor <span class="req">*</span></span>
+            <span>Foto — individual, de pareja o de grupo, según la categoría <span class="req">*</span></span>
             <div class="foto-wrap">
               <div class="foto-help">
                 <p><strong>Cómo debe ser la foto:</strong></p>
@@ -147,12 +156,25 @@ const ESPECIALIDADES = [
   .chk input { margin-top: 3px; flex: none; width: 18px; height: 18px; accent-color: var(--gold); }
   .chk a { color: var(--gold-dark, #a2823f); font-weight: 700; text-decoration: underline; }
 
+  /* COMPONENTES (pareja / equipo) */
+  .comp-block { margin-top: 16px; background: #fff; border: 1.5px solid #ece7dd; border-radius: 12px; padding: 16px; }
+  .comp-title { display: block; font-size: 13px; font-weight: 700; color: var(--p-ink); margin-bottom: 4px; }
+  .comp-note { font-size: 12.5px; color: var(--p-ink); opacity: .72; margin: 0 0 12px; line-height: 1.45; }
+  .comp-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .comp-row input { padding: 10px 12px; border: 1.5px solid #d8d2c7; border-radius: 8px; font-size: 14px; font-family: inherit; background: #fff; color: var(--text); }
+  .comp-row input:focus { outline: none; border-color: var(--gold); }
+  .comp-del { border: none; background: #f0e9dd; color: var(--gold-dark, #a2823f); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 20px; line-height: 1; }
+  .comp-del:hover { background: #e6dcc8; }
+  .comp-add { margin-top: 4px; background: transparent; border: 1.5px dashed #cbb98a; color: var(--gold-dark, #a2823f); padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+  .comp-add:hover { background: #faf6ee; }
+
   .ins-submit { margin-top: 28px; width: 100%; }
   .ins-ok-title { color: var(--p-ink); }
 
   @media (max-width: 620px) {
     .grid2 { grid-template-columns: 1fr; }
     .foto-wrap { grid-template-columns: 1fr; }
+    .comp-row { grid-template-columns: 1fr 1fr; }
   }
 </style>
 
@@ -178,15 +200,65 @@ const ESPECIALIDADES = [
   $("#gate-btn").addEventListener("click", tryLogin);
   $("#gate-pass").addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Enter") tryLogin(); });
 
-  // --- Campo condicional pareja/equipo ---
+  // --- Componentes según especialidad (solista / pareja / equipo) ---
   const sel = form.querySelector('[name="especialidad"]') as HTMLSelectElement;
-  const fldPareja = $("#fld-pareja"), inpPareja = fldPareja.querySelector("input") as HTMLInputElement;
+  const miembros = $("#miembros"), fldGrupo = $("#fld-grupo");
+  const grupoInput = fldGrupo.querySelector("input") as HTMLInputElement;
+  const grupoLabel = $("#grupo-label"), compList = $("#comp-list"), compAdd = $("#comp-add");
+  const compTitle = $("#comp-title"), compNote = $("#comp-note");
+  let mode = "solo";
+
+  function makeRow(required) {
+    const row = document.createElement("div");
+    row.className = "comp-row";
+    const mk = (c, ph, req) => { const i = document.createElement("input"); i.type = "text"; i.dataset.c = c; i.placeholder = ph; if (req) i.required = true; return i; };
+    row.append(mk("nombre", "Nombre", required), mk("apellidos", "Apellidos", required), mk("instagram", "@instagram", false));
+    if (mode === "equipo") {
+      const del = document.createElement("button");
+      del.type = "button"; del.className = "comp-del"; del.textContent = "×"; del.setAttribute("aria-label", "Quitar componente");
+      del.addEventListener("click", () => row.remove());
+      row.appendChild(del);
+    }
+    return row;
+  }
+
   sel.addEventListener("change", () => {
-    const needs = /Dúos|Parejas|Equipos/.test(sel.value);
-    fldPareja.hidden = !needs;
-    inpPareja.required = needs;
-    if (!needs) inpPareja.value = "";
+    mode = /Equipos/.test(sel.value) ? "equipo" : /Dúos|Parejas/.test(sel.value) ? "pareja" : "solo";
+    compList.innerHTML = ""; grupoInput.required = false; grupoInput.value = "";
+    if (mode === "solo") { miembros.hidden = true; fldGrupo.hidden = true; compAdd.hidden = true; return; }
+    miembros.hidden = false; fldGrupo.hidden = false;
+    if (mode === "pareja") {
+      grupoLabel.innerHTML = 'Nombre artístico del dúo (opcional)';
+      compTitle.textContent = "Componente 2 de la pareja";
+      compNote.textContent = "El componente 1 eres tú (los datos de arriba). Añade al segundo. La foto será de la pareja.";
+      compList.appendChild(makeRow(true));
+      compAdd.hidden = true;
+    } else {
+      grupoLabel.innerHTML = 'Nombre del grupo <span class="req">*</span>';
+      grupoInput.required = true;
+      compTitle.textContent = "Componentes del grupo";
+      compNote.textContent = "Añade a todos los integrantes (nombre, apellidos e Instagram). La foto será grupal.";
+      compList.appendChild(makeRow(true)); compList.appendChild(makeRow(true));
+      compAdd.hidden = false;
+    }
   });
+  compAdd.addEventListener("click", () => compList.appendChild(makeRow(false)));
+
+  function rowText(row, i) {
+    const g = (c) => ((row.querySelector('[data-c="' + c + '"]') as HTMLInputElement).value || "").trim();
+    if (!g("nombre") && !g("apellidos")) return null;
+    return (`${i}) ${g("nombre")} ${g("apellidos")}`).trim() + (g("instagram") ? " — " + g("instagram") : "");
+  }
+  function buildComponentes(fields) {
+    if (mode === "solo") return "";
+    const rows = [...compList.querySelectorAll(".comp-row")];
+    if (mode === "pareja") {
+      const first = (`1) ${fields.nombre} ${fields.apellidos}`).trim() + (fields.instagram ? " — " + fields.instagram : "");
+      const second = rowText(rows[0], 2);
+      return [first, second].filter(Boolean).join("\n");
+    }
+    return rows.map((r, i) => rowText(r, i + 1)).filter(Boolean).join("\n");
+  }
 
   // --- Foto: reducir tamaño en el navegador y previsualizar ---
   $("#foto-input").addEventListener("change", (e) => {
@@ -219,6 +291,7 @@ const ESPECIALIDADES = [
     const fields = Object.fromEntries(fd.entries());
     fields.acepta_bases = (form.querySelector('[name="acepta_bases"]') as HTMLInputElement).checked;
     fields.acepta_rgpd = (form.querySelector('[name="acepta_rgpd"]') as HTMLInputElement).checked;
+    fields.componentes = buildComponentes(fields);
     delete fields.foto;
     submitBtn.disabled = true; submitBtn.textContent = "Enviando…";
     try {
@@ -233,7 +306,8 @@ const ESPECIALIDADES = [
   // --- Inscribir a otro ---
   $("#ins-again").addEventListener("click", () => {
     (form as HTMLFormElement).reset();
-    photo = null; $("#foto-preview").hidden = true; fldPareja.hidden = true; inpPareja.required = false;
+    photo = null; $("#foto-preview").hidden = true;
+    mode = "solo"; miembros.hidden = true; fldGrupo.hidden = true; compAdd.hidden = true; compList.innerHTML = ""; grupoInput.required = false;
     $("#ins-ok").hidden = true; form.hidden = false;
   });
 </script>
