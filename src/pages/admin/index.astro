@@ -1,0 +1,267 @@
+---
+import Base from "@/layouts/Base.astro";
+---
+
+<Base title="Panel de inscripciones" description="Panel privado de la organización." lang="es">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+
+  <div class="prop">
+    <section class="p-section adm">
+      <div class="p-container">
+        <p class="p-eyebrow">Organización · Mundial 2026</p>
+        <h1 class="p-display adm-title">Panel de inscripciones</h1>
+
+        <!-- ACCESO -->
+        <div id="adm-gate" class="adm-box">
+          <p>Zona privada de la organización.</p>
+          <div class="gate-row">
+            <input id="gate-pass" type="password" placeholder="Contraseña" autocomplete="off" />
+            <button id="gate-btn" type="button" class="p-btn p-btn-solid">Entrar</button>
+          </div>
+          <p id="gate-msg" class="adm-msg" role="alert"></p>
+        </div>
+
+        <!-- PANEL -->
+        <div id="adm-panel" hidden>
+          <!-- Resumen -->
+          <div class="adm-kpis">
+            <div class="kpi"><span class="kpi-n" id="kpi-total">—</span><span class="kpi-l">Inscripciones</span></div>
+            <div class="kpi"><span class="kpi-n" id="kpi-personas">—</span><span class="kpi-l">Competidores</span></div>
+            <div class="kpi"><span class="kpi-n" id="kpi-pend">—</span><span class="kpi-l">Pendientes</span></div>
+            <div class="kpi"><span class="kpi-n" id="kpi-aprob">—</span><span class="kpi-l">Aprobadas</span></div>
+          </div>
+
+          <h2 class="adm-h2">Por categoría</h2>
+          <div class="adm-cats" id="adm-cats"></div>
+
+          <!-- Controles -->
+          <div class="adm-tools">
+            <input id="adm-buscar" type="search" placeholder="Buscar por nombre, país, grupo…" />
+            <select id="adm-filtro-cat"><option value="">Todas las categorías</option></select>
+            <select id="adm-filtro-est">
+              <option value="">Todos los estados</option>
+              <option>Pendiente</option><option>Aprobado</option><option>Rechazado</option>
+            </select>
+            <button type="button" id="adm-csv" class="p-btn p-btn-light">Descargar CSV</button>
+            <button type="button" id="adm-recargar" class="p-btn p-btn-light">Recargar</button>
+          </div>
+
+          <p id="adm-count" class="adm-count"></p>
+          <div class="adm-tabla-wrap"><table class="adm-tabla"><thead><tr>
+            <th>Foto</th><th>Nombre</th><th>Categoría</th><th>Grupo</th><th>Nº</th>
+            <th>País</th><th>Contacto</th><th>Vídeo</th><th>Estado</th>
+          </tr></thead><tbody id="adm-tbody"></tbody></table></div>
+          <p id="adm-msg" class="adm-msg"></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Detalle de una inscripción -->
+  <div id="adm-modal" class="adm-modal" hidden>
+    <div class="adm-modal-bg" data-cerrar></div>
+    <div class="adm-modal-box" role="dialog" aria-modal="true">
+      <button type="button" class="adm-modal-x" data-cerrar aria-label="Cerrar">×</button>
+      <div id="adm-modal-body"></div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .adm-title { font-size: clamp(28px, 4vw, 44px); margin-bottom: 24px; }
+  .adm-box { max-width: 480px; background: var(--p-card, #f6f2ec); border-radius: 16px; padding: 32px; text-align: center; }
+  .gate-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .gate-row input { flex: 1 1 220px; padding: 13px 16px; border: 1.5px solid #d8d2c7; border-radius: 10px; font-size: 16px; }
+  .adm-msg { min-height: 20px; margin: 12px 0 0; font-size: 14px; font-weight: 600; color: #c0392b; }
+
+  .adm-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 34px; }
+  .kpi { background: var(--p-card, #f6f2ec); border-radius: 14px; padding: 20px; text-align: center; }
+  .kpi-n { display: block; font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: -.03em; color: var(--p-ink); line-height: 1.1; }
+  .kpi-l { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--gold-dark, #a2823f); margin-top: 4px; }
+
+  .adm-h2 { font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); margin: 0 0 14px; }
+  .adm-cats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  :global(.adm-cat) { display: inline-flex; align-items: center; gap: 8px; background: var(--p-card, #f1eee9); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; color: var(--p-ink); }
+  :global(.adm-cat b) { background: var(--gold); color: #fff; border-radius: 999px; padding: 1px 8px; font-size: 11px; }
+
+  .adm-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .adm-tools input, .adm-tools select { padding: 10px 13px; border: 1.5px solid #d8d2c7; border-radius: 9px; font-size: 14px; font-family: inherit; background: #fff; color: var(--text); }
+  .adm-tools input { flex: 1 1 240px; }
+  .adm-tools .p-btn { padding: 10px 18px; font-size: 14px; }
+  .adm-count { font-size: 13px; color: var(--p-ink); opacity: .7; margin: 0 0 10px; }
+
+  .adm-tabla-wrap { overflow-x: auto; border: 1px solid #ece7dd; border-radius: 12px; }
+  .adm-tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  .adm-tabla th { text-align: left; padding: 12px; background: #faf7f1; font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark, #a2823f); white-space: nowrap; }
+  :global(.adm-tabla td) { padding: 10px 12px; border-top: 1px solid #f0ece4; vertical-align: middle; }
+  :global(.adm-tabla tbody tr:hover) { background: #fdfbf7; }
+  :global(.adm-foto) { width: 46px; height: 46px; object-fit: cover; border-radius: 8px; display: block; cursor: zoom-in; background: #eee; }
+  :global(.adm-nombre) { font-weight: 700; cursor: pointer; }
+  :global(.adm-nombre:hover) { color: var(--gold-dark, #a2823f); text-decoration: underline; }
+  :global(.adm-est) { border: 1.5px solid #ddd6c9; border-radius: 8px; padding: 5px 8px; font-size: 12.5px; font-family: inherit; background: #fff; }
+  :global(.est-Aprobado) { border-color: #7cb87c; color: #1e7a1e; }
+  :global(.est-Rechazado) { border-color: #d9a1a1; color: #b03535; }
+  :global(.adm-tabla a) { color: var(--gold-dark, #a2823f); font-weight: 600; }
+
+  /* Modal detalle */
+  .adm-modal { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  /* display:flex gana a [hidden], hay que anularlo explícitamente */
+  .adm-modal[hidden] { display: none; }
+  .adm-modal-bg { position: absolute; inset: 0; background: rgba(15, 11, 30, .6); }
+  .adm-modal-box { position: relative; background: #fff; border-radius: 16px; padding: 28px; max-width: 620px; width: 100%; max-height: 86vh; overflow-y: auto; }
+  .adm-modal-x { position: absolute; top: 10px; right: 14px; border: none; background: none; font-size: 28px; line-height: 1; cursor: pointer; color: #999; }
+  :global(.adm-d-foto) { width: 160px; border-radius: 12px; margin-bottom: 16px; }
+  :global(.adm-d h3) { margin: 0 0 4px; font-size: 22px; }
+  :global(.adm-d dl) { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 16px 0 0; font-size: 14px; }
+  :global(.adm-d dt) { font-weight: 700; color: var(--gold-dark, #a2823f); }
+  :global(.adm-d dd) { margin: 0; }
+  :global(.adm-d pre) { white-space: pre-wrap; font-family: inherit; margin: 0; }
+
+  @media (max-width: 760px) {
+    .adm-kpis { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<script>
+  const $ = (s) => document.querySelector(s);
+  const FN = "/.netlify/functions/inscripciones-listar";
+  let pass = "", datos = [];
+
+  async function api(payload) {
+    const r = await fetch(FN, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...payload, password: pass }) });
+    return { ok: r.ok, data: await r.json() };
+  }
+
+  // --- Acceso ---
+  async function entrar() {
+    const val = ($("#gate-pass") as HTMLInputElement).value.trim();
+    if (!val) return;
+    $("#gate-msg").textContent = "Comprobando…";
+    pass = val;
+    const { ok, data } = await api({ action: "list" });
+    if (!ok) { pass = ""; $("#gate-msg").textContent = data.error || "No se pudo entrar."; return; }
+    $("#adm-gate").hidden = true; $("#adm-panel").hidden = false;
+    pintar(data);
+  }
+  $("#gate-btn").addEventListener("click", entrar);
+  $("#gate-pass").addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Enter") entrar(); });
+
+  async function recargar() {
+    $("#adm-msg").textContent = "Actualizando…";
+    const { ok, data } = await api({ action: "list" });
+    $("#adm-msg").textContent = ok ? "" : (data.error || "Error al recargar.");
+    if (ok) pintar(data);
+  }
+  $("#adm-recargar").addEventListener("click", recargar);
+
+  // --- Pintar resumen ---
+  function pintar(d) {
+    datos = d.items || [];
+    $("#kpi-total").textContent = d.total ?? 0;
+    $("#kpi-personas").textContent = d.personas ?? 0;
+    $("#kpi-pend").textContent = d.porEstado?.Pendiente ?? 0;
+    $("#kpi-aprob").textContent = d.porEstado?.Aprobado ?? 0;
+
+    const cats = Object.entries(d.porCategoria || {}).sort((a, b) => b[1] - a[1]);
+    $("#adm-cats").innerHTML = cats.length
+      ? cats.map(([c, n]) => `<span class="adm-cat">${esc(c)} <b>${n}</b></span>`).join("")
+      : '<span class="adm-cat">Aún no hay inscripciones</span>';
+
+    const sel = $("#adm-filtro-cat") as HTMLSelectElement;
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">Todas las categorías</option>' + cats.map(([c]) => `<option>${esc(c)}</option>`).join("");
+    sel.value = prev;
+    filtrar();
+  }
+
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // --- Tabla ---
+  function visibles() {
+    const q = ($("#adm-buscar") as HTMLInputElement).value.trim().toLowerCase();
+    const c = ($("#adm-filtro-cat") as HTMLSelectElement).value;
+    const e = ($("#adm-filtro-est") as HTMLSelectElement).value;
+    return datos.filter((it) => {
+      if (c && it.especialidad !== c) return false;
+      if (e && it.estado !== e) return false;
+      if (!q) return true;
+      return [it.nombre, it.grupo, it.pais, it.ciudad, it.email, it.academia, it.integrantes].join(" ").toLowerCase().includes(q);
+    });
+  }
+  function filtrar() {
+    const list = visibles();
+    $("#adm-count").textContent = `Mostrando ${list.length} de ${datos.length}`;
+    $("#adm-tbody").innerHTML = list.map((it, i) => `
+      <tr data-i="${datos.indexOf(it)}">
+        <td>${it.foto ? `<img class="adm-foto" src="${esc(it.foto)}" alt="" loading="lazy" />` : ""}</td>
+        <td><span class="adm-nombre" data-ver>${esc(it.nombre) || "—"}</span></td>
+        <td>${esc(it.especialidad)}</td>
+        <td>${esc(it.grupo)}</td>
+        <td>${it.n}</td>
+        <td>${esc(it.pais)}</td>
+        <td>${it.email ? `<a href="mailto:${esc(it.email)}">${esc(it.email)}</a><br>` : ""}${esc(it.telefono)}</td>
+        <td>${it.video ? `<a href="${esc(it.video)}" target="_blank" rel="noopener">ver</a>` : ""}</td>
+        <td><select class="adm-est est-${esc(it.estado)}" data-est>
+          ${["Pendiente", "Aprobado", "Rechazado"].map((s) => `<option${s === it.estado ? " selected" : ""}>${s}</option>`).join("")}
+        </select></td>
+      </tr>`).join("");
+  }
+  $("#adm-buscar").addEventListener("input", filtrar);
+  $("#adm-filtro-cat").addEventListener("change", filtrar);
+  $("#adm-filtro-est").addEventListener("change", filtrar);
+
+  // Cambiar estado / abrir detalle
+  $("#adm-tbody").addEventListener("change", async (e) => {
+    const s = (e.target as HTMLElement).closest("[data-est]") as HTMLSelectElement;
+    if (!s) return;
+    const it = datos[Number(s.closest("tr").dataset.i)];
+    s.className = "adm-est est-" + s.value;
+    const { ok, data } = await api({ action: "estado", id: it.id, estado: s.value });
+    if (ok) { it.estado = s.value; $("#adm-msg").textContent = ""; recargarKpis(); }
+    else { $("#adm-msg").textContent = data.error || "No se pudo cambiar el estado."; }
+  });
+  function recargarKpis() {
+    $("#kpi-pend").textContent = datos.filter((d) => d.estado === "Pendiente").length;
+    $("#kpi-aprob").textContent = datos.filter((d) => d.estado === "Aprobado").length;
+  }
+
+  $("#adm-tbody").addEventListener("click", (e) => {
+    const t = (e.target as HTMLElement);
+    if (t.closest("[data-ver]") || t.classList.contains("adm-foto")) {
+      const it = datos[Number(t.closest("tr").dataset.i)];
+      $("#adm-modal-body").innerHTML = `<div class="adm-d">
+        ${it.foto ? `<img class="adm-d-foto" src="${esc(it.foto)}" alt="" />` : ""}
+        <h3>${esc(it.nombre) || "—"}</h3>
+        <p>${esc(it.especialidad)}${it.grupo ? " · " + esc(it.grupo) : ""}</p>
+        <dl>
+          <dt>Integrantes</dt><dd><pre>${esc(it.integrantes) || "—"}</pre></dd>
+          <dt>País</dt><dd>${esc(it.pais)}${it.ciudad ? " · " + esc(it.ciudad) : ""}</dd>
+          <dt>Email</dt><dd>${it.email ? `<a href="mailto:${esc(it.email)}">${esc(it.email)}</a>` : "—"}</dd>
+          <dt>Teléfono</dt><dd>${esc(it.telefono) || "—"}</dd>
+          <dt>Academia</dt><dd>${esc(it.academia) || "—"}</dd>
+          <dt>Instagram</dt><dd>${esc(it.instagram) || "—"}</dd>
+          <dt>Vídeo</dt><dd>${it.video ? `<a href="${esc(it.video)}" target="_blank" rel="noopener">${esc(it.video)}</a>` : "—"}</dd>
+          <dt>Observaciones</dt><dd><pre>${esc(it.observaciones) || "—"}</pre></dd>
+          <dt>Estado</dt><dd>${esc(it.estado)}</dd>
+        </dl></div>`;
+      $("#adm-modal").hidden = false;
+    }
+  });
+  $("#adm-modal").addEventListener("click", (e) => {
+    if ((e.target as HTMLElement).closest("[data-cerrar]")) $("#adm-modal").hidden = true;
+  });
+  document.addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Escape") $("#adm-modal").hidden = true; });
+
+  // --- CSV ---
+  $("#adm-csv").addEventListener("click", () => {
+    const cols = ["nombre", "especialidad", "grupo", "n", "pais", "ciudad", "email", "telefono", "academia", "instagram", "video", "estado", "integrantes", "observaciones"];
+    const cab = ["Nombre", "Categoría", "Grupo", "Nº", "País", "Ciudad", "Email", "Teléfono", "Academia", "Instagram", "Vídeo", "Estado", "Integrantes", "Observaciones"];
+    const q = (v) => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+    const csv = "﻿" + [cab.map(q).join(";"), ...visibles().map((it) => cols.map((c) => q(it[c])).join(";"))].join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8;" }));
+    a.download = "inscripciones.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+</script>
