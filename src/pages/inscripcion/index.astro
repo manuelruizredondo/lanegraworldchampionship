@@ -325,8 +325,11 @@ const ESPECIALIDADES = [
   function paintRatioHint() {
     if (!sel.value) { $("#foto-ratio").textContent = ""; return; }
     $("#foto-ratio").textContent = "";
-    $("#help-ratio").innerHTML = "Formato JPG o PNG. Se recorta sola, no hace falta que la prepares.";
     const esGrupo2 = max > 2;
+    // La medida recomendada solo se indica en solistas y dúos/parejas (foto cuadrada).
+    $("#help-ratio").innerHTML = esGrupo2
+      ? "Formato JPG o PNG. Se recorta sola, no hace falta que la prepares."
+      : 'Formato JPG o PNG, <strong>cuadrada (1:1)</strong> — por ejemplo <strong>1080 × 1080 px</strong>.';
     ($("#foto-ejemplo-img") as HTMLImageElement).src = esGrupo2 ? "/img/preview-4-3.webp" : "/img/preview-1-1.webp";
     $("#help-caras").innerHTML = esGrupo2
       ? 'Todas las caras deben quedar <strong>dentro de la zona marcada</strong> del ejemplo, dejando algo de espacio con el borde de la foto.'
@@ -344,7 +347,8 @@ const ESPECIALIDADES = [
       let sw = img.width, sh = Math.round(sw / r);
       if (sh > img.height) { sh = img.height; sw = Math.round(sh * r); }
       const sx = Math.round((img.width - sw) / 2), sy = Math.round((img.height - sh) / 2);
-      const outW = r === 1 ? 1200 : 1600, outH = Math.round(outW / r);
+      // 1080×1080 (cuadrada) o 1440×1080 (apaisada de grupos)
+      const outH = 1080, outW = Math.round(outH * r);
       const cv = document.createElement("canvas"); cv.width = outW; cv.height = outH;
       cv.getContext("2d")!.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
       const dataUrl = cv.toDataURL("image/jpeg", 0.85);
