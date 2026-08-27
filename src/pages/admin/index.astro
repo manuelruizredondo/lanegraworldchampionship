@@ -59,6 +59,15 @@ import Base from "@/layouts/Base.astro";
     </section>
   </div>
 
+  <!-- Vídeo del competidor -->
+  <div id="vid-modal" class="vid-modal" hidden>
+    <div class="vid-modal-bg" data-vcerrar></div>
+    <div class="vid-modal-box" role="dialog" aria-modal="true">
+      <button type="button" class="adm-modal-x" data-vcerrar aria-label="Cerrar">×</button>
+      <div id="vid-modal-body"></div>
+    </div>
+  </div>
+
   <!-- Detalle de una inscripción -->
   <div id="adm-modal" class="adm-modal" hidden>
     <div class="adm-modal-bg" data-cerrar></div>
@@ -112,6 +121,24 @@ import Base from "@/layouts/Base.astro";
   :global(.b-Pendiente) { background: #fff5db; color: #8a6a12; }
   :global(.b-Aprobado) { background: #e4f6e4; color: #1a6b1a; }
   :global(.b-Rechazado) { background: #fdeaea; color: #a82c2c; }
+  /* Botón "ver" del vídeo */
+  :global(.adm-vid-btn) { border: none; background: none; padding: 0; font: inherit; font-weight: 600; color: var(--gold-dark, #a2823f); cursor: pointer; text-decoration: underline; }
+  :global(.adm-vid-btn:hover) { color: var(--gold); }
+  /* Modal del vídeo */
+  .vid-modal { position: fixed; inset: 0; z-index: 4100; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .vid-modal[hidden] { display: none; }
+  .vid-modal-bg { position: absolute; inset: 0; background: rgba(15, 11, 30, .78); }
+  .vid-modal-box { position: relative; background: #12101a; border-radius: 16px; padding: 44px 16px 16px; width: 100%; max-width: 900px; max-height: 92vh; overflow-y: auto; }
+  .vid-modal-box .adm-modal-x { color: #fff; }
+  :global(.vid-yt) { position: relative; width: 100%; aspect-ratio: 16/9; }
+  :global(.vid-yt iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 10px; }
+  :global(.vid-ig) { display: flex; justify-content: center; }
+  :global(.vid-ig iframe) { width: 400px; max-width: 100%; height: 640px; border: 0; border-radius: 10px; background: #fff; }
+  :global(.vid-fallback) { text-align: center; color: #fff; padding: 30px 10px; }
+  :global(.vid-fallback a) { color: var(--gold); font-weight: 700; }
+  :global(.vid-abrir) { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: rgba(255,255,255,.75); }
+  :global(.vid-abrir a) { color: var(--gold); font-weight: 600; }
+
   /* Botón de notas en la tabla */
   :global(.adm-nota-btn) { border: 1.5px dashed #d8d2c7; background: #fff; border-radius: 8px; width: 32px; height: 30px; cursor: pointer; font-size: 14px; line-height: 1; color: #b3aa99; }
   :global(.adm-nota-btn:hover) { border-color: var(--gold); color: var(--gold-dark, #a2823f); }
@@ -237,7 +264,7 @@ import Base from "@/layouts/Base.astro";
         <td>${it.email ? `<a href="mailto:${esc(it.email)}">${esc(it.email)}</a>` : ""}</td>
         <td class="nw">${it.telefono ? `<a href="https://wa.me/${esc(String(it.telefono).replace(/[^0-9]/g, ""))}" target="_blank" rel="noopener">${esc(it.telefono)}</a>` : ""}</td>
         <td>${it.instagram ? `<a href="https://instagram.com/${esc(String(it.instagram).replace(/^@/, ""))}" target="_blank" rel="noopener">${esc(it.instagram)}</a>` : ""}</td>
-        <td>${it.video ? `<a href="${esc(it.video)}" target="_blank" rel="noopener">ver</a>` : ""}</td>
+        <td>${it.video ? `<button type="button" class="adm-vid-btn" data-vid="${esc(it.video)}">ver</button>` : ""}</td>
         <td class="nw">${esc(fecha(it.creado))}</td>
         <td><button type="button" class="adm-nota-btn${it.notas ? " tiene" : ""}" data-ver title="${it.notas ? esc(it.notas) : "Añadir notas"}">${it.notas ? "📝" : "＋"}</button></td>
         <td><select class="adm-est est-${esc(it.estado)}" data-est>
@@ -294,6 +321,28 @@ import Base from "@/layouts/Base.astro";
       $("#adm-modal").hidden = false;
     }
   });
+  // --- Modal de vídeo: incrusta YouTube o Instagram ---
+  function incrustar(url) {
+    const s = String(url || "");
+    let m = s.match(/(?:youtube\.com\/(?:watch\?v=|live\/|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+    if (m) return `<div class="vid-yt"><iframe src="https://www.youtube-nocookie.com/embed/${m[1]}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+    m = s.match(/instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);
+    if (m) return `<div class="vid-ig"><iframe src="https://www.instagram.com/${m[1]}/${m[2]}/embed" scrolling="no" allowtransparency="true"></iframe></div>`;
+    return `<div class="vid-fallback">No se puede reproducir aquí.<br><a href="${esc(s)}" target="_blank" rel="noopener">Abrir el vídeo en una pestaña nueva</a></div>`;
+  }
+  $("#adm-tbody").addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest(".adm-vid-btn") as HTMLElement;
+    if (!b) return;
+    const url = b.dataset.vid || "";
+    $("#vid-modal-body").innerHTML = incrustar(url) +
+      `<p class="vid-abrir"><a href="${esc(url)}" target="_blank" rel="noopener">Abrir en una pestaña nueva ↗</a></p>`;
+    $("#vid-modal").hidden = false;
+  });
+  function cerrarVideo() { $("#vid-modal").hidden = true; $("#vid-modal-body").innerHTML = ""; }
+  $("#vid-modal").addEventListener("click", (e) => {
+    if ((e.target as HTMLElement).closest("[data-vcerrar]")) cerrarVideo();
+  });
+
   // Guardar notas internas en Airtable
   $("#adm-modal").addEventListener("click", async (e) => {
     const btn = (e.target as HTMLElement).closest("#adm-notas-save") as HTMLButtonElement;
@@ -317,7 +366,7 @@ import Base from "@/layouts/Base.astro";
   $("#adm-modal").addEventListener("click", (e) => {
     if ((e.target as HTMLElement).closest("[data-cerrar]")) $("#adm-modal").hidden = true;
   });
-  document.addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Escape") $("#adm-modal").hidden = true; });
+  document.addEventListener("keydown", (e) => { if ((e as KeyboardEvent).key === "Escape") { $("#adm-modal").hidden = true; cerrarVideo(); } });
 
   // --- CSV ---
   $("#adm-csv").addEventListener("click", () => {
