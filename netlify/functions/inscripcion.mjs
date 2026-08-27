@@ -88,7 +88,12 @@ export default async (req) => {
   }
 
   // 2) Subir la foto como adjunto al campo "Foto" (si viene)
+  //    Tope de 5 MB también en el servidor (el navegador ya la reescala y valida).
   if (recId && body.photo?.base64 && body.photo?.type) {
+    const bytes = Math.floor((String(body.photo.base64).length * 3) / 4);
+    if (bytes > 5 * 1024 * 1024) {
+      return json({ ok: true, recordId: recId, photoWarning: "La foto supera los 5 MB y no se ha adjuntado." });
+    }
     try {
       const up = await fetch(`https://content.airtable.com/v0/${BASE}/${recId}/Foto/uploadAttachment`, {
         method: "POST",

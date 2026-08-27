@@ -79,7 +79,7 @@ const ESPECIALIDADES = [
                     <li>Mirando a cámara y con la cara bien visible. Podéis llevar gorra, siempre que no os tape la cara.</li>
                     <li><strong>Sin texto, logos, marcos ni collages</strong>, y que no sea una captura de pantalla: mandad la foto original.</li>
                     <li id="help-juntos">En dúos y parejas, los dos en la misma foto.</li>
-                    <li id="help-ratio">Formato JPG o PNG.</li>
+                    <li id="help-ratio">Formato JPG o PNG, <strong>máximo 5 MB</strong>.</li>
                   </ul>
                   <figure class="foto-ejemplo">
                     <!-- Si aún no existe la guía 4:3 de grupos, se muestra la 1:1 -->
@@ -192,6 +192,7 @@ const ESPECIALIDADES = [
   .foto-ejemplo figcaption { font-size: 11px; color: #999; text-align: center; margin-top: 5px; line-height: 1.35; }
   .foto-drop { display: flex; flex-direction: column; gap: 12px; }
   .foto-ratio { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--gold-dark, #a2823f); line-height: 1.4; }
+  .foto-ratio.err { color: #c0392b; }
 
   /* Previsualización sobre el cartel oficial (plantilla PNG con ventana transparente) */
   .cartel { margin: 0; }
@@ -341,8 +342,8 @@ const ESPECIALIDADES = [
     const esGrupo2 = max > 2;
     // La medida recomendada solo se indica en solistas y dúos/parejas (foto cuadrada).
     $("#help-ratio").innerHTML = esGrupo2
-      ? "Formato JPG o PNG. Se recorta sola, no hace falta que la prepares."
-      : 'Formato JPG o PNG, <strong>cuadrada (1:1)</strong> — por ejemplo <strong>1080 × 1080 px</strong>.';
+      ? "Formato JPG o PNG, <strong>máximo 5 MB</strong>. Se recorta sola, no hace falta que la prepares."
+      : 'Formato JPG o PNG, <strong>máximo 5 MB</strong>, <strong>cuadrada (1:1)</strong> — por ejemplo <strong>1080 × 1080 px</strong>.';
     ($("#foto-ejemplo-img") as HTMLImageElement).src = esGrupo2 ? "/img/preview-4-3.webp" : "/img/preview-1-1.webp";
     // "Los dos juntos" solo tiene sentido en dúos/parejas; en equipos, que quepan todos.
     const juntos = $("#help-juntos");
@@ -382,8 +383,19 @@ const ESPECIALIDADES = [
     };
     img.src = url;
   }
+  const MAX_FOTO = 5 * 1024 * 1024; // 5 MB
   $("#foto-input").addEventListener("change", (e) => {
-    lastFile = (e.target as HTMLInputElement).files?.[0] || null;
+    const inp = e.target as HTMLInputElement;
+    const f = inp.files?.[0] || null;
+    if (f && f.size > MAX_FOTO) {
+      const mb = (f.size / 1024 / 1024).toFixed(1);
+      $("#foto-ratio").textContent = `La foto pesa ${mb} MB y el máximo son 5 MB. Elige otra o redúcela antes de subirla.`;
+      $("#foto-ratio").classList.add("err");
+      inp.value = ""; lastFile = null; photo = null; $("#cartel").hidden = true;
+      return;
+    }
+    $("#foto-ratio").classList.remove("err");
+    lastFile = f;
     processPhoto(lastFile);
   });
 
