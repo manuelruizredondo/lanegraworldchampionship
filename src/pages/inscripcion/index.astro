@@ -54,7 +54,7 @@ const ESPECIALIDADES = [
           <!-- PASO 2 · INTEGRANTES (se genera al elegir especialidad) -->
           <div class="step" id="step-int" hidden>
             <p class="step-n">Paso 2</p>
-            <label class="fld" id="fld-grupo" hidden><span id="grupo-label">Nombre del grupo <span class="req">*</span></span><input name="grupo" type="text" /></label>
+            <label class="fld" id="fld-grupo" hidden><span id="grupo-label">Nombre artístico <span class="req">*</span></span><input name="grupo" type="text" /><span class="fld-hint" id="grupo-hint">Es el nombre que aparecerá en el cartel si resultas seleccionado.</span></label>
             <div class="int-head">
               <span class="int-title" id="int-title">Datos de los integrantes</span>
               <p class="int-note" id="int-note"></p>
@@ -102,7 +102,7 @@ const ESPECIALIDADES = [
               </div>
             </div>
 
-            <label class="fld"><span>Enlace a un vídeo bailando (YouTube o Instagram) <span class="req">*</span></span>
+            <label class="fld"><span id="video-label">Enlace a un vídeo bailando (YouTube o Instagram) <span class="req">*</span></span>
               <input name="video" type="url" placeholder="https://…" required />
             </label>
 
@@ -211,6 +211,9 @@ const ESPECIALIDADES = [
   .chk input { margin-top: 3px; flex: none; width: 18px; height: 18px; accent-color: var(--gold); }
   .chk a { color: var(--gold-dark, #a2823f); font-weight: 700; text-decoration: underline; }
   .lbl-mini { font-weight: 400; opacity: .65; }
+  .fld-hint { display: block; font-size: 12px; font-weight: 400; color: var(--p-ink); opacity: .6; margin-top: 5px; }
+  :global(.int-edad) { display: block; font-size: 11.5px; font-weight: 600; color: var(--gold-dark, #a2823f); margin-top: 4px; min-height: 14px; }
+  :global(.int-aviso) { font-size: 12px; color: var(--p-ink); opacity: .62; margin: 0 0 12px; line-height: 1.4; }
 
   .ins-submit { margin-top: 28px; width: 100%; }
   .ins-ok-title { color: var(--p-ink); }
@@ -257,13 +260,16 @@ const ESPECIALIDADES = [
     c.className = "int-card";
     c.innerHTML = `
       <div class="int-card-h"><span class="int-card-t">Integrante ${n}</span></div>
+      <p class="int-aviso">Se representa a un solo país y hay que estar nacionalizado para hacerlo.</p>
       <div class="int-grid">
         <label class="int-f"><span>Nombre *</span><input data-c="nombre" type="text" required /></label>
         <label class="int-f"><span>Apellidos *</span><input data-c="apellidos" type="text" required /></label>
-        <label class="int-f"><span>Fecha de nacimiento *</span><input data-c="nacimiento" type="date" required /></label>
-        <label class="int-f"><span>País *</span><input data-c="pais" type="text" required /></label>
+        <label class="int-f"><span>Fecha de nacimiento *</span><input data-c="nacimiento" type="date" required /><span class="int-edad" data-edad></span></label>
+        <label class="int-f"><span>Nacionalidad *</span><input data-c="pais" type="text" required /></label>
+        <label class="int-f"><span>País al que representa *</span><input data-c="representa" type="text" required /></label>
         <label class="int-f"><span>Documento (DNI/Pasaporte) *</span><input data-c="documento" type="text" required /></label>
         <label class="int-f"><span>Email *</span><input data-c="email" type="email" required /></label>
+        <label class="int-f int-tel"><span>Teléfono / WhatsApp *</span><input data-c="telefono" type="tel" /></label>
         <label class="int-f"><span>Instagram</span><input data-c="instagram" type="text" placeholder="@usuario" /></label>
       </div>`;
     return c;
@@ -290,10 +296,21 @@ const ESPECIALIDADES = [
     intList.innerHTML = "";
     for (let i = 0; i < min; i++) addCard();
     const esGrupo = max > 2;
-    fldGrupo.hidden = !(max > 1);
+    // Nombre artístico: se pide siempre (es el que irá en el cartel si sale seleccionado)
+    fldGrupo.hidden = false;
     grupoInput.required = esGrupo;
-    grupoLabel.innerHTML = esGrupo ? 'Nombre del grupo <span class="req">*</span>' : "Nombre artístico del dúo/pareja (opcional)";
-    if (!(max > 1)) grupoInput.value = "";
+    grupoLabel.innerHTML = esGrupo
+      ? 'Nombre del grupo <span class="req">*</span>'
+      : 'Nombre artístico <span class="lbl-mini">(opcional)</span>';
+    // Teléfono por integrante solo en solistas y dúos/parejas (en equipos basta el del responsable)
+    intList.querySelectorAll(".int-tel").forEach((el) => {
+      const inp = el.querySelector("input") as HTMLInputElement;
+      (el as HTMLElement).hidden = esGrupo; inp.required = !esGrupo;
+      if (esGrupo) inp.value = "";
+    });
+    // El vídeo se pide del estilo de la categoría elegida
+    const estilo = String(sel.value).split(" · ")[0];
+    $("#video-label").innerHTML = `Enlace al vídeo de <strong>${estilo}</strong> (YouTube o Instagram) <span class="req">*</span>`;
     intTitle.textContent = min === 1 ? "Datos del competidor" : "Datos de cada integrante";
     intNote.textContent = max === 1
       ? "Rellena los datos del competidor."
@@ -315,17 +332,46 @@ const ESPECIALIDADES = [
     paintRatioHint();
     if (lastFile) processPhoto(lastFile);
   });
-  intAdd.addEventListener("click", addCard);
+  intAdd.addEventListener("click", () => {
+    addCard();
+    const esGrupo = max > 2;
+    const ult = intList.querySelector(".int-card:last-child .int-tel") as HTMLElement;
+    if (ult) { const i = ult.querySelector("input") as HTMLInputElement; ult.hidden = esGrupo; i.required = !esGrupo; }
+  });
+
+  // Edad que tendrá el competidor durante el evento (21 oct 2026)
+  const EVENTO = new Date("2026-10-21T00:00:00+02:00");
+  function edadEnEvento(iso) {
+    if (!iso) return null;
+    const d = new Date(iso); if (isNaN(+d)) return null;
+    let a = EVENTO.getFullYear() - d.getFullYear();
+    const m = EVENTO.getMonth() - d.getMonth();
+    if (m < 0 || (m === 0 && EVENTO.getDate() < d.getDate())) a--;
+    return a >= 0 && a < 120 ? a : null;
+  }
+  // Al escribir la fecha se muestra la edad que tendrá durante el evento
+  intList.addEventListener("input", (e) => {
+    const inp = (e.target as HTMLElement).closest('[data-c="nacimiento"]') as HTMLInputElement;
+    if (!inp) return;
+    const out = inp.parentElement.querySelector("[data-edad]");
+    const a = edadEnEvento(inp.value);
+    if (out) out.textContent = a === null ? "" : `${a} años durante el evento`;
+  });
 
   function buildIntegrantes() {
     return [...intList.querySelectorAll(".int-card")].map((c, i) => {
       const g = (k) => ((c.querySelector('[data-c="' + k + '"]') as HTMLInputElement).value || "").trim();
       if (!g("nombre") && !g("apellidos")) return null;
       const bits = [`${i + 1}) ${g("nombre")} ${g("apellidos")}`.trim()];
-      if (g("nacimiento")) bits.push("nac. " + g("nacimiento"));
-      if (g("pais")) bits.push(g("pais"));
+      if (g("nacimiento")) {
+        const e = edadEnEvento(g("nacimiento"));
+        bits.push(`nacido ${g("nacimiento")}` + (e !== null ? ` (${e} años en el evento)` : ""));
+      }
+      if (g("pais")) bits.push("nacionalidad " + g("pais"));
+      if (g("representa")) bits.push("representa a " + g("representa"));
       if (g("documento")) bits.push("doc. " + g("documento"));
       if (g("email")) bits.push(g("email"));
+      if (g("telefono")) bits.push(g("telefono"));
       if (g("instagram")) bits.push(g("instagram"));
       return bits.join(" · ");
     }).filter(Boolean).join("\n");
@@ -417,6 +463,7 @@ const ESPECIALIDADES = [
     fields.apellidos = g1("apellidos");
     fields.nacimiento = g1("nacimiento");
     fields.pais = g1("pais");
+    fields.representa = g1("representa");
     fields.instagram = g1("instagram");
     // En solistas, el email de contacto es el del propio competidor
     if (max === 1) fields.email = g1("email");

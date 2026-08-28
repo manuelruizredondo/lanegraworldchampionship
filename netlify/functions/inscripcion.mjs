@@ -57,6 +57,7 @@ export default async (req) => {
     "Email": String(f.email).trim(),
     "Teléfono": String(f.telefono).trim(),
     "País": String(f.pais).trim(),
+    "Representa a": f.representa ? String(f.representa).trim() : "",
     "Ciudad": f.ciudad ? String(f.ciudad).trim() : "",
     "Fecha de nacimiento": String(f.nacimiento).trim(),
     "Especialidad": String(f.especialidad).trim(),
