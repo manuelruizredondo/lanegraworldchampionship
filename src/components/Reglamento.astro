@@ -1,5 +1,5 @@
 ---
-import { REGLAMENTO, REGLAMENTO_META, REGLAMENTO_PDF } from "@/data/reglamento.js";
+import { REGLAMENTO, REGLAMENTO_META } from "@/data/reglamento.js";
 
 const { lang = "es" } = Astro.props;
 const t = REGLAMENTO_META[lang] || REGLAMENTO_META.es;
@@ -9,8 +9,8 @@ const src = REGLAMENTO[lang] || REGLAMENTO.es;
 const salsa = (src.salsa && src.salsa.length) ? src.salsa : REGLAMENTO.es.salsa;
 const bachata = (src.bachata && src.bachata.length) ? src.bachata : REGLAMENTO.es.bachata;
 const DOCS = [
-  { key: "salsa", label: t.tabs.salsa, blocks: salsa, pdf: REGLAMENTO_PDF.salsa },
-  { key: "bachata", label: t.tabs.bachata, blocks: bachata, pdf: REGLAMENTO_PDF.bachata },
+  { key: "salsa", label: t.tabs.salsa, blocks: salsa },
+  { key: "bachata", label: t.tabs.bachata, blocks: bachata },
 ];
 
 // Resalta en negrita la hora, la disciplina y palabras clave de cada línea de horario
@@ -44,10 +44,6 @@ const fmtSchedule = (s) => {
   <div class="container">
     {DOCS.map((d, i) => (
       <article class={"rg-doc" + (i === 0 ? " active" : "")} data-doc-panel={d.key}>
-        <a class="rg-pdf" href={d.pdf} target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-          {t.pdf}
-        </a>
         {d.blocks.map((b) => (
           b.type === "h2" ? <h2 class="rg-h2">{b.text}</h2> :
           b.type === "h3" ? <h3 class="rg-h3">{b.text}</h3> :
@@ -111,18 +107,11 @@ const fmtSchedule = (s) => {
   .rg-doc { display: none; }
   .rg-doc.active { display: block; }
 
-  .rg-pdf {
-    display: inline-flex; align-items: center; gap: 8px; margin: 0 0 26px;
-    padding: 10px 20px; border-radius: 999px; background: #14121a; color: #fff;
-    text-decoration: none; font-weight: 600; font-size: 14px; transition: opacity .15s;
-  }
-  .rg-pdf:hover { opacity: .88; }
-
   .rg-h2 {
     font-size: clamp(20px, 3vw, 26px); font-weight: 800; letter-spacing: -.02em; color: #14121a;
     margin: 40px 0 14px; padding-bottom: 10px; border-bottom: 2px solid #ece8e1; line-height: 1.2;
   }
-  .rg-doc > .rg-pdf + .rg-h2 { margin-top: 0; }
+  .rg-doc > .rg-h2:first-child { margin-top: 0; }
   .rg-h3 { font-size: 17px; font-weight: 700; color: #14121a; margin: 26px 0 6px; line-height: 1.35; }
   .rg-p { font-size: 15.5px; line-height: 1.7; color: #3a3a44; margin: 0 0 14px; }
   .rg-ul { margin: 0 0 16px; padding-left: 22px; }
