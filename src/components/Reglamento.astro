@@ -15,6 +15,9 @@ const DOCS = [
 
 // Resalta en negrita la hora, la disciplina y palabras clave de cada línea de horario
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+// En el texto del reglamento, **algo** se muestra en negrita (se escapa antes, así que
+// el contenido nunca puede inyectar HTML).
+const fmt = (s) => esc(String(s ?? "")).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 const fmtSchedule = (s) => {
   let out = esc(s);
   out = out.replace(/^(\s*\d{1,2}:\d{2}(?:\s*a\s*\d{1,2}:\d{2}h?)?)/, "<strong>$1</strong>");
@@ -46,10 +49,10 @@ const fmtSchedule = (s) => {
       <article class={"rg-doc" + (i === 0 ? " active" : "")} data-doc-panel={d.key}>
         {d.blocks.map((b) => (
           b.type === "h2" ? <h2 class="rg-h2">{b.text}</h2> :
-          b.type === "h3" ? <h3 class="rg-h3">{b.text}</h3> :
-          b.type === "p" ? <p class="rg-p">{b.text}</p> :
-          b.type === "note" ? <p class="rg-note">{b.text}</p> :
-          b.type === "ul" ? <ul class="rg-ul">{b.items.map((it) => <li>{it}</li>)}</ul> :
+          b.type === "h3" ? <h3 class="rg-h3" set:html={fmt(b.text)}></h3> :
+          b.type === "p" ? <p class="rg-p" set:html={fmt(b.text)}></p> :
+          b.type === "note" ? <p class="rg-note" set:html={fmt(b.text)}></p> :
+          b.type === "ul" ? <ul class="rg-ul">{b.items.map((it) => <li set:html={fmt(it)}></li>)}</ul> :
           b.type === "schedule" ? (
             <div class="rg-sched">
               <p class="rg-sched-day">{b.day}</p>
