@@ -13,12 +13,27 @@ const desc = {
   it: "Festival mondiale di salsa e bachata a Calpe: workshop per tutti i livelli, show, feste e il Mondiale Pasos Libres. Dal 21 al 25 ottobre 2026.",
 }[lang];
 
+const NOMBRE = {
+  es: "La Negra Dance Festival · Mundial de Pasos Libres",
+  en: "La Negra Dance Festival · Pasos Libres World Championship",
+  it: "La Negra Dance Festival · Mondiale Pasos Libres",
+}[lang] || "La Negra Dance Festival · Mundial de Pasos Libres";
+
+// Los dos mundiales que se celebran dentro del festival
+const SUB = {
+  es: ["XV Mundial de Pasos Libres La Negra Salsa", "V Mundial de Pasos Libres La Negra Bachata"],
+  en: ["XV Pasos Libres Salsa World Championship", "V Pasos Libres Bachata World Championship"],
+  it: ["XV Mondiale Pasos Libres Salsa", "V Mondiale Pasos Libres Bachata"],
+}[lang] || [];
+
 const performer = (ARTISTS[lang] || ARTISTS.es).map((a) => ({ "@type": "PerformingGroup", name: a.name }));
 
 const data = {
   "@context": "https://schema.org",
-  "@type": "Festival",
-  name: "La Negra Dance Festival",
+  // Es a la vez festival y competición: schema.org admite varios tipos.
+  "@type": ["Festival", "SportsEvent"],
+  name: NOMBRE,
+  alternateName: "Mundial de Pasos Libres",
   startDate: "2026-10-21",
   endDate: "2026-10-25",
   eventStatus: "https://schema.org/EventScheduled",
@@ -53,6 +68,15 @@ const data = {
     validFrom: "2025-01-01",
   },
   performer,
+  subEvent: SUB.map((n) => ({
+    "@type": "SportsEvent",
+    name: n,
+    startDate: "2026-10-21",
+    endDate: "2026-10-25",
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    location: { "@type": "Place", name: "Hotel AR Diamante Beach 4* Superior", address: { "@type": "PostalAddress", addressLocality: "Calpe", addressRegion: "Alicante", addressCountry: "ES" } },
+  })),
 };
 ---
 <script type="application/ld+json" set:html={JSON.stringify(data)} is:inline />
