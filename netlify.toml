@@ -19,6 +19,14 @@
   status = 301
   force = true
 
+# Restos de la web antigua en WordPress. El PDF de las bases de 2025 seguía
+# indexado y compitiendo con la página actual: se manda a las bases vigentes.
+[[redirects]]
+  from = "/wp-content/uploads/*"
+  to = "/bases-y-reglamento/"
+  status = 301
+  force = true
+
 # Astro genera 404.html automáticamente desde src/pages/404.astro.
 [[headers]]
   for = "/img/*"
