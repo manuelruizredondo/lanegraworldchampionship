@@ -118,7 +118,7 @@ const gallery = [
 ];
 ---
 
-<Base title="Ganadores 2024" description="Los ganadores del Mundial de Salsa y Bachata de La Negra Dance Festival 2024." lang="es">
+<Base title="Ganadores 2024 · Mundial La Negra de Pasos Libres" description="Todos los campeones del Mundial de Salsa y Bachata 2024: solistas, dúos, parejas y equipos, con los vídeos de sus coreografías." lang="es">
   <SubNav items={subNav} label="Secciones de la competición" />
 
   <div class="prop">
@@ -137,11 +137,11 @@ const gallery = [
           <article class="winner-card">
             {c.video ? (
               <button class="winner-img has-video" type="button" data-video={c.video} aria-label={`Ver vídeo del campeón: ${c.title}`}>
-                <img src={img(c.image)} alt={c.title} loading="lazy" />
+                <img src={img(c.image)} alt={c.title} loading="lazy" decoding="async" />
                 <span class="winner-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
               </button>
             ) : (
-              <div class="winner-img"><img src={img(c.image)} alt={c.title} loading="lazy" /></div>
+              <div class="winner-img"><img src={img(c.image)} alt={c.title} loading="lazy" decoding="async" /></div>
             )}
             <h2 class="winner-title">{c.title}</h2>
             <ol class="podium">
@@ -155,7 +155,7 @@ const gallery = [
     <!-- GALLERY -->
     <section class="p-section">
       <div class="p-container gallery-grid">
-        {gallery.map((src) => <div class="gallery-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+        {gallery.map((src) => <div class="gallery-item"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
       </div>
     </section>
 

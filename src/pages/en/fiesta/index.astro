@@ -51,7 +51,7 @@ const gallery = [
 ];
 ---
 
-<Base title="Party" description="The most danced nights of the year: four nights, four themes and two social dancing rooms at La Negra Dance Festival." lang="en">
+<Base title="Salsa &amp; Bachata Parties 2026 · La Negra, Calpe Spain" description="Four nights, four themes and two social dancing rooms until dawn with the best DJs. Calpe, Spain, October 21-25, 2026." lang="en">
   <div class="prop">
   <!-- HERO -->
   <section class="p-section fi-hero">
@@ -96,7 +96,7 @@ const gallery = [
     </div>
     <div class="p-container fi-salas">
       <article class="fi-sala" data-slideshow>
-        {salaSalsaImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
+        {salaSalsaImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" decoding="async" />)}
         <div class="fi-sala-head">
           <p class="fi-sala-tag">Social dancing</p>
           <h3 class="fi-sala-t">Sala Salsa</h3>
@@ -107,7 +107,7 @@ const gallery = [
         </div>
       </article>
       <article class="fi-sala" data-slideshow>
-        {salaBachataImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
+        {salaBachataImgs.map((src, i) => <img class={"fi-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" decoding="async" />)}
         <div class="fi-sala-head">
           <p class="fi-sala-tag">Social dancing</p>
           <h3 class="fi-sala-t">Sala Bachata</h3>
@@ -131,7 +131,7 @@ const gallery = [
           <div class="p-artists-set">
             {djArtists.map((d) => (
               <div class="p-artist">
-                <div class="p-artist-img"><img src={img(d.img)} alt={d.name} loading="lazy" /></div>
+                <div class="p-artist-img"><img src={img(d.img)} alt={d.name} loading="lazy" decoding="async" /></div>
                 <span class="p-artist-n"><span>{d.first}</span>{d.last && <span>{d.last}</span>}</span>
                 <span class="p-artist-c">{d.country}</span>
                 <div class="p-artist-social">
@@ -144,7 +144,7 @@ const gallery = [
           <div class="p-artists-set" aria-hidden="true">
             {djArtists.map((d) => (
               <div class="p-artist">
-                <div class="p-artist-img"><img src={img(d.img)} alt={d.name} loading="lazy" /></div>
+                <div class="p-artist-img"><img src={img(d.img)} alt={d.name} loading="lazy" decoding="async" /></div>
                 <span class="p-artist-n"><span>{d.first}</span>{d.last && <span>{d.last}</span>}</span>
                 <span class="p-artist-c">{d.country}</span>
                 <div class="p-artist-social">
@@ -169,7 +169,7 @@ const gallery = [
         {nights.map((n) => (
           <article class="night">
             <div class="night-img">
-              <img src={img(n.img)} alt={n.title} loading="lazy" />
+              <img src={img(n.img)} alt={n.title} loading="lazy" decoding="async" />
               <span class="night-day">{n.day}</span>
             </div>
             <h4 class="night-title">{n.title}</h4>
@@ -183,7 +183,7 @@ const gallery = [
   <!-- PAST EDITIONS -->
   <section class="p-section p-center">
     <div class="p-container past-gallery">
-      {gallery.map((src) => <div class="pg-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+      {gallery.map((src) => <div class="pg-item"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
     </div>
     <div class="p-container">
       <p class="p-eyebrow">Past editions</p>
