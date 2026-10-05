@@ -157,11 +157,11 @@ const gallery = [
           <article class="winner-card">
             {c.video ? (
               <button class="winner-img has-video" type="button" data-video={c.video} aria-label={`Watch the champion's video: ${c.title}`}>
-                <img src={img(c.image)} alt={c.title} loading="lazy" />
+                <img src={img(c.image)} alt={c.title} loading="lazy" decoding="async" />
                 <span class="winner-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
               </button>
             ) : (
-              <div class="winner-img"><img src={img(c.image)} alt={c.title} loading="lazy" /></div>
+              <div class="winner-img"><img src={img(c.image)} alt={c.title} loading="lazy" decoding="async" /></div>
             )}
             <h2 class="winner-title">{c.title}</h2>
             <ol class="podium">
@@ -175,7 +175,7 @@ const gallery = [
     <!-- GALLERY -->
     <section class="p-section">
       <div class="p-container gallery-grid">
-        {gallery.map((src) => <div class="gallery-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+        {gallery.map((src) => <div class="gallery-item"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
       </div>
     </section>
 

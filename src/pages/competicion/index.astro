@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import EventSchema from "@/components/EventSchema.astro";
 import SubNav from "@/components/SubNav.astro";
 import { img } from "@/data/img.js";
 
@@ -45,6 +46,7 @@ const gallery = [
 ---
 
 <Base title="Mundial de Salsa y Bachata 2026 · La Negra, Calpe" description="Compite en el XV Mundial de Pasos Libres: categorías, bases, inscripción y pase de competidor. Calpe (Alicante), del 21 al 25 de octubre de 2026.">
+  <EventSchema lang="es" />
   <SubNav items={subNav} label="Secciones de la competición" />
 
   <div class="prop">
@@ -56,7 +58,7 @@ const gallery = [
         <span class="reg-closed c-hero-btn"><span class="btn btn-solid btn-off" aria-disabled="true" role="button" title="Inscripciones cerradas">Inscríbete ahora</span><span class="reg-note">Inscripciones cerradas: el plazo de inscripción al Mundial 2026 ha finalizado.</span></span>
         <div class="c-hero-grid">
           {heroGrid.map((src) => (
-            <div class="c-g-item"><img src={img(src)} alt="" loading="lazy" /></div>
+            <div class="c-g-item"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>
           ))}
         </div>
       </div>
@@ -74,8 +76,8 @@ const gallery = [
           </div>
         </div>
         <div class="c-split-imgs">
-          <div class="c-g-item c-g-tall"><img src={img("la-negra-dance-festival-galeria-2023-23.webp")} alt="" loading="lazy" /></div>
-          <div class="c-g-item c-g-tall"><img src={img("la-negra-dance-festival-galeria-2023-28.webp")} alt="" loading="lazy" /></div>
+          <div class="c-g-item c-g-tall"><img src={img("la-negra-dance-festival-galeria-2023-23.webp")} alt="" loading="lazy" decoding="async" /></div>
+          <div class="c-g-item c-g-tall"><img src={img("la-negra-dance-festival-galeria-2023-28.webp")} alt="" loading="lazy" decoding="async" /></div>
         </div>
       </div>
     </section>
@@ -151,7 +153,7 @@ const gallery = [
       <div class="p-container">
         <div class="c-gallery">
           {gallery.map((src) => (
-            <div class="c-g-item c-g-sq"><img src={img(src)} alt="" loading="lazy" /></div>
+            <div class="c-g-item c-g-sq"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>
           ))}
         </div>
       </div>

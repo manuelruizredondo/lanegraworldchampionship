@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import EventSchema from "@/components/EventSchema.astro";
 import SubNav from "@/components/SubNav.astro";
 import Statement from "@/components/Statement.astro";
 import { img } from "@/data/img.js";
@@ -70,6 +71,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
 ---
 
 <Base title="Salsa & Bachata Festival 2026 in Spain · La Negra, Calpe" description="Five days of salsa and bachata in Calpe, Spain: workshops with 90+ artists, parties until dawn, shows and the World Championship. October 21-25, 2026." lang="en" heroOverlay={true}>
+  <EventSchema lang="en" />
   <div class="prop">
     <!-- HERO -->
     <section id="info" class="p-phero f-hero" style={`background-image:url(${img("la-negra-dance-festival-festival-img-12.webp")})`}>
@@ -92,7 +94,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
     <section class="p-section fx-loc">
       <div class="p-container fx-loc-grid">
         <div class="fx-media" data-slideshow>
-          {introGallery.map((src, i) => <img class={"fx-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" />)}
+          {introGallery.map((src, i) => <img class={"fx-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" decoding="async" />)}
           <div class="fx-bars">{introGallery.map((_, i) => <span class={i === 0 ? "is-on" : undefined}></span>)}</div>
         </div>
         <div class="fx-loc-text">
@@ -116,7 +118,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
         <div class="f-artists">
           {artists.map((a) => (
             <article class="f-artist">
-              <div class="f-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+              <div class="f-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" decoding="async" /></div>
               <h3 class="f-artist-n">{a.name}</h3>
               <p class="f-artist-c">{a.country}</p>
             </article>
@@ -130,7 +132,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
     <section id="talleres" class="p-section">
       <div class="p-container f-split">
         <div class="f-split-imgs">
-          {talleresGallery.map((src) => <div class="f-g-item f-g-tall"><img src={img(src)} alt="" loading="lazy" /></div>)}
+          {talleresGallery.map((src) => <div class="f-g-item f-g-tall"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
         </div>
         <div class="f-split-text">
           <p class="p-eyebrow">Salsa · Bachata</p>
@@ -143,7 +145,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
 
     <!-- THE COMPETITION · WORLD CHAMPIONSHIP -->
     <section id="mundial" class="p-band f-band">
-      <div class="p-band-media"><img src={img("ganadores_grupos_salsa_2025.jpg")} alt="Pasos Libres World Championship" loading="lazy" /></div>
+      <div class="p-band-media"><img src={img("ganadores_grupos_salsa_2025.jpg")} alt="Pasos Libres World Championship" loading="lazy" decoding="async" /></div>
       <div class="p-band-content">
         <p class="p-band-eyebrow">The competition</p>
         <h2 class="p-band-title">The Pasos Libres World Championship</h2>
@@ -156,7 +158,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
     <section id="fiesta" class="p-section f-night">
       <div class="p-container f-night-grid">
         <div class="f-night-imgs">
-          {fiestaGallery.map((src) => <div class="f-g-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+          {fiestaGallery.map((src) => <div class="f-g-item"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
         </div>
         <div class="f-night-text">
           <p class="p-eyebrow">The night</p>
@@ -228,7 +230,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       </div>
       <div class="p-container">
         <div class="f-gallery">
-          {hotelGallery.map((src) => <div class="f-g-item"><img src={img(src)} alt="" loading="lazy" /></div>)}
+          {hotelGallery.map((src) => <div class="f-g-item"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
         </div>
       </div>
     </section>
@@ -261,7 +263,7 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
           <p class="f-msg" data-contact-msg hidden></p>
         </form>
         <div class="f-contact-imgs">
-          {fiestaGallery.map((src) => <div class="f-g-item f-g-sq"><img src={img(src)} alt="" loading="lazy" /></div>)}
+          {fiestaGallery.map((src) => <div class="f-g-item f-g-sq"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
         </div>
       </div>
     </section>

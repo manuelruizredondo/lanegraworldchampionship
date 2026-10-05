@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import EventSchema from "@/components/EventSchema.astro";
 import { img } from "@/data/img.js";
 
 const ticketsPage = "https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata";
@@ -16,6 +17,7 @@ const fiestaImgs = [
   description="Tu entrada al festival de salsa y bachata de Calpe: talleres, fiestas, shows y Mundial, del 21 al 25 de octubre de 2026. Hotel sede con precio especial."
   lang="es"
 >
+  <EventSchema lang="es" />
   <div class="prop">
     <!-- PASE / COUNTDOWN -->
     <section class="p-section pass-hero p-center">
@@ -97,7 +99,7 @@ const fiestaImgs = [
       <div class="p-container fiesta-inner">
         <div class="fiesta-gallery">
           {fiestaImgs.map((name) => (
-            <div class="fiesta-img"><img src={img(name)} alt="Fiesta La Negra Dance Festival" loading="lazy" /></div>
+            <div class="fiesta-img"><img src={img(name)} alt="Fiesta La Negra Dance Festival" loading="lazy" decoding="async" /></div>
           ))}
         </div>
         <div class="fiesta-text">

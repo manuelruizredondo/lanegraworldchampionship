@@ -21,7 +21,7 @@ const YEARS = [
     <div class="container gal-grid">
       {YEARS.map((y) => (
         <a class="gal-card" href={y.href}>
-          <div class="gal-img"><img src={img(y.cover)} alt={`Gallery ${y.year}`} loading="lazy" /></div>
+          <div class="gal-img"><img src={img(y.cover)} alt={`Gallery ${y.year}`} loading="lazy" decoding="async" /></div>
           <div class="gal-body">
             <span class="gal-year">{y.year}</span>
             <p class="gal-sub">{y.sub}</p>

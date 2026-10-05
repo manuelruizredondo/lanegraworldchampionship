@@ -82,7 +82,7 @@ const images = [
         <div class="prop-gallery">
           {images.map((name, i) => (
             <figure class="g-item">
-              <img src={img(name)} alt={`La Negra Dance Festival 2024 — foto ${i + 1}`} loading="lazy" data-lightbox />
+              <img src={img(name)} alt={`La Negra Dance Festival 2024 — foto ${i + 1}`} loading="lazy" decoding="async" data-lightbox />
             </figure>
           ))}
         </div>

@@ -253,7 +253,7 @@ import Base from "@/layouts/Base.astro";
     $("#adm-count").textContent = `Mostrando ${list.length} de ${datos.length}`;
     $("#adm-tbody").innerHTML = list.map((it, i) => `
       <tr data-i="${datos.indexOf(it)}">
-        <td>${it.foto ? `<img class="adm-foto" src="${esc(it.foto)}" alt="" loading="lazy" />` : ""}</td>
+        <td>${it.foto ? `<img class="adm-foto" src="${esc(it.foto)}" alt="" loading="lazy" decoding="async" />` : ""}</td>
         <td><span class="adm-nombre" data-ver>${esc(it.nombre) || "—"}</span></td>
         <td>${esc(it.especialidad)}</td>
         <td>${esc(it.grupo)}</td>

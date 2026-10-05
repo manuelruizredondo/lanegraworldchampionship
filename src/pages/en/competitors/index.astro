@@ -74,7 +74,7 @@ const gallery = [
             <div class="comp-grid">
               {COMP_BY_CAT[c.key].map((p) => (
                 <figure class="comp-card">
-                  <img src={`${COMP_BASE}/${p.file}`} alt={p.country ? `${p.name} — ${p.country}` : p.name} loading="lazy" data-lightbox role="button" tabindex="0" />
+                  <img src={`${COMP_BASE}/${p.file}`} alt={p.country ? `${p.name} — ${p.country}` : p.name} loading="lazy" decoding="async" data-lightbox role="button" tabindex="0" />
                   <figcaption class="comp-name">{p.name}</figcaption>
                 </figure>
               ))}
@@ -92,7 +92,7 @@ const gallery = [
         <div class="cat-grid">
           {categories.map((c) => (
             <article class="cat-card">
-              <div class="cat-img"><img src={img(c.img)} alt={c.label} loading="lazy" data-lightbox role="button" tabindex="0" /></div>
+              <div class="cat-img"><img src={img(c.img)} alt={c.label} loading="lazy" decoding="async" data-lightbox role="button" tabindex="0" /></div>
               <h3 class="cat-label">{c.label}</h3>
             </article>
           ))}
@@ -104,7 +104,7 @@ const gallery = [
     <section class="p-section p-gray">
       <div class="p-container gallery-grid">
         {gallery.map((src) => (
-          <div class="gallery-item"><img src={img(src)} alt="" loading="lazy" /></div>
+          <div class="gallery-item"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>
         ))}
       </div>
     </section>
@@ -117,7 +117,7 @@ const gallery = [
         <p class="p-lead p-narrow final-text">Three days of salsa and bachata, for those in love with Latin dance. Pure fire on the dance floor: artists, contestants, workshops, parties and lots of rhythm. Not to be missed, from October 21 to 25, 2026 in Calpe (Spain).</p>
       </div>
       <div class="p-container cta-box">
-        <div class="cta-img"><img src={img("lanegra-dance-festival-home-1-7.webp")} alt="" loading="lazy" /></div>
+        <div class="cta-img"><img src={img("lanegra-dance-festival-home-1-7.webp")} alt="" loading="lazy" decoding="async" /></div>
         <div class="cta-content">
           <p>An international Salsa and Bachata festival and dance competition.</p>
           <p class="cta-claim">Come, dance and enjoy!</p>

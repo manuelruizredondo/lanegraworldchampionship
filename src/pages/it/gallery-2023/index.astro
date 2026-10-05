@@ -58,7 +58,7 @@ const photos = [
         <div class="prop-gallery">
           {photos.map((name) => (
             <figure class="g-item">
-              <img src={img(name)} alt="La Negra Dance Festival 2023" loading="lazy" data-lightbox />
+              <img src={img(name)} alt="La Negra Dance Festival 2023" loading="lazy" decoding="async" data-lightbox />
             </figure>
           ))}
         </div>

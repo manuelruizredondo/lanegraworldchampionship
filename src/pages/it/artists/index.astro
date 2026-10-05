@@ -85,7 +85,7 @@ const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentCol
         {salsa.map((a) => (
           <article class="artist">
             <button type="button" class="artist-img" data-artist data-aname={a.name} data-acountry={a.country} data-abio={BIOS[a.name] || BIOS[IMG_TO_NAME[a.img]] || ""} data-aig={a.ig || ""} data-afb={a.fb || ""} data-ayt={a.yt || ""}>
-              <img src={img(a.img)} alt={a.name} loading="lazy" />
+              <img src={img(a.img)} alt={a.name} loading="lazy" decoding="async" />
             </button>
             <h3 class="artist-name">{a.name}</h3>
             <p class="artist-country">{a.country}</p>
@@ -110,7 +110,7 @@ const fbIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentCol
         {bachata.map((a) => (
           <article class="artist">
             <button type="button" class="artist-img" data-artist data-aname={a.name} data-acountry={a.country} data-abio={BIOS[a.name] || BIOS[IMG_TO_NAME[a.img]] || ""} data-aig={a.ig || ""} data-afb={a.fb || ""} data-ayt={a.yt || ""}>
-              <img src={img(a.img)} alt={a.name} loading="lazy" />
+              <img src={img(a.img)} alt={a.name} loading="lazy" decoding="async" />
             </button>
             <h3 class="artist-name">{a.name}</h3>
             <p class="artist-country">{a.country}</p>

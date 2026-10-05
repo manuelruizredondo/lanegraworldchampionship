@@ -165,7 +165,7 @@ const artists = ARTISTS_ES.map((a) => {
       <div class="p-container why-grid">
         {reasons.map((r) => (
           <a class="why-card" href={r.href}>
-            <img class="why-img" src={r.img} alt="" loading="lazy" />
+            <img class="why-img" src={r.img} alt="" loading="lazy" decoding="async" />
             <div class="why-body">
               <span class="why-n">{r.n}</span>
               <h3 class="why-t">{r.t}</h3>
@@ -186,7 +186,7 @@ const artists = ARTISTS_ES.map((a) => {
       <div class="p-container p-pillars">
         {pillars.map((p) => (
           <a class="p-pillar" href={p.href}>
-            <div class="p-pillar-media"><img src={p.img} alt={p.title} loading="lazy" /></div>
+            <div class="p-pillar-media"><img src={p.img} alt={p.title} loading="lazy" decoding="async" /></div>
             <div class="p-pillar-panel">
               <span class="p-pillar-tag">{p.tag}</span>
               <h3 class="p-pillar-t">{p.title}</h3>
@@ -208,7 +208,7 @@ const artists = ARTISTS_ES.map((a) => {
       <div class="p-container p-cards">
         {features.map((f) => (
           <a class="p-card" href={f.href}>
-            <div class="p-card-media"><img src={f.img} alt={f.title} loading="lazy" /></div>
+            <div class="p-card-media"><img src={f.img} alt={f.title} loading="lazy" decoding="async" /></div>
             <div class="p-card-panel">
               <h3 class="p-card-t">{f.title}</h3>
               <p class="p-card-d">{f.desc}</p>
@@ -249,7 +249,7 @@ const artists = ARTISTS_ES.map((a) => {
             </div>
           ))}
         </div>
-        <div class="p-values-media"><img src={values[0].img} alt="La Negra Dance Festival" loading="lazy" /></div>
+        <div class="p-values-media"><img src={values[0].img} alt="La Negra Dance Festival" loading="lazy" decoding="async" /></div>
       </div>
     </section>
 
@@ -265,7 +265,7 @@ const artists = ARTISTS_ES.map((a) => {
     <!-- PHOTO BAND (parallax interior + mensaje de internacionalidad) -->
     <section class="p-band">
       <div class="p-band-media">
-        <img src={img("la-negra-dance-festival-fiesta-img-12.webp")} alt="" loading="lazy" />
+        <img src={img("la-negra-dance-festival-fiesta-img-12.webp")} alt="" loading="lazy" decoding="async" />
       </div>
       <div class="p-band-content">
         <p class="p-band-eyebrow">35+ países · 5 continentes</p>
@@ -282,7 +282,7 @@ const artists = ARTISTS_ES.map((a) => {
       </div>
       <div class="p-map" data-map>
         <div class="p-map-plane">
-          <img class="p-map-img" src="/img/world-map-dots.svg" alt="Mapa de nacionalidades de los asistentes" width="2370" height="1104" loading="lazy" />
+          <img class="p-map-img" src="/img/world-map-dots.svg" alt="Mapa de nacionalidades de los asistentes" width="2370" height="1104" loading="lazy" decoding="async" />
           {mapPins.map((p, i) => (
             <div
               class={p.big ? "p-pin p-pin-big" : "p-pin"}
@@ -308,7 +308,7 @@ const artists = ARTISTS_ES.map((a) => {
             </div>
           ))}
         </div>
-        <img class="p-map-m-img" src="/img/world-map-dots.svg" alt="Mapa de nacionalidades de los asistentes" width="2370" height="1104" loading="lazy" />
+        <img class="p-map-m-img" src="/img/world-map-dots.svg" alt="Mapa de nacionalidades de los asistentes" width="2370" height="1104" loading="lazy" decoding="async" />
         <div class="p-map-bolas">
           {[...mapPins].sort((a, b) => b.n - a.n).slice(9).map((p) => (
             <div class="p-bola">
@@ -331,7 +331,7 @@ const artists = ARTISTS_ES.map((a) => {
           <div class="p-artists-set">
             {artists.map((a) => (
           <div class="p-artist">
-            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" decoding="async" /></div>
             <span class="p-artist-n"><span>{a.first}</span>{a.last && <span>{a.last}</span>}</span>
             <span class="p-artist-c">{a.country}</span>
           </div>
@@ -340,7 +340,7 @@ const artists = ARTISTS_ES.map((a) => {
           <div class="p-artists-set" aria-hidden="true">
             {artists.map((a) => (
           <div class="p-artist">
-            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" /></div>
+            <div class="p-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" decoding="async" /></div>
             <span class="p-artist-n"><span>{a.first}</span>{a.last && <span>{a.last}</span>}</span>
             <span class="p-artist-c">{a.country}</span>
           </div>
