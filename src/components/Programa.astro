@@ -1,7 +1,7 @@
 ---
 import { PROGRAMA, ROOM_LIST, I18N } from "@/data/programa.js";
 import { ARTISTS } from "@/data/artists.js";
-import { BIOS } from "@/data/artist-bios.js";
+import { BIOS, PERFILES } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
 
 const { lang = "es", comingSoon = false } = Astro.props;
@@ -18,8 +18,11 @@ const artistFor = (teacher) => {
     const n = norm(a.name);
     if (n.length >= 4 && tt.includes(n) && (!best || n.length > norm(best.name).length)) best = a;
   }
-  return best;
+  return best || perfilIndex[tt] || null;
 };
+// Ponentes sin ficha en el cartel de artistas: se buscan por nombre exacto.
+const perfilIndex = {};
+for (const k in PERFILES) perfilIndex[norm(k)] = { name: k, ...PERFILES[k] };
 const initials = (n) => (n || "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 // Descripción del artista (generada a partir de estilo + país; sustituible por biografía real)
 // Índice de biografías por nombre normalizado (tolera mayúsculas/acentos)
@@ -148,7 +151,10 @@ const describe = (s) => {
                 >
                   {s.r !== "full" && (s.k === "taller"
                     ? <span class={"pr-room pr-st-" + (isBachata(s) ? "b" : "s")}>{isBachata(s) ? "Bachata" : "Salsa"}</span>
-                    : <span class={"pr-room pr-cn-" + s.k}>{t.kind[s.k]}</span>)}
+                    /* Solo los tipos con color propio llevan esquina; el resto no pinta nada. */
+                    : ["master", "comp", "social"].includes(s.k)
+                      ? <span class={"pr-room pr-cn-" + s.k}>{t.kind[s.k]}</span>
+                      : null)}
                   <div class="pr-card-in">
                     {s.r === "full" && (
                       <div class="pr-meta">
