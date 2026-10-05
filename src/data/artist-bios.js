@@ -1,7 +1,7 @@
 // Biografías breves de artistas (borradores generados con investigación web; revisar/editar).
 // Se muestran en la modal de artista de /programacion. Clave = nombre del artista.
 export const BIOS = {
-  "Manuel Ruiz": "25 años de oficio ininterrumpido y más de 500 clientes: grandes corporaciones, organismos gubernamentales, pymes y start-ups. Ha sido CTO, fundador y consultor en la creación de cuatro empresas tecnológicas. Los últimos 10 años los ha dedicado al crecimiento de una de las grandes marcas del grupo Inditex, al frente de su design system y de los equipos que lo sostienen. En su ponencia explica, con casos reales, cómo funcionan por dentro las redes sociales y cómo la IA está cambiando el trabajo de quien vive de enseñar a bailar.",
+  "Manuel Ruiz": "25 años de oficio ininterrumpido y más de 500 clientes: grandes corporaciones, organismos gubernamentales, pymes y start-ups. Ha sido CTO, fundador y consultor en la creación de cuatro empresas tecnológicas. Los últimos 10 años los ha dedicado al crecimiento de una de las grandes marcas del grupo Inditex, al frente de su arquitectura y de los equipos de desarrollo que la sostienen. En su ponencia explica, con casos reales, cómo funcionan por dentro las redes sociales y cómo la IA está cambiando el trabajo de quien vive de enseñar a bailar.",
   "Tito Ortos": "Nacido en Santurce, Puerto Rico (1974), en una familia de músicos, es director del programa de salsa de San Juan y una de las mayores autoridades en salsa puertorriqueña. Junto a Tamara Livolsi ha coreografiado para Gilberto Santa Rosa, El Gran Combo y Ricky Martin, y organiza el Puerto Rico Salsa Congress.",
   "Bersy Cortez": "Nacida en Caracas, empezó a bailar a los diez años y con dieciséis ya integraba Imagen Latina, antes de instalarse en España. Es referente del mambo femenino y creadora del «African Mambo», su fusión personal de movimiento afro, mambo y musicalidad.",
   "Maykel Fonts": "Bailarín y coreógrafo cubano (1976) formado en Tropicana en afro, ballet y rumba, emigró a Italia en 2000. Ganó el primer premio como mejor bailarín y coreógrafo del Salsa Congress World 2006 y ha sido profesor en el programa italiano «Ballando con le stelle».",
@@ -102,5 +102,5 @@ export const IMG_TO_NAME = {
 // Ponentes y profesores que NO forman parte del cartel de artistas de baile:
 // no aparecen en /artistas/, pero su tarjeta del horario sí abre ficha.
 export const PERFILES = {
-  "Manuel Ruiz": { img: "manuel-ruiz.webp", country: "Estrategia digital | Barcelona" },
+  "Manuel Ruiz": { img: "manuel-ruiz.webp", country: "Estrategia digital | Barcelona", web: "https://digitalstrategy.es" },
 };

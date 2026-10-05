@@ -167,7 +167,7 @@ const describe = (s) => {
                       const clickable = a || s.k === "taller" || s.k === "master";
                       if (!clickable) return <p class="pr-teacher">{s.p}</p>;
                       const dispName = a ? a.name : s.p.split("·")[0].trim();
-                      return <button class="pr-teacher pr-teacher-link" type="button" data-aname={dispName} data-aimg={a ? img(a.img) : ""} data-acountry={a ? a.country : ""} data-abio={bioFor(a, dispName)} data-aig={(a && a.ig) || ""} data-afb={(a && a.fb) || ""} data-ayt={(a && a.yt) || ""} data-ainitials={initials(dispName)}>{s.p}</button>;
+                      return <button class="pr-teacher pr-teacher-link" type="button" data-aname={dispName} data-aimg={a ? img(a.img) : ""} data-acountry={a ? a.country : ""} data-abio={bioFor(a, dispName)} data-aig={(a && a.ig) || ""} data-afb={(a && a.fb) || ""} data-ayt={(a && a.yt) || ""} data-aweb={(a && a.web) || ""} data-ainitials={initials(dispName)}>{s.p}</button>;
                     })()}
                     {s.r !== "full" && (
                       <div class="pr-meta pr-meta-bottom">
@@ -377,7 +377,8 @@ const describe = (s) => {
   const amCountry = amodal.querySelector(".pr-am-country");
   const amBio = amodal.querySelector(".pr-am-bio");
   const amSocial = amodal.querySelector(".pr-am-social");
-  const SOCIALS = [["aig", "Instagram"], ["ayt", "YouTube"], ["afb", "Facebook"]];
+  // La web se etiqueta con su propio dominio (p. ej. "digitalstrategy.es").
+  const SOCIALS = [["aig", "Instagram"], ["ayt", "YouTube"], ["afb", "Facebook"], ["aweb", null]];
   const openArtist = (btn) => {
     const hasImg = !!btn.dataset.aimg;
     amImg.hidden = !hasImg; amPh.hidden = hasImg;
@@ -394,7 +395,8 @@ const describe = (s) => {
       if (url) {
         const a = document.createElement("a");
         a.href = url; a.target = "_blank"; a.rel = "noopener";
-        a.className = "pr-am-link"; a.textContent = label;
+        a.className = "pr-am-link";
+        a.textContent = label || url.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/$/, "");
         amSocial.appendChild(a);
       }
     });
