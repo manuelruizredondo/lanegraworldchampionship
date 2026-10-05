@@ -79,7 +79,7 @@
   .p-marquee-half .p-fire-o { animation: p-fire-flicker .9s ease-in-out infinite; }
   .p-marquee-half .p-fire-i { animation: p-fire-flicker-i .65s ease-in-out infinite; }
   .p-marquee-half:nth-child(2n) .p-fire-o { animation-delay: -.45s; }
-  .p-marquee-half .p-fire:nth-of-type(2n .p-fire-o) { animation-delay: -.3s; }
+  .p-marquee-half .p-fire:nth-of-type(2n) .p-fire-o { animation-delay: -.3s; }
   @keyframes p-fire-flicker {
     0%, 100% { transform: scaleY(1) scaleX(1) rotate(0deg); }
     25% { transform: scaleY(1.08) scaleX(.95) rotate(-2deg); }

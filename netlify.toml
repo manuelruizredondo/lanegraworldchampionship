@@ -27,6 +27,26 @@
   status = 301
   force = true
 
+# Rutas antiguas que cambiaron de nombre. Antes eran páginas con <meta refresh>,
+# que es más lento y Google trata como redirección "blanda": mejor un 301 de verdad.
+[[redirects]]
+  from = "/programacion/*"
+  to = "/talleres/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/schedule/*"
+  to = "/en/workshops/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/it/programma/*"
+  to = "/it/workshops/"
+  status = 301
+  force = true
+
 # Astro genera 404.html automáticamente desde src/pages/404.astro.
 [[headers]]
   for = "/img/*"

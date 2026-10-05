@@ -187,6 +187,18 @@ p { margin: 0 0 16px; }
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
+/* Foco de teclado visible en todo el sitio. Solo :focus-visible, así que no
+   aparece al hacer clic con el ratón, únicamente al tabular. */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Sobre fondos oscuros el dorado se pierde: se usa blanco */
+:where(.site-header, .flyout-panel, footer, .p-hero, .cta-content) :where(a, button, [tabindex]):focus-visible {
+  outline-color: #fff;
+}
+
 /* Enlace "saltar al contenido": invisible hasta que recibe foco con teclado */
 .skip-link {
   position: fixed; top: -100px; left: 16px; z-index: 3000;

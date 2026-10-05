@@ -9,7 +9,7 @@ export const ROUTES = [
   { es: "/festival/", en: "/en/festival/", it: "/it/festival/" },
   { es: "/artistas/", en: "/en/artists/", it: "/it/artists/" },
   { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" },
-  // Nota: /programacion/, /en/schedule/, /it/programma/ son stubs noindex que
+  // Nota: /programacion/, /en/schedule/, /it/programma/ se redirigen con 301 desde netlify.toml y
   // redirigen a /talleres/ — se dejan FUERA de ROUTES para no meterlos en el
   // sitemap ni en el hreflang.
   { es: "/fiesta/", en: "/en/fiesta/", it: "/it/fiesta/" },

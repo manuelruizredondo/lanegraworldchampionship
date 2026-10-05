@@ -14,7 +14,7 @@ const gallery = [
   "/img/2025/03/lanegra-dance-festival-home-3-28.webp",
 ];
 const sponsors = [
-  { img: "/img/2025/03/CAMISETAS-BAILONGAS-COLABORADORES-LA-NEGRA-FESTIVAL.png", alt: "Bailongas", href: "#" },
+  { img: "/img/2025/03/CAMISETAS-BAILONGAS-COLABORADORES-LA-NEGRA-FESTIVAL.png", alt: "Bailongas", href: "" },
   { img: "/img/2025/03/processed_image_0.png", alt: "Diamante Beach Spa Hotel", href: "https://ar-hotels.actpages.com/la-negra-festival.html" },
 ];
 const social = {
@@ -62,9 +62,13 @@ const network = [
     <div class="container footer-row">
       <div class="sponsors">
         {sponsors.map((s) => (
-          <a href={s.href} class="sponsor" {...(s.href.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}>
-            <img src={s.img} alt={s.alt} loading="lazy" />
-          </a>
+          s.href && s.href.startsWith("http")
+            ? <a href={s.href} class="sponsor" target="_blank" rel="noopener">
+                <img src={s.img} alt={s.alt} width="200" height="64" loading="lazy" />
+              </a>
+            : <span class="sponsor">
+                <img src={s.img} alt={s.alt} width="200" height="64" loading="lazy" />
+              </span>
         ))}
       </div>
 
