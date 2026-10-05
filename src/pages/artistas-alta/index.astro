@@ -1,0 +1,327 @@
+---
+import Base from "@/layouts/Base.astro";
+
+// Formulario único multiidioma: el artista elige ES / EN / IT arriba y toda la
+// página cambia sin recargar. La URL es siempre la misma (se manda por WhatsApp).
+const T = {
+  es: {
+    code: "ES", eyebrow: "La Negra Dance Festival · 2026", h1: "Ficha de artista",
+    gateIntro: "Zona privada. Introduce la contraseña que te ha facilitado la organización.",
+    gatePlaceholder: "Contraseña", gateBtn: "Entrar", gateBad: "Contraseña incorrecta.",
+    intro: "Cuéntanos quién eres. Con esto preparamos tu biografía en la web del festival y el material de prensa. Tómate tu tiempo: lo que escribas aquí es lo que leerá la gente.",
+    nombre: "Nombre", apellidos: "Apellidos", pais: "País",
+    estilo: "Estilo", estiloSalsa: "Salsa", estiloBachata: "Bachata", estiloAmbos: "Ambos",
+    especialidad: "Especialidad",
+    especialidadHelp: "En una línea, cómo te presentarías. Por ejemplo: «Salsa cubana y afro» o «Lady styling y mambo On2».",
+    trayectoria: "Trayectoria",
+    trayectoriaHelp: "Dónde te formaste, con quién has bailado, qué compañías o proyectos has tenido, qué te distingue. Entre 80 y 150 palabras está bien.",
+    premios: "Premios y títulos",
+    premiosHelp: "Campeonatos, podios, reconocimientos. Si no tienes, déjalo en blanco: no pasa nada.",
+    redes: "Redes", igHelp: "Tu usuario o el enlace completo",
+    email: "Email de contacto", emailHelp: "Solo para que la organización pueda escribirte si falta algo. No se publica.",
+    foto: "Foto de prensa", fotoHelp: "Se recorta en cuadrado. Máximo 5 MB. Si no tienes una a mano, puedes enviarla luego.",
+    fotoBtn: "Elegir foto", rgpd: "Autorizo a La Negra Dance Festival a publicar estos datos y esta foto en su web y materiales de promoción.",
+    enviar: "Enviar ficha", enviando: "Enviando…",
+    ok: "¡Recibido! Gracias. Si necesitamos algo más, te escribimos.",
+    req: "Faltan campos obligatorios por rellenar.", err: "No se ha podido enviar. Inténtalo de nuevo en un momento.",
+    opt: "opcional",
+  },
+  en: {
+    code: "EN", eyebrow: "La Negra Dance Festival · 2026", h1: "Artist profile",
+    gateIntro: "Private area. Enter the password the organisation gave you.",
+    gatePlaceholder: "Password", gateBtn: "Enter", gateBad: "Wrong password.",
+    intro: "Tell us who you are. We use this to write your biography on the festival website and for press material. Take your time: what you write here is what people will read.",
+    nombre: "First name", apellidos: "Surname", pais: "Country",
+    estilo: "Style", estiloSalsa: "Salsa", estiloBachata: "Bachata", estiloAmbos: "Both",
+    especialidad: "Speciality",
+    especialidadHelp: "One line on how you would introduce yourself. For example: \"Cuban salsa and afro\" or \"Lady styling and On2 mambo\".",
+    trayectoria: "Career",
+    trayectoriaHelp: "Where you trained, who you have danced with, your companies or projects, what makes you different. Between 80 and 150 words works well.",
+    premios: "Awards and titles",
+    premiosHelp: "Championships, podiums, recognitions. Leave it blank if you have none — that is perfectly fine.",
+    redes: "Social media", igHelp: "Your username or the full link",
+    email: "Contact email", emailHelp: "Only so the organisation can reach you if something is missing. Not published.",
+    foto: "Press photo", fotoHelp: "Cropped to a square. 5 MB maximum. If you do not have one at hand, you can send it later.",
+    fotoBtn: "Choose photo", rgpd: "I authorise La Negra Dance Festival to publish this information and photo on its website and promotional material.",
+    enviar: "Send profile", enviando: "Sending…",
+    ok: "Received, thank you! We will write to you if we need anything else.",
+    req: "Some required fields are still empty.", err: "Could not send. Please try again in a moment.",
+    opt: "optional",
+  },
+  it: {
+    code: "IT", eyebrow: "La Negra Dance Festival · 2026", h1: "Scheda artista",
+    gateIntro: "Area privata. Inserisci la password che ti ha dato l'organizzazione.",
+    gatePlaceholder: "Password", gateBtn: "Entra", gateBad: "Password errata.",
+    intro: "Raccontaci chi sei. Con queste informazioni prepariamo la tua biografia sul sito del festival e il materiale per la stampa. Prenditi il tuo tempo: quello che scrivi qui è ciò che leggerà la gente.",
+    nombre: "Nome", apellidos: "Cognome", pais: "Paese",
+    estilo: "Stile", estiloSalsa: "Salsa", estiloBachata: "Bachata", estiloAmbos: "Entrambi",
+    especialidad: "Specialità",
+    especialidadHelp: "In una riga, come ti presenteresti. Per esempio: «Salsa cubana e afro» o «Lady styling e mambo On2».",
+    trayectoria: "Percorso",
+    trayectoriaHelp: "Dove ti sei formato, con chi hai ballato, che compagnie o progetti hai avuto, cosa ti distingue. Tra le 80 e le 150 parole va benissimo.",
+    premios: "Premi e titoli",
+    premiosHelp: "Campionati, podi, riconoscimenti. Se non ne hai, lascia in bianco: non è un problema.",
+    redes: "Social", igHelp: "Il tuo nome utente o il link completo",
+    email: "Email di contatto", emailHelp: "Serve solo all'organizzazione per scriverti se manca qualcosa. Non viene pubblicata.",
+    foto: "Foto stampa", fotoHelp: "Viene ritagliata in quadrato. Massimo 5 MB. Se non ne hai una a portata di mano, puoi inviarla dopo.",
+    fotoBtn: "Scegli foto", rgpd: "Autorizzo La Negra Dance Festival a pubblicare questi dati e questa foto sul suo sito e sui materiali promozionali.",
+    enviar: "Invia scheda", enviando: "Invio in corso…",
+    ok: "Ricevuto, grazie! Ti scriviamo se ci serve altro.",
+    req: "Mancano dei campi obbligatori.", err: "Invio non riuscito. Riprova tra un momento.",
+    opt: "facoltativo",
+  },
+};
+---
+
+<Base title="Ficha de artista" description="Acceso privado para que los artistas del festival envíen su biografía." lang="es">
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+
+  <div class="prop">
+    <section class="p-section p-center art">
+      <div class="p-container">
+
+        <div class="art-langs" role="group" aria-label="Idioma / Language / Lingua">
+          <button type="button" class="art-lang is-on" data-lang="es">ES</button>
+          <button type="button" class="art-lang" data-lang="en">EN</button>
+          <button type="button" class="art-lang" data-lang="it">IT</button>
+        </div>
+
+        <p class="p-eyebrow" data-t="eyebrow"></p>
+        <h1 class="p-display" data-t="h1"></h1>
+
+        <!-- PUERTA DE ACCESO -->
+        <div id="art-gate" class="art-box">
+          <p class="p-lead p-narrow" data-t="gateIntro"></p>
+          <div class="art-gate-row">
+            <input id="art-pass" type="password" autocomplete="off" data-ph="gatePlaceholder" />
+            <button id="art-gate-btn" type="button" class="p-btn p-btn-solid" data-t="gateBtn"></button>
+          </div>
+          <p id="art-gate-msg" class="art-msg" role="alert"></p>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form id="art-form" class="art-form" hidden novalidate>
+          <p class="p-lead p-narrow art-intro" data-t="intro"></p>
+
+          <div class="art-grid">
+            <label class="art-f"><span data-t="nombre"></span><input name="nombre" required /></label>
+            <label class="art-f"><span data-t="apellidos"></span><input name="apellidos" required /></label>
+            <label class="art-f"><span data-t="pais"></span><input name="pais" required /></label>
+            <label class="art-f"><span data-t="estilo"></span>
+              <select name="estilo" required>
+                <option value="Salsa" data-t="estiloSalsa"></option>
+                <option value="Bachata" data-t="estiloBachata"></option>
+                <option value="Ambos" data-t="estiloAmbos"></option>
+              </select>
+            </label>
+          </div>
+
+          <label class="art-f art-full"><span data-t="especialidad"></span>
+            <input name="especialidad" required />
+            <small data-t="especialidadHelp"></small>
+          </label>
+
+          <label class="art-f art-full"><span data-t="trayectoria"></span>
+            <textarea name="trayectoria" rows="7" required></textarea>
+            <small data-t="trayectoriaHelp"></small>
+          </label>
+
+          <label class="art-f art-full"><span data-t="premios"></span> <em class="art-opt" data-t="opt"></em>
+            <textarea name="premios" rows="4"></textarea>
+            <small data-t="premiosHelp"></small>
+          </label>
+
+          <fieldset class="art-fs">
+            <legend><span data-t="redes"></span> <em class="art-opt" data-t="opt"></em></legend>
+            <div class="art-grid">
+              <label class="art-f"><span>Instagram</span><input name="instagram" placeholder="@" />
+                <small data-t="igHelp"></small></label>
+              <label class="art-f"><span>YouTube</span><input name="youtube" placeholder="https://" /></label>
+              <label class="art-f"><span>Facebook</span><input name="facebook" placeholder="https://" /></label>
+              <label class="art-f"><span data-t="email"></span><input name="email" type="email" />
+                <small data-t="emailHelp"></small></label>
+            </div>
+          </fieldset>
+
+          <div class="art-f art-full">
+            <span data-t="foto"></span> <em class="art-opt" data-t="opt"></em>
+            <div class="art-foto">
+              <button type="button" id="art-foto-btn" class="p-btn" data-t="fotoBtn"></button>
+              <input id="art-foto" type="file" accept="image/*" hidden />
+              <img id="art-foto-prev" alt="" hidden />
+            </div>
+            <small data-t="fotoHelp"></small>
+          </div>
+
+          <label class="art-check">
+            <input type="checkbox" name="acepta_rgpd" required />
+            <span data-t="rgpd"></span>
+          </label>
+
+          <button type="submit" id="art-send" class="p-btn p-btn-solid art-send" data-t="enviar"></button>
+          <p id="art-msg" class="art-msg" role="alert"></p>
+        </form>
+
+      </div>
+    </section>
+  </div>
+
+  <script type="application/json" id="art-i18n" set:html={JSON.stringify(T)}></script>
+
+  <script>
+    const T = JSON.parse(document.getElementById("art-i18n").textContent);
+    let lang = "es";
+    let pass = "";
+    let photo = null;
+
+    const $ = (s) => document.querySelector(s);
+    const t = (k) => T[lang][k] || "";
+
+    function paint() {
+      document.querySelectorAll("[data-t]").forEach((el) => { el.textContent = t(el.dataset.t); });
+      document.querySelectorAll("[data-ph]").forEach((el) => { el.placeholder = t(el.dataset.ph); });
+      document.querySelectorAll(".art-lang").forEach((b) => b.classList.toggle("is-on", b.dataset.lang === lang));
+      document.documentElement.lang = lang;
+    }
+
+    document.querySelectorAll(".art-lang").forEach((b) => {
+      b.addEventListener("click", () => { lang = b.dataset.lang; paint(); });
+    });
+
+    // --- Puerta de acceso ---
+    async function entrar() {
+      const v = $("#art-pass").value.trim();
+      if (!v) return;
+      $("#art-gate-msg").textContent = "";
+      try {
+        const r = await fetch("/.netlify/functions/artistas", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: "auth", password: v }),
+        });
+        if (!r.ok) { $("#art-gate-msg").textContent = t("gateBad"); return; }
+        pass = v;
+        $("#art-gate").hidden = true;
+        $("#art-form").hidden = false;
+      } catch { $("#art-gate-msg").textContent = t("err"); }
+    }
+    $("#art-gate-btn").addEventListener("click", entrar);
+    $("#art-pass").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); entrar(); } });
+
+    // --- Foto: recorte cuadrado en el navegador ---
+    $("#art-foto-btn").addEventListener("click", () => $("#art-foto").click());
+    $("#art-foto").addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const img = new Image();
+      img.onload = () => {
+        const lado = Math.min(img.width, img.height);
+        const out = Math.min(lado, 1200);
+        const c = document.createElement("canvas");
+        c.width = c.height = out;
+        c.getContext("2d").drawImage(img, (img.width - lado) / 2, (img.height - lado) / 2, lado, lado, 0, 0, out, out);
+        const url = c.toDataURL("image/jpeg", 0.85);
+        photo = { base64: url.split(",")[1], type: "image/jpeg", name: "artista.jpg" };
+        const prev = $("#art-foto-prev");
+        prev.src = url; prev.hidden = false;
+        URL.revokeObjectURL(img.src);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    // --- Envío ---
+    $("#art-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const msg = $("#art-msg");
+      msg.className = "art-msg";
+      if (!form.checkValidity()) { msg.textContent = t("req"); form.reportValidity(); return; }
+
+      const fields = Object.fromEntries(new FormData(form).entries());
+      fields.acepta_rgpd = form.acepta_rgpd.checked;
+      fields.idioma = lang;
+
+      const btn = $("#art-send");
+      btn.disabled = true;
+      btn.textContent = t("enviando");
+      try {
+        const r = await fetch("/.netlify/functions/artistas", {
+          method: "POST", headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: "submit", password: pass, fields, photo }),
+        });
+        const data = await r.json();
+        if (!r.ok || !data.ok) throw new Error(data.error || "error");
+        form.innerHTML = '<p class="art-ok">' + t("ok") + "</p>";
+      } catch {
+        msg.textContent = t("err");
+        msg.classList.add("is-bad");
+        btn.disabled = false;
+        btn.textContent = t("enviar");
+      }
+    });
+
+    paint();
+  </script>
+
+  <style>
+    .art { padding-top: 40px; }
+
+    .art-langs { display: flex; justify-content: center; gap: 8px; margin-bottom: 28px; }
+    .art-lang {
+      min-width: 56px; min-height: 42px; padding: 9px 16px; cursor: pointer;
+      border: 1.5px solid #d8d2c7; border-radius: 10px; background: #fff;
+      color: var(--text); font: inherit; font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+    }
+    .art-lang:hover { border-color: var(--gold); }
+    .art-lang.is-on { background: var(--gold); border-color: var(--gold); color: #fff; }
+
+    .art-box {
+      max-width: 560px; margin: 0 auto; background: var(--p-card, #f6f2ec);
+      border-radius: 16px; padding: clamp(24px, 4vw, 40px); text-align: center;
+    }
+    .art-gate-row { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+    .art-gate-row input { flex: 1 1 240px; max-width: 300px; }
+
+    .art-form { max-width: 720px; margin: 0 auto; text-align: left; }
+    .art-intro { margin: 0 auto 34px; }
+
+    .art-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+    .art-f { display: block; margin-bottom: 22px; }
+    .art-f > span, .art-fs legend span {
+      display: inline-block; margin-bottom: 7px; font-size: 13.5px; font-weight: 700; letter-spacing: 0.02em;
+    }
+    .art-opt { font-size: 12px; font-style: normal; font-weight: 600; color: var(--gold-dark, #a28243); }
+    .art-f small { display: block; margin-top: 7px; font-size: 12.5px; line-height: 1.5; color: var(--text); opacity: 0.68; }
+    .art-full { grid-column: 1 / -1; }
+
+    .art input, .art select, .art textarea {
+      width: 100%; padding: 12px 15px; font: inherit; font-size: 16px;
+      color: var(--text); background: #fff; border: 1.5px solid #d8d2c7; border-radius: 10px;
+    }
+    .art textarea { resize: vertical; line-height: 1.6; }
+    .art input:focus, .art select:focus, .art textarea:focus { border-color: var(--gold); }
+
+    .art-fs { border: 1.5px solid #e4ded3; border-radius: 12px; padding: 20px 22px 2px; margin: 0 0 26px; }
+    .art-fs legend { padding: 0 8px; }
+
+    .art-foto { display: flex; align-items: center; gap: 16px; margin-top: 10px; }
+    .art-foto .p-btn { flex: none; }
+    #art-foto-prev { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; border: 1.5px solid #d8d2c7; }
+
+    .art-check {
+      display: flex; gap: 12px; align-items: flex-start; margin: 10px 0 28px;
+      font-size: 14px; line-height: 1.55;
+    }
+    .art-check input { width: 19px; height: 19px; flex: none; margin-top: 2px; }
+    .art-send { width: 100%; }
+    .art-send[disabled] { opacity: 0.6; cursor: progress; }
+    .art-msg { min-height: 20px; margin: 14px 0 0; font-size: 14px; font-weight: 600; color: #c0392b; }
+    .art-ok {
+      font-size: 18px; line-height: 1.6; text-align: center; padding: 40px 20px;
+      background: var(--p-card, #f6f2ec); border-radius: 16px; color: #1e8449; font-weight: 600;
+    }
+
+    @media (max-width: 620px) {
+      .art-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</Base>
