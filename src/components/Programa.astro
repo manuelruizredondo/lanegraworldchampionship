@@ -23,6 +23,21 @@ const artistFor = (teacher) => {
 // Ponentes sin ficha en el cartel de artistas: se buscan por nombre exacto.
 const perfilIndex = {};
 for (const k in PERFILES) perfilIndex[norm(k)] = { name: k, ...PERFILES[k] };
+// Índice por nombre EXACTO (sin coincidencias parciales), para separar parejas.
+const exactIndex = {};
+for (const a of artistList) exactIndex[norm(a.name)] = a;
+for (const k in perfilIndex) if (!exactIndex[k]) exactIndex[k] = perfilIndex[k];
+const exact = (n) => exactIndex[norm(n)] || null;
+// "Angelo Rito y Maykel Fonts" son dos artistas; "Berra y Reyes" es una pareja
+// con ficha propia. Solo se separa si el nombre completo NO tiene ficha y al
+// menos una de las partes sí la tiene.
+const splitTeachers = (p) => {
+  if (exact(p)) return null;
+  const parts = p.split(/\s+(?:y|e|&)\s+/i).map((x) => x.trim()).filter(Boolean);
+  if (parts.length < 2) return null;
+  const resolved = parts.map((x) => ({ text: x, a: exact(x) }));
+  return resolved.some((r) => r.a) ? resolved : null;
+};
 const initials = (n) => (n || "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 // Descripción del artista (generada a partir de estilo + país; sustituible por biografía real)
 // Índice de biografías por nombre normalizado (tolera mayúsculas/acentos)
@@ -163,6 +178,17 @@ const describe = (s) => {
                     )}
                     <h3 class="pr-title">{title(s)}</h3>
                     {s.p && (() => {
+                      const multi = splitTeachers(s.p);
+                      if (multi) return (
+                        <p class="pr-teacher">
+                          {multi.map((r, i) => (
+                            <>
+                              {i > 0 && " y "}
+                              <button class="pr-teacher-link" type="button" data-aname={r.a ? r.a.name : r.text} data-aimg={r.a ? img(r.a.img) : ""} data-acountry={r.a ? r.a.country : ""} data-abio={bioFor(r.a, r.text)} data-aig={(r.a && r.a.ig) || ""} data-afb={(r.a && r.a.fb) || ""} data-ayt={(r.a && r.a.yt) || ""} data-aweb={(r.a && r.a.web) || ""} data-ainitials={initials(r.text)}>{r.text}</button>
+                            </>
+                          ))}
+                        </p>
+                      );
                       const a = artistFor(s.p);
                       const clickable = a || s.k === "taller" || s.k === "master";
                       if (!clickable) return <p class="pr-teacher">{s.p}</p>;
@@ -403,18 +429,21 @@ const describe = (s) => {
     amSocial.hidden = amSocial.children.length === 0;
     amodal.hidden = false;
     document.body.style.overflow = "hidden";
-    amLastFocus = btn; // para devolver el foco al cerrar
+    amLastFocus = btn; // para devolver el foco al cerrar (solo si se abrió con teclado)
     const closeBtn = amodal.querySelector(".pr-am-close");
     if (closeBtn) closeBtn.focus();
   };
   let amLastFocus = null;
+  let amByKeyboard = false;
   const closeArtist = () => {
     if (amodal.hidden) return;
     amodal.hidden = true; document.body.style.overflow = "";
-    if (amLastFocus && amLastFocus.focus) amLastFocus.focus();
-    amLastFocus = null;
+    // Devolver el foco al botón solo si se llegó con teclado: hacerlo tras un
+    // clic de ratón dibujaría el anillo de foco sin que nadie lo haya pedido.
+    if (amByKeyboard && amLastFocus && amLastFocus.focus) amLastFocus.focus();
+    amLastFocus = null; amByKeyboard = false;
   };
-  document.querySelectorAll(".pr-teacher-link").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); openArtist(b); }));
+  document.querySelectorAll(".pr-teacher-link").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); amByKeyboard = e.detail === 0; openArtist(b); }));
   amodal.querySelectorAll("[data-am-close]").forEach((x) => x.addEventListener("click", closeArtist));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeArtist(); });
   // Foco atrapado dentro de la modal (Tab cicla entre sus elementos)
@@ -641,7 +670,9 @@ const describe = (s) => {
   .pr-card:not(.pr-band) .pr-title::before { content: ""; float: right; width: 88px; height: 20px; }
   .pr-teacher { margin: 5px 0 0; font-size: 13px; color: #6a6a74; line-height: 1.4; padding-right: 26px; }
   /* Nombre del profe que es artista invitado: enlace (abre la ficha) */
-  button.pr-teacher-link { display: block; width: 100%; text-align: left; background: none; border: 0; font-family: var(--font-body); cursor: pointer; }
+  button.pr-teacher-link { display: block; width: 100%; text-align: left; background: none; border: 0; padding-left: 0; font-family: var(--font-body); cursor: pointer; }
+  /* Varios profesores en la misma tarjeta: cada uno es su propio enlace, en línea */
+  p.pr-teacher > button.pr-teacher-link { display: inline; width: auto; padding: 0; color: inherit; font-size: inherit; line-height: inherit; }
   .pr-teacher-link { position: relative; padding-right: 26px; }
   .pr-teacher-link span, .pr-teacher-link { text-decoration: underline; text-decoration-color: rgba(20, 18, 26, .18); text-underline-offset: 2px; }
   .pr-teacher-link:hover { color: #14121a; text-decoration-color: currentColor; }
