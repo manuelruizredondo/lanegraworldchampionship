@@ -158,7 +158,20 @@ const describe = (s) => {
           <div class="pr-slot">
             <div class="pr-rail">
               <div class="pr-time pr-time-start"><span>{tm[0]}</span></div>
-              {tm[1] && <div class="pr-time pr-time-end"><span>{tm[1]}</span></div>}
+              {tm[1] && (
+                <div class="pr-time pr-time-end">
+                  {tm[1] === "amanecer"
+                    /* Sol saliendo por el horizonte: las fiestas que acaban al amanecer */
+                    ? <span class="pr-dawn" title={t.untilDawn} aria-label={t.untilDawn} role="img">
+                        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                          <path d="M3 18h18" />
+                          <path d="M7.5 18a4.5 4.5 0 0 1 9 0" />
+                          <path d="M12 4.5v2M5.6 7.1l1.4 1.4M18.4 7.1l-1.4 1.4M1.5 13.5h2M20.5 13.5h2" />
+                        </svg>
+                      </span>
+                    : <span>{tm[1]}</span>}
+                </div>
+              )}
             </div>
             <div class="pr-sessions">
               {slot.items.map((s) => (
@@ -615,6 +628,9 @@ const describe = (s) => {
   .pr-time span { font-weight: 800; font-size: 14px; color: #14121a; letter-spacing: -.02em; line-height: 1.15; display: block; }
   .pr-time-end span { font-weight: 700; font-size: 12px; color: #a7a2b0; }
   .pr-time-end span::before { content: "–"; margin-right: 3px; color: #cfc9bb; }
+  /* "Hasta el amanecer": en vez de la palabra, un sol saliendo */
+  .pr-dawn { display: inline-flex; align-items: center; color: var(--gold); }
+  .pr-dawn svg { display: block; }
   .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; align-content: start; }
 
   .pr-card {
