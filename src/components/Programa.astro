@@ -33,7 +33,10 @@ const exact = (n) => exactIndex[norm(n)] || null;
 // menos una de las partes sí la tiene.
 const splitTeachers = (p) => {
   if (exact(p)) return null;
-  const parts = p.split(/\s+(?:y|e|&)\s+/i).map((x) => x.trim()).filter(Boolean);
+  // El "·" manda sobre la "y": en "Korke y Judith · Irene y Tomás" son dos
+  // parejas, no cuatro personas. Solo se parte por "y" si no hay ningún "·".
+  const corte = p.includes("·") ? /\s*·\s*/ : /\s+(?:y|e|&)\s+/i;
+  const parts = p.split(corte).map((x) => x.trim()).filter(Boolean);
   if (parts.length < 2) return null;
   const resolved = parts.map((x) => ({ text: x, a: exact(x) }));
   return resolved.some((r) => r.a) ? resolved : null;
@@ -178,12 +181,13 @@ const describe = (s) => {
                     )}
                     <h3 class="pr-title">{title(s)}</h3>
                     {s.p && (() => {
+                      const p0 = s.p;
                       const multi = splitTeachers(s.p);
                       if (multi) return (
                         <p class="pr-teacher">
                           {multi.map((r, i) => (
                             <>
-                              {i > 0 && " y "}
+                              {i > 0 && (p0.includes("·") ? " · " : " y ")}
                               <button class="pr-teacher-link" type="button" data-aname={r.a ? r.a.name : r.text} data-aimg={r.a ? img(r.a.img) : ""} data-acountry={r.a ? r.a.country : ""} data-abio={bioFor(r.a, r.text)} data-aig={(r.a && r.a.ig) || ""} data-afb={(r.a && r.a.fb) || ""} data-ayt={(r.a && r.a.yt) || ""} data-aweb={(r.a && r.a.web) || ""} data-ainitials={initials(r.text)}>{r.text}</button>
                             </>
                           ))}
