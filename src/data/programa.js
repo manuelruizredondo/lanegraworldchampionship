@@ -14,8 +14,8 @@ export const ROOMS = {
 export const ROOM_LIST = [
   { key: "gs", name: "Gran Salón del Mundial", img: "/img/salas/gran-salon-mundial.webp", loc: "Salón principal: escenario de shows, finales del Mundial y baile social hasta el amanecer." },
   { key: "pb", name: "Piano Bar", loc: "Talleres y masterclasses. Junto a la Terraza Infinity, sede de las pre-parties VIP." },
-  { key: "s1", name: "Sala 1", loc: "Sala de talleres y clases en paralelo." },
-  { key: "s2", name: "Sala 2", loc: "Sala de talleres y clases en paralelo." },
+  { key: "s1", name: "Sala 1", img: "/img/salas/sala-1.webp", loc: "Sala de talleres y clases en paralelo." },
+  { key: "s2", name: "Sala 2", img: "/img/salas/sala-2.webp", loc: "Sala de talleres y clases en paralelo." },
 ];
 
 export const PROGRAMA = [

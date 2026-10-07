@@ -102,5 +102,5 @@ export const IMG_TO_NAME = {
 // Ponentes y profesores que NO forman parte del cartel de artistas de baile:
 // no aparecen en /artistas/, pero su tarjeta del horario sí abre ficha.
 export const PERFILES = {
-  "Manuel Ruiz": { img: "manuel-ruiz.webp", country: "Estrategia digital | Barcelona", web: "https://digitalstrategy.es" },
+  "Manuel Ruiz": { img: "manuel-ruiz.webp", country: "Consultor de estrategia digital para grandes corporaciones | Barcelona", web: "https://digitalstrategy.es" },
 };
