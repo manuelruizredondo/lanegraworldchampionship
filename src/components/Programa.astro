@@ -4,7 +4,7 @@ import { ARTISTS } from "@/data/artists.js";
 import { BIOS, PERFILES } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
 
-const { lang = "es", comingSoon = false } = Astro.props;
+const { lang = "es", comingSoon = false, wip = false } = Astro.props;
 const t = I18N[lang] || I18N.es;
 
 // Artistas: si el nombre de un artista aparece en el texto del profe, la card enlaza a su ficha
@@ -101,7 +101,7 @@ const describe = (s) => {
 )}
 
 <!-- Salones: 4 cajas con imagen, borde de color y la bolita arriba a la izquierda -->
-<section class:list={["pr-rooms", { "pr-off": comingSoon }]}>
+<section class:list={["pr-rooms", { "pr-off": comingSoon, "pr-veil": wip }]}>
   <div class="container">
     <p class="pr-rooms-label">{t.roomsLabel}</p>
     <div class="pr-rooms-grid">
@@ -120,7 +120,7 @@ const describe = (s) => {
 </section>
 
 <!-- Controles sticky: filtros + buscador, y abajo los días como tabs con barra deslizante -->
-<div class:list={["pr-controls", { "pr-off": comingSoon }]}>
+<div class:list={["pr-controls", { "pr-off": comingSoon, "pr-veil": wip }]}>
   <div class="container">
     <label class="pr-search">
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -147,7 +147,7 @@ const describe = (s) => {
   </div>
 </div>
 
-<section class:list={["pr-body", { "pr-off": comingSoon }]}>
+<section class:list={["pr-body", { "pr-off": comingSoon, "pr-veil": wip }]}>
   <div class="container">
     <p class="pr-fav-empty" hidden>{t.favEmpty}</p>
     {days.map((d, di) => (
@@ -243,6 +243,12 @@ const describe = (s) => {
     <p class="pr-note">{t.note}</p>
   </div>
 </section>
+
+{wip && (
+  <div class="pr-wip" role="status">
+    <p class="pr-wip-txt">{t.wipTitle}</p>
+  </div>
+)}
 
 <!-- Modal de artista: se abre al tocar el nombre del profe (si es artista invitado) -->
 <div class="pr-artist-modal" hidden>
@@ -496,6 +502,21 @@ const describe = (s) => {
   .pr-soon p { max-width: 860px; margin: 0 auto; padding: 15px 24px; text-align: center; color: #5a4a22; font-weight: 600; font-size: 15px; line-height: 1.5; }
   /* Modo "Próximamente": el horario se ve como referencia, atenuado y sin interacción */
   .pr-off { opacity: .45; pointer-events: none; user-select: none; }
+  /* Modo "en obras": el horario se intuye pero no se puede leer ni tocar. */
+  .pr-veil { filter: blur(7px) saturate(.55); opacity: .5; pointer-events: none; user-select: none; }
+  .pr-veil .pr-controls, .pr-veil.pr-controls { position: static; }
+  .pr-wip {
+    position: fixed; inset: 0; z-index: 400;
+    display: grid; place-items: center; padding: 24px;
+    /* No bloquea el menú ni el resto de la navegación */
+    pointer-events: none;
+  }
+  .pr-wip-txt {
+    margin: 0; text-align: center; color: #14121a;
+    font-size: clamp(28px, 6vw, 56px); font-weight: 800; letter-spacing: -.02em;
+    text-shadow: 0 2px 24px rgba(255, 255, 255, .95), 0 1px 3px rgba(255, 255, 255, 1);
+  }
+
   .pr-off .pr-controls, .pr-off.pr-controls { position: static; }
 
   .pr-controls {
