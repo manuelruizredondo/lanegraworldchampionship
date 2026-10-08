@@ -247,6 +247,12 @@ const describe = (s) => {
 {wip && (
   <div class="pr-wip" role="status">
     <p class="pr-wip-txt">{t.wipTitle}</p>
+    <p class="pr-wip-sub">{t.wipSub}</p>
+    <div class="pr-wip-links">
+      <a href="https://www.instagram.com/lanegraworldchampionship/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.facebook.com/lanegradancefestival" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://www.youtube.com/user/LaNegraSalsa1" target="_blank" rel="noopener">YouTube</a>
+    </div>
   </div>
 )}
 
@@ -507,7 +513,7 @@ const describe = (s) => {
   .pr-veil .pr-controls, .pr-veil.pr-controls { position: static; }
   .pr-wip {
     position: fixed; inset: 0; z-index: 400;
-    display: grid; place-items: center; padding: 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px;
     /* No bloquea el menú ni el resto de la navegación */
     pointer-events: none;
   }
@@ -516,6 +522,19 @@ const describe = (s) => {
     font-size: clamp(28px, 6vw, 56px); font-weight: 800; letter-spacing: -.02em;
     text-shadow: 0 2px 24px rgba(255, 255, 255, .95), 0 1px 3px rgba(255, 255, 255, 1);
   }
+  .pr-wip-sub {
+    margin: 0; text-align: center; color: #14121a;
+    font-size: clamp(16px, 2.6vw, 21px); font-weight: 600;
+    text-shadow: 0 2px 20px rgba(255, 255, 255, .95), 0 1px 3px rgba(255, 255, 255, 1);
+  }
+  /* Los enlaces sí son pulsables, aunque el cartel no capture clics */
+  .pr-wip-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; pointer-events: auto; }
+  .pr-wip-links a {
+    padding: 11px 22px; border-radius: 999px; background: var(--gold); color: #fff;
+    font-size: 14px; font-weight: 700; text-decoration: none; letter-spacing: .02em;
+    box-shadow: 0 4px 16px rgba(20, 18, 26, .16);
+  }
+  .pr-wip-links a:hover { background: var(--gold-dark, #a28243); }
 
   .pr-off .pr-controls, .pr-off.pr-controls { position: static; }
 
