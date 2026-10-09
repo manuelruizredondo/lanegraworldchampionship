@@ -303,6 +303,9 @@ const CARDS = [
 
   /* ---- Maqueta ---- */
   .pd-mock {
+    /* El dedo se posiciona dentro de esta caja: sin relative se anclaba a un
+       ancestro lejano y en tablet acababa a 2.000px de donde debía. */
+    position: relative;
     border-radius: 18px; border: 1px solid #ece8e1; background: #fff;
     box-shadow: 0 18px 44px rgba(20, 18, 26, .08); padding: 16px; overflow: hidden;
   }
