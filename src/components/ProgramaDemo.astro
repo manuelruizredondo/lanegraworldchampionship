@@ -68,12 +68,11 @@ const CARDS = [
 ---
 
 <section class="pd" data-step="0">
-  <div class="p-container pd-head">
-    <h2 class="p-h2">{t.h2}</h2>
-  </div>
-
   <div class="pd-scroll">
     <div class="pd-sticky">
+      <div class="p-container pd-head">
+        <h2 class="p-h2">{t.h2}</h2>
+      </div>
       <div class="p-container pd-grid">
 
         <!-- Puntos de progreso -->
@@ -115,7 +114,7 @@ const CARDS = [
           ))}
           <div class="pd-ctas">
             <a class="p-btn p-btn-dark" href={HREF[lang] || HREF.es}>{t.cta}</a>
-            <a class="p-btn pd-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
+            <a class="pd-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
               <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
               {t.pdf}
             </a>
@@ -174,10 +173,13 @@ const CARDS = [
 </script>
 
 <style>
-  .pd { background: var(--p-bg, #fff); }
-  .pd-head { text-align: center; padding: clamp(40px, 5.5vw, 72px) 0 0; }
+  .pd { background: var(--p-bg, #fff); --pd-aire: clamp(28px, 3.6vw, 50px); }
+  /* Mismo aire arriba y abajo del título: los dos salen de --pd-aire, así que
+     no pueden descuadrarse. El h2 va sin margen propio. */
+  .pd-head { text-align: center; padding: 0 0 var(--pd-aire); }
+  .pd-head h2 { margin: 0; }
 
-  .pd-sticky { padding: clamp(18px, 2.4vw, 32px) 0 clamp(34px, 4.5vw, 56px); }
+  .pd-sticky { padding: var(--pd-aire) 0 clamp(34px, 4.5vw, 56px); }
   .pd-grid { display: grid; grid-template-columns: 1fr; gap: 28px; }
 
   /* Puntos de progreso */
@@ -269,18 +271,22 @@ const CARDS = [
   .pd-step p { margin: 0; max-height: 0; overflow: hidden; opacity: 0; font-size: 15px; line-height: 1.6; color: #4a4a55; transition: all .35s ease; }
   .pd-step.on h3 { color: #14121a; }
   .pd-step.on p { max-height: 160px; opacity: 1; margin-top: 8px; }
-  .pd-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .pd-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 24px; }
+  /* El PDF es la opción secundaria: enlace subrayado, no botón, para que no
+     compita con el de ver la programación. */
   .pd-pdf {
-    display: inline-flex; align-items: center; gap: 9px;
-    background: transparent; color: var(--p-ink); border: 1.5px solid var(--p-line, #ddd8cf);
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--gold-dark, #a28243); font-weight: 600; font-size: 15px;
+    text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px;
+    text-decoration-color: rgba(162, 130, 67, .4);
   }
-  .pd-pdf:hover { background: #f4f1ea; border-color: var(--p-ink); }
+  .pd-pdf:hover { color: #14121a; text-decoration-color: currentColor; }
 
   @media (min-width: 900px) {
     .pd-scroll { height: 340vh; }
     /* El bloque fijo ocupa la pantalla menos la cabecera, y el contenido se
        estira para llenarla: si no, al centrarlo quedaban 180px muertos arriba. */
-    .pd-sticky { position: sticky; top: var(--header-h, 88px); display: flex; align-items: center; min-height: calc(100svh - var(--header-h, 88px) - 160px); }
+    .pd-sticky { position: sticky; top: var(--header-h, 88px); display: flex; flex-direction: column; justify-content: center; min-height: calc(100svh - var(--header-h, 88px) - 60px); }
     .pd-grid { grid-template-columns: 26px 1fr 1fr; gap: 0 clamp(28px, 4vw, 60px); align-items: center; }
     .pd-dots { flex-direction: column; justify-content: center; gap: 9px; }
     .pd-dot.on { width: 7px; height: 22px; }

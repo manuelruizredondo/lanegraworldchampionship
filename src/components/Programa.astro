@@ -91,7 +91,12 @@ const describe = (s) => {
     {comingSoon && <span class="pr-soon-badge">{t.tallBadge}</span>}
     <p class="eyebrow dark">{comingSoon ? t.tallEyebrow : t.eyebrow}</p>
     <h1 class="script-title">{comingSoon ? t.tallH1 : t.h1}</h1>
-    <p class="pr-sub">{comingSoon ? t.tallSub : t.sub}</p>
+    {comingSoon
+      ? <p class="pr-sub">{t.tallSub}</p>
+      : <p class="pr-sub"><a class="pr-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
+          {t.pdfLink}
+        </a></p>}
   </div>
 </section>
 {comingSoon && (
@@ -503,6 +508,13 @@ const describe = (s) => {
   .pr-hero { padding: clamp(40px, 6vw, 72px) 0 clamp(20px, 3vw, 32px); text-align: center; }
   .pr-hero .script-title { margin: 0 0 14px; }
   .pr-sub { max-width: 640px; margin: 0 auto; color: #6a6a74; font-size: 16px; line-height: 1.6; }
+  .pr-pdf {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--gold-dark, #a28243); font-weight: 600;
+    text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1.5px;
+    text-decoration-color: rgba(162, 130, 67, .4);
+  }
+  .pr-pdf:hover { color: #14121a; text-decoration-color: currentColor; }
   .pr-soon-badge { display: inline-block; background: var(--gold); color: #fff; font-weight: 800; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 15px; border-radius: 999px; margin-bottom: 16px; }
   .pr-soon { background: #faf3e2; border-top: 1px solid #f0e6cf; border-bottom: 1px solid #f0e6cf; }
   .pr-soon p { max-width: 860px; margin: 0 auto; padding: 15px 24px; text-align: center; color: #5a4a22; font-weight: 600; font-size: 15px; line-height: 1.5; }
