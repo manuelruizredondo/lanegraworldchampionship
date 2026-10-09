@@ -478,3 +478,16 @@
     html.js-fx .p-artist-img { animation: none; }
     .p-marquee-half .p-fire-o, .p-marquee-half .p-fire-i { animation: none; }
   }
+
+  /* Bloque de programación en la home: dos botones sobre fondo claro, así que
+     el outline del hero (blanco sobre transparente) no sirve aquí. */
+  .prog-cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .prog-pdf {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: transparent; color: var(--p-ink); border: 1.5px solid var(--p-line, #ddd8cf);
+  }
+  .prog-pdf:hover { background: #f4f1ea; border-color: var(--p-ink); }
+  @media (max-width: 520px) {
+    .prog-cta-row .p-btn { flex: 1 1 100%; text-align: center; justify-content: center; }
+  }
+

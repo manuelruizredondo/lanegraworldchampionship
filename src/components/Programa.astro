@@ -390,8 +390,10 @@ const describe = (s) => {
   window.addEventListener("resize", () => { moveInk(Math.max(0, lastActive)); spy(); });
   window.addEventListener("load", () => moveInk(Math.max(0, lastActive)));
   chips.forEach((c) => c.addEventListener("click", () => {
-    filter = c.dataset.filter;
-    chips.forEach((x) => x.classList.toggle("active", x === c));
+    // Volver a pulsar el filtro activo lo quita y devuelve a "Todo"
+    const quitar = filter === c.dataset.filter && filter !== "all";
+    filter = quitar ? "all" : c.dataset.filter;
+    chips.forEach((x) => x.classList.toggle("active", x.dataset.filter === filter));
     apply();
   }));
   q.addEventListener("input", () => { query = q.value.trim().toLowerCase(); apply(); });
