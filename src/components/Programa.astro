@@ -108,16 +108,21 @@ const describe = (s) => {
 <!-- Controles sticky: filtros + buscador, y abajo los días como tabs con barra deslizante -->
 <div class:list={["pr-controls", { "pr-off": comingSoon, "pr-veil": wip }]}>
   <div class="container">
+    <div class="pr-top">
     <label class="pr-search">
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input type="search" id="pr-q" placeholder={t.search} autocomplete="off" aria-label={t.searchAria} />
     </label>
+    <button class="pr-chip pr-chip-fav" data-filter="fav">
+      <svg class="pr-chip-heart" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>{t.filters.fav}</span>
+      <span class="pr-fav-count" hidden>0</span>
+    </button>
+    </div>
     <div class="pr-filters" role="group" aria-label={t.filtersAria}>
-      {FILTER_KEYS.map((k, i) => (
-        <button class={"pr-chip" + (k === "fav" ? " pr-chip-fav" : "") + (i === 0 ? " active" : "")} data-filter={k}>
-          {k === "fav" && <svg class="pr-chip-heart" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>}
+      {FILTER_KEYS.filter((k) => k !== "fav").map((k, i) => (
+        <button class={"pr-chip" + (i === 0 ? " active" : "")} data-filter={k}>
           <span>{t.filters[k]}</span>
-          {k === "fav" && <span class="pr-fav-count" hidden>0</span>}
         </button>
       ))}
     </div>
@@ -181,6 +186,7 @@ const describe = (s) => {
                 <article
                   class={"pr-card rc-" + s.r + " k-" + s.k + (s.r === "full" ? " pr-band" : "") + (s.k === "taller" ? (isBachata(s) ? " sp-b" : " sp-s") : "")}
                   data-kind={s.k}
+                  data-estilo={s.r === "full" ? undefined : (isBachata(s) ? "bachata" : "salsa")}
                   data-text={((s.n || "") + " " + (s.p || "")).toLowerCase()}
                 >
                   {s.r !== "full" && (s.k === "taller"
@@ -283,7 +289,12 @@ const describe = (s) => {
   const panels = [...document.querySelectorAll("[data-day-panel]")];
   const chips = [...document.querySelectorAll(".pr-chip")];
   const q = document.getElementById("pr-q");
-  let filter = "all", query = "";
+  // Filtros múltiples. Dentro de un mismo grupo suman (bachata O salsa) y entre
+  // grupos restringen (bachata Y masterclass = masterclasses de bachata).
+  const ESTILOS = ["bachata", "salsa"];
+  const TIPOS = ["taller", "master", "comp", "social"];
+  const filtros = new Set();
+  let query = "";
   const controlsEl = document.querySelector(".pr-controls");
 
   // ── Favoritos (persisten en el navegador con localStorage) ──
@@ -314,7 +325,7 @@ const describe = (s) => {
     btn.setAttribute("aria-pressed", on ? "true" : "false");
     btn.classList.remove("pr-fav-pop"); void btn.offsetWidth; if (on) btn.classList.add("pr-fav-pop");
     syncFavCount();
-    if (filter === "fav") apply();
+    if (filtros.has("fav")) apply();
   }));
   markFavs();
   syncFavCount();
@@ -325,21 +336,21 @@ const describe = (s) => {
   window.addEventListener("resize", setControlsH);
 
   const apply = () => {
-    const favMode = filter === "fav";
+    const favMode = filtros.has("fav");
+    const estilos = ESTILOS.filter((e) => filtros.has(e));
+    const tipos = TIPOS.filter((k) => filtros.has(k));
     panels.forEach((panel) => {
       let visible = 0;
       panel.querySelectorAll(".pr-slot").forEach((slot) => {
         let shown = 0;
         slot.querySelectorAll(".pr-card").forEach((card) => {
           const favBtn = card.querySelector(".pr-fav");
-          const okKind = favMode
-            ? !!(favBtn && favs.has(favBtn.dataset.fav))
-            : filter === "bachata" ? card.classList.contains("sp-b")
-            : filter === "salsa" ? card.classList.contains("sp-s")
-            : filter === "all" || card.dataset.kind === filter
-              || (filter === "social" && (card.dataset.kind === "social" || card.dataset.kind === "meal"));
+          const okFav = !favMode || !!(favBtn && favs.has(favBtn.dataset.fav));
+          const okEstilo = !estilos.length || estilos.includes(card.dataset.estilo);
+          const okTipo = !tipos.length || tipos.some((k) => card.dataset.kind === k
+            || (k === "social" && card.dataset.kind === "meal"));
           const okText = !query || (card.dataset.text || "").includes(query);
-          const ok = okKind && okText;
+          const ok = okFav && okEstilo && okTipo && okText;
           card.hidden = !ok;
           if (ok) shown++;
         });
@@ -394,13 +405,19 @@ const describe = (s) => {
   window.addEventListener("scroll", () => { if (!spyTick) { spyTick = true; requestAnimationFrame(spy); } }, { passive: true });
   window.addEventListener("resize", () => { moveInk(Math.max(0, lastActive)); spy(); });
   window.addEventListener("load", () => moveInk(Math.max(0, lastActive)));
+  // "Todo" se enciende solo cuando no hay ningún filtro puesto
+  const pintarChips = () => chips.forEach((x) => x.classList.toggle("active",
+    x.dataset.filter === "all" ? filtros.size === 0 : filtros.has(x.dataset.filter)));
+
   chips.forEach((c) => c.addEventListener("click", () => {
-    // Volver a pulsar el filtro activo lo quita y devuelve a "Todo"
-    const quitar = filter === c.dataset.filter && filter !== "all";
-    filter = quitar ? "all" : c.dataset.filter;
-    chips.forEach((x) => x.classList.toggle("active", x.dataset.filter === filter));
+    const f = c.dataset.filter;
+    if (f === "all") filtros.clear();
+    else if (filtros.has(f)) filtros.delete(f);   // volver a pulsarlo lo quita
+    else filtros.add(f);
+    pintarChips();
     apply();
   }));
+  pintarChips();
   q.addEventListener("input", () => { query = q.value.trim().toLowerCase(); apply(); });
 
   // Salas: al pulsar el nombre de una columna se abre una burbuja con su ubicación
@@ -496,8 +513,8 @@ const describe = (s) => {
     if (card) card.classList.toggle("expanded");
   });
   document.querySelectorAll(".pr-reset").forEach((r) => r.addEventListener("click", () => {
-    filter = "all"; query = ""; q.value = "";
-    chips.forEach((x) => x.classList.toggle("active", x.dataset.filter === "all"));
+    filtros.clear(); query = ""; q.value = "";
+    pintarChips();
     apply();
   }));
   apply();
@@ -557,6 +574,10 @@ const describe = (s) => {
     border-bottom: 0;
     padding: 12px 0 0;
   }
+  /* Buscador y favoritos arriba; los filtros de categoría, abajo y aparte.
+     "Mis favoritos" no filtra por tipo de clase: filtra por lo tuyo. */
+  .pr-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .pr-top .pr-chip-fav { flex: 0 0 auto; padding: 9px 15px; }
   .pr-filters { display: flex; overflow-x: auto; scrollbar-width: none; margin: 8px -24px 0; padding: 6px 24px; gap: 6px; }
   .pr-filters::-webkit-scrollbar { display: none; }
 
