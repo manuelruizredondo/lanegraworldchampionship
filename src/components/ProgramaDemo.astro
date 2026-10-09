@@ -9,8 +9,8 @@ const T = {
   es: {
     h2: "Programación 2026",
     pasos: [
-      { t: "Filtra por lo tuyo", d: "Bachata, salsa, masterclasses, el Mundial o las fiestas. Un toque y te quedas solo con lo que te interesa." },
-      { t: "Busca a tu profesor", d: "Escribe un nombre y aparecen todas sus clases, el día y la sala. Sin recorrer los cinco días a mano." },
+      { t: "Filtra por lo que te gusta", d: "Bachata, salsa, masterclasses, el Mundial o las fiestas. Un toque y te quedas solo con lo que te interesa." },
+      { t: "Busca taller o profesor", d: "Escribe un nombre y aparecen todas sus clases, el día y la sala. Sin recorrer los cinco días a mano." },
       { t: "Guarda tus favoritos", d: "Marca las clases con el corazón y quédate solo con las tuyas. Se quedan guardadas en tu móvil." },
       { t: "Mira las cuatro salas", d: "En pantalla grande verás a la vez qué pasa en el Gran Salón, el Piano Bar y las salas 1 y 2." },
     ],
@@ -25,8 +25,8 @@ const T = {
   en: {
     h2: "2026 schedule",
     pasos: [
-      { t: "Filter what you want", d: "Bachata, salsa, masterclasses, the World Championship or the parties. One tap and you keep only what matters to you." },
-      { t: "Find your teacher", d: "Type a name and every one of their classes shows up, with the day and the room. No scrolling through five days." },
+      { t: "Filter what you like", d: "Bachata, salsa, masterclasses, the World Championship or the parties. One tap and you keep only what matters to you." },
+      { t: "Search class or teacher", d: "Type a name and every one of their classes shows up, with the day and the room. No scrolling through five days." },
       { t: "Save your favourites", d: "Tap the heart on a class and keep only yours. They stay saved on your phone." },
       { t: "See all four rooms", d: "On a big screen you see at once what is on in the Gran Salón, the Piano Bar and rooms 1 and 2." },
     ],
@@ -41,8 +41,8 @@ const T = {
   it: {
     h2: "Programma 2026",
     pasos: [
-      { t: "Filtra quello che vuoi", d: "Bachata, salsa, masterclass, il Mondiale o le feste. Un tocco e resti solo con ciò che ti interessa." },
-      { t: "Cerca il tuo insegnante", d: "Scrivi un nome e compaiono tutte le sue lezioni, con giorno e sala. Senza scorrere i cinque giorni a mano." },
+      { t: "Filtra quello che ti piace", d: "Bachata, salsa, masterclass, il Mondiale o le feste. Un tocco e resti solo con ciò che ti interessa." },
+      { t: "Cerca lezione o insegnante", d: "Scrivi un nome e compaiono tutte le sue lezioni, con giorno e sala. Senza scorrere i cinque giorni a mano." },
       { t: "Salva i preferiti", d: "Tocca il cuore su una lezione e tieni solo le tue. Restano salvate sul tuo telefono." },
       { t: "Guarda le quattro sale", d: "Su schermo grande vedi insieme cosa succede nel Gran Salón, nel Piano Bar e nelle sale 1 e 2." },
     ],
@@ -265,12 +265,12 @@ const CARDS = [
   }
 
   /* ---- Pasos ---- */
-  .pd-step { padding: 14px 0; cursor: pointer; }
+  .pd-step { padding: 7px 0; cursor: pointer; }
   .pd-step h3 { margin: 0; font-size: clamp(22px, 3.6vw, 34px); font-weight: 500; letter-spacing: -.015em; color: #c9c4bb; transition: color .3s ease; }
   .pd-step p { margin: 0; max-height: 0; overflow: hidden; opacity: 0; font-size: 15px; line-height: 1.6; color: #4a4a55; transition: all .35s ease; }
   .pd-step.on h3 { color: #14121a; }
-  .pd-step.on p { max-height: 160px; opacity: 1; margin-top: 8px; }
-  .pd-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 24px; }
+  .pd-step.on p { max-height: 160px; opacity: 1; margin-top: 6px; }
+  .pd-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 18px; }
   /* El PDF es la opción secundaria: enlace subrayado, no botón, para que no
      compita con el de ver la programación. */
   .pd-pdf {
@@ -294,7 +294,7 @@ const CARDS = [
     .pd-card-t { font-size: 13.5px; }
     .pd-card-p { font-size: 12px; }
     .pd-cards { gap: 12px; margin-top: 16px; }
-    .pd-step { padding: 20px 0; }
+    .pd-step { padding: 13px 0; }
     .pd-step p { font-size: 16px; }
   }
 </style>
