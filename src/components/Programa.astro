@@ -1,5 +1,5 @@
 ---
-import { PROGRAMA, ROOM_LIST, I18N } from "@/data/programa.js";
+import { PROGRAMA, ROOM_LIST, I18N, NOMBRES } from "@/data/programa.js";
 import { ARTISTS } from "@/data/artists.js";
 import { BIOS, PERFILES } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
@@ -79,7 +79,10 @@ const days = PROGRAMA.map((d) => {
 const FILTER_KEYS = ["all", "fav", "taller", "bachata", "salsa", "master", "comp", "social"];
 // Estilo del taller según el título: Bachata (RD) o Salsa (por defecto)
 const isBachata = (s) => /bachata|dominican|bacano/i.test(s.n || "");
-const title = (s) => (s.r === "full" ? (t.band[s.n] || s.n) : s.n);
+// En inglés e italiano, el nombre de la clase se traduce; si falta la
+// traducción se queda el original en vez de desaparecer.
+const NOM = NOMBRES[lang] || {};
+const title = (s) => (s.r === "full" ? (t.band[s.n] || s.n) : (NOM[s.n] || s.n));
 const describe = (s) => {
   if (s.k === "taller") return s.l ? t.levelInfo[s.l] : t.desc.taller;
   return t.desc[s.k] || t.desc.taller;
@@ -187,7 +190,7 @@ const describe = (s) => {
                   class={"pr-card rc-" + s.r + " k-" + s.k + (s.r === "full" ? " pr-band" : "") + (s.k === "taller" ? (isBachata(s) ? " sp-b" : " sp-s") : "")}
                   data-kind={s.k}
                   data-estilo={s.r === "full" ? undefined : (isBachata(s) ? "bachata" : "salsa")}
-                  data-text={((s.n || "") + " " + (s.p || "")).toLowerCase()}
+                  data-text={((title(s) || "") + " " + (s.n || "") + " " + (s.p || "")).toLowerCase()}
                 >
                   {s.r !== "full" && (s.k === "taller"
                     ? <span class={"pr-room pr-st-" + (isBachata(s) ? "b" : "s")}>{isBachata(s) ? "Bachata" : "Salsa"}</span>
@@ -733,6 +736,9 @@ const describe = (s) => {
   .pr-dawn { display: inline-flex; align-items: center; color: var(--gold); }
   .pr-dawn svg { display: block; }
   .pr-sessions { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; align-content: start; }
+  /* La flecha es cosa del carrusel de móvil: en escritorio las tarjetas caben
+     en columnas y no hay nada que desplazar. */
+  .pr-mas { display: none; }
 
   .pr-card {
     position: relative; overflow: hidden;
