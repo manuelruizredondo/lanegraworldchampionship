@@ -7,9 +7,7 @@ const { lang = "es" } = Astro.props;
 
 const T = {
   es: {
-    eyebrow: "La programación",
-    h2: "Cinco días sin perderte nada",
-    sub: "El horario no es un PDF: se filtra, se busca y se guarda.",
+    h2: "Programación 2026",
     pasos: [
       { t: "Filtra por lo tuyo", d: "Bachata, salsa, masterclasses, el Mundial o las fiestas. Un toque y te quedas solo con lo que te interesa." },
       { t: "Busca a tu profesor", d: "Escribe un nombre y aparecen todas sus clases, el día y la sala. Sin recorrer los cinco días a mano." },
@@ -22,12 +20,10 @@ const T = {
     tecleado: "Maykel",
     favs: "Mis favoritos",
     salas: ["Gran Salón", "Piano Bar", "Sala 1", "Sala 2"],
-    cta: "Ver la programación",
+    cta: "Ver la programación", pdf: "Descargar en PDF",
   },
   en: {
-    eyebrow: "The schedule",
-    h2: "Five days without missing a thing",
-    sub: "The schedule is not a PDF: you filter it, search it and save it.",
+    h2: "2026 schedule",
     pasos: [
       { t: "Filter what you want", d: "Bachata, salsa, masterclasses, the World Championship or the parties. One tap and you keep only what matters to you." },
       { t: "Find your teacher", d: "Type a name and every one of their classes shows up, with the day and the room. No scrolling through five days." },
@@ -40,12 +36,10 @@ const T = {
     tecleado: "Maykel",
     favs: "My favourites",
     salas: ["Gran Salón", "Piano Bar", "Room 1", "Room 2"],
-    cta: "See the schedule",
+    cta: "See the schedule", pdf: "Download as PDF",
   },
   it: {
-    eyebrow: "Il programma",
-    h2: "Cinque giorni senza perderti nulla",
-    sub: "L'orario non è un PDF: si filtra, si cerca e si salva.",
+    h2: "Programma 2026",
     pasos: [
       { t: "Filtra quello che vuoi", d: "Bachata, salsa, masterclass, il Mondiale o le feste. Un tocco e resti solo con ciò che ti interessa." },
       { t: "Cerca il tuo insegnante", d: "Scrivi un nome e compaiono tutte le sue lezioni, con giorno e sala. Senza scorrere i cinque giorni a mano." },
@@ -58,7 +52,7 @@ const T = {
     tecleado: "Maykel",
     favs: "I miei preferiti",
     salas: ["Gran Salón", "Piano Bar", "Sala 1", "Sala 2"],
-    cta: "Vedi il programma",
+    cta: "Vedi il programma", pdf: "Scarica in PDF",
   },
 };
 const t = T[lang] || T.es;
@@ -75,9 +69,7 @@ const CARDS = [
 
 <section class="pd" data-step="0">
   <div class="p-container pd-head">
-    <p class="p-eyebrow">{t.eyebrow}</p>
     <h2 class="p-h2">{t.h2}</h2>
-    <p class="p-lead">{t.sub}</p>
   </div>
 
   <div class="pd-scroll">
@@ -121,7 +113,13 @@ const CARDS = [
               <p>{s.d}</p>
             </div>
           ))}
-          <a class="p-btn p-btn-dark pd-cta" href={HREF[lang] || HREF.es}>{t.cta}</a>
+          <div class="pd-ctas">
+            <a class="p-btn p-btn-dark" href={HREF[lang] || HREF.es}>{t.cta}</a>
+            <a class="p-btn pd-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
+              {t.pdf}
+            </a>
+          </div>
         </div>
 
       </div>
@@ -177,8 +175,7 @@ const CARDS = [
 
 <style>
   .pd { background: var(--p-bg, #fff); }
-  .pd-head { text-align: center; padding: clamp(26px, 4vw, 52px) 0 0; }
-  .pd-head .p-lead { max-width: 620px; margin-left: auto; margin-right: auto; }
+  .pd-head { text-align: center; padding: clamp(40px, 5.5vw, 72px) 0 0; }
 
   .pd-sticky { padding: clamp(18px, 2.4vw, 32px) 0 clamp(34px, 4.5vw, 56px); }
   .pd-grid { display: grid; grid-template-columns: 1fr; gap: 28px; }
@@ -272,7 +269,12 @@ const CARDS = [
   .pd-step p { margin: 0; max-height: 0; overflow: hidden; opacity: 0; font-size: 15px; line-height: 1.6; color: #4a4a55; transition: all .35s ease; }
   .pd-step.on h3 { color: #14121a; }
   .pd-step.on p { max-height: 160px; opacity: 1; margin-top: 8px; }
-  .pd-cta { margin-top: 24px; }
+  .pd-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .pd-pdf {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: transparent; color: var(--p-ink); border: 1.5px solid var(--p-line, #ddd8cf);
+  }
+  .pd-pdf:hover { background: #f4f1ea; border-color: var(--p-ink); }
 
   @media (min-width: 900px) {
     .pd-scroll { height: 340vh; }
