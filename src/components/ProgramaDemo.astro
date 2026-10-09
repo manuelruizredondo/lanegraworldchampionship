@@ -17,7 +17,7 @@ const T = {
     chips: ["Todo", "Bachata", "Salsa", "El Mundial"],
     dias: ["Mié", "Jue", "Vie", "Sáb", "Dom"],
     buscar: "Buscar taller o profe…",
-    tecleado: "Maykel",
+    busca1: "Maykel", busca2: "Solistas",
     favs: "Mis favoritos",
     salas: ["Gran Salón", "Piano Bar", "Sala 1", "Sala 2"],
     cta: "Ver la programación", pdf: "Descargar en PDF",
@@ -33,7 +33,7 @@ const T = {
     chips: ["All", "Bachata", "Salsa", "World Cup"],
     dias: ["Wed", "Thu", "Fri", "Sat", "Sun"],
     buscar: "Search class or teacher…",
-    tecleado: "Maykel",
+    busca1: "Maykel", busca2: "Solistas",
     favs: "My favourites",
     salas: ["Gran Salón", "Piano Bar", "Room 1", "Room 2"],
     cta: "See the schedule", pdf: "Download as PDF",
@@ -49,7 +49,7 @@ const T = {
     chips: ["Tutto", "Bachata", "Salsa", "Mondiale"],
     dias: ["Mer", "Gio", "Ven", "Sab", "Dom"],
     buscar: "Cerca lezione o insegnante…",
-    tecleado: "Maykel",
+    busca1: "Maykel", busca2: "Solistas",
     favs: "I miei preferiti",
     salas: ["Gran Salón", "Piano Bar", "Sala 1", "Sala 2"],
     cta: "Vedi il programma", pdf: "Scarica in PDF",
@@ -60,10 +60,10 @@ const HREF = { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" };
 
 // Las cuatro tarjetas de la maqueta. `sala` decide su columna en el paso 4.
 const CARDS = [
-  { n: "Afro-Cuban Footwork & Body Movement", p: "Maykel Fonts", sala: "pb", estilo: "salsa", busca: true },
-  { n: "Bachata Trilogía: tradicional y moderna", p: "Andrés y Jessica", sala: "s1", estilo: "bachata" },
-  { n: "Salsa: Semifinal Solistas Chicos", p: "", sala: "gs", estilo: "mundial" },
-  { n: "Bachata Sensual: Lead & Follow", p: "Berra y Reyes", sala: "s2", estilo: "bachata" },
+  { n: "Afro-Cuban Footwork & Body Movement", p: "Maykel Fonts", sala: "pb", estilo: "salsa", busca: "maykel" },
+  { n: "Bachata Trilogía: tradicional y moderna", p: "Andrés y Jessica", sala: "s1", estilo: "bachata", busca: "" },
+  { n: "Salsa: Semifinal Solistas Chicos", p: "", sala: "gs", estilo: "salsa", busca: "solistas" },
+  { n: "Bachata Sensual: Lead & Follow", p: "Berra y Reyes", sala: "s2", estilo: "bachata", busca: "" },
 ];
 ---
 
@@ -84,17 +84,17 @@ const CARDS = [
         <div class="pd-mock" aria-hidden="true">
           <span class="pd-tap"></span>
           <div class="pd-bar">
-            <div class="pd-search"><em>{t.buscar}</em><strong data-txt={t.tecleado}></strong><span class="pd-cursor"></span></div>
+            <div class="pd-search" data-b1={t.busca1} data-b2={t.busca2}><em>{t.buscar}</em><strong></strong><span class="pd-cursor"></span></div>
             <div class="pd-chips">
-              {t.chips.map((c, i) => <span class={"pd-chip pd-chip-" + i}>{c}</span>)}
-              <span class="pd-chip pd-chip-fav"><i></i>{t.favs}<b>2</b></span>
+              {t.chips.map((c, i) => <span class={"pd-chip pd-chip-" + i} data-c={["todo", "bachata", "salsa", "mundial"][i]}>{c}</span>)}
+              <span class="pd-chip pd-chip-fav" data-c="fav"><i></i>{t.favs}<b>0</b></span>
             </div>
           </div>
           <div class="pd-days">{t.dias.map((d, i) => <span class={"pd-day" + (i === 1 ? " on" : "")}>{d}</span>)}</div>
           <div class="pd-rooms">{t.salas.map((s, i) => <span class={"pd-room pd-room-" + i}>{s}</span>)}</div>
           <div class="pd-cards">
             {CARDS.map((c, i) => (
-              <article class={`pd-card pd-c${i} e-${c.estilo} r-${c.sala}` + (c.busca ? " is-match" : "")}>
+              <article class={`pd-card pd-c${i} e-${c.estilo} r-${c.sala}`} data-e={c.estilo} data-b={c.busca}>
                 <span class="pd-card-t">{c.n}</span>
                 {c.p && <span class="pd-card-p">{c.p}</span>}
                 <span class="pd-heart">
@@ -138,29 +138,88 @@ const CARDS = [
     let paso = -1;
     const mock = pd.querySelector(".pd-mock");
     const tap = pd.querySelector(".pd-tap");
-    const escrito = pd.querySelector(".pd-search strong");
-    const DIANA = [".pd-chip-1", ".pd-search", ".pd-c0 .pd-heart", ".pd-rooms"];
-    let tecleo = null;
+    const busca = pd.querySelector(".pd-search");
+    const escrito = busca.querySelector("strong");
+    const chips = [...pd.querySelectorAll(".pd-chip")];
+    const cards = [...pd.querySelectorAll(".pd-card")];
+    const contador = pd.querySelector(".pd-chip-fav b");
+    const favs = new Set();
 
-    // El dedo se coloca sobre el elemento real, no sobre coordenadas a ojo:
-    // así sigue cuadrando aunque cambien los textos o el ancho.
-    const moverDedo = (i) => {
-      const d = pd.querySelector(DIANA[i]);
+    // ---- piezas sueltas que usa el guion ----
+    const dedo = (sel) => {
+      const d = typeof sel === "string" ? pd.querySelector(sel) : sel;
       if (!d || !tap) return;
       const a = d.getBoundingClientRect(), b = mock.getBoundingClientRect();
       tap.style.left = (a.left - b.left + a.width / 2) + "px";
       tap.style.top = (a.top - b.top + a.height / 2) + "px";
       tap.classList.remove("toca"); void tap.offsetWidth; tap.classList.add("toca");
     };
-
-    const teclear = (txt) => {
-      clearInterval(tecleo);
-      escrito.textContent = "";
+    const marcarChip = (c) => chips.forEach((x) => x.classList.toggle("on", x.dataset.c === c));
+    const mostrar = (fn) => cards.forEach((c, i) => c.classList.toggle("apagada", !fn(c, i)));
+    const todas = () => mostrar(() => true);
+    const escribir = (txt) => {
       let k = 0;
-      tecleo = setInterval(() => {
+      escrito.textContent = "";
+      const id = setInterval(() => {
         escrito.textContent = txt.slice(0, ++k);
-        if (k >= txt.length) clearInterval(tecleo);
+        if (k >= txt.length) clearInterval(id);
       }, 110);
+      relojes.push(id);
+    };
+    const corazon = (i, on) => {
+      cards[i].classList.toggle("fav", on);
+      if (on) favs.add(i); else favs.delete(i);
+      contador.textContent = String(favs.size);
+      pd.querySelector(".pd-chip-fav").classList.toggle("con-favs", favs.size > 0);
+    };
+
+    // ---- guion de cada paso: [milisegundos, qué hacer] ----
+    const GUION = [
+      [ // Filtrar: salsa, luego bachata, y vuelta a empezar
+        [0,    () => { marcarChip("todo"); todas(); }],
+        [700,  () => dedo('[data-c="salsa"]')],
+        [1250, () => { marcarChip("salsa"); mostrar((c) => c.dataset.e === "salsa"); }],
+        [3000, () => dedo('[data-c="bachata"]')],
+        [3550, () => { marcarChip("bachata"); mostrar((c) => c.dataset.e === "bachata"); }],
+        [5600, null],
+      ],
+      [ // Buscar: primero un profesor, luego una categoría
+        [0,    () => { marcarChip("todo"); todas(); escrito.textContent = ""; }],
+        [500,  () => dedo(".pd-search")],
+        [900,  () => escribir(busca.dataset.b1)],
+        [1800, () => mostrar((c) => c.dataset.b === "maykel")],
+        [3600, () => { escrito.textContent = ""; todas(); }],
+        [3900, () => escribir(busca.dataset.b2)],
+        [5000, () => mostrar((c) => c.dataset.b === "solistas")],
+        [6800, null],
+      ],
+      [ // Favoritos: marcar dos y luego filtrar por ellos
+        [0,    () => { marcarChip("todo"); todas(); favs.clear(); cards.forEach((c) => c.classList.remove("fav")); contador.textContent = "0"; pd.querySelector(".pd-chip-fav").classList.remove("con-favs"); }],
+        [600,  () => dedo(".pd-c0 .pd-heart")],
+        [1050, () => corazon(0, true)],
+        [1900, () => dedo(".pd-c3 .pd-heart")],
+        [2350, () => corazon(3, true)],
+        [3300, () => dedo('[data-c="fav"]')],
+        [3800, () => { marcarChip("fav"); mostrar((c, i) => favs.has(i)); }],
+        [6000, null],
+      ],
+      [ // Las cuatro salas: sin secuencia, se enseña el cuadrante
+        [0, () => { marcarChip("todo"); todas(); escrito.textContent = ""; }],
+      ],
+    ];
+
+    let relojes = [];
+    const pararGuion = () => { relojes.forEach(clearTimeout); relojes.forEach(clearInterval); relojes = []; };
+    const lanzarGuion = (i) => {
+      pararGuion();
+      const g = GUION[i];
+      if (!g) return;
+      g.forEach(([ms, fn]) => {
+        relojes.push(setTimeout(() => {
+          if (fn) fn();
+          else lanzarGuion(i); // último paso sin acción: vuelve a empezar
+        }, ms));
+      });
     };
 
     const set = (i) => {
@@ -170,8 +229,7 @@ const CARDS = [
       pd.dataset.step = String(i);
       pd.querySelectorAll(".pd-step").forEach((s, k) => s.classList.toggle("on", k === i));
       pd.querySelectorAll(".pd-dot").forEach((d, k) => d.classList.toggle("on", k === i));
-      moverDedo(i);
-      if (escrito) { if (i === 1) teclear(escrito.dataset.txt || ""); else { clearInterval(tecleo); escrito.textContent = ""; } }
+      lanzarGuion(i);
     };
 
     // En pantalla ancha manda el scroll, como en la referencia.
@@ -281,14 +339,14 @@ const CARDS = [
     padding: 6px 12px; border-radius: 999px; border: 1px solid #e6e1d8; background: #fff;
     font-size: 11.5px; font-weight: 700; color: #4a4a55; transition: all .35s ease;
   }
-  .pd-chip-0 { background: var(--gold); border-color: var(--gold); color: #fff; }
-  .pd[data-step="0"] .pd-chip-0 { background: #fff; border-color: #e6e1d8; color: #4a4a55; }
-  .pd[data-step="0"] .pd-chip-1 { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .pd-chip.on { background: var(--gold); border-color: var(--gold); color: #fff; }
   .pd-chip-fav { display: inline-flex; align-items: center; gap: 6px; }
   .pd-chip-fav i { width: 9px; height: 9px; border-radius: 999px; background: #d7d2c8; }
   .pd-chip-fav b { padding: 1px 6px; border-radius: 999px; background: #ddd8cf; color: #fff; font-size: 10px; transition: background .35s ease; }
-  .pd[data-step="2"] .pd-chip-fav i { background: #e0435f; }
-  .pd[data-step="2"] .pd-chip-fav b { background: #e0435f; }
+  .pd-chip-fav.con-favs i { background: #e0435f; }
+  .pd-chip-fav.con-favs b { background: #e0435f; }
+  .pd-chip-fav.on { background: #fdeef0; border-color: #f3c6ce; color: #c8324c; }
+  .pd-chip-fav.on i, .pd-chip-fav.on b { background: #c8324c; }
 
   .pd-days { display: flex; gap: 14px; margin-top: 13px; padding-bottom: 9px; border-bottom: 1px solid #f0ece4; }
   .pd-day { font-size: 12px; font-weight: 700; color: #b8b3a8; }
@@ -323,16 +381,11 @@ const CARDS = [
   .e-mundial { border-color: #e2c27a; background: linear-gradient(135deg, #faeec6 0%, #e8cd86 100%); }
   .e-mundial .pd-card-t { color: #241d08; }
 
-  /* Paso 1: filtrar por bachata — lo que no es bachata se apaga */
-  .pd[data-step="0"] .e-salsa, .pd[data-step="0"] .e-mundial { opacity: .22; transform: scale(.97); }
-  /* Paso 2: buscar — solo queda la clase que coincide */
-  .pd[data-step="1"] .pd-card:not(.is-match) { opacity: .16; transform: scale(.96); }
-  .pd[data-step="1"] .is-match { border-color: var(--gold); }
-  /* Paso 3: favoritos — dos corazones marcados */
-  .pd[data-step="2"] .pd-c0 .pd-heart, .pd[data-step="2"] .pd-c3 .pd-heart { color: #e0435f; }
-  .pd[data-step="2"] .pd-c0 .pd-heart { animation: pdLate .55s ease .35s both; }
-  .pd[data-step="2"] .pd-c3 .pd-heart { animation: pdLate .55s ease .95s both; }
-  @keyframes pdLate { 0% { transform: scale(1); } 45% { transform: scale(1.5); } 100% { transform: scale(1.15); } }
+  /* Lo que el filtro o la búsqueda dejan fuera */
+  .pd-card.apagada { opacity: .18; transform: scale(.96); }
+  /* Corazón marcado */
+  .pd-card.fav .pd-heart { color: #e0435f; animation: pdLate .5s ease both; }
+  @keyframes pdLate { 0% { transform: scale(1); } 45% { transform: scale(1.5); } 100% { transform: scale(1.12); } }
   /* Paso 4: las cuatro salas, una columna cada una */
   .pd[data-step="3"] .pd-cards { grid-template-columns: repeat(4, 1fr); }
   .pd[data-step="3"] .r-gs { order: 1; } .pd[data-step="3"] .r-pb { order: 2; }
