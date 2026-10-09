@@ -244,9 +244,9 @@ const describe = (s) => {
                 </article>
               ))}
             </div>
-            <span class="pr-mas" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
-            </span>
+            <button class="pr-mas" type="button" tabindex="-1" aria-label={t.masAria}>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+            </button>
           </div>
         ); })}
         </div>
@@ -349,6 +349,14 @@ const describe = (s) => {
   document.querySelectorAll(".pr-sessions").forEach((s) => {
     s.addEventListener("scroll", () => marcarMas(s), { passive: true });
   });
+  // Pulsarla avanza una tarjeta, que es lo que falta por ver
+  document.querySelectorAll(".pr-mas").forEach((b) => b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const ses = b.closest(".pr-slot").querySelector(".pr-sessions");
+    const card = ses.querySelector(".pr-card:not([hidden])");
+    const paso = card ? card.getBoundingClientRect().width + 10 : ses.clientWidth * 0.8;
+    ses.scrollBy({ left: paso, behavior: "smooth" });
+  }));
   window.addEventListener("resize", revisarMas);
 
   const apply = () => {
@@ -1015,7 +1023,8 @@ const describe = (s) => {
       position: absolute; right: -4px; top: 50%; transform: translateY(-50%);
       width: 30px; height: 30px; border-radius: 50%; z-index: 4;
       background: #fff; color: #14121a; box-shadow: 0 2px 12px rgba(20, 18, 26, .22);
-      display: none; align-items: center; justify-content: center; pointer-events: none;
+      display: none; align-items: center; justify-content: center;
+      border: 0; padding: 0; cursor: pointer;
       animation: prMas 1.6s ease-in-out infinite;
     }
     .pr-slot.hay-mas .pr-mas { display: flex; }
