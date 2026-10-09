@@ -997,6 +997,12 @@ const describe = (s) => {
     .pr-sessions > .pr-card:not(:only-child) .pr-meta { padding-right: 62px; }
     .pr-sessions > .pr-card:not(:only-child) .pr-meta-bottom { padding-right: 66px; }
     .pr-sessions > .pr-band { flex-basis: 100%; max-width: none; }
-    .pr-search { max-width: none; }
+    /* Buscador y favoritos en la misma línea también en móvil: el buscador se
+       encoge y el botón se aprieta, en vez de bajar a otra fila. */
+    .pr-top { flex-wrap: nowrap; gap: 8px; }
+    .pr-search { max-width: none; flex: 1 1 auto; min-width: 0; }
+    .pr-search input { min-width: 0; }
+    .pr-top .pr-chip-fav { padding: 9px 12px; font-size: 12.5px; gap: 5px; }
+    .pr-top .pr-chip-fav > span:first-of-type { white-space: nowrap; }
   }
 </style>
