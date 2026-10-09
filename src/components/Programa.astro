@@ -100,25 +100,6 @@ const describe = (s) => {
   </div>
 )}
 
-<!-- Salones: 4 cajas con imagen, borde de color y la bolita arriba a la izquierda -->
-<section class:list={["pr-rooms", { "pr-off": comingSoon, "pr-veil": wip }]}>
-  <div class="container">
-    <p class="pr-rooms-label">{t.roomsLabel}</p>
-    <div class="pr-rooms-grid">
-      {ROOM_LIST.map((r) => (
-        <article class={"pr-room-box rc-" + r.key} data-room={r.key} data-name={t.roomFull[r.key]} data-loc={t.roomLoc[r.key]} role="button" tabindex="0" aria-expanded="false">
-          <div class={"pr-room-img pr-rimg-" + r.key} style={r.img ? `background-image:url(${r.img})` : undefined}>
-            <strong class="pr-room-name-full">{t.roomFull[r.key]}</strong>
-            <strong class="pr-room-name-short">{t.rooms[r.key]}</strong>
-            <span class={"pr-dot pr-r-" + r.key}></span>
-          </div>
-        </article>
-      ))}
-    </div>
-    <div class="pr-room-info" hidden><strong></strong><span></span></div>
-  </div>
-</section>
-
 <!-- Controles sticky: filtros + buscador, y abajo los días como tabs con barra deslizante -->
 <div class:list={["pr-controls", { "pr-off": comingSoon, "pr-veil": wip }]}>
   <div class="container">
@@ -157,9 +138,16 @@ const describe = (s) => {
           <span></span>
           <div>
             {ROOM_LIST.map((r) => (
-              <span class={"pr-colhead-c pr-chc-" + r.key}>
-                <i class={"pr-dot pr-r-" + r.key}></i>{t.roomFull[r.key]}
-              </span>
+              <div class="pr-chc-wrap">
+                <button type="button" class={"pr-colhead-c pr-chc-" + r.key} data-room={r.key} aria-expanded="false">
+                  <i class={"pr-dot pr-r-" + r.key}></i><span>{t.roomFull[r.key]}</span>
+                  <svg class="pr-chc-i" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5"/><path d="M12 7.6v.1"/></svg>
+                </button>
+                <div class={"pr-chc-pop rc-" + r.key} hidden>
+                  <strong>{t.roomFull[r.key]}</strong>
+                  <span>{t.roomLoc[r.key]}</span>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -408,31 +396,22 @@ const describe = (s) => {
   }));
   q.addEventListener("input", () => { query = q.value.trim().toLowerCase(); apply(); });
 
-  // Salas: al tocar una caja se abre un panel con su ubicación (info extra)
-  const roomBoxes = [...document.querySelectorAll(".pr-room-box")];
-  const roomInfo = document.querySelector(".pr-room-info");
-  let openRoom = null;
-  const closeRoomInfo = () => {
-    if (roomInfo) roomInfo.hidden = true;
-    roomBoxes.forEach((b) => { b.classList.remove("open"); b.setAttribute("aria-expanded", "false"); });
-    openRoom = null;
-  };
-  const toggleRoom = (b) => {
-    if (openRoom === b) { closeRoomInfo(); return; }
-    closeRoomInfo();
-    roomInfo.className = "pr-room-info rc-" + b.dataset.room;
-    roomInfo.querySelector("strong").textContent = b.dataset.name;
-    roomInfo.querySelector("span").textContent = b.dataset.loc;
-    roomInfo.hidden = false;
-    b.classList.add("open"); b.setAttribute("aria-expanded", "true");
-    openRoom = b;
-  };
-  roomBoxes.forEach((b) => {
-    b.addEventListener("click", (e) => { e.stopPropagation(); toggleRoom(b); });
-    b.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRoom(b); } });
+  // Salas: al pulsar el nombre de una columna se abre una burbuja con su ubicación
+  const chBtns = [...document.querySelectorAll(".pr-colhead-c")];
+  const cerrarPop = () => chBtns.forEach((b) => {
+    b.setAttribute("aria-expanded", "false");
+    const pop = b.parentElement.querySelector(".pr-chc-pop");
+    if (pop) pop.hidden = true;
   });
-  if (roomInfo) roomInfo.addEventListener("click", (e) => e.stopPropagation());
-  document.addEventListener("click", closeRoomInfo);
+  chBtns.forEach((b) => b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const pop = b.parentElement.querySelector(".pr-chc-pop");
+    const abierta = !pop.hidden;
+    cerrarPop();
+    if (!abierta) { pop.hidden = false; b.setAttribute("aria-expanded", "true"); }
+  }));
+  document.addEventListener("click", cerrarPop);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarPop(); });
 
   // Modal de artista: al tocar el nombre del profe (si es artista) muestra foto + info
   const amodal = document.querySelector(".pr-artist-modal");
@@ -903,7 +882,9 @@ const describe = (s) => {
   @media (min-width: 1000px) {
     .pr-colhead {
       display: grid; grid-template-columns: 46px 1fr; gap: 0 12px;
-      margin-bottom: 4px;
+      /* El mismo -20px que .pr-timeline, para que las columnas de la cabecera
+         caigan exactamente sobre las de las tarjetas. */
+      margin: 0 0 4px -20px;
       /* Se queda pegada bajo los filtros: en un día largo, sin ella no sabes
          qué columna estás mirando. --pr-ctrl-h lo mide el script. */
       position: sticky; top: calc(var(--header-h, 88px) + var(--pr-ctrl-h, 166px));
@@ -911,12 +892,37 @@ const describe = (s) => {
       background: linear-gradient(#fff 72%, rgba(255, 255, 255, 0));
     }
     .pr-colhead > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .pr-chc-wrap { position: relative; min-width: 0; }
     .pr-colhead-c {
-      display: flex; align-items: center; gap: 7px;
+      display: flex; align-items: center; gap: 7px; width: 100%;
       padding: 7px 12px; border-radius: 10px; background: #f7f4ee;
+      border: 0; font-family: inherit; cursor: pointer; text-align: left;
       font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
-      color: #6a6a74; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      color: #6a6a74;
     }
+    .pr-colhead-c > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pr-colhead-c:hover { background: #efeadf; color: #14121a; }
+    .pr-chc-i { flex: none; margin-left: auto; opacity: .5; }
+    .pr-colhead-c[aria-expanded="true"] { background: #14121a; color: #fff; }
+    .pr-colhead-c[aria-expanded="true"] .pr-chc-i { opacity: 1; }
+    /* Burbuja con la ubicación de la sala */
+    .pr-chc-pop {
+      position: absolute; top: calc(100% + 9px); left: 0; z-index: 10; width: max-content; max-width: 300px;
+      padding: 12px 15px; border-radius: 12px; background: #14121a; color: #fff;
+      box-shadow: 0 14px 34px rgba(20, 18, 26, .26);
+      text-transform: none; letter-spacing: 0;
+    }
+    .pr-chc-pop[hidden] { display: none; }
+    .pr-chc-pop::before {
+      content: ""; position: absolute; bottom: 100%; left: 18px;
+      border: 7px solid transparent; border-bottom-color: #14121a;
+    }
+    .pr-chc-pop strong { display: block; font-size: 13.5px; margin-bottom: 3px; }
+    .pr-chc-pop span { display: block; font-size: 12.5px; line-height: 1.5; color: rgba(255, 255, 255, .78); }
+    .pr-chc-pop.rc-gs strong { color: #e8c171; }
+    .pr-chc-pop.rc-pb strong { color: #6fd3c4; }
+    .pr-chc-pop.rc-s1 strong { color: #9aa6f5; }
+    .pr-chc-pop.rc-s2 strong { color: #f59ab9; }
     .pr-colhead-c .pr-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
     .pr-sessions { grid-template-columns: repeat(4, 1fr); }
     .pr-sessions > .rc-gs { grid-column: 1; }
