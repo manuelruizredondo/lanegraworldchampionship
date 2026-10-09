@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import ProgramaDemo from "@/components/ProgramaDemo.astro";
 import EventSchema from "@/components/EventSchema.astro";
 import Faq from "@/components/Faq.astro";
 import { img } from "@/data/img.js";
@@ -169,6 +170,8 @@ const artists = ARTISTS_ES.map((a) => {
         </a>
       </div>
     </section>
+
+    <ProgramaDemo lang="es" />
 
     <!-- POR QUÉ EL MEJOR (posicionamiento: artistas · Mundial · hotel · ediciones) -->
     <section class="p-section why">

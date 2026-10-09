@@ -1,5 +1,6 @@
 ---
 import Base from "@/layouts/Base.astro";
+import ProgramaDemo from "@/components/ProgramaDemo.astro";
 import EventSchema from "@/components/EventSchema.astro";
 import Faq from "@/components/Faq.astro";
 import { img } from "@/data/img.js";
@@ -172,6 +173,8 @@ const artists = ARTISTS_IT.map((a) => {
         </a>
       </div>
     </section>
+
+    <ProgramaDemo lang="it" />
 
     <section class="p-section why">
       <div class="p-container p-split">

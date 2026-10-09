@@ -1,0 +1,279 @@
+---
+// Demostración del horario: al bajar, la maqueta de la izquierda va enseñando
+// qué se puede hacer (filtrar, buscar, guardar favoritos, ver las cuatro salas).
+// No es un vídeo: es la propia interfaz en miniatura, así que pesa nada y se ve
+// nítida en cualquier pantalla.
+const { lang = "es" } = Astro.props;
+
+const T = {
+  es: {
+    eyebrow: "La programación",
+    h2: "Cinco días sin perderte nada",
+    sub: "El horario no es un PDF: se filtra, se busca y se guarda.",
+    pasos: [
+      { t: "Filtra por lo tuyo", d: "Bachata, salsa, masterclasses, el Mundial o las fiestas. Un toque y te quedas solo con lo que te interesa." },
+      { t: "Busca a tu profesor", d: "Escribe un nombre y aparecen todas sus clases, el día y la sala. Sin recorrer los cinco días a mano." },
+      { t: "Guarda tus favoritos", d: "Marca las clases con el corazón y quédate solo con las tuyas. Se quedan guardadas en tu móvil." },
+      { t: "Mira las cuatro salas", d: "En pantalla grande verás a la vez qué pasa en el Gran Salón, el Piano Bar y las salas 1 y 2." },
+    ],
+    chips: ["Todo", "Bachata", "Salsa", "El Mundial"],
+    buscar: "Buscar taller o profe…",
+    tecleado: "Maykel",
+    favs: "Mis favoritos",
+    salas: ["Gran Salón", "Piano Bar", "Sala 1", "Sala 2"],
+    cta: "Ver la programación",
+  },
+  en: {
+    eyebrow: "The schedule",
+    h2: "Five days without missing a thing",
+    sub: "The schedule is not a PDF: you filter it, search it and save it.",
+    pasos: [
+      { t: "Filter what you want", d: "Bachata, salsa, masterclasses, the World Championship or the parties. One tap and you keep only what matters to you." },
+      { t: "Find your teacher", d: "Type a name and every one of their classes shows up, with the day and the room. No scrolling through five days." },
+      { t: "Save your favourites", d: "Tap the heart on a class and keep only yours. They stay saved on your phone." },
+      { t: "See all four rooms", d: "On a big screen you see at once what is on in the Gran Salón, the Piano Bar and rooms 1 and 2." },
+    ],
+    chips: ["All", "Bachata", "Salsa", "World Cup"],
+    buscar: "Search class or teacher…",
+    tecleado: "Maykel",
+    favs: "My favourites",
+    salas: ["Gran Salón", "Piano Bar", "Room 1", "Room 2"],
+    cta: "See the schedule",
+  },
+  it: {
+    eyebrow: "Il programma",
+    h2: "Cinque giorni senza perderti nulla",
+    sub: "L'orario non è un PDF: si filtra, si cerca e si salva.",
+    pasos: [
+      { t: "Filtra quello che vuoi", d: "Bachata, salsa, masterclass, il Mondiale o le feste. Un tocco e resti solo con ciò che ti interessa." },
+      { t: "Cerca il tuo insegnante", d: "Scrivi un nome e compaiono tutte le sue lezioni, con giorno e sala. Senza scorrere i cinque giorni a mano." },
+      { t: "Salva i preferiti", d: "Tocca il cuore su una lezione e tieni solo le tue. Restano salvate sul tuo telefono." },
+      { t: "Guarda le quattro sale", d: "Su schermo grande vedi insieme cosa succede nel Gran Salón, nel Piano Bar e nelle sale 1 e 2." },
+    ],
+    chips: ["Tutto", "Bachata", "Salsa", "Mondiale"],
+    buscar: "Cerca lezione o insegnante…",
+    tecleado: "Maykel",
+    favs: "I miei preferiti",
+    salas: ["Gran Salón", "Piano Bar", "Sala 1", "Sala 2"],
+    cta: "Vedi il programma",
+  },
+};
+const t = T[lang] || T.es;
+const HREF = { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" };
+
+// Las cuatro tarjetas de la maqueta. `sala` decide su columna en el paso 4.
+const CARDS = [
+  { n: "Afro-Cuban Footwork & Body Movement", p: "Maykel Fonts", sala: "pb", estilo: "salsa", busca: true },
+  { n: "Bachata Trilogía: tradicional y moderna", p: "Andrés y Jessica", sala: "s1", estilo: "bachata" },
+  { n: "Salsa: Semifinal Solistas Chicos", p: "", sala: "gs", estilo: "mundial" },
+  { n: "Bachata Sensual: Lead & Follow", p: "Berra y Reyes", sala: "s2", estilo: "bachata" },
+];
+---
+
+<section class="pd" data-step="0">
+  <div class="p-container pd-head">
+    <p class="p-eyebrow">{t.eyebrow}</p>
+    <h2 class="p-h2">{t.h2}</h2>
+    <p class="p-lead">{t.sub}</p>
+  </div>
+
+  <div class="pd-scroll">
+    <div class="pd-sticky">
+      <div class="p-container pd-grid">
+
+        <!-- Puntos de progreso -->
+        <div class="pd-dots" aria-hidden="true">
+          {t.pasos.map((_, i) => <span class="pd-dot" data-dot={i}></span>)}
+        </div>
+
+        <!-- Maqueta del horario -->
+        <div class="pd-mock" aria-hidden="true">
+          <div class="pd-bar">
+            <div class="pd-search"><span class="pd-cursor"></span><em>{t.buscar}</em><strong>{t.tecleado}</strong></div>
+            <div class="pd-chips">
+              {t.chips.map((c, i) => <span class={"pd-chip pd-chip-" + i}>{c}</span>)}
+              <span class="pd-chip pd-chip-fav"><i></i>{t.favs}<b>2</b></span>
+            </div>
+          </div>
+          <div class="pd-rooms">{t.salas.map((s, i) => <span class={"pd-room pd-room-" + i}>{s}</span>)}</div>
+          <div class="pd-cards">
+            {CARDS.map((c, i) => (
+              <article class={`pd-card pd-c${i} e-${c.estilo} r-${c.sala}` + (c.busca ? " is-match" : "")}>
+                <span class="pd-card-t">{c.n}</span>
+                {c.p && <span class="pd-card-p">{c.p}</span>}
+                <span class="pd-heart">
+                  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </span>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <!-- Pasos -->
+        <div class="pd-steps">
+          {t.pasos.map((s, i) => (
+            <div class="pd-step" data-i={i}>
+              <h3>{s.t}</h3>
+              <p>{s.d}</p>
+            </div>
+          ))}
+          <a class="p-btn p-btn-dark pd-cta" href={HREF[lang] || HREF.es}>{t.cta}</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const pd = document.querySelector(".pd");
+  if (pd) {
+    const total = pd.querySelectorAll(".pd-step").length;
+    const scroll = pd.querySelector(".pd-scroll");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const ancho = window.matchMedia("(min-width: 900px)");
+    let paso = -1;
+    const set = (i) => {
+      i = Math.max(0, Math.min(total - 1, i));
+      if (i === paso) return;
+      paso = i;
+      pd.dataset.step = String(i);
+      pd.querySelectorAll(".pd-step").forEach((s, k) => s.classList.toggle("on", k === i));
+      pd.querySelectorAll(".pd-dot").forEach((d, k) => d.classList.toggle("on", k === i));
+    };
+
+    // En pantalla ancha manda el scroll, como en la referencia.
+    const porScroll = () => {
+      const r = scroll.getBoundingClientRect();
+      const recorrido = r.height - window.innerHeight;
+      if (recorrido <= 0) return;
+      const p = Math.min(1, Math.max(0, -r.top / recorrido));
+      set(Math.floor(p * total * 0.999));
+    };
+
+    // En móvil (o si se pide menos movimiento) va solo, en bucle.
+    let reloj = null;
+    const auto = () => { reloj = setInterval(() => set((paso + 1) % total), 3800); };
+    const parar = () => { if (reloj) { clearInterval(reloj); reloj = null; } };
+
+    const montar = () => {
+      parar();
+      window.removeEventListener("scroll", porScroll);
+      if (ancho.matches && !reduce.matches) { window.addEventListener("scroll", porScroll, { passive: true }); porScroll(); }
+      else { set(0); auto(); }
+    };
+    montar();
+    ancho.addEventListener("change", montar);
+    reduce.addEventListener("change", montar);
+    // Pulsar un paso lo activa (y en móvil detiene el bucle: manda la persona)
+    pd.querySelectorAll(".pd-step").forEach((s, i) => s.addEventListener("click", () => { parar(); set(i); }));
+    set(0);
+  }
+</script>
+
+<style>
+  .pd { background: var(--p-bg, #fff); }
+  .pd-head { text-align: center; padding: clamp(50px, 8vw, 90px) 0 0; }
+  .pd-head .p-lead { max-width: 620px; margin-left: auto; margin-right: auto; }
+
+  .pd-sticky { padding: clamp(28px, 4vw, 54px) 0 clamp(50px, 7vw, 80px); }
+  .pd-grid { display: grid; grid-template-columns: 1fr; gap: 28px; }
+
+  /* Puntos de progreso */
+  .pd-dots { display: flex; gap: 7px; justify-content: center; }
+  .pd-dot { width: 7px; height: 7px; border-radius: 999px; background: #ddd8cf; transition: all .3s ease; }
+  .pd-dot.on { background: #14121a; width: 22px; }
+
+  /* ---- Maqueta ---- */
+  .pd-mock {
+    border-radius: 18px; border: 1px solid #ece8e1; background: #fff;
+    box-shadow: 0 18px 44px rgba(20, 18, 26, .08); padding: 16px; overflow: hidden;
+  }
+  .pd-search {
+    position: relative; display: flex; align-items: center;
+    height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid #e6e1d8;
+    font-size: 13px; color: #8d8898; overflow: hidden;
+  }
+  .pd-search strong { font-weight: 600; color: #14121a; display: none; }
+  .pd-search .pd-cursor { display: none; width: 1.5px; height: 15px; background: var(--gold); margin-right: 1px; animation: pdBlink 1s steps(2) infinite; }
+  @keyframes pdBlink { 50% { opacity: 0; } }
+  .pd[data-step="1"] .pd-search em { display: none; }
+  .pd[data-step="1"] .pd-search strong, .pd[data-step="1"] .pd-search .pd-cursor { display: inline-block; }
+
+  .pd-chips { display: flex; gap: 6px; margin-top: 11px; flex-wrap: wrap; }
+  .pd-chip {
+    padding: 6px 12px; border-radius: 999px; border: 1px solid #e6e1d8; background: #fff;
+    font-size: 11.5px; font-weight: 700; color: #4a4a55; transition: all .35s ease;
+  }
+  .pd-chip-0 { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .pd[data-step="0"] .pd-chip-0 { background: #fff; border-color: #e6e1d8; color: #4a4a55; }
+  .pd[data-step="0"] .pd-chip-1 { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .pd-chip-fav { display: inline-flex; align-items: center; gap: 6px; }
+  .pd-chip-fav i { width: 9px; height: 9px; border-radius: 999px; background: #d7d2c8; }
+  .pd-chip-fav b { padding: 1px 6px; border-radius: 999px; background: #ddd8cf; color: #fff; font-size: 10px; transition: background .35s ease; }
+  .pd[data-step="2"] .pd-chip-fav i { background: #e0435f; }
+  .pd[data-step="2"] .pd-chip-fav b { background: #e0435f; }
+
+  .pd-rooms { display: none; gap: 6px; margin-top: 13px; }
+  .pd-room {
+    flex: 1; padding: 5px 8px; border-radius: 7px; background: #f7f4ee;
+    font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: #6a6a74;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .pd[data-step="3"] .pd-rooms { display: flex; }
+
+  .pd-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 13px; }
+  .pd-card {
+    position: relative; min-height: 86px; padding: 11px 12px;
+    border-radius: 12px; border: 1.5px solid #ece8e1; background: #fff;
+    display: flex; flex-direction: column; gap: 4px;
+    /* Sin esto, una palabra larga desborda la columna en la rejilla de 4 salas */
+    min-width: 0; overflow-wrap: anywhere;
+    transition: opacity .4s ease, transform .4s ease, border-color .4s ease;
+  }
+  .pd-card-t { font-size: 12px; font-weight: 700; line-height: 1.3; color: #14121a; }
+  .pd-card-p { font-size: 11px; color: #6a6a74; }
+  .pd-heart { position: absolute; right: 9px; bottom: 8px; color: #d7d2c8; transition: color .4s ease, transform .4s ease; }
+  .pd-heart svg { display: block; fill: currentColor; }
+  .e-mundial { border-color: #e2c27a; background: linear-gradient(135deg, #faeec6 0%, #e8cd86 100%); }
+  .e-mundial .pd-card-t { color: #241d08; }
+
+  /* Paso 1: filtrar por bachata — lo que no es bachata se apaga */
+  .pd[data-step="0"] .e-salsa, .pd[data-step="0"] .e-mundial { opacity: .22; transform: scale(.97); }
+  /* Paso 2: buscar — solo queda la clase que coincide */
+  .pd[data-step="1"] .pd-card:not(.is-match) { opacity: .16; transform: scale(.96); }
+  .pd[data-step="1"] .is-match { border-color: var(--gold); }
+  /* Paso 3: favoritos — dos corazones marcados */
+  .pd[data-step="2"] .pd-c0 .pd-heart, .pd[data-step="2"] .pd-c3 .pd-heart { color: #e0435f; transform: scale(1.18); }
+  /* Paso 4: las cuatro salas, una columna cada una */
+  .pd[data-step="3"] .pd-cards { grid-template-columns: repeat(4, 1fr); }
+  .pd[data-step="3"] .r-gs { order: 1; } .pd[data-step="3"] .r-pb { order: 2; }
+  .pd[data-step="3"] .r-s1 { order: 3; } .pd[data-step="3"] .r-s2 { order: 4; }
+  .pd[data-step="3"] .pd-card-t { font-size: 11px; }
+  .pd[data-step="3"] .pd-cards { gap: 5px; }
+  @media (max-width: 620px) {
+    .pd[data-step="3"] .pd-card { padding: 8px 7px; min-height: 76px; }
+    .pd[data-step="3"] .pd-card-t { font-size: 9.5px; }
+    .pd[data-step="3"] .pd-card-p { font-size: 9px; }
+    .pd[data-step="3"] .pd-heart { display: none; }
+  }
+
+  /* ---- Pasos ---- */
+  .pd-step { padding: 14px 0; cursor: pointer; border-top: 1px solid #ece8e1; }
+  .pd-step:first-child { border-top: 0; }
+  .pd-step h3 { margin: 0; font-size: clamp(21px, 3.4vw, 30px); font-weight: 800; letter-spacing: -.02em; color: #c9c4bb; transition: color .3s ease; }
+  .pd-step p { margin: 0; max-height: 0; overflow: hidden; opacity: 0; font-size: 15px; line-height: 1.6; color: #4a4a55; transition: all .35s ease; }
+  .pd-step.on h3 { color: #14121a; }
+  .pd-step.on p { max-height: 160px; opacity: 1; margin-top: 8px; }
+  .pd-cta { margin-top: 24px; }
+
+  @media (min-width: 900px) {
+    .pd-scroll { height: 340vh; }
+    .pd-sticky { position: sticky; top: var(--header-h, 88px); display: flex; align-items: center; min-height: calc(100vh - var(--header-h, 88px)); }
+    .pd-grid { grid-template-columns: 26px 1fr 1fr; gap: 0 clamp(28px, 4vw, 60px); align-items: center; }
+    .pd-dots { flex-direction: column; justify-content: center; gap: 9px; }
+    .pd-dot.on { width: 7px; height: 22px; }
+    .pd-mock { padding: 20px; }
+    .pd-card { min-height: 100px; }
+  }
+</style>
