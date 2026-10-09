@@ -312,6 +312,8 @@ const describe = (s) => {
     if (!favCountEl) return;
     favCountEl.textContent = favs.size;
     favCountEl.hidden = favs.size === 0;
+    const chipFav = document.querySelector(".pr-chip-fav");
+    if (chipFav) chipFav.classList.toggle("con-favs", favs.size > 0);
   };
   const markFavs = () => favBtns.forEach((btn) => {
     const on = favs.has(btn.dataset.fav);
@@ -602,7 +604,8 @@ const describe = (s) => {
   /* Buscador y favoritos arriba; los filtros de categoría, abajo y aparte.
      "Mis favoritos" no filtra por tipo de clase: filtra por lo tuyo. */
   .pr-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .pr-top .pr-chip-fav { flex: 0 0 auto; padding: 9px 15px; }
+  /* En escritorio se va al extremo derecho: no es un filtro más de la fila */
+  .pr-top .pr-chip-fav { flex: 0 0 auto; padding: 9px 15px; margin-left: auto; }
   .pr-filters { display: flex; overflow-x: auto; scrollbar-width: none; margin: 8px -24px 0; padding: 6px 24px; gap: 6px; }
   .pr-filters::-webkit-scrollbar { display: none; }
 
@@ -851,7 +854,11 @@ const describe = (s) => {
   /* Chip de filtro "Mis favoritos" con corazón y contador */
   .pr-chip-fav { display: inline-flex; align-items: center; gap: 6px; }
   .pr-chip-heart path { fill: currentColor; }
-  .pr-chip-fav.active { background: #fdeef0; color: #c8324c; border-color: #f2c3cc; }
+  /* Con favoritos guardados: corazón y borde en rojo, aunque el filtro no esté puesto */
+  .pr-chip-fav.con-favs { border-color: #e0435f; color: #c8324c; }
+  .pr-chip-fav.con-favs .pr-chip-heart { color: #e0435f; }
+  .pr-chip-fav.active { background: #fdeef0; color: #c8324c; border-color: #c8324c; }
+  .pr-chip-fav.active .pr-chip-heart { color: #c8324c; }
   .pr-fav-count {
     display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;
     padding: 0 5px; border-radius: 999px; font-size: 11px; font-weight: 800; line-height: 1;
@@ -1041,7 +1048,7 @@ const describe = (s) => {
     .pr-top { flex-wrap: nowrap; gap: 8px; }
     .pr-search { max-width: none; flex: 1 1 auto; min-width: 0; }
     .pr-search input { min-width: 0; }
-    .pr-top .pr-chip-fav { padding: 9px 12px; font-size: 12.5px; gap: 5px; }
+    .pr-top .pr-chip-fav { padding: 9px 12px; font-size: 12.5px; gap: 5px; margin-left: 0; }
     .pr-top .pr-chip-fav > span:first-of-type { white-space: nowrap; }
   }
 </style>
