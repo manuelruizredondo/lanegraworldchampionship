@@ -82,8 +82,9 @@ const CARDS = [
 
         <!-- Maqueta del horario -->
         <div class="pd-mock" aria-hidden="true">
+          <span class="pd-tap"></span>
           <div class="pd-bar">
-            <div class="pd-search"><span class="pd-cursor"></span><em>{t.buscar}</em><strong>{t.tecleado}</strong></div>
+            <div class="pd-search"><em>{t.buscar}</em><strong data-txt={t.tecleado}></strong><span class="pd-cursor"></span></div>
             <div class="pd-chips">
               {t.chips.map((c, i) => <span class={"pd-chip pd-chip-" + i}>{c}</span>)}
               <span class="pd-chip pd-chip-fav"><i></i>{t.favs}<b>2</b></span>
@@ -112,15 +113,16 @@ const CARDS = [
               <p>{s.d}</p>
             </div>
           ))}
-          <div class="pd-ctas">
-            <a class="p-btn p-btn-dark" href={HREF[lang] || HREF.es}>{t.cta}</a>
-            <a class="pd-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
-              {t.pdf}
-            </a>
-          </div>
         </div>
 
+      </div>
+
+      <div class="p-container pd-ctas">
+        <a class="p-btn p-btn-dark" href={HREF[lang] || HREF.es}>{t.cta}</a>
+        <a class="pd-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
+          {t.pdf}
+        </a>
       </div>
     </div>
   </div>
@@ -134,6 +136,33 @@ const CARDS = [
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const ancho = window.matchMedia("(min-width: 900px)");
     let paso = -1;
+    const mock = pd.querySelector(".pd-mock");
+    const tap = pd.querySelector(".pd-tap");
+    const escrito = pd.querySelector(".pd-search strong");
+    const DIANA = [".pd-chip-1", ".pd-search", ".pd-c0 .pd-heart", ".pd-rooms"];
+    let tecleo = null;
+
+    // El dedo se coloca sobre el elemento real, no sobre coordenadas a ojo:
+    // así sigue cuadrando aunque cambien los textos o el ancho.
+    const moverDedo = (i) => {
+      const d = pd.querySelector(DIANA[i]);
+      if (!d || !tap) return;
+      const a = d.getBoundingClientRect(), b = mock.getBoundingClientRect();
+      tap.style.left = (a.left - b.left + a.width / 2) + "px";
+      tap.style.top = (a.top - b.top + a.height / 2) + "px";
+      tap.classList.remove("toca"); void tap.offsetWidth; tap.classList.add("toca");
+    };
+
+    const teclear = (txt) => {
+      clearInterval(tecleo);
+      escrito.textContent = "";
+      let k = 0;
+      tecleo = setInterval(() => {
+        escrito.textContent = txt.slice(0, ++k);
+        if (k >= txt.length) clearInterval(tecleo);
+      }, 110);
+    };
+
     const set = (i) => {
       i = Math.max(0, Math.min(total - 1, i));
       if (i === paso) return;
@@ -141,6 +170,8 @@ const CARDS = [
       pd.dataset.step = String(i);
       pd.querySelectorAll(".pd-step").forEach((s, k) => s.classList.toggle("on", k === i));
       pd.querySelectorAll(".pd-dot").forEach((d, k) => d.classList.toggle("on", k === i));
+      moverDedo(i);
+      if (escrito) { if (i === 1) teclear(escrito.dataset.txt || ""); else { clearInterval(tecleo); escrito.textContent = ""; } }
     };
 
     // En pantalla ancha manda el scroll, como en la referencia.
@@ -157,6 +188,19 @@ const CARDS = [
     const auto = () => { reloj = setInterval(() => set((paso + 1) % total), 3800); };
     const parar = () => { if (reloj) { clearInterval(reloj); reloj = null; } };
 
+    // La columna de pasos cambia de alto según lo largo que sea el párrafo
+    // abierto, y como todo va centrado eso movía el título en cada cambio. Se le
+    // reserva el alto del párrafo más largo y deja de bailar.
+    const columna = pd.querySelector(".pd-steps");
+    const fijarAlto = () => {
+      if (!columna) return;
+      columna.style.minHeight = "";
+      const cerrado = columna.scrollHeight - [...pd.querySelectorAll(".pd-step.on p")]
+        .reduce((a, e) => a + e.scrollHeight + 6, 0);
+      const mayor = Math.max(...[...pd.querySelectorAll(".pd-step p")].map((e) => e.scrollHeight));
+      columna.style.minHeight = Math.round(cerrado + mayor + 6) + "px";
+    };
+
     const montar = () => {
       parar();
       window.removeEventListener("scroll", porScroll);
@@ -164,10 +208,22 @@ const CARDS = [
       else { set(0); auto(); }
     };
     montar();
-    ancho.addEventListener("change", montar);
+    fijarAlto();
+    window.addEventListener("resize", fijarAlto);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fijarAlto);
+    ancho.addEventListener("change", () => { montar(); fijarAlto(); });
     reduce.addEventListener("change", montar);
-    // Pulsar un paso lo activa (y en móvil detiene el bucle: manda la persona)
-    pd.querySelectorAll(".pd-step").forEach((s, i) => s.addEventListener("click", () => { parar(); set(i); }));
+    // Pulsar un paso: en móvil lo activa y detiene el bucle; en escritorio manda
+    // el scroll, así que hay que llevar la página al punto de ese paso o el
+    // siguiente movimiento lo desharía.
+    pd.querySelectorAll(".pd-step").forEach((s, i) => s.addEventListener("click", () => {
+      if (ancho.matches && !reduce.matches) {
+        const r = scroll.getBoundingClientRect();
+        const recorrido = r.height - window.innerHeight;
+        const destino = scroll.offsetTop + recorrido * ((i + 0.5) / total);
+        window.scrollTo({ top: destino, behavior: "smooth" });
+      } else { parar(); set(i); }
+    }));
     set(0);
   }
 </script>
@@ -197,11 +253,28 @@ const CARDS = [
     height: 38px; padding: 0 14px; border-radius: 999px; border: 1px solid #e6e1d8;
     font-size: 13px; color: #8d8898; overflow: hidden;
   }
-  .pd-search strong { font-weight: 600; color: #14121a; display: none; }
+  .pd-search strong { font-weight: 600; color: #14121a; display: none; white-space: pre; }
+  /* Dedo que se desplaza hasta lo que se está pulsando */
+  .pd-tap {
+    position: absolute; z-index: 5; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+    border-radius: 50%; background: rgba(20, 18, 26, .14); border: 1.5px solid rgba(20, 18, 26, .35);
+    opacity: 0; pointer-events: none;
+    transition: left .55s cubic-bezier(.4, 0, .2, 1), top .55s cubic-bezier(.4, 0, .2, 1), opacity .3s ease;
+  }
+  .pd-tap.toca { animation: pdToca 1.1s ease forwards; }
+  @keyframes pdToca {
+    0% { opacity: 0; transform: scale(1.5); }
+    35% { opacity: 1; transform: scale(1); }
+    55% { transform: scale(.62); background: rgba(204, 153, 51, .45); border-color: var(--gold); }
+    75% { transform: scale(1); }
+    100% { opacity: 0; transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) { .pd-tap { display: none; } }
   .pd-search .pd-cursor { display: none; width: 1.5px; height: 15px; background: var(--gold); margin-right: 1px; animation: pdBlink 1s steps(2) infinite; }
   @keyframes pdBlink { 50% { opacity: 0; } }
   .pd[data-step="1"] .pd-search em { display: none; }
   .pd[data-step="1"] .pd-search strong, .pd[data-step="1"] .pd-search .pd-cursor { display: inline-block; }
+  .pd-search .pd-cursor { margin-left: 1px; margin-right: 0; }
 
   .pd-chips { display: flex; gap: 6px; margin-top: 11px; flex-wrap: wrap; }
   .pd-chip {
@@ -220,21 +293,27 @@ const CARDS = [
   .pd-days { display: flex; gap: 14px; margin-top: 13px; padding-bottom: 9px; border-bottom: 1px solid #f0ece4; }
   .pd-day { font-size: 12px; font-weight: 700; color: #b8b3a8; }
   .pd-day.on { color: #14121a; box-shadow: 0 10px 0 -8px var(--gold); }
-  .pd-rooms { display: none; gap: 6px; margin-top: 13px; }
+  /* Siempre ocupa su sitio aunque no se vea: si aparece y desaparece, la caja
+     pega un salto de 31px al llegar al paso de las salas. */
+  .pd-rooms { display: flex; gap: 6px; margin-top: 13px; visibility: hidden; opacity: 0; transition: opacity .35s ease; }
   .pd-room {
     flex: 1; padding: 5px 8px; border-radius: 7px; background: #f7f4ee;
     font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: #6a6a74;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .pd[data-step="3"] .pd-rooms { display: flex; }
+  .pd[data-step="3"] .pd-rooms { visibility: visible; opacity: 1; }
 
-  .pd-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 13px; }
+  /* Dos filas reservadas siempre: en el paso de las cuatro salas sólo se llena
+     una, pero sin esto la caja encogía 106px y daba un salto. */
+  /* Altura fija: con dos filas reservadas y alto propio, la caja no se mueve
+     aunque en el paso de las cuatro salas los títulos ocupen más líneas. */
+  .pd-cards { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 9px; margin-top: 13px; height: 190px; }
   .pd-card {
-    position: relative; min-height: 86px; padding: 11px 12px;
+    position: relative; padding: 11px 12px;
     border-radius: 12px; border: 1.5px solid #ece8e1; background: #fff;
     display: flex; flex-direction: column; gap: 4px;
     /* Sin esto, una palabra larga desborda la columna en la rejilla de 4 salas */
-    min-width: 0; overflow-wrap: anywhere;
+    min-width: 0; overflow: hidden; overflow-wrap: anywhere;
     transition: opacity .4s ease, transform .4s ease, border-color .4s ease;
   }
   .pd-card-t { font-size: 12px; font-weight: 700; line-height: 1.3; color: #14121a; }
@@ -250,7 +329,10 @@ const CARDS = [
   .pd[data-step="1"] .pd-card:not(.is-match) { opacity: .16; transform: scale(.96); }
   .pd[data-step="1"] .is-match { border-color: var(--gold); }
   /* Paso 3: favoritos — dos corazones marcados */
-  .pd[data-step="2"] .pd-c0 .pd-heart, .pd[data-step="2"] .pd-c3 .pd-heart { color: #e0435f; transform: scale(1.18); }
+  .pd[data-step="2"] .pd-c0 .pd-heart, .pd[data-step="2"] .pd-c3 .pd-heart { color: #e0435f; }
+  .pd[data-step="2"] .pd-c0 .pd-heart { animation: pdLate .55s ease .35s both; }
+  .pd[data-step="2"] .pd-c3 .pd-heart { animation: pdLate .55s ease .95s both; }
+  @keyframes pdLate { 0% { transform: scale(1); } 45% { transform: scale(1.5); } 100% { transform: scale(1.15); } }
   /* Paso 4: las cuatro salas, una columna cada una */
   .pd[data-step="3"] .pd-cards { grid-template-columns: repeat(4, 1fr); }
   .pd[data-step="3"] .r-gs { order: 1; } .pd[data-step="3"] .r-pb { order: 2; }
@@ -270,7 +352,7 @@ const CARDS = [
   .pd-step p { margin: 0; max-height: 0; overflow: hidden; opacity: 0; font-size: 15px; line-height: 1.6; color: #4a4a55; transition: all .35s ease; }
   .pd-step.on h3 { color: #14121a; }
   .pd-step.on p { max-height: 160px; opacity: 1; margin-top: 6px; }
-  .pd-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 18px; }
+  .pd-ctas { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; margin-top: 26px; }
   /* El PDF es la opción secundaria: enlace subrayado, no botón, para que no
      compita con el de ver la programación. */
   .pd-pdf {
@@ -290,10 +372,9 @@ const CARDS = [
     .pd-dots { flex-direction: column; justify-content: center; gap: 9px; }
     .pd-dot.on { width: 7px; height: 22px; }
     .pd-mock { padding: 26px; }
-    .pd-card { min-height: 132px; }
     .pd-card-t { font-size: 13.5px; }
     .pd-card-p { font-size: 12px; }
-    .pd-cards { gap: 12px; margin-top: 16px; }
+    .pd-cards { gap: 12px; margin-top: 16px; height: 288px; }
     .pd-step { padding: 13px 0; }
     .pd-step p { font-size: 16px; }
   }
