@@ -17,6 +17,7 @@ const T = {
       { t: "Mira las cuatro salas", d: "En pantalla grande verás a la vez qué pasa en el Gran Salón, el Piano Bar y las salas 1 y 2." },
     ],
     chips: ["Todo", "Bachata", "Salsa", "El Mundial"],
+    dias: ["Mié", "Jue", "Vie", "Sáb", "Dom"],
     buscar: "Buscar taller o profe…",
     tecleado: "Maykel",
     favs: "Mis favoritos",
@@ -34,6 +35,7 @@ const T = {
       { t: "See all four rooms", d: "On a big screen you see at once what is on in the Gran Salón, the Piano Bar and rooms 1 and 2." },
     ],
     chips: ["All", "Bachata", "Salsa", "World Cup"],
+    dias: ["Wed", "Thu", "Fri", "Sat", "Sun"],
     buscar: "Search class or teacher…",
     tecleado: "Maykel",
     favs: "My favourites",
@@ -51,6 +53,7 @@ const T = {
       { t: "Guarda le quattro sale", d: "Su schermo grande vedi insieme cosa succede nel Gran Salón, nel Piano Bar e nelle sale 1 e 2." },
     ],
     chips: ["Tutto", "Bachata", "Salsa", "Mondiale"],
+    dias: ["Mer", "Gio", "Ven", "Sab", "Dom"],
     buscar: "Cerca lezione o insegnante…",
     tecleado: "Maykel",
     favs: "I miei preferiti",
@@ -95,6 +98,7 @@ const CARDS = [
               <span class="pd-chip pd-chip-fav"><i></i>{t.favs}<b>2</b></span>
             </div>
           </div>
+          <div class="pd-days">{t.dias.map((d, i) => <span class={"pd-day" + (i === 1 ? " on" : "")}>{d}</span>)}</div>
           <div class="pd-rooms">{t.salas.map((s, i) => <span class={"pd-room pd-room-" + i}>{s}</span>)}</div>
           <div class="pd-cards">
             {CARDS.map((c, i) => (
@@ -173,10 +177,10 @@ const CARDS = [
 
 <style>
   .pd { background: var(--p-bg, #fff); }
-  .pd-head { text-align: center; padding: clamp(50px, 8vw, 90px) 0 0; }
+  .pd-head { text-align: center; padding: clamp(26px, 4vw, 52px) 0 0; }
   .pd-head .p-lead { max-width: 620px; margin-left: auto; margin-right: auto; }
 
-  .pd-sticky { padding: clamp(28px, 4vw, 54px) 0 clamp(50px, 7vw, 80px); }
+  .pd-sticky { padding: clamp(18px, 2.4vw, 32px) 0 clamp(34px, 4.5vw, 56px); }
   .pd-grid { display: grid; grid-template-columns: 1fr; gap: 28px; }
 
   /* Puntos de progreso */
@@ -214,6 +218,9 @@ const CARDS = [
   .pd[data-step="2"] .pd-chip-fav i { background: #e0435f; }
   .pd[data-step="2"] .pd-chip-fav b { background: #e0435f; }
 
+  .pd-days { display: flex; gap: 14px; margin-top: 13px; padding-bottom: 9px; border-bottom: 1px solid #f0ece4; }
+  .pd-day { font-size: 12px; font-weight: 700; color: #b8b3a8; }
+  .pd-day.on { color: #14121a; box-shadow: 0 10px 0 -8px var(--gold); }
   .pd-rooms { display: none; gap: 6px; margin-top: 13px; }
   .pd-room {
     flex: 1; padding: 5px 8px; border-radius: 7px; background: #f7f4ee;
@@ -261,7 +268,7 @@ const CARDS = [
   /* ---- Pasos ---- */
   .pd-step { padding: 14px 0; cursor: pointer; border-top: 1px solid #ece8e1; }
   .pd-step:first-child { border-top: 0; }
-  .pd-step h3 { margin: 0; font-size: clamp(21px, 3.4vw, 30px); font-weight: 800; letter-spacing: -.02em; color: #c9c4bb; transition: color .3s ease; }
+  .pd-step h3 { margin: 0; font-size: clamp(22px, 3.6vw, 34px); font-weight: 800; letter-spacing: -.02em; color: #c9c4bb; transition: color .3s ease; }
   .pd-step p { margin: 0; max-height: 0; overflow: hidden; opacity: 0; font-size: 15px; line-height: 1.6; color: #4a4a55; transition: all .35s ease; }
   .pd-step.on h3 { color: #14121a; }
   .pd-step.on p { max-height: 160px; opacity: 1; margin-top: 8px; }
@@ -269,11 +276,18 @@ const CARDS = [
 
   @media (min-width: 900px) {
     .pd-scroll { height: 340vh; }
-    .pd-sticky { position: sticky; top: var(--header-h, 88px); display: flex; align-items: center; min-height: calc(100vh - var(--header-h, 88px)); }
+    /* El bloque fijo ocupa la pantalla menos la cabecera, y el contenido se
+       estira para llenarla: si no, al centrarlo quedaban 180px muertos arriba. */
+    .pd-sticky { position: sticky; top: var(--header-h, 88px); display: flex; align-items: center; min-height: calc(100svh - var(--header-h, 88px) - 160px); }
     .pd-grid { grid-template-columns: 26px 1fr 1fr; gap: 0 clamp(28px, 4vw, 60px); align-items: center; }
     .pd-dots { flex-direction: column; justify-content: center; gap: 9px; }
     .pd-dot.on { width: 7px; height: 22px; }
-    .pd-mock { padding: 20px; }
-    .pd-card { min-height: 100px; }
+    .pd-mock { padding: 26px; }
+    .pd-card { min-height: 132px; }
+    .pd-card-t { font-size: 13.5px; }
+    .pd-card-p { font-size: 12px; }
+    .pd-cards { gap: 12px; margin-top: 16px; }
+    .pd-step { padding: 20px 0; }
+    .pd-step p { font-size: 16px; }
   }
 </style>
