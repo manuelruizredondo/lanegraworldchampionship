@@ -1,14 +1,19 @@
 ---
 import { PROGRAMA, ROOM_LIST, I18N, NOMBRES } from "@/data/programa.js";
 import { ARTISTS } from "@/data/artists.js";
-import { BIOS, PERFILES } from "@/data/artist-bios.js";
+import { biosDe, PERFILES, IMG_TO_NAME } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
 
 const { lang = "es", comingSoon = false, wip = false } = Astro.props;
 const t = I18N[lang] || I18N.es;
 
 // Artistas: si el nombre de un artista aparece en el texto del profe, la card enlaza a su ficha
-const artistList = ARTISTS[lang] || ARTISTS.es;
+// Los nombres de PROGRAMA están en español, así que se busca siempre contra la
+// lista española y después se traduce la ficha por imagen (igual en los 3 idiomas).
+const artistList = ARTISTS.es;
+const localByImg = {};
+for (const a of (ARTISTS[lang] || ARTISTS.es)) localByImg[a.img] = a;
+const local = (a) => (a && localByImg[a.img] ? { ...a, ...localByImg[a.img] } : a);
 const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 const artistFor = (teacher) => {
   if (!teacher) return null;
@@ -18,14 +23,17 @@ const artistFor = (teacher) => {
     const n = norm(a.name);
     if (n.length >= 4 && tt.includes(n) && (!best || n.length > norm(best.name).length)) best = a;
   }
-  return best || perfilIndex[tt] || null;
+  return local(best) || perfilIndex[tt] || null;
 };
 // Ponentes sin ficha en el cartel de artistas: se buscan por nombre exacto.
 const perfilIndex = {};
-for (const k in PERFILES) perfilIndex[norm(k)] = { name: k, ...PERFILES[k] };
+for (const k in PERFILES) {
+  const p = PERFILES[k];
+  perfilIndex[norm(k)] = { name: k, ...p, country: p[`country_${lang}`] || p.country };
+}
 // Índice por nombre EXACTO (sin coincidencias parciales), para separar parejas.
 const exactIndex = {};
-for (const a of artistList) exactIndex[norm(a.name)] = a;
+for (const a of artistList) exactIndex[norm(a.name)] = local(a);
 for (const k in perfilIndex) if (!exactIndex[k]) exactIndex[k] = perfilIndex[k];
 const exact = (n) => exactIndex[norm(n)] || null;
 // "Angelo Rito y Maykel Fonts" son dos artistas; "Berra y Reyes" es una pareja
@@ -44,10 +52,16 @@ const splitTeachers = (p) => {
 const initials = (n) => (n || "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 // Descripción del artista (generada a partir de estilo + país; sustituible por biografía real)
 // Índice de biografías por nombre normalizado (tolera mayúsculas/acentos)
+const BIOS = biosDe(lang);
 const bioIndex = {};
 for (const k in BIOS) { if (BIOS[k]) bioIndex[norm(k)] = BIOS[k]; }
 const bioFor = (a, name) => {
-  if (a) { const rb = bioIndex[norm(a.name)]; if (rb) return rb; } // biografía real
+  if (a) {
+    // El nombre está traducido en EN/IT ("Korke and Judith"), así que se busca
+    // también por la imagen, que es la misma en los tres idiomas.
+    const rb = bioIndex[norm(a.name)] || bioIndex[norm(IMG_TO_NAME[a.img])];
+    if (rb) return rb; // biografía real
+  }
   if (a && a.country) {
     const [style, place] = a.country.split("|").map((s) => s.trim());
     const T = {

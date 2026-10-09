@@ -1,7 +1,8 @@
 ---
 import Base from "@/layouts/Base.astro";
 import { img } from "@/data/img.js";
-import { BIOS, IMG_TO_NAME } from "@/data/artist-bios.js";
+import { biosDe, IMG_TO_NAME } from "@/data/artist-bios.js";
+const BIOS = biosDe("en");
 import ArtistModal from "@/components/ArtistModal.astro";
 
 const salsa = [
@@ -25,6 +26,7 @@ const salsa = [
   { name: "Jorge Martinez", country: "Salsa | Mexico", img: "Jorge-Martinez.webp", ig: "https://www.instagram.com/jorgesalsa/", fb: "https://www.facebook.com/jorgesalsanama/?locale=es_LA" },
   { name: "Irene and Noelia", country: "Salsa | Spain", img: "la-negra-festival-tito-irene-y-noelia.webp", ig: "https://www.instagram.com/irena_y_noelia_latindancers/", fb: "https://www.facebook.com/IrenayNoeliaSalsa/" },
   { name: "Jorge Aguilar", country: "Salsa | Mexico", img: "jorge-aguilar-festiva-la-negra-dance.jpeg", ig: "https://www.instagram.com/jorgeaguilar4u/" },
+  { name: "Fadifusión", country: "Salsa | Jordan", img: "Fadifusion.webp", ig: "https://www.instagram.com/fadifusionll/" },
   { name: "Alexander Carbó", country: "Salsa | Cuba", img: "la-negra-festival-tito-alexander-carbo.webp", ig: "https://www.instagram.com/alexandercarboofficial/?hl=es", yt: "https://www.youtube.com/channel/UCCYtTeixRuLWd1yiAYv_9ig" },
   { name: "Carmen Lorente", country: "Salsa | Spain", img: "la-negra-festival-tito-carmen-lorente.webp", ig: "https://www.instagram.com/carmen.lorente.valencia/?hl=es", fb: "https://www.facebook.com/carmen.lorente.valencia/?locale=es_LA" },
   { name: "Alessandro Massaro", country: "Salsa | Italy", img: "Alessandro-Massaro.webp", ig: "https://www.instagram.com/ale.massaro86/" },
