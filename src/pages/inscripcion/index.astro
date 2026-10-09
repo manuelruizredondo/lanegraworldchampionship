@@ -83,7 +83,7 @@ const ESPECIALIDADES = [
                   </ul>
                   <figure class="foto-ejemplo">
                     <!-- Si aún no existe la guía 4:3 de grupos, se muestra la 1:1 -->
-                    <img id="foto-ejemplo-img" src="/img/preview-1-1.webp" alt="Ejemplo: las caras dentro del círculo, con espacio hasta el borde" loading="lazy" decoding="async" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='/img/preview-1-1.webp';}" />
+                    <img id="foto-ejemplo-img" src="/img/preview-1-1.webp" alt="Ejemplo: las caras dentro del círculo, con espacio hasta el borde" loading="lazy" decoding="async" onerror="if(!this.src.endsWith('preview-1-1.webp')){this.src='/img/preview-1-1.webp';}" />
                     <figcaption>Ejemplo: las caras, dentro del círculo verde</figcaption>
                   </figure>
                 </div>
