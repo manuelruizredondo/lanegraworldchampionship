@@ -42,8 +42,20 @@ const fullTitle = title.includes("La Negra") ? title : `${title} — La Negra Da
 // URLs absolutas para canonical / og / hreflang
 const site = Astro.site ?? new URL("https://campeonatopasoslibres.com");
 const canonical = new URL(Astro.url.pathname, site);
-// og:image: foto por página (prop `image`) o, por defecto, una foto del festival
-const ogImage = new URL(image ? img(image) : img("festival-negra-dance-home-1.jpg"), site);
+// og:image: la que pase la página (prop `image`) o, si no, la que toque por
+// sección. Son 1200x630 con el nombre del festival encima, porque al compartir
+// un enlace la imagen es lo único que se ve antes de decidir si se pulsa.
+const OG_POR_SECCION = [
+  [/^\/(talleres|en\/workshops|it\/workshops)\//, "/img/og/talleres.jpg"],
+  [/^\/(mundial|competicion|competidores|bases-y-reglamento|ganadores|ediciones|videos)/, "/img/og/mundial.jpg"],
+  [/^\/en\/(world-championship|competition|competitors|rules|winners|editions|videos)/, "/img/og/mundial.jpg"],
+  [/^\/it\/(mondiale|competition|competitors|regolamento|vincitori|edizioni|videos)/, "/img/og/mundial.jpg"],
+];
+const ogPorSeccion = OG_POR_SECCION.find(([re]) => re.test(Astro.url.pathname));
+const ogImage = new URL(
+  image ? img(image) : (ogPorSeccion ? ogPorSeccion[1] : "/img/og/festival.jpg"),
+  site,
+);
 const alternates = routeFor(Astro.url.pathname);
 const OG_LOCALE = { es: "es_ES", en: "en_US", it: "it_IT" };
 
@@ -94,6 +106,9 @@ const orgSchema = {
     <meta property="og:description" content={desc} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:locale" content={OG_LOCALE[lang] || "es_ES"} />
     <meta property="og:image:alt" content={fullTitle} />
     <meta name="twitter:card" content="summary_large_image" />

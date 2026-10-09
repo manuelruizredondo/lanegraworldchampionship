@@ -153,6 +153,16 @@ const describe = (s) => {
     {days.map((d, di) => (
       <div class="pr-day" id={`pr-day-${di}`} data-day-panel={di}>
         <h2 class="pr-day-head"><span class="pr-day-head-name">{t.days[d.day]}</span><span class="pr-day-head-date">{d.date}</span></h2>
+        <div class="pr-colhead" aria-hidden="true">
+          <span></span>
+          <div>
+            {ROOM_LIST.map((r) => (
+              <span class={"pr-colhead-c pr-chc-" + r.key}>
+                <i class={"pr-dot pr-r-" + r.key}></i>{t.roomFull[r.key]}
+              </span>
+            ))}
+          </div>
+        </div>
         <div class="pr-timeline">
         {d.slots.map((slot) => { const tm = slot.t.split(/\s*[–—-]\s*/); return (
           <div class="pr-slot">
@@ -192,6 +202,7 @@ const describe = (s) => {
                         <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>
                       </div>
                     )}
+                    <span class="pr-card-time">{s.t}</span>
                     <h3 class="pr-title">{title(s)}</h3>
                     {s.p && (() => {
                       const p0 = s.p;
@@ -472,6 +483,14 @@ const describe = (s) => {
     if (amByKeyboard && amLastFocus && amLastFocus.focus) amLastFocus.focus();
     amLastFocus = null; amByKeyboard = false;
   };
+  // Alto real del bloque de filtros, para colgar de él la cabecera de salas
+  const ctrl = document.querySelector(".pr-controls");
+  if (ctrl) {
+    const medir = () => document.documentElement.style.setProperty("--pr-ctrl-h", ctrl.offsetHeight + "px");
+    medir();
+    if (window.ResizeObserver) new ResizeObserver(medir).observe(ctrl);
+    window.addEventListener("resize", medir);
+  }
   document.querySelectorAll(".pr-teacher-link").forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); amByKeyboard = e.detail === 0; openArtist(b); }));
   amodal.querySelectorAll("[data-am-close]").forEach((x) => x.addEventListener("click", closeArtist));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeArtist(); });
@@ -691,12 +710,24 @@ const describe = (s) => {
   .sp-b { border-color: #14285a; }
   .sp-s { border-color: #e0a416; }
   /* Pill de la sala (abajo-izquierda), en el color de la sala */
+  /* line-height: 1 para que la caja ciña la letra; el reparto desigual del
+     padding compensa que las mayúsculas no tienen descendentes y quedaban altas. */
   .pr-roomtag {
     display: inline-flex; align-items: center;
-    padding: 2px 10px; border-radius: 999px;
+    padding: 6px 10px 5px; border-radius: 999px; line-height: 1;
     font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #fff;
   }
   .pr-card-in { padding: 13px 15px; min-width: 0; }
+  /* Hora dentro de la propia tarjeta: la del carril se pierde al filtrar o buscar */
+  .pr-card-time {
+    display: block; margin-bottom: 4px;
+    font-size: 11.5px; font-weight: 800; letter-spacing: .03em; color: #8d8898;
+    font-variant-numeric: tabular-nums;
+  }
+  .k-comp .pr-card-time { color: #7a6424; }
+  .k-social .pr-card-time { color: rgba(255, 255, 255, .7); }
+  .pr-band .pr-card-time { color: #9a9486; }
+
   .pr-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; align-items: center; padding-right: 96px; min-height: 22px; }
   /* Sala + nivel abajo a la izquierda (talleres), dejando hueco para el corazón/+ */
   .pr-meta-bottom { margin: 9px 0 0; padding-right: 72px; min-height: 0; }
@@ -720,7 +751,7 @@ const describe = (s) => {
   .pr-cn-master { background: #d59a22; }
   .pr-cn-comp { background: #241d08; }
   .pr-cn-social { background: #6b46c9; }
-  .pr-level { font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+  .pr-level { font-size: 10.5px; font-weight: 700; padding: 5px 8px 4px; border-radius: 999px; line-height: 1; border: 1px solid; white-space: nowrap; }
   .lv-Abierto { color: #2e9b63; border-color: #b8e6cd; background: #eafaf1; }
   .lv-MedioBajo { color: #2a9d8f; border-color: #b7e3dd; background: #e9f7f5; }
   .lv-Medio { color: #3f6fd0; border-color: #c4d4f2; background: #edf2fc; }
@@ -865,6 +896,38 @@ const describe = (s) => {
   .pr-am-link { padding: 7px 15px; border-radius: 999px; background: #f0ede7; color: #14121a; font-weight: 600; font-size: 13px; text-decoration: none; transition: background .15s; }
   .pr-am-link:hover { background: var(--gold); color: #fff; }
   @keyframes prAmIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+
+  /* ESCRITORIO: rejilla de salas, una columna por cada una, como el cuadrante
+     del programa en papel. Debajo de 1000px se vuelve al flujo de tarjetas. */
+  .pr-colhead { display: none; }
+  @media (min-width: 1000px) {
+    .pr-colhead {
+      display: grid; grid-template-columns: 46px 1fr; gap: 0 12px;
+      margin-bottom: 4px;
+      /* Se queda pegada bajo los filtros: en un día largo, sin ella no sabes
+         qué columna estás mirando. --pr-ctrl-h lo mide el script. */
+      position: sticky; top: calc(var(--header-h, 88px) + var(--pr-ctrl-h, 166px));
+      z-index: 450; padding: 6px 0;
+      background: linear-gradient(#fff 72%, rgba(255, 255, 255, 0));
+    }
+    .pr-colhead > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .pr-colhead-c {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 12px; border-radius: 10px; background: #f7f4ee;
+      font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+      color: #6a6a74; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pr-colhead-c .pr-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+    .pr-sessions { grid-template-columns: repeat(4, 1fr); }
+    .pr-sessions > .rc-gs { grid-column: 1; }
+    .pr-sessions > .rc-pb { grid-column: 2; }
+    .pr-sessions > .rc-s1 { grid-column: 3; }
+    .pr-sessions > .rc-s2 { grid-column: 4; }
+    .pr-sessions > .pr-band { grid-column: 1 / -1; }
+    /* Con la columna encima, la etiqueta de sala dentro de la tarjeta sobra */
+    .pr-sessions > .pr-card:not(.pr-band) .pr-roomtag { display: none; }
+    .pr-sessions > .pr-card:not(.pr-band) .pr-meta-bottom:empty { display: none; }
+  }
 
   @media (max-width: 640px) {
     /* Las 4 salas en una sola fila también en móvil */
