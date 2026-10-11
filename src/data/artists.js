@@ -52,7 +52,7 @@ export const ARTISTS_ES = [
   { name: "Jose y Yoli Conuco", country: "Bachata | España", img: "jose-evelyn-bachata-festival-pasos-libres-1.jpg", ig: "https://www.instagram.com/conucodance", yt: "https://www.youtube.com/c/ConucoDanceBenidorm" },
 ];
 
-export const ARTISTS_EN = [
+const ARTISTS_EN_PAIS = [
   { name: "Tito Ortos", country: "Salsa | Puerto Rico", img: "la-negra-festival-tito-ortos.webp", ig: "https://www.instagram.com/titoortos/?hl=es", fb: "https://www.facebook.com/titoortos.gutierrez/?locale=es_ES" },
   { name: "Bersy Cortez", country: "Salsa | Venezuela", img: "la-negra-festival-bersy-cortez.webp", ig: "https://www.instagram.com/bersycortez/?hl=es", fb: "https://www.facebook.com/bersaidy" },
   { name: "Maykel Fonts", country: "Salsa | Cuba", img: "la-negra-festival-maykel-fonts.webp", ig: "https://www.instagram.com/maykel_fonts/?hl=es", yt: "https://www.youtube.com/@maykelfonts7608" },
@@ -103,6 +103,15 @@ export const ARTISTS_EN = [
   { name: "Jose and Yoli Conuco", country: "Bachata | Spain", img: "jose-evelyn-bachata-festival-pasos-libres-1.jpg", ig: "https://www.instagram.com/conucodance", yt: "https://www.youtube.com/c/ConucoDanceBenidorm" },
 ];
 
+// Los nombres propios de los artistas y su especialidad (Salsa / Bachata) NO se
+// traducen: se escriben igual en los tres idiomas. Lo único que cambia de un
+// idioma a otro es el país, que es la etiqueta visible bajo la foto.
+const NOMBRE_POR_IMG = Object.fromEntries(ARTISTS_ES.map((a) => [a.img, a.name]));
+export const ARTISTS_EN = ARTISTS_EN_PAIS.map((a) => ({
+  ...a,
+  name: NOMBRE_POR_IMG[a.img] || a.name,
+}));
+
 // Lista IT derivada de la EN: se traduce el país (la etiqueta visible) y el "and" de los dúos.
 const COUNTRY_IT = {
   "Puerto Rico": "Porto Rico",
@@ -123,8 +132,7 @@ const COUNTRY_IT = {
 
 export const ARTISTS_IT = ARTISTS_EN.map((a) => {
   const [style, country] = a.country.split(" | ");
-  const c = COUNTRY_IT[country] || country;
-  return { ...a, name: a.name.replace(/ and /g, " e "), country: `${style} | ${c}` };
+  return { ...a, country: `${style} | ${COUNTRY_IT[country] || country}` };
 });
 
 const splitByStyle = (list) => {
