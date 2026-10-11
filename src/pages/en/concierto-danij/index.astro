@@ -1,8 +1,9 @@
 ---
 import Base from "@/layouts/Base.astro";
 import VotacionDaniJ from "@/components/VotacionDaniJ.astro";
+import { OG } from "@/data/danij.js";
 ---
 
-<Base noindex title="You choose the setlist · Dani J in concert" description="Vote for your 10 favourite Dani J songs and rank them: the most voted ones will be played at the concert of the XV Pasos Libres World Championship, in Calpe." lang="en">
+<Base noindex title="You choose the setlist · Dani J in concert" description="Vote for your 10 favourite Dani J songs and rank them: the most voted ones will be played at the concert of the XV Pasos Libres World Championship, in Calpe." image={OG.en} lang="en">
   <VotacionDaniJ lang="en" />
 </Base>

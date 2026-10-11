@@ -348,3 +348,11 @@ export const I18N = {
 // se entiende igual en cualquiera de ellos.
 export const RUTA = { es: "/concierto-danij/", en: "/en/concierto-danij/", it: "/it/concierto-danij/" };
 export const RUTA_PROGRAMA = { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" };
+
+// Imagen que sale al compartir el enlace (1200x630, una por idioma).
+// La genera scripts/og-concierto-danij.py a partir de la foto de prensa.
+export const OG = {
+  es: "/img/og/concierto-danij.jpg",
+  en: "/img/og/concierto-danij-en.jpg",
+  it: "/img/og/concierto-danij-it.jpg",
+};
