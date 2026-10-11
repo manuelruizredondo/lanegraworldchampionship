@@ -191,7 +191,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
 
     cat.addEventListener("click", (e) => {
       const play = e.target.closest("[data-yt]");
-      if (play) { abrirPrev(play.dataset.yt, play.dataset.ytNombre); return; }
+      if (play) { abrirPrev(play.dataset.yt, play.dataset.ytNombre, play); return; }
       const b = e.target.closest("[data-song]");
       if (b) alternar(b.dataset.song);
     });
@@ -201,7 +201,44 @@ const cerrada = Date.now() > Date.parse(CIERRE);
     const prevVideo = prev.querySelector("[data-dj-prev-video]");
     const prevTitulo = prev.querySelector("[data-dj-prev-t]");
 
-    function abrirPrev(id, nombre) {
+    // Se coloca pegado al botón que se ha pulsado, como un globo. Si no cabe
+    // debajo se pone encima, y siempre se recorta a la pantalla para que no se
+    // salga por ningún lado.
+    let botonActual = null;
+    let encolado = false;
+
+    function colocar() {
+      if (prev.hidden || !botonActual) return;
+      const b = botonActual.getBoundingClientRect();
+      const an = prev.offsetWidth;
+      const al = prev.offsetHeight;
+      const M = 12;
+      // Alineado por su borde derecho con el del botón: el play está al final
+      // de la fila, así que el globo cae hacia dentro de la lista.
+      let x = b.right - an;
+      let y = b.bottom + 8;
+      // Si debajo no cabe, se intenta encima; y en cualquier caso se recorta a
+      // la pantalla, porque el botón puede haber quedado fuera al hacer scroll.
+      if (y + al > window.innerHeight - M) {
+        const arriba = b.top - al - 8;
+        if (arriba >= M) y = arriba;
+      }
+      x = Math.min(Math.max(M, x), Math.max(M, window.innerWidth - an - M));
+      y = Math.min(Math.max(M, y), Math.max(M, window.innerHeight - al - M));
+      prev.style.left = Math.round(x) + "px";
+      prev.style.top = Math.round(y) + "px";
+    }
+
+    const recolocar = () => {
+      if (encolado) return;
+      encolado = true;
+      requestAnimationFrame(() => { encolado = false; colocar(); });
+    };
+    window.addEventListener("scroll", recolocar, { passive: true });
+    window.addEventListener("resize", recolocar);
+
+    function abrirPrev(id, nombre, boton) {
+      botonActual = boton || null;
       prevTitulo.textContent = nombre || "";
       // Se crea aquí: hasta ahora no se había pedido nada a YouTube.
       const f = document.createElement("iframe");
@@ -213,6 +250,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
       f.referrerPolicy = "strict-origin-when-cross-origin";
       prevVideo.replaceChildren(f);
       prev.hidden = false;
+      colocar();
       // No se roba el foco ni se toca el scroll: la idea es poder seguir
       // mirando la lista mientras suena.
     }
@@ -220,6 +258,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
     function cerrarPrev() {
       if (prev.hidden) return;
       prev.hidden = true;
+      botonActual = null;
       // Vaciar el contenedor mata el iframe: deja de sonar y de cargar.
       prevVideo.replaceChildren();
     }
@@ -383,8 +422,9 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-play:hover { border-color: var(--gold); background: #fdfaf3; color: var(--gold-dark, #a28243); }
   .dj-play svg { margin-left: 2px; }
 
-  /* Reproductor flotante: pequeño, en una esquina, sin velo ni bloqueo. */
-  .dj-prev { position: fixed; z-index: 1400; bottom: 20px; left: 20px; width: 300px; }
+  /* Reproductor flotante: pequeño, pegado al botón de play que se ha pulsado.
+     `left`/`top` los calcula el script; aquí solo van el tamaño y la capa. */
+  .dj-prev { position: fixed; z-index: 1400; top: 0; left: 0; width: 300px; }
   .dj-prev[hidden] { display: none; }
   .dj-prev-caja {
     background: #14121a; border-radius: 14px; overflow: hidden;
@@ -404,8 +444,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   /* En móvil va abajo, por encima de la barra de enviar y sin pisar el botón
      de WhatsApp, que vive en la esquina de la derecha. */
   @media (max-width: 640px) {
-    /* 128px deja libre la barra de enviar (110px de alto) con su aire. */
-    .dj-prev { left: 14px; right: auto; width: 258px; bottom: 128px; }
+    .dj-prev { width: 250px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .dj-prev-caja { animation: none; }
