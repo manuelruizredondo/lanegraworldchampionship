@@ -79,11 +79,13 @@ const cerrada = Date.now() > Date.parse(CIERRE);
         </div>
       </form>
 
-      <!-- Escucha previa: el iframe se crea al abrir y se destruye al cerrar,
-           así no se queda sonando de fondo ni carga nada hasta que se pide. -->
+      <!-- Escucha previa: un reproductor pequeño que flota en una esquina. No
+           tapa la página ni corta el scroll, así se puede seguir mirando y
+           votando con la canción sonando. El iframe se crea al abrir y se
+           destruye al cerrar: no pide nada a YouTube hasta que se pulsa, y al
+           cerrar deja de sonar en vez de quedarse de fondo. -->
       <div class="dj-prev" data-dj-prev hidden>
-        <div class="dj-prev-fondo" data-dj-prev-fuera></div>
-        <div class="dj-prev-caja" role="dialog" aria-modal="true" aria-labelledby="dj-prev-t">
+        <div class="dj-prev-caja" role="region" aria-labelledby="dj-prev-t">
           <div class="dj-prev-barra">
             <p class="dj-prev-t" id="dj-prev-t" data-dj-prev-t></p>
             <button type="button" class="dj-prev-x" data-dj-prev-cerrar aria-label={t.cerrarPrev}>
@@ -194,14 +196,12 @@ const cerrada = Date.now() > Date.parse(CIERRE);
       if (b) alternar(b.dataset.song);
     });
 
-    // --- Escucha previa ---
+    // --- Escucha previa (reproductor flotante, no modal) ---
     const prev = document.querySelector("[data-dj-prev]");
     const prevVideo = prev.querySelector("[data-dj-prev-video]");
     const prevTitulo = prev.querySelector("[data-dj-prev-t]");
-    let ultimoFoco = null;
 
     function abrirPrev(id, nombre) {
-      ultimoFoco = document.activeElement;
       prevTitulo.textContent = nombre || "";
       // Se crea aquí: hasta ahora no se había pedido nada a YouTube.
       const f = document.createElement("iframe");
@@ -213,8 +213,8 @@ const cerrada = Date.now() > Date.parse(CIERRE);
       f.referrerPolicy = "strict-origin-when-cross-origin";
       prevVideo.replaceChildren(f);
       prev.hidden = false;
-      document.body.style.overflow = "hidden";
-      prev.querySelector("[data-dj-prev-cerrar]").focus();
+      // No se roba el foco ni se toca el scroll: la idea es poder seguir
+      // mirando la lista mientras suena.
     }
 
     function cerrarPrev() {
@@ -222,13 +222,18 @@ const cerrada = Date.now() > Date.parse(CIERRE);
       prev.hidden = true;
       // Vaciar el contenedor mata el iframe: deja de sonar y de cargar.
       prevVideo.replaceChildren();
-      document.body.style.overflow = "";
-      if (ultimoFoco && ultimoFoco.isConnected) ultimoFoco.focus();
     }
 
-    prev.querySelector("[data-dj-prev-fuera]").addEventListener("click", cerrarPrev);
     prev.querySelector("[data-dj-prev-cerrar]").addEventListener("click", cerrarPrev);
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarPrev(); });
+
+    // Clic en cualquier otro sitio: se cierra. Salvo en otro botón de play,
+    // que lo que quiere es cambiar de canción, no cerrar y volver a abrir.
+    document.addEventListener("click", (e) => {
+      if (prev.hidden) return;
+      if (e.target.closest("[data-dj-prev]") || e.target.closest("[data-yt]")) return;
+      cerrarPrev();
+    });
 
     // Buscador: sin acentos ni mayúsculas, para que «corazon» encuentre «CORAZÓN».
     const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -378,18 +383,16 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-play:hover { border-color: var(--gold); background: #fdfaf3; color: var(--gold-dark, #a28243); }
   .dj-play svg { margin-left: 2px; }
 
-  /* Mini modal de escucha */
-  .dj-prev { position: fixed; inset: 0; z-index: 3500; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  /* Reproductor flotante: pequeño, en una esquina, sin velo ni bloqueo. */
+  .dj-prev { position: fixed; z-index: 1400; bottom: 20px; left: 20px; width: 300px; }
   .dj-prev[hidden] { display: none; }
-  .dj-prev-fondo { position: absolute; inset: 0; background: rgba(15, 11, 30, .64); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
   .dj-prev-caja {
-    position: relative; z-index: 1; width: 100%; max-width: 520px;
-    background: #14121a; border-radius: 16px; overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, .5); animation: djPrevIn .2s ease;
+    background: #14121a; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .42); animation: djPrevIn .2s ease;
   }
-  @keyframes djPrevIn { from { opacity: 0; transform: translateY(10px) scale(.98); } }
-  .dj-prev-barra { display: flex; align-items: center; gap: 10px; padding: 11px 10px 11px 15px; }
-  .dj-prev-t { margin: 0; flex: 1; min-width: 0; color: #fff; font-size: 13.5px; font-weight: 700; letter-spacing: .01em; overflow-wrap: anywhere; }
+  @keyframes djPrevIn { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+  .dj-prev-barra { display: flex; align-items: center; gap: 8px; padding: 9px 8px 9px 12px; }
+  .dj-prev-t { margin: 0; flex: 1; min-width: 0; color: #fff; font-size: 12.5px; font-weight: 700; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .dj-prev-x {
     flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; border: 0;
     background: rgba(255, 255, 255, .12); color: #fff; cursor: pointer;
@@ -398,6 +401,15 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-prev-x:hover { background: rgba(255, 255, 255, .22); }
   .dj-prev-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
   .dj-prev-video :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  /* En móvil va abajo, por encima de la barra de enviar y sin pisar el botón
+     de WhatsApp, que vive en la esquina de la derecha. */
+  @media (max-width: 640px) {
+    /* 128px deja libre la barra de enviar (110px de alto) con su aire. */
+    .dj-prev { left: 14px; right: auto; width: 258px; bottom: 128px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dj-prev-caja { animation: none; }
+  }
 
   .dj-nores { margin: 16px 0 0; font-size: 14px; color: #6a6a74; text-align: center; }
   .dj-nores[hidden] { display: none; }
