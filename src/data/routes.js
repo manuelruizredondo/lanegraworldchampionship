@@ -26,6 +26,10 @@ export const ROUTES = [
   { es: "/aviso-legal/", en: "/en/legal-notice/", it: "/it/legal-notice/" },
   { es: "/politica-de-privacidad/", en: "/en/privacy-policy/", it: "/it/privacy-policy/" },
   { es: "/cookies/", en: "/en/cookie-policy/", it: "/it/cookie-policy/" },
+  // La votación del repertorio de Dani J está aquí para que el selector de
+  // idioma y el hreflang lleven a la misma página, pero lleva `sitemap: false`
+  // porque es una página temporal y va con noindex: cierra el 24 de octubre.
+  { es: "/concierto-danij/", en: "/en/concierto-danij/", it: "/it/concierto-danij/", sitemap: false },
 ];
 
 // Devuelve la fila de equivalencias de una ruta (o undefined si no está mapeada)

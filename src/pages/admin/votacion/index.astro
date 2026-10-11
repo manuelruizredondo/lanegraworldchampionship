@@ -1,0 +1,214 @@
+---
+// Recuento de la votación del repertorio de Dani J.
+// Zona privada: misma contraseña que el panel de inscripciones (ADMIN_PASSWORD).
+import Base from "@/layouts/Base.astro";
+import { MAX_VOTOS, CIERRE } from "@/data/danij.js";
+---
+
+<Base noindex title="Resultados de la votación · Dani J" description="Panel privado de la organización." lang="es">
+  <div class="prop">
+    <section class="p-section adm">
+      <div class="p-container">
+        <p class="p-eyebrow">Organización · Concierto de Dani J</p>
+        <h1 class="p-display adm-title">Resultados de la votación</h1>
+
+        <!-- ACCESO -->
+        <div id="gate" class="adm-box">
+          <p>Zona privada de la organización.</p>
+          <div class="gate-row">
+            <input id="gate-pass" type="password" placeholder="Contraseña" autocomplete="off" />
+            <button id="gate-btn" type="button" class="p-btn p-btn-dark">Entrar</button>
+          </div>
+          <p id="gate-msg" class="adm-msg" role="alert"></p>
+        </div>
+
+        <!-- PANEL -->
+        <div id="panel" hidden>
+          <div class="adm-kpis">
+            <div class="kpi"><span class="kpi-n" id="kpi-votantes">—</span><span class="kpi-l">Personas que han votado</span></div>
+            <div class="kpi"><span class="kpi-n" id="kpi-papeletas">—</span><span class="kpi-l">Canciones marcadas</span></div>
+            <div class="kpi"><span class="kpi-n" id="kpi-convotos">—</span><span class="kpi-l">Canciones con al menos un voto</span></div>
+            <div class="kpi"><span class="kpi-n" id="kpi-sinvotos">—</span><span class="kpi-l">Sin ningún voto</span></div>
+          </div>
+
+          <p class="adm-nota">
+            <strong>Puntos</strong>: {MAX_VOTOS} al nº 1 de cada persona, {MAX_VOTOS - 1} al nº 2… y 1 al nº {MAX_VOTOS}.
+            Es el orden que manda para armar el repertorio. <strong>Votos</strong> es cuánta gente la metió en su top,
+            sin mirar en qué puesto. <strong>Nº 1</strong>, cuántas personas la pusieron la primera de todas.
+          </p>
+
+          <div class="adm-barra">
+            <button id="recargar" type="button" class="p-btn p-btn-light p-btn-sm">Actualizar</button>
+            <button id="copiar" type="button" class="p-btn p-btn-light p-btn-sm">Copiar el top 20</button>
+            <button id="csv" type="button" class="p-btn p-btn-light p-btn-sm">Descargar CSV</button>
+            <span id="msg" class="adm-msg"></span>
+          </div>
+
+          <div class="adm-tabla-wrap">
+            <table class="adm-tabla">
+              <thead><tr>
+                <th>#</th><th>Canción</th><th class="num">Puntos</th><th class="num">Votos</th><th class="num">Nº 1</th>
+              </tr></thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+
+          <p id="descartadas" class="adm-aviso" hidden></p>
+          <p class="adm-pie">Cierre de la votación: 24 de octubre de 2026 a las 21:00 h.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script is:inline define:vars={{ CIERRE }}>
+  (function () {
+    const $ = (s) => document.querySelector(s);
+    const FN = "/.netlify/functions/votacion-resultados";
+    let pass = "";
+    let ranking = [];
+
+    const api = async () => {
+      const r = await fetch(FN, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password: pass }),
+      });
+      return { ok: r.ok, data: await r.json().catch(() => ({})) };
+    };
+
+    async function entrar() {
+      const val = $("#gate-pass").value.trim();
+      if (!val) return;
+      $("#gate-msg").textContent = "Comprobando…";
+      pass = val;
+      const { ok, data } = await api();
+      if (!ok) { pass = ""; $("#gate-msg").textContent = data.error || "No se pudo entrar."; return; }
+      $("#gate").hidden = true;
+      $("#panel").hidden = false;
+      pintar(data);
+    }
+    $("#gate-btn").addEventListener("click", entrar);
+    $("#gate-pass").addEventListener("keydown", (e) => { if (e.key === "Enter") entrar(); });
+
+    function pintar(d) {
+      ranking = d.ranking || [];
+      $("#kpi-votantes").textContent = d.votantes ?? 0;
+      $("#kpi-papeletas").textContent = d.papeletas ?? 0;
+      $("#kpi-convotos").textContent = ranking.length;
+      $("#kpi-sinvotos").textContent = d.sinVotos ?? 0;
+
+      const tb = $("#tbody");
+      tb.innerHTML = "";
+      if (!ranking.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 5;
+        td.className = "vacio";
+        td.textContent = "Todavía no hay votos.";
+        tr.appendChild(td);
+        tb.appendChild(tr);
+      }
+      ranking.forEach((x) => {
+        const tr = document.createElement("tr");
+        if (x.puesto <= 10) tr.className = "top";
+        const celda = (txt, cls) => {
+          const td = document.createElement("td");
+          td.textContent = String(txt);
+          if (cls) td.className = cls;
+          return td;
+        };
+        tr.appendChild(celda(x.puesto, "pos"));
+        tr.appendChild(celda(x.cancion, "cancion"));
+        tr.appendChild(celda(x.puntos, "num fuerte"));
+        tr.appendChild(celda(x.votos, "num"));
+        tr.appendChild(celda(x.primeros, "num"));
+        tb.appendChild(tr);
+      });
+
+      const desc = d.descartadas || [];
+      $("#descartadas").hidden = !desc.length;
+      if (desc.length) {
+        $("#descartadas").textContent =
+          "Hay títulos en Airtable que no están en la lista oficial y no se han contado: " + desc.join(" · ");
+      }
+      const cerrada = Date.now() > Date.parse(CIERRE);
+      $("#msg").textContent = cerrada ? "La votación está cerrada." : "";
+    }
+
+    $("#recargar").addEventListener("click", async () => {
+      $("#msg").textContent = "Actualizando…";
+      const { ok, data } = await api();
+      $("#msg").textContent = ok ? "" : (data.error || "Error al recargar.");
+      if (ok) pintar(data);
+    });
+
+    $("#copiar").addEventListener("click", async () => {
+      const txt = ranking.slice(0, 20).map((x) => `${x.puesto}. ${x.cancion} — ${x.puntos} pts (${x.votos} votos)`).join("\n");
+      try {
+        await navigator.clipboard.writeText(txt);
+        $("#msg").textContent = "Top 20 copiado.";
+      } catch {
+        $("#msg").textContent = "No se pudo copiar. Usa el CSV.";
+      }
+    });
+
+    $("#csv").addEventListener("click", () => {
+      const esc = (v) => '"' + String(v).replace(/"/g, '""') + '"';
+      const filas = [["Puesto", "Canción", "Puntos", "Votos", "Nº 1"]]
+        .concat(ranking.map((x) => [x.puesto, x.cancion, x.puntos, x.votos, x.primeros]));
+      // BOM para que Excel abra bien los acentos.
+      const blob = new Blob(["﻿" + filas.map((f) => f.map(esc).join(";")).join("\r\n")],
+                            { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "votacion-danij.csv";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+  })();
+</script>
+
+<style>
+  .adm { padding-top: 20px; }
+  .adm-title { font-size: clamp(30px, 4.4vw, 52px); margin-bottom: 22px; }
+  .adm-box { max-width: 460px; background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 22px; }
+  .gate-row { display: flex; gap: 10px; margin-top: 12px; }
+  .gate-row input {
+    flex: 1; padding: 12px 14px; border-radius: 10px; border: 2px solid #e6e1d8;
+    font-size: 16px; font-family: inherit;
+  }
+  .gate-row input:focus-visible { outline: none; border-color: var(--gold); }
+  .adm-msg { margin: 10px 0 0; font-size: 13.5px; color: #8a8578; }
+
+  .adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 16px 18px; }
+  .kpi-n { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: #14121a; font-variant-numeric: tabular-nums; }
+  .kpi-l { display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #8a8578; line-height: 1.3; }
+
+  .adm-nota { max-width: 760px; margin: 0 0 18px; font-size: 13px; line-height: 1.6; color: #6a6a74; }
+  .adm-barra { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .adm-barra .adm-msg { margin: 0; }
+
+  .adm-tabla-wrap { overflow-x: auto; border: 1px solid #ece7dd; border-radius: 12px; }
+  .adm-tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  .adm-tabla th {
+    text-align: left; padding: 12px; background: #faf7f1; font-size: 11.5px;
+    text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark, #a2823f); white-space: nowrap;
+  }
+  .adm-tabla th.num { text-align: right; }
+  /* Las filas las crea el script: sin :global() no les llega el estilo. */
+  .adm-tabla :global(td) { padding: 10px 12px; border-top: 1px solid #f0ece4; }
+  .adm-tabla :global(tbody tr:hover) { background: #fdfbf7; }
+  .adm-tabla :global(tr.top) { background: #fdfaf3; }
+  .adm-tabla :global(tr.top:hover) { background: #fbf5e8; }
+  .adm-tabla :global(td.pos) { width: 46px; font-weight: 800; color: var(--gold-dark, #a2823f); font-variant-numeric: tabular-nums; }
+  .adm-tabla :global(td.cancion) { font-weight: 600; color: #14121a; }
+  .adm-tabla :global(td.num) { text-align: right; font-variant-numeric: tabular-nums; width: 80px; }
+  .adm-tabla :global(td.fuerte) { font-weight: 800; }
+  .adm-tabla :global(td.vacio) { text-align: center; padding: 30px; color: #8a8578; }
+
+  .adm-aviso { margin: 14px 0 0; font-size: 13px; color: #c8324c; line-height: 1.5; }
+  .adm-aviso[hidden] { display: none; }
+  .adm-pie { margin: 18px 0 0; font-size: 12.5px; color: #9a9aa2; }
+</style>

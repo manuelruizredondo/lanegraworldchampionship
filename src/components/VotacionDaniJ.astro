@@ -1,0 +1,328 @@
+---
+// Votación del repertorio del concierto de Dani J.
+// Se elige hasta MAX_VOTOS canciones y se ordenan: el orden ES el voto, así que
+// la posición viaja al servidor tal cual la deja la persona.
+import { CANCIONES, MAX_VOTOS, CIERRE, I18N, RUTA_PROGRAMA } from "@/data/danij.js";
+
+const { lang = "es" } = Astro.props;
+const t = I18N[lang] || I18N.es;
+// El cierre se comprueba también en el servidor; esto solo evita enseñar el
+// formulario cuando la página se genera después del plazo.
+const cerrada = Date.now() > Date.parse(CIERRE);
+---
+
+<div class="prop">
+<section class="dj">
+  <div class="p-container dj-head">
+    <p class="p-eyebrow">{t.eyebrow}</p>
+    <h1 class="script-title dj-h1">{t.h1}</h1>
+    {cerrada
+      ? <p class="p-lead p-narrow">{t.cerradaTexto}</p>
+      : <><p class="p-lead p-narrow">{t.lead}</p><p class="dj-plazo">{t.plazo}</p></>}
+  </div>
+
+  {cerrada ? (
+    <div class="p-container dj-cerrada">
+      <h2 class="p-h2">{t.cerradaTitulo}</h2>
+      <a class="p-btn p-btn-dark" href={RUTA_PROGRAMA[lang] || RUTA_PROGRAMA.es}>{t.okVolver}</a>
+    </div>
+  ) : (
+    <div class="p-container dj-wrap">
+      <form class="dj-form" data-dj novalidate>
+        <label class="dj-label" for="dj-email">{t.emailLabel}</label>
+        <input class="dj-input" id="dj-email" type="email" name="email" inputmode="email"
+               autocomplete="email" placeholder={t.emailPh} required />
+        <p class="dj-ayuda">{t.emailAyuda}</p>
+
+        <!-- Top elegido -->
+        <div class="dj-top" data-dj-top>
+          <div class="dj-top-head">
+            <h2 class="dj-top-t">{t.tuTop}</h2>
+            <span class="dj-cuenta"><strong data-dj-n>0</strong> {t.de} {MAX_VOTOS}</span>
+          </div>
+          <p class="dj-vacio" data-dj-vacio>{t.vacio}</p>
+          <ol class="dj-lista" data-dj-lista></ol>
+        </div>
+
+        <!-- Buscador + catálogo -->
+        <div class="dj-buscar">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.2-3.2" /></svg>
+          <input type="search" data-dj-q placeholder={t.buscar} aria-label={t.buscar} autocomplete="off" />
+        </div>
+        <p class="dj-orden">{t.orden}</p>
+
+        <ul class="dj-cat" data-dj-cat>
+          {CANCIONES.map((c) => (
+            <li>
+              <button type="button" class="dj-song" data-song={c} aria-pressed="false">
+                <span class="dj-song-n" aria-hidden="true"></span>
+                <span class="dj-song-t">{c}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <p class="dj-nores" data-dj-nores hidden>
+          {t.sinResultados} <button type="button" class="dj-link" data-dj-limpiar>{t.limpiar}</button>
+        </p>
+
+        <p class="dj-msg" data-dj-msg hidden role="alert"></p>
+
+        <div class="dj-barra">
+          <span class="dj-barra-n"><strong data-dj-n2>0</strong> {t.de} {MAX_VOTOS} {t.elegidas}</span>
+          <button class="p-btn p-btn-dark dj-enviar" type="submit" data-dj-enviar>{t.enviar}</button>
+        </div>
+      </form>
+
+      <div class="dj-ok" data-dj-ok hidden>
+        <h2 class="p-h2">{t.okTitulo}</h2>
+        <p class="p-lead p-narrow">{t.okTexto}</p>
+        <a class="p-btn p-btn-dark" href={RUTA_PROGRAMA[lang] || RUTA_PROGRAMA.es}>{t.okVolver}</a>
+      </div>
+    </div>
+  )}
+</section>
+</div>
+
+<script is:inline define:vars={{ MAX: MAX_VOTOS, LANG: lang, T: {
+  subir: t.subir, bajar: t.bajar, quitar: t.quitar, enviando: t.enviar,
+  enviandoTxt: t.enviando, errEmail: t.errEmail, errPocas: t.errPocas,
+  errGenerico: t.errGenerico, maxAviso: t.maxAviso,
+} }}>
+  (function () {
+    const form = document.querySelector("[data-dj]");
+    if (!form) return;
+
+    const cat = form.querySelector("[data-dj-cat]");
+    const lista = form.querySelector("[data-dj-lista]");
+    const vacio = form.querySelector("[data-dj-vacio]");
+    const q = form.querySelector("[data-dj-q]");
+    const nores = form.querySelector("[data-dj-nores]");
+    const msg = form.querySelector("[data-dj-msg]");
+    const botonEnviar = form.querySelector("[data-dj-enviar]");
+    const contadores = [form.querySelector("[data-dj-n]"), form.querySelector("[data-dj-n2]")];
+    const botones = new Map();
+    cat.querySelectorAll("[data-song]").forEach((b) => botones.set(b.dataset.song, b));
+
+    // El orden de este array ES el voto.
+    let elegidas = [];
+
+    const aviso = (texto, tipo) => {
+      msg.textContent = texto || "";
+      msg.className = "dj-msg" + (tipo ? " " + tipo : "");
+      msg.hidden = !texto;
+    };
+
+    function pintar() {
+      contadores.forEach((c) => { if (c) c.textContent = String(elegidas.length); });
+      vacio.hidden = elegidas.length > 0;
+
+      lista.innerHTML = "";
+      elegidas.forEach((nombre, i) => {
+        const li = document.createElement("li");
+        li.className = "dj-item";
+        li.innerHTML =
+          '<span class="dj-pos">' + (i + 1) + "</span>" +
+          '<span class="dj-item-t"></span>' +
+          '<span class="dj-acc">' +
+            '<button type="button" class="dj-ico" data-up aria-label="' + T.subir + ': ' + nombre + '"' + (i === 0 ? " disabled" : "") + '>' +
+              '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></button>' +
+            '<button type="button" class="dj-ico" data-down aria-label="' + T.bajar + ': ' + nombre + '"' + (i === elegidas.length - 1 ? " disabled" : "") + '>' +
+              '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg></button>' +
+            '<button type="button" class="dj-ico dj-x" data-del aria-label="' + T.quitar + ': ' + nombre + '">' +
+              '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button>' +
+          "</span>";
+        li.querySelector(".dj-item-t").textContent = nombre;
+        li.querySelector("[data-up]").addEventListener("click", () => mover(i, -1));
+        li.querySelector("[data-down]").addEventListener("click", () => mover(i, 1));
+        li.querySelector("[data-del]").addEventListener("click", () => quitar(nombre));
+        lista.appendChild(li);
+      });
+
+      botones.forEach((b, nombre) => {
+        const i = elegidas.indexOf(nombre);
+        b.classList.toggle("elegida", i !== -1);
+        b.setAttribute("aria-pressed", i !== -1 ? "true" : "false");
+        b.querySelector(".dj-song-n").textContent = i !== -1 ? String(i + 1) : "";
+      });
+
+      botonEnviar.disabled = elegidas.length === 0;
+    }
+
+    function alternar(nombre) {
+      const i = elegidas.indexOf(nombre);
+      if (i !== -1) { elegidas.splice(i, 1); aviso(""); }
+      else if (elegidas.length >= MAX) { aviso(T.maxAviso, "err"); return; }
+      else { elegidas.push(nombre); aviso(""); }
+      pintar();
+    }
+    function quitar(nombre) {
+      const i = elegidas.indexOf(nombre);
+      if (i !== -1) { elegidas.splice(i, 1); aviso(""); pintar(); }
+    }
+    function mover(i, d) {
+      const j = i + d;
+      if (j < 0 || j >= elegidas.length) return;
+      [elegidas[i], elegidas[j]] = [elegidas[j], elegidas[i]];
+      pintar();
+    }
+
+    cat.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-song]");
+      if (b) alternar(b.dataset.song);
+    });
+
+    // Buscador: sin acentos ni mayúsculas, para que «corazon» encuentre «CORAZÓN».
+    const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    function filtrar() {
+      const v = norm(q.value.trim());
+      let visibles = 0;
+      botones.forEach((b) => {
+        const ok = !v || norm(b.dataset.song).includes(v);
+        b.parentElement.hidden = !ok;
+        if (ok) visibles++;
+      });
+      nores.hidden = visibles > 0;
+    }
+    q.addEventListener("input", filtrar);
+    form.querySelector("[data-dj-limpiar]").addEventListener("click", () => { q.value = ""; filtrar(); q.focus(); });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = form.querySelector("#dj-email").value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        aviso(T.errEmail, "err");
+        form.querySelector("#dj-email").focus();
+        return;
+      }
+      if (!elegidas.length) { aviso(T.errPocas, "err"); return; }
+
+      botonEnviar.disabled = true;
+      botonEnviar.textContent = T.enviandoTxt;
+      aviso("");
+      try {
+        const r = await fetch("/.netlify/functions/votacion", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ email, canciones: elegidas, idioma: LANG }),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.error || T.errGenerico);
+        form.hidden = true;
+        document.querySelector("[data-dj-ok]").hidden = false;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        aviso(err.message || T.errGenerico, "err");
+        botonEnviar.disabled = false;
+        botonEnviar.textContent = T.enviando;
+      }
+    });
+
+    pintar();
+  })();
+</script>
+
+<style>
+  .dj { padding: 26px 0 120px; }
+  .dj-head { text-align: center; max-width: 720px; }
+  .dj-h1 { margin: 2px 0 10px; }
+  .dj-plazo {
+    display: inline-block; margin: 10px 0 0; padding: 7px 14px; border-radius: 999px;
+    background: #f4efe4; color: var(--gold-dark, #a28243); font-size: 13px; font-weight: 700;
+  }
+  .dj-wrap { max-width: 720px; margin-top: 26px; }
+  .dj-cerrada { max-width: 560px; text-align: center; margin-top: 30px; }
+
+  .dj-label { display: block; font-size: 13px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; color: #6a6a74; margin-bottom: 7px; }
+  .dj-input {
+    width: 100%; padding: 13px 15px; border-radius: 12px; border: 2px solid #e6e1d8;
+    font-size: 16px; font-family: inherit; background: #fff; color: #14121a;
+  }
+  .dj-input:focus-visible { outline: none; border-color: var(--gold); }
+  .dj-ayuda { margin: 7px 0 0; font-size: 12.5px; color: #8a8578; }
+
+  /* Top elegido */
+  .dj-top { margin: 26px 0 0; padding: 16px; border-radius: 16px; background: #faf7f1; border: 1px solid #ece8e1; }
+  .dj-top-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .dj-top-t { margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -.01em; color: #14121a; }
+  .dj-cuenta { font-size: 13px; font-weight: 700; color: #8a8578; font-variant-numeric: tabular-nums; }
+  .dj-vacio { margin: 0; font-size: 13.5px; color: #8a8578; line-height: 1.5; }
+  .dj-vacio[hidden] { display: none; }
+  .dj-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  /* Las filas del top las crea el script, así que no llevan el atributo de
+     ámbito de Astro: hay que sacarlas del scope con :global() o no se pintan. */
+  .dj-lista :global(.dj-item) {
+    display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+    background: #fff; border: 1px solid #ece8e1; border-radius: 11px; padding: 8px 9px 8px 8px;
+  }
+  .dj-lista :global(.dj-pos) {
+    display: flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: #fff;
+    font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums;
+  }
+  .dj-lista :global(.dj-item-t) { font-size: 13.5px; font-weight: 700; color: #14121a; line-height: 1.3; min-width: 0; overflow-wrap: anywhere; }
+  .dj-lista :global(.dj-acc) { display: flex; gap: 3px; }
+  .dj-lista :global(.dj-ico) {
+    flex: 0 0 auto; width: 30px; height: 30px; border-radius: 8px; border: 0;
+    background: #f4f1ea; color: #6a6a74;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .dj-lista :global(.dj-ico:hover) { background: #ebe6db; color: #14121a; }
+  .dj-lista :global(.dj-ico:disabled) { opacity: .3; cursor: default; }
+  .dj-lista :global(.dj-x:hover) { background: #fdeceb; color: #c8324c; }
+
+  /* Buscador */
+  .dj-buscar { position: relative; margin: 26px 0 0; }
+  .dj-buscar svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #8a8578; pointer-events: none; }
+  .dj-buscar input {
+    width: 100%; padding: 12px 15px 12px 40px; border-radius: 999px; border: 2px solid #e6e1d8;
+    font-size: 16px; font-family: inherit; background: #fff; color: #14121a;
+  }
+  .dj-buscar input:focus-visible { outline: none; border-color: var(--gold); }
+  .dj-orden { margin: 9px 0 14px; font-size: 12.5px; color: #8a8578; }
+
+  /* Catálogo */
+  .dj-cat { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .dj-cat > li[hidden] { display: none; }
+  .dj-song {
+    width: 100%; display: grid; grid-template-columns: 26px 1fr; align-items: center; gap: 9px;
+    text-align: left; padding: 11px 13px 11px 9px; border-radius: 11px;
+    border: 1.5px solid #ece8e1; background: #fff; cursor: pointer; font-family: inherit;
+    transition: border-color .12s ease, background .12s ease;
+  }
+  .dj-song:hover { border-color: var(--gold); }
+  .dj-song-n {
+    display: flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #e0dacd; background: #fff;
+    font-size: 12px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums;
+  }
+  .dj-song-t { font-size: 13.5px; font-weight: 600; color: #14121a; line-height: 1.3; }
+  .dj-song.elegida { border-color: var(--gold); background: #fdfaf3; }
+  .dj-song.elegida .dj-song-n { background: var(--gold); border-color: var(--gold); }
+  .dj-song.elegida .dj-song-t { font-weight: 800; }
+
+  .dj-nores { margin: 16px 0 0; font-size: 14px; color: #6a6a74; text-align: center; }
+  .dj-nores[hidden] { display: none; }
+  .dj-link { border: 0; background: none; padding: 0; color: var(--gold-dark); font-weight: 700; text-decoration: underline; cursor: pointer; font-family: inherit; font-size: inherit; }
+
+  .dj-msg { margin: 16px 0 0; font-size: 14px; font-weight: 600; text-align: center; }
+  .dj-msg[hidden] { display: none; }
+  .dj-msg.err { color: #c8324c; }
+
+  /* Barra fija de envío */
+  .dj-barra {
+    position: sticky; bottom: 0; z-index: 10; margin-top: 20px;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 13px 0 16px; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 22%);
+  }
+  .dj-barra-n { font-size: 13px; font-weight: 700; color: #6a6a74; font-variant-numeric: tabular-nums; }
+  .dj-enviar:disabled { opacity: .45; cursor: default; }
+
+  .dj-ok { text-align: center; padding: 40px 0 10px; }
+  .dj-ok[hidden] { display: none; }
+  .dj-ok .p-btn { margin-top: 8px; }
+
+  @media (max-width: 520px) {
+    .dj-barra { flex-direction: column; align-items: stretch; gap: 8px; text-align: center; }
+    .dj-enviar { width: 100%; }
+  }
+</style>

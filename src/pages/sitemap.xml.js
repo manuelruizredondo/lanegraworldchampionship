@@ -4,7 +4,7 @@ import { ROUTES } from "../data/routes.js";
 export function GET(context) {
   const site = (context.site ?? new URL("https://campeonatopasoslibres.com")).href.replace(/\/$/, "");
 
-  const urls = ROUTES.flatMap((r) =>
+  const urls = ROUTES.filter((r) => r.sitemap !== false).flatMap((r) =>
     ["es", "en", "it"].map(
       (l) => `  <url>
     <loc>${site}${r[l]}</loc>
