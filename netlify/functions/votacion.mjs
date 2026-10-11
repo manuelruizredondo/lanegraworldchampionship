@@ -96,13 +96,31 @@ export default async (req) => {
   };
   canciones.forEach((c, i) => { fields[`Voto ${i + 1}`] = c; });
 
+  const escribir = (f) => fetch(url, {
+    method: "POST",
+    headers: cabeceras,
+    body: JSON.stringify({ records: [{ fields: f }], typecast: true }),
+  });
+
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: cabeceras,
-      body: JSON.stringify({ records: [{ fields }], typecast: true }),
-    });
-    if (!res.ok) return json({ error: m.servidor, detail: await res.text() }, 502);
+    let res = await escribir(fields);
+
+    // Airtable rechaza el registro ENTERO si alguno de los campos no existe en
+    // la tabla. Antes que perder el voto, se reintenta con lo imprescindible:
+    // el email y las diez posiciones. Lo demás (idioma, recuento, top en texto)
+    // es comodidad para leer la tabla, no el voto.
+    if (!res.ok) {
+      const texto = await res.text();
+      if (/UNKNOWN_FIELD_NAME/i.test(texto)) {
+        const minimo = { Email: fields.Email };
+        canciones.forEach((c, i) => { minimo[`Voto ${i + 1}`] = c; });
+        res = await escribir(minimo);
+        if (!res.ok) return json({ error: m.servidor, detail: await res.text() }, 502);
+      } else {
+        return json({ error: m.servidor, detail: texto }, 502);
+      }
+    }
+
     const data = await res.json();
     return json({ ok: true, recordId: data.records?.[0]?.id });
   } catch (e) {
