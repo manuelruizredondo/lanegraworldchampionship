@@ -44,7 +44,7 @@ const network = [
       </div>
       <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="nl-form" data-nl>
         <input type="hidden" name="form-name" value="newsletter" />
-        <p class="nl-hp" hidden><label>No rellenar: <input name="bot-field" /></label></p>
+        <p class="nl-hp" hidden><label>{{ es: "No rellenar:", en: "Do not fill:", it: "Non compilare:" }[lang] || "No rellenar:"} <input name="bot-field" /></label></p>
         <div class="nl-row">
           <input type="email" name="email" required placeholder={nl.ph} aria-label={nl.ph} />
           <button type="submit">{nl.btn}</button>

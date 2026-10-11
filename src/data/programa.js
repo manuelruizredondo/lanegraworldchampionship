@@ -2,6 +2,13 @@
 // r (sala): gs = Gran Salón del Mundial · pb = Piano Bar · s1 = Sala 1 · s2 = Sala 2 · full = todas
 // k (tipo): taller · master · comp · social · meal · info
 // l (nivel): Abierto · Medio-Bajo · Medio · Medio-Alto · Medio-Avanzado · Avanzado
+// Cada idioma descarga su propio PDF (scripts/programa-pdf.py los genera los tres).
+export const PDF_PROGRAMA = {
+  es: "/pdf/programacion-la-negra-2026.pdf",
+  en: "/pdf/schedule-la-negra-2026.pdf",
+  it: "/pdf/programma-la-negra-2026.pdf",
+};
+
 export const ROOMS = {
   gs: "Gran Salón",
   pb: "Piano Bar",
@@ -24,10 +31,10 @@ export const PROGRAMA = [
     sessions: [
       { t: "Desde 09:30", r: "full", k: "info", n: "Entrega de acreditaciones" },
       { t: "15:30 – 16:45", r: "pb", k: "master", n: "Más allá del resultado: herramientas emocionales para competir y crecer", p: "Franco Rocha" },
-      { t: "17:00 – 18:30", r: "pb", k: "comp", n: "Bachata: Preliminatoria Solistas Chicas" },
-      { t: "18:30 – 20:30", r: "pb", k: "comp", n: "Salsa: Preliminatoria Solistas Chicos" },
+      { t: "17:00 – 18:30", r: "pb", k: "comp", n: "Bachata: Preliminar Solistas Chicas" },
+      { t: "18:30 – 20:30", r: "pb", k: "comp", n: "Salsa: Preliminar Solistas Chicos" },
       { t: "19:30 – 22:30", r: "full", k: "meal", n: "Horario de cena" },
-      { t: "22:00 – 00:45", r: "pb", k: "comp", n: "Salsa: Preliminatoria Solistas Chicas" },
+      { t: "22:00 – 00:45", r: "pb", k: "comp", n: "Salsa: Preliminar Solistas Chicas" },
     ],
   },
   {
@@ -184,9 +191,9 @@ export const PROGRAMA = [
 export const NOMBRES = {
   en: {
     "Más allá del resultado: herramientas emocionales para competir y crecer": "Beyond the result: emotional tools to compete and grow",
-    "Bachata: Preliminatoria Solistas Chicas": "Bachata: Women's Solo Preliminary",
-    "Salsa: Preliminatoria Solistas Chicos": "Salsa: Men's Solo Preliminary",
-    "Salsa: Preliminatoria Solistas Chicas": "Salsa: Women's Solo Preliminary",
+    "Bachata: Preliminar Solistas Chicas": "Bachata: Women's Solo Preliminary",
+    "Salsa: Preliminar Solistas Chicos": "Salsa: Men's Solo Preliminary",
+    "Salsa: Preliminar Solistas Chicas": "Salsa: Women's Solo Preliminary",
     "Ensayo de competidores": "Competitors' rehearsal",
     "Ensayos de competidores": "Competitors' rehearsals",
     "Bachata Street: enriquece tus recursos en footwork y pareja": "Bachata Street: richer footwork and partner work",
@@ -287,9 +294,9 @@ export const NOMBRES = {
   },
   it: {
     "Más allá del resultado: herramientas emocionales para competir y crecer": "Oltre il risultato: strumenti emotivi per competere e crescere",
-    "Bachata: Preliminatoria Solistas Chicas": "Bachata: Preliminare Soliste Donne",
-    "Salsa: Preliminatoria Solistas Chicos": "Salsa: Preliminare Solisti Uomini",
-    "Salsa: Preliminatoria Solistas Chicas": "Salsa: Preliminare Soliste Donne",
+    "Bachata: Preliminar Solistas Chicas": "Bachata: Preliminare Soliste Donne",
+    "Salsa: Preliminar Solistas Chicos": "Salsa: Preliminare Solisti Uomini",
+    "Salsa: Preliminar Solistas Chicas": "Salsa: Preliminare Soliste Donne",
     "Ensayo de competidores": "Prove dei concorrenti",
     "Ensayos de competidores": "Prove dei concorrenti",
     "Bachata Street: enriquece tus recursos en footwork y pareja": "Bachata Street: arricchisci footwork e lavoro in coppia",
@@ -404,6 +411,8 @@ export const I18N = {
     tallBanner: "Próximamente: el horario de talleres del 2026 se anunciará pronto. Lo que ves debajo es una referencia de ediciones anteriores.",
     roomsLabel: "Las salas del festival",
     untilDawn: "Hasta el amanecer",
+    desde: "Desde",
+    close: "Cerrar",
     wipTitle: "Hoy es el día", wipSub: "Sigue nuestras redes",
     masAria: "Ver más clases de esta hora",
     daysAria: "Días", filtersAria: "Filtrar por tipo", searchAria: "Buscar",
@@ -444,7 +453,7 @@ export const I18N = {
       "Horario de cena": "Horario de cena", "Horario de comida": "Horario de comida", "Horario de desayuno": "Horario de desayuno", "Break": "Descanso",
     },
     empty: "No hay resultados con estos filtros.", reset: "Quitar filtros",
-    note: "Los horarios de competición y fiestas pueden sufrir ligeras modificaciones. La organización se reserva el derecho de alterar los talleres por incidencias ajenas. Programación de la edición 2025.",
+    note: "Los horarios de competición y fiestas pueden sufrir ligeras modificaciones. La organización se reserva el derecho de alterar los talleres por incidencias ajenas. Programación de la edición 2026.",
   },
   en: {
     metaTitle: "Schedule · Classes & workshops timetable",
@@ -459,6 +468,8 @@ export const I18N = {
     tallBanner: "Coming soon: the 2026 workshop timetable will be announced shortly. What you see below is a reference from previous editions.",
     roomsLabel: "The festival rooms",
     untilDawn: "Until dawn",
+    desde: "From",
+    close: "Close",
     wipTitle: "Today is the day", wipSub: "Follow us on social media",
     masAria: "See more classes at this time",
     daysAria: "Days", filtersAria: "Filter by type", searchAria: "Search",
@@ -499,7 +510,7 @@ export const I18N = {
       "Horario de cena": "Dinner time", "Horario de comida": "Lunch time", "Horario de desayuno": "Breakfast time", "Break": "Break",
     },
     empty: "No results with these filters.", reset: "Clear filters",
-    note: "Competition and party times may vary slightly. The organization reserves the right to change workshops due to external issues. 2025 edition schedule.",
+    note: "Competition and party times may vary slightly. The organization reserves the right to change workshops due to external issues. 2026 edition schedule.",
   },
   it: {
     metaTitle: "Programma · Orario di lezioni e workshop",
@@ -514,6 +525,8 @@ export const I18N = {
     tallBanner: "Prossimamente: l'orario dei workshop 2026 sarà annunciato a breve. Quello che vedi sotto è un riferimento delle edizioni precedenti.",
     roomsLabel: "Le sale del festival",
     untilDawn: "Fino all'alba",
+    desde: "Dalle",
+    close: "Chiudi",
     wipTitle: "Oggi è il giorno", wipSub: "Seguici sui social",
     masAria: "Vedi altre lezioni a quest'ora",
     daysAria: "Giorni", filtersAria: "Filtra per tipo", searchAria: "Cerca",
@@ -554,6 +567,6 @@ export const I18N = {
       "Horario de cena": "Orario cena", "Horario de comida": "Orario pranzo", "Horario de desayuno": "Orario colazione", "Break": "Pausa",
     },
     empty: "Nessun risultato con questi filtri.", reset: "Rimuovi filtri",
-    note: "Gli orari di competizione e feste possono subire lievi modifiche. L'organizzazione si riserva il diritto di modificare i workshop per cause esterne. Programma dell'edizione 2025.",
+    note: "Gli orari di competizione e feste possono subire lievi modifiche. L'organizzazione si riserva il diritto di modificare i workshop per cause esterne. Programma dell'edizione 2026.",
   },
 };

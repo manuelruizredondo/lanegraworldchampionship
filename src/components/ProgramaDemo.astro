@@ -57,12 +57,25 @@ const T = {
 };
 const t = T[lang] || T.es;
 const HREF = { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" };
+const PDF = { es: "/pdf/programacion-la-negra-2026.pdf", en: "/pdf/schedule-la-negra-2026.pdf", it: "/pdf/programma-la-negra-2026.pdf" };
 
 // Las cuatro tarjetas de la maqueta. `sala` decide su columna en el paso 4.
+// Los dos nombres descriptivos se traducen igual que en la programación real;
+// los que son nombre propio de la clase se dejan como están en los tres idiomas.
+const TRILOGIA = {
+  es: "Bachata Trilogía: tradicional y moderna",
+  en: "Bachata Trilogy: traditional and modern",
+  it: "Trilogia Bachata: tradizionale e moderna",
+};
+const SEMI = {
+  es: "Salsa: Semifinal Solistas Chicos",
+  en: "Salsa: Men's Solo Semi-final",
+  it: "Salsa: Semifinale Solisti Uomini",
+};
 const CARDS = [
   { n: "Afro-Cuban Footwork & Body Movement", p: "Maykel Fonts", sala: "pb", estilo: "salsa", busca: "maykel" },
-  { n: "Bachata Trilogía: tradicional y moderna", p: "Andrés y Jessica", sala: "s1", estilo: "bachata", busca: "" },
-  { n: "Salsa: Semifinal Solistas Chicos", p: "", sala: "gs", estilo: "salsa", busca: "solistas" },
+  { n: TRILOGIA[lang] || TRILOGIA.es, p: "Andrés y Jessica", sala: "s1", estilo: "bachata", busca: "" },
+  { n: SEMI[lang] || SEMI.es, p: "", sala: "gs", estilo: "salsa", busca: "solistas" },
   { n: "Bachata Sensual: Lead & Follow", p: "Berra y Reyes", sala: "s2", estilo: "bachata", busca: "" },
 ];
 ---
@@ -119,7 +132,7 @@ const CARDS = [
 
       <div class="p-container pd-ctas">
         <a class="p-btn p-btn-dark" href={HREF[lang] || HREF.es}>{t.cta}</a>
-        <a class="pd-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
+        <a class="pd-pdf" href={PDF[lang] || PDF.es} download>
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
           {t.pdf}
         </a>

@@ -1,16 +1,22 @@
 ---
+const { lang = "es" } = Astro.props;
+const L = {
+  es: { close: "Cerrar", prev: "Anterior", next: "Siguiente" },
+  en: { close: "Close", prev: "Previous", next: "Next" },
+  it: { close: "Chiudi", prev: "Precedente", next: "Successiva" },
+}[lang] || { close: "Cerrar", prev: "Anterior", next: "Siguiente" };
 // Lightbox reutilizable: haz click en cualquier <img data-lightbox> para verla en grande.
 // Navega entre todas las imágenes data-lightbox de la página con las flechas, el teclado
 // (← →) o deslizando en móvil. Cierra con click fuera, botón ✕ o tecla Escape.
 ---
 <div class="lightbox" data-lightbox-overlay hidden aria-hidden="true">
-  <button class="lightbox-close" type="button" aria-label="Cerrar">&times;</button>
-  <button class="lightbox-nav lightbox-prev" type="button" aria-label="Anterior">&#8249;</button>
+  <button class="lightbox-close" type="button" aria-label={L.close}>&times;</button>
+  <button class="lightbox-nav lightbox-prev" type="button" aria-label={L.prev}>&#8249;</button>
   <figure class="lightbox-fig">
     <img class="lightbox-img" alt="" />
     <figcaption class="lightbox-count" data-lightbox-count></figcaption>
   </figure>
-  <button class="lightbox-nav lightbox-next" type="button" aria-label="Siguiente">&#8250;</button>
+  <button class="lightbox-nav lightbox-next" type="button" aria-label={L.next}>&#8250;</button>
 </div>
 
 <style>

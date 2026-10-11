@@ -8,3 +8,7 @@ public/video/
 
 # Copia local temporal para previsualizar competidores (no versionar)
 public/comp-preview/
+
+# Python
+__pycache__/
+*.pyc

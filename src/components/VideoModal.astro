@@ -1,10 +1,12 @@
 ---
+const { lang = "es" } = Astro.props;
+const CERRAR = { es: "Cerrar", en: "Close", it: "Chiudi" }[lang] || "Cerrar";
 // Modal de vídeo reutilizable: cualquier elemento con [data-video="ID_YT"] abre
 // el vídeo de YouTube en una ventana centrada. Cierra con ✕, click fuera o Escape.
 // El iframe se crea al pulsar (no carga cookies de YouTube hasta entonces).
 ---
 <div class="vm-overlay" data-video-overlay hidden aria-hidden="true">
-  <button class="vm-close" type="button" aria-label="Cerrar">&times;</button>
+  <button class="vm-close" type="button" aria-label={CERRAR}>&times;</button>
   <div class="vm-frame" data-video-frame></div>
 </div>
 

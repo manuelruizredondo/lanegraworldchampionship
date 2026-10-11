@@ -1,5 +1,5 @@
 ---
-import { PROGRAMA, ROOM_LIST, I18N, NOMBRES } from "@/data/programa.js";
+import { PROGRAMA, ROOM_LIST, I18N, NOMBRES, PDF_PROGRAMA } from "@/data/programa.js";
 import { ARTISTS } from "@/data/artists.js";
 import { biosDe, PERFILES, IMG_TO_NAME } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
@@ -97,6 +97,8 @@ const isBachata = (s) => /bachata|dominican|bacano/i.test(s.n || "");
 // traducción se queda el original en vez de desaparecer.
 const NOM = NOMBRES[lang] || {};
 const title = (s) => (s.r === "full" ? (t.band[s.n] || s.n) : (NOM[s.n] || s.n));
+// Las horas abiertas se guardan como "Desde 09:30": solo se traduce el prefijo.
+const hora = (x) => (x || "").replace(/^Desde\b/, t.desde);
 const describe = (s) => {
   if (s.k === "taller") return s.l ? t.levelInfo[s.l] : t.desc.taller;
   return t.desc[s.k] || t.desc.taller;
@@ -110,7 +112,7 @@ const describe = (s) => {
     <h1 class="script-title">{comingSoon ? t.tallH1 : t.h1}</h1>
     {comingSoon
       ? <p class="pr-sub">{t.tallSub}</p>
-      : <p class="pr-sub"><a class="pr-pdf" href="/pdf/programacion-la-negra-2026.pdf" download>
+      : <p class="pr-sub"><a class="pr-pdf" href={PDF_PROGRAMA[lang] || PDF_PROGRAMA.es} download>
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="M7 10l5 5 5-5" /><path d="M12 15V3" /></svg>
           {t.pdfLink}
         </a></p>}
@@ -179,7 +181,7 @@ const describe = (s) => {
           </div>
         </div>
         <div class="pr-timeline">
-        {d.slots.map((slot) => { const tm = slot.t.split(/\s*[–—-]\s*/); return (
+        {d.slots.map((slot) => { const tm = hora(slot.t).split(/\s*[–—-]\s*/); return (
           <div class="pr-slot">
             <div class="pr-rail">
               <div class="pr-time pr-time-start"><span>{tm[0]}</span></div>
@@ -218,7 +220,7 @@ const describe = (s) => {
                         <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>
                       </div>
                     )}
-                    <span class="pr-card-time">{s.t}</span>
+                    <span class="pr-card-time">{hora(s.t)}</span>
                     <h3 class="pr-title">{title(s)}</h3>
                     {s.p && (() => {
                       const p0 = s.p;
