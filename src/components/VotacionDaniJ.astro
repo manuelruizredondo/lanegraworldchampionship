@@ -471,6 +471,12 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-ok[hidden] { display: none; }
   .dj-ok .p-btn { margin-top: 8px; }
 
+  /* En móvil el botón de WhatsApp flota en la esquina de abajo a la derecha y
+     se montaba encima del botón de enviar, que ocupa todo el ancho. Se sube la
+     barra lo justo para dejarlo libre (52px del botón + 14 de su margen). */
+  @media (max-width: 640px) {
+    .dj-barra { padding-bottom: 78px; }
+  }
   @media (max-width: 520px) {
     .dj-barra { flex-direction: column; align-items: stretch; gap: 8px; text-align: center; }
     .dj-enviar { width: 100%; }
