@@ -21,6 +21,13 @@ const anchorNav = [
   { label: "CONTATTI", href: "#contactar" },
 ];
 
+const stats = [
+  { n: "XV", l: "Edizioni" },
+  { n: "+20", l: "Paesi" },
+  { n: "+90", l: "Artisti" },
+  { n: "4", l: "Notti di festa" },
+];
+
 const introGallery = [
   "la-negra-dance-festival-festival-img-18.webp",
   "la-negra-dance-festival-festival-img-14.webp",
@@ -89,44 +96,24 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
 
     <!-- Dichiarazione (badge rotante + frase grande), come il Mondiale -->
     <Statement html={stmtHtml} sub={stmtSub} />
-
-    <!-- LUOGO + COME ARRIVARE -->
-    <section class="p-section fx-loc">
-      <div class="p-container fx-loc-grid">
-        <div class="fx-media" data-slideshow>
-          {introGallery.map((src, i) => <img class={"fx-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" decoding="async" />)}
-          <div class="fx-bars">{introGallery.map((_, i) => <span class={i === 0 ? "is-on" : undefined}></span>)}</div>
-        </div>
-        <div class="fx-loc-text">
-          <p class="p-eyebrow">Dove ci troviamo</p>
-          <h2 class="p-h2">Il luogo e come arrivare</h2>
-          <ul class="fx-loc-list">
-            <li><span class="fx-loc-k">Il luogo</span> Calpe, Alicante (Spagna) — Hotel ufficiale AR Diamante Beach 4* superior.</li>
-            <li><span class="fx-loc-k">Aeroporti più vicini</span> Alicante (50 min dall'hotel) · Valencia (1h 20min dall'hotel)</li>
-          </ul>
-          <a class="p-btn p-btn-dark" href="https://maps.app.goo.gl/1Upi3tNxMANnCbZ87" target="_blank" rel="noopener">Vedi mappa</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ARTISTS -->
-    <section id="artistas" class="p-section p-center p-gray">
+    <!-- COS'È + NUMERI -->
+    <section class="p-section p-center">
       <div class="p-container">
-        <p class="p-eyebrow">Salsa · Bachata</p>
-        <h2 class="p-h2">I nostri artisti ospiti</h2>
-        <p class="p-lead p-narrow">Ogni anno portiamo artisti e ballerini di fama internazionale da ogni angolo del mondo. Ballerini d'élite, workshop, spiaggia, piscine, feste e concorrenti provenienti da oltre 20 paesi si riuniscono in questo grande evento.</p>
-        <div class="f-artists">
-          {artists.map((a) => (
-            <article class="f-artist">
-              <div class="f-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" decoding="async" /></div>
-              <h3 class="f-artist-n">{a.name}</h3>
-              <p class="f-artist-c">{a.country}</p>
-            </article>
-          ))}
+        <p class="p-eyebrow">Il festival</p>
+        <h2 class="p-h2 p-narrow">Festival e Mondiale, sullo stesso palco</h2>
+        <p class="p-lead p-narrow">Workshop con le leggende della salsa e della bachata, il Campionato Mondiale di Pasos Libres e le notti più ballate dell'anno. Tutto in un unico hotel fronte mare, che tu venga da solo, con gli amici o in coppia.</p>
+      </div>
+      <div class="p-container f-stats">
+        <div class="p-stats">
+          <div class="p-stats-row">
+            {stats.map((s) => (
+              <div class="p-stat"><span class="p-stat-n">{s.n}</span><span class="p-stat-l">{s.l}</span></div>
+            ))}
+          </div>
         </div>
-        <a class="p-btn p-btn-light" href="/it/artists/">Vedi tutti</a>
       </div>
     </section>
+
 
     <!-- WORKSHOPS -->
     <section id="talleres" class="p-section">
@@ -154,6 +141,25 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       </div>
     </section>
 
+    <!-- ARTISTS -->
+    <section id="artistas" class="p-section p-center p-gray">
+      <div class="p-container">
+        <p class="p-eyebrow">Salsa · Bachata</p>
+        <h2 class="p-h2">I nostri artisti ospiti</h2>
+        <p class="p-lead p-narrow">Ogni anno portiamo artisti e ballerini di fama internazionale da ogni angolo del mondo. Ballerini d'élite, workshop, spiaggia, piscine, feste e concorrenti provenienti da oltre 20 paesi si riuniscono in questo grande evento.</p>
+        <div class="f-artists">
+          {artists.map((a) => (
+            <article class="f-artist">
+              <div class="f-artist-img"><img src={img(a.img)} alt={a.name} loading="lazy" decoding="async" /></div>
+              <h3 class="f-artist-n">{a.name}</h3>
+              <p class="f-artist-c">{a.country}</p>
+            </article>
+          ))}
+        </div>
+        <a class="p-btn p-btn-light" href="/it/artists/">Vedi tutti</a>
+      </div>
+    </section>
+
     <!-- LA NOTTE · FESTA -->
     <section id="fiesta" class="p-section f-night">
       <div class="p-container f-night-grid">
@@ -169,30 +175,12 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       </div>
     </section>
 
-    <!-- FULL PASS -->
-    <section id="fullpass" class="p-section p-center p-gray">
-      <div class="p-container">
-        <p class="p-eyebrow">Full Pass</p>
-        <h2 class="p-h2">Ci vediamo a La Negra</h2>
-        <p class="p-lead p-narrow">Vendita dei biglietti gestita tramite <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a>.</p>
-        <div class="f-widget">
-          <iframe
-            src="https://www.goandance.com/en/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"
-            title="Acquista il Full Pass — go&dance"
-            loading="lazy"
-          ></iframe>
-        </div>
-        <p class="f-credit">Powered by <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a></p>
-        <a class="p-link f-gd-link" href={gdEvent} target="_blank" rel="noopener">Vai alla pagina dei biglietti ↗</a>
-      </div>
-    </section>
-
     <!-- HOTEL -->
     <section id="hotel" class="p-section">
       <div class="p-container p-center">
-        <p class="p-eyebrow">AR Diamante Beach</p>
-        <h2 class="p-h2">Prenota subito il tuo hotel</h2>
-        <p class="p-lead">Sede del La Negra Dance Festival</p>
+        <p class="p-eyebrow">La sede · AR Diamante Beach</p>
+        <h2 class="p-h2">Dormi, balli e gareggi senza spostarti</h2>
+        <p class="p-lead p-narrow">L'hotel sede è il centro di tutto: workshop, competizione, feste, spiaggia e piscina a pochi passi.</p>
       </div>
       <div class="p-container f-hotel-grid">
         <div class="f-hotel-text">
@@ -235,6 +223,43 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
       </div>
     </section>
 
+    <!-- LUOGO + COME ARRIVARE -->
+    <section class="p-section fx-loc">
+      <div class="p-container fx-loc-grid">
+        <div class="fx-media" data-slideshow>
+          {introGallery.map((src, i) => <img class={"fx-slide" + (i === 0 ? " is-on" : "")} src={img(src)} alt="" loading="lazy" decoding="async" />)}
+          <div class="fx-bars">{introGallery.map((_, i) => <span class={i === 0 ? "is-on" : undefined}></span>)}</div>
+        </div>
+        <div class="fx-loc-text">
+          <p class="p-eyebrow">Dove ci troviamo</p>
+          <h2 class="p-h2">Il luogo e come arrivare</h2>
+          <ul class="fx-loc-list">
+            <li><span class="fx-loc-k">Il luogo</span> Calpe, Alicante (Spagna) — Hotel ufficiale AR Diamante Beach 4* superior.</li>
+            <li><span class="fx-loc-k">Aeroporti più vicini</span> Alicante (50 min dall'hotel) · Valencia (1h 20min dall'hotel)</li>
+          </ul>
+          <a class="p-btn p-btn-dark" href="https://maps.app.goo.gl/1Upi3tNxMANnCbZ87" target="_blank" rel="noopener">Vedi mappa</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FULL PASS -->
+    <section id="fullpass" class="p-section p-center p-gray">
+      <div class="p-container">
+        <p class="p-eyebrow">Il pass</p>
+        <h2 class="p-h2">Un biglietto per tutto: il Full Pass</h2>
+        <p class="p-lead p-narrow">Workshop, competizione, show e feste con un unico pass. Vendita dei biglietti gestita tramite <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a>.</p>
+        <div class="f-widget">
+          <iframe
+            src="https://www.goandance.com/en/event-tickets/106ef4d5-c8be-4fce-8660-ea6854726bff?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fcompeticion%2F"
+            title="Acquista il Full Pass — go&dance"
+            loading="lazy"
+          ></iframe>
+        </div>
+        <p class="f-credit">Powered by <a class="f-a" href={gdEvent} target="_blank" rel="noopener">go&amp;dance</a></p>
+        <a class="p-link f-gd-link" href={gdEvent} target="_blank" rel="noopener">Vai alla pagina dei biglietti ↗</a>
+      </div>
+    </section>
+
     <!-- CONTACT -->
     <section id="contactar" class="p-section p-gray">
       <div class="p-container p-center">
@@ -265,16 +290,6 @@ const gdEvent = "https://www.goandance.com/es/evento/8885/la-negra-dance-festiva
         <div class="f-contact-imgs">
           {fiestaGallery.map((src) => <div class="f-g-item f-g-sq"><img src={img(src)} alt="" loading="lazy" decoding="async" /></div>)}
         </div>
-      </div>
-    </section>
-
-    <!-- FIESTA CTA -->
-    <section class="p-final">
-      <div class="f-final-inner">
-        <p class="p-eyebrow">Di notte…</p>
-        <h2 class="p-h2 p-white">Goditi la festa!</h2>
-        <p class="p-white-70">Dopo un'intensa giornata di workshop, apprendimento e riposo… c'è la festa! Preparati a notti di pura energia nelle nostre feste a tema, con la migliore atmosfera, i migliori ballerini e la migliore musica.</p>
-        <a class="p-btn p-btn-light" href="/it/fiesta/">Scopri di più</a>
       </div>
     </section>
   </div>

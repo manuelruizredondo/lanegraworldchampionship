@@ -142,6 +142,12 @@ def clave(s):
     return "meal" if k == "meal" else "info"
 
 
+def capitaliza(t):
+    """«DOMINGO» → «Domingo», «25 OCT» → «25 oct». Solo la inicial en mayúscula."""
+    t = (t or "").lower()
+    return t[:1].upper() + t[1:] if t[:1].isalpha() else t
+
+
 def titulo(s):
     """El rótulo ya dice «MUNDIAL BACHATA» o «MASTERCLASS»: el título no lo repite."""
     n = s.get("n") or ""
@@ -208,9 +214,13 @@ def main(ruta_datos, lang, salida):
                         height=40, preserveAspectRatio=True, anchor="sw", mask="auto")
         except Exception:
             pass
+        # Un pelín de tracking negativo: el tamaño grande lo pide.
         c.setFillColorRGB(*NEGRO)
-        c.setFont("Helvetica-Bold", 21)
-        c.drawString(M + 74, H - 34, f"{dia} {fecha}")
+        to = c.beginText(M + 74, H - 34)
+        to.setFont("Helvetica-Bold", 21)
+        to.setCharSpace(-0.5)
+        to.textOut(f"{dia} {fecha}")
+        c.drawText(to)
         c.setFont("Helvetica-Bold", 8.5)
         c.drawRightString(W - M, H - 30, ET["cabecera"])
 
@@ -305,7 +315,7 @@ def main(ruta_datos, lang, salida):
             else:
                 slots.append({"t": s["t"], "items": [s]})
         pag += 1
-        y = cabecera(d["day"].upper(), d["date"])
+        y = cabecera(capitaliza(d["day"]), capitaliza(d["date"]))
         pie(pag)
         for sl in slots:
             banda = [s for s in sl["items"] if s["r"] == "full"]
@@ -313,17 +323,22 @@ def main(ruta_datos, lang, salida):
             if y - hh < 34:
                 c.showPage()
                 pag += 1
-                y = cabecera(d["day"].upper() + f' ({ET["cont"]})', d["date"])
+                y = cabecera(capitaliza(d["day"]) + f' ({ET["cont"]})', capitaliza(d["date"]))
                 pie(pag)
             if banda:
                 s = banda[0]
                 fondo, tinta = color_de(s)
                 comida = s["k"] == "meal"
+                c.setFillColorRGB(*NEGRO)
+                c.setFont("Helvetica-Bold", 7.6)
+                c.drawString(M, y - hh + 7, sl["t"])
+                # La banda arranca donde arrancan las tarjetas, para que la hora
+                # quede alineada con la del resto de filas.
                 c.setFillColorRGB(*fondo)
-                c.roundRect(M, y - hh, W - 2 * M, hh, 3, fill=1, stroke=0)
+                c.roundRect(M + TW, y - hh, W - M - TW - M, hh, 3, fill=1, stroke=0)
                 c.setFillColorRGB(*(ROJO_COMIDAS if comida else tinta))
                 c.setFont("Helvetica-Bold", 7.6)
-                c.drawCentredString(W / 2, y - hh + 7, f'{s["n"].upper()}  ·  {sl["t"]}')
+                c.drawCentredString(M + TW + (W - M - TW - M) / 2, y - hh + 7, s["n"].upper())
                 y -= hh + 5
                 continue
             c.setFillColorRGB(*NEGRO)

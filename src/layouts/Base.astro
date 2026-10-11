@@ -28,12 +28,14 @@ const {
   lang = "es",
   heroOverlay = false,
   image,
+  noindex = false,
 } = Astro.props as {
   title?: string;
   description?: string;
   lang?: Lang;
   heroOverlay?: boolean;
   image?: string;
+  noindex?: boolean;
 };
 
 const desc = description || DEFAULT_DESC[lang] || DEFAULT_DESC.es;
@@ -91,6 +93,7 @@ const orgSchema = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={desc} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     {alternates && (
       <>

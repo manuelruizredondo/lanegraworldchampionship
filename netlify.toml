@@ -47,7 +47,19 @@
   status = 301
   force = true
 
-# Astro genera 404.html automáticamente desde src/pages/404.astro.
+# 404 por idioma. Astro genera los tres (src/pages/404.astro y los de en/ e it/);
+# estas reglas hacen que una URL rota bajo /en/ o /it/ devuelva la suya, con su
+# menú y su texto, en vez de la española. Van al final: Netlify aplica la
+# primera regla que casa, así que cualquier redirección real tiene prioridad.
+[[redirects]]
+  from = "/en/*"
+  to = "/en/404/index.html"
+  status = 404
+
+[[redirects]]
+  from = "/it/*"
+  to = "/it/404/index.html"
+  status = 404
 [[headers]]
   for = "/img/*"
   [headers.values]

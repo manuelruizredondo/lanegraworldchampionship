@@ -313,7 +313,6 @@
   .p-map-sec { padding: calc(var(--p-gap) * .55) 0 0; }
   .p-map-head { margin-bottom: 6px; }
   .p-map { position: relative; width: 100%; padding-top: 70px; overflow: hidden; }
-  .p-map-grid { display: none; }
   /* la inclinación encoge la proyección: subimos el plano para comerle el blanco */
   .p-map-plane { position: relative; margin-top: -6.5%; margin-bottom: -1%; }
   /* El 3D vive SOLO en la imagen (sin preserve-3d anidado: compatible con Safari);
@@ -375,7 +374,6 @@
   .p-map-m { display: none; }
   @media (max-width: 700px) {
     .p-map { display: none; }
-    .p-map-grid { display: none; }
     .p-map-sec { padding: calc(var(--p-gap) * .5) 0 0; }
     .p-map-m { display: block; margin-top: 24px; }
     .p-map-bolas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px 8px; }
