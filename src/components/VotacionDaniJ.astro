@@ -2,7 +2,7 @@
 // Votación del repertorio del concierto de Dani J.
 // Se elige hasta MAX_VOTOS canciones y se ordenan: el orden ES el voto, así que
 // la posición viaja al servidor tal cual la deja la persona.
-import { CANCIONES, MAX_VOTOS, CIERRE, I18N, RUTA_PROGRAMA } from "@/data/danij.js";
+import { CANCIONES, MAX_VOTOS, CIERRE, I18N, RUTA_PROGRAMA, YT } from "@/data/danij.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
@@ -53,11 +53,17 @@ const cerrada = Date.now() > Date.parse(CIERRE);
 
         <ul class="dj-cat" data-dj-cat>
           {CANCIONES.map((c) => (
-            <li>
+            <li class="dj-fila">
               <button type="button" class="dj-song" data-song={c} aria-pressed="false">
                 <span class="dj-song-n" aria-hidden="true"></span>
                 <span class="dj-song-t">{c}</span>
               </button>
+              {YT[c] && (
+                <button type="button" class="dj-play" data-yt={YT[c]} data-yt-nombre={c}
+                        aria-label={`${t.escuchar} ${c}`} title={`${t.escuchar} ${c}`}>
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4c.6-.4.6-1.4 0-1.8l-10-6.4c-.7-.4-1.6.1-1.6.9z"/></svg>
+                </button>
+              )}
             </li>
           ))}
         </ul>
@@ -72,6 +78,21 @@ const cerrada = Date.now() > Date.parse(CIERRE);
           <button class="p-btn p-btn-dark dj-enviar" type="submit" data-dj-enviar>{t.enviar}</button>
         </div>
       </form>
+
+      <!-- Escucha previa: el iframe se crea al abrir y se destruye al cerrar,
+           así no se queda sonando de fondo ni carga nada hasta que se pide. -->
+      <div class="dj-prev" data-dj-prev hidden>
+        <div class="dj-prev-fondo" data-dj-prev-fuera></div>
+        <div class="dj-prev-caja" role="dialog" aria-modal="true" aria-labelledby="dj-prev-t">
+          <div class="dj-prev-barra">
+            <p class="dj-prev-t" id="dj-prev-t" data-dj-prev-t></p>
+            <button type="button" class="dj-prev-x" data-dj-prev-cerrar aria-label={t.cerrarPrev}>
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="dj-prev-video" data-dj-prev-video></div>
+        </div>
+      </div>
 
       <div class="dj-ok" data-dj-ok hidden>
         <h2 class="p-h2">{t.okTitulo}</h2>
@@ -167,9 +188,47 @@ const cerrada = Date.now() > Date.parse(CIERRE);
     }
 
     cat.addEventListener("click", (e) => {
+      const play = e.target.closest("[data-yt]");
+      if (play) { abrirPrev(play.dataset.yt, play.dataset.ytNombre); return; }
       const b = e.target.closest("[data-song]");
       if (b) alternar(b.dataset.song);
     });
+
+    // --- Escucha previa ---
+    const prev = document.querySelector("[data-dj-prev]");
+    const prevVideo = prev.querySelector("[data-dj-prev-video]");
+    const prevTitulo = prev.querySelector("[data-dj-prev-t]");
+    let ultimoFoco = null;
+
+    function abrirPrev(id, nombre) {
+      ultimoFoco = document.activeElement;
+      prevTitulo.textContent = nombre || "";
+      // Se crea aquí: hasta ahora no se había pedido nada a YouTube.
+      const f = document.createElement("iframe");
+      f.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
+              "?autoplay=1&rel=0&modestbranding=1&playsinline=1";
+      f.title = nombre || "YouTube";
+      f.allow = "autoplay; encrypted-media; picture-in-picture";
+      f.allowFullscreen = true;
+      f.referrerPolicy = "strict-origin-when-cross-origin";
+      prevVideo.replaceChildren(f);
+      prev.hidden = false;
+      document.body.style.overflow = "hidden";
+      prev.querySelector("[data-dj-prev-cerrar]").focus();
+    }
+
+    function cerrarPrev() {
+      if (prev.hidden) return;
+      prev.hidden = true;
+      // Vaciar el contenedor mata el iframe: deja de sonar y de cargar.
+      prevVideo.replaceChildren();
+      document.body.style.overflow = "";
+      if (ultimoFoco && ultimoFoco.isConnected) ultimoFoco.focus();
+    }
+
+    prev.querySelector("[data-dj-prev-fuera]").addEventListener("click", cerrarPrev);
+    prev.querySelector("[data-dj-prev-cerrar]").addEventListener("click", cerrarPrev);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrarPrev(); });
 
     // Buscador: sin acentos ni mayúsculas, para que «corazon» encuentre «CORAZÓN».
     const norm = (s) => (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -224,7 +283,14 @@ const cerrada = Date.now() > Date.parse(CIERRE);
 <style>
   .dj { padding: 26px 0 120px; }
   .dj-head { text-align: center; max-width: 720px; }
-  .dj-h1 { margin: 2px 0 10px; }
+  /* Titular en UNA sola línea en cualquier ancho: el tamaño va con el viewport
+     y `nowrap` impide que parta. Los tres idiomas rondan los 22 caracteres, así
+     que el mismo ajuste les sirve. */
+  .dj-h1 {
+    margin: 2px 0 10px;
+    white-space: nowrap;
+    font-size: clamp(22px, 8.4vw, 72px);
+  }
   .dj-plazo {
     display: inline-block; margin: 10px 0 0; padding: 7px 14px; border-radius: 999px;
     background: #f4efe4; color: var(--gold-dark, #a28243); font-size: 13px; font-weight: 700;
@@ -299,6 +365,39 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-song.elegida { border-color: var(--gold); background: #fdfaf3; }
   .dj-song.elegida .dj-song-n { background: var(--gold); border-color: var(--gold); }
   .dj-song.elegida .dj-song-t { font-weight: 800; }
+
+  /* Fila = elegir (crece) + escuchar (fijo) */
+  .dj-fila { display: flex; gap: 6px; align-items: stretch; }
+  .dj-fila > .dj-song { flex: 1 1 auto; min-width: 0; }
+  .dj-play {
+    flex: 0 0 auto; width: 46px; border-radius: 11px;
+    border: 1.5px solid #ece8e1; background: #fff; color: #6a6a74;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: border-color .12s ease, background .12s ease, color .12s ease;
+  }
+  .dj-play:hover { border-color: var(--gold); background: #fdfaf3; color: var(--gold-dark, #a28243); }
+  .dj-play svg { margin-left: 2px; }
+
+  /* Mini modal de escucha */
+  .dj-prev { position: fixed; inset: 0; z-index: 3500; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .dj-prev[hidden] { display: none; }
+  .dj-prev-fondo { position: absolute; inset: 0; background: rgba(15, 11, 30, .64); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .dj-prev-caja {
+    position: relative; z-index: 1; width: 100%; max-width: 520px;
+    background: #14121a; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .5); animation: djPrevIn .2s ease;
+  }
+  @keyframes djPrevIn { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+  .dj-prev-barra { display: flex; align-items: center; gap: 10px; padding: 11px 10px 11px 15px; }
+  .dj-prev-t { margin: 0; flex: 1; min-width: 0; color: #fff; font-size: 13.5px; font-weight: 700; letter-spacing: .01em; overflow-wrap: anywhere; }
+  .dj-prev-x {
+    flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; border: 0;
+    background: rgba(255, 255, 255, .12); color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dj-prev-x:hover { background: rgba(255, 255, 255, .22); }
+  .dj-prev-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+  .dj-prev-video :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
 
   .dj-nores { margin: 16px 0 0; font-size: 14px; color: #6a6a74; text-align: center; }
   .dj-nores[hidden] { display: none; }

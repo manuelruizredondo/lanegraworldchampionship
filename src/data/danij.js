@@ -114,6 +114,119 @@ export const CANCIONES = [
   "QUÉDATE CONMIGO",
 ];
 
+// Vídeo de YouTube de cada canción, para la escucha previa: título exacto de
+// la lista de arriba → id de 11 caracteres (lo que va detrás de "watch?v=").
+// Solo sale el botón de play en las canciones que estén aquí; las que falten
+// se quedan sin él, antes que abrir un vídeo equivocado.
+//
+// Para añadir una: copia la URL del vídeo en YouTube y quédate con el id.
+//   https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  "dQw4w9WgXcQ"
+export const YT = {
+  "VOODOO": "9Uucv8qF-MU",  // Dani J - Voodoo (Videoclip Oficial)
+  "VICIO": "evawUbA9DYo",  // Dani J - Vicio (Videoclip Oficial)
+  "QUE HABLEN": "LS9_4cvQIQA",  // Dani J - Que Hablen ft. Korke & Judith
+  "FANÁTICO": "Zd-nBRmPWVs",  // Dani J - Fanático (Official Video)
+  "BAILÁNDOTE": "xy-oNPhVvao",  // Dani J - Bailándote - Benidorm Fest 2026
+  "RUTA 66": "pRM8szWDv5U",  // Dani J - RUTA 66 (Videoclip Oficial)
+  "EL CORAZÓN NO PERDONA": "9K7Lai67ZQc",  // Mr. Don, Dani J, DerekVinci - El Corazón No Perdona
+  "ENTRE LA ESPADA Y LA PARED": "NWm6_K9HjT0",  // Dani J & Pinto Picasso - Entre La Espada Y La Pared
+  "NIÑA SIN TI": "beEnyP5YhxE",  // Sergio Contreras y Dani J - Niña sin ti
+  "100 AÑOS CONTIGO (SALSA)": "ZgAw-cYcyOk",  // Dani J & Dj Fabrizio Zoro - 100 AÑOS CONTIGO (Salsa)
+  "aMARTE (SALSA)": "SDbiZAwy_KQ",  // Dani J & Dj Fabrizio Zoro - aMarte
+  "VULNERABLE": "CePn8y-wLRU",  // Joana Santos, Dani J - VULNERABLE
+  "ASI DE RICO": "hgk_dJi0jQ0",  // ASÍ DE RICO - MONTELIER ft DANI J
+  "NO ME HAGO EL DURO (BACHATA VERSION)": "u7F7CPOaYUU",  // Dani J - No Me Hago El Duro (Bachata Version)
+  "DTMF (BACHATA VERSION)": "AwJbP04eHZU",  // Dani J - DtMF (Bachata Version)
+  "MEDLEY DADDY YANKEE (BACHATA VERSION)": "N66XXuQgX_I",  // Dani J - Daddy Yankee Medley (Bachata Version)
+  "RATA DE DOS PATAS (BACHATA VERSION)": "bxmubVimJNc",  // Dani J - Rata de Dos Patas (Bachata Version)
+  "ROSAS": "7Jf6YB6-S-I",  // Dani J & Kewin Cosmos - Rosas
+  "SOLITA": "r4FYwW8szq4",  // Nesty x Dani J - Solita
+  "BUENAS NOCHES MI AMOR": "E1wk5FY8NiU",  // Dani J & Marco Puma - Buenas Noches Mi Amor
+  "COMO TU NO HAY DOS (BACHATA VERSION)": "zesXzES7wA4",  // Dani J - COMO TÚ NO HAY DOS
+  "MILLONARIA": "nQlY7Kq-zws",  // Dani J - Millonaria
+  "TOKYO": "BcEHjSrSPbw",  // Dani J - Tokyo
+  "ENTRE UN MILLÓN (BACHATA VERSION)": "Q1mwcYUN-6M",  // Dani J, DJ Ramon - Entre Un Millón (Bachata Version)
+  "NO ME ACOSTUMBRO (BACHATA VERSION)": "QBtV2BSCA6c",  // Dani J, Dj Husky - No Me Acostumbro (Bachata Version)
+  "QUE TIENES TU (BACHATA VERSION)": "3MmEwxcTByA",  // Dani J, Ryan Miles - Qué tienes tú (Bachata Version)
+  "TE PIDO (BACHATA VERSION)": "hEYPrUubYc8",  // Dani J, DJ Alejandro, Dimen5ions - Te Pido (Bachata Version)
+  "TAN SOLO TU (BACHATA VERSION)": "-_0aAA-MDtQ",  // Dani J, Dj León - Tan Solo Tú (Bachata Version)
+  "TULUM (BACHATA VERSION)": "X2VnqyWU9Jo",  // Dani J, Dj Tony Pecino - Tulum (Bachata Version)
+  "PISCINA (BACHATA VERSION)": "XxpgoGUGw9I",  // Dani J & Dj Tronky - Piscina (Bachata Version)
+  "SI TU NO ESTAS AQUÍ (BACHATA VERSION)": "1FmTSA9ONhA",  // Dani J, Dj Tony - Si Tú No Estás Aquí (Bachata Version)
+  "13": "AjtfBlm4fnY",  // Dani J - 13 (Videoclip Oficial)
+  "LOCA": "AmHvTxyBowE",  // Dani J x Efrem J - LOCA
+  "SEVEN (BACHATA VERSION)": "gbAKuplJQkc",  // Dani J - Seven (Bachata Version)
+  "NO VUELVO A CAER": "MIcB_MW0g44",  // Dani J - No Vuelvo A Caer
+  "ATEMPORAL": "_JzoQ06LkA0",  // Dani J, Danny Romero - Atemporal
+  "DISPARO AL CORAZÓN": "GswKJdc2biQ",  // Dani J - Disparo Al Corazón
+  "VILLANO": "O__YH8ChLYI",  // Dani J - Villano
+  "7 PECADOS": "BlsNeRhIDpY",  // Dani J - 7 Pecados
+  "BORRACHO": "pNs55eVcfV0",  // Román, Dani J - Borracho
+  "CAPRICHITO": "gIxYp0QunbI",  // Dani J - Caprichito
+  "PEÓN": "arvXDzPKH80",  // Dani J, Caluu C - Peón
+  "MIL VIDAS": "leY1HrwwZNQ",  // Dani J - Mil Vidas
+  "ME GUSTA": "ZKPwEeiwURc",  // Dani J - Me Gusta
+  "TE QUIERO A TI (BACHATA VERSION)": "Jl_geciBGWc",  // Soraya & Dani J - Te Quiero A Ti (Versión Bachata)
+  "GITANA": "l0bPbxWDwO8",  // Gitana - Dani J ft Luis&Andrea
+  "CASI TUYA": "nr8Tzf-i4-k",  // Joana Santos, Dani J - CASI TUYA
+  "LEY DE GRAVEDAD (BACHATA VERSION)": "9GhbcnWbOnA",  // Dani J, DJ Dimen5ions & DJ Alejandro - Ley de Gravedad
+  "LUNES X LA MAÑANA (SALSA)": "NMhp66NIvDE",  // Dani J - Lunes X La Mañana
+  "LUCES (SALSA)": "YnYqXBIVDq0",  // Dani J - Luces (Audio Oficial) Salsa
+  "ACÉRCATE A MI (SALSA)": "rQ5HPJ-zgcY",  // Dani J - Acércate A Mi (Audio Oficial) Salsa
+  "MIEDO (SALSA)": "V5q4QaptAf8",  // Dani J - Miedo (Audio Oficial) Salsa
+  "DOBLE O NADA (SALSA)": "0lGUIW37tbM",  // Dani J - Doble O Nada (Audio Oficial) Salsa
+  "QUEDATE UNA NOCHE MÁS (SALSA)": "CXJw4uckzC0",  // Dani J Ft. La Máxima79 - Quédate Una Noche Más (Salsa)
+  "LUNA (SALSA)": "uCXUyMW4-8A",  // Dani J - Luna (Audio Oficial) Salsa
+  "INOLVIDABLE (SALSA)": "IZRKUf27bmE",  // Dani J, La Máxima 79 - Inolvidable
+  "TU JUGUETE": "oMa-fVm7FnE",  // Dani J - Tu Juguete
+  "NIÑA PIENSA EN TI (BACHATA VERSION)": "88cC2PA65Ws",  // Dani J - Niña Piensa En Ti
+  "MENTIRAS": "DhOCCPKVUh0",  // Dani J, Kewin Cosmos - Mentiras
+  "DECÍDETE": "KKtX-9bZTHQ",  // Dani J, Bachata Heightz - Decídete
+  "1+1": "MGg8tSUzffQ",  // Mario Baro, Dani J - 1 + 1
+  "VENTE": "gzMneT9oIVs",  // Dani J, Be Yhong - Vente
+  "QUE HACES CON EL": "MDQHwT3cS8E",  // Marco Puma & Dani J - Que Haces Con El
+  "BÉSAME (BACHATA VERSION)": "sYJJxSqDdVM",  // Bésame - Dani J, Sanco, Dj Husky
+  "ENTRE TÚ Y MIL MARES (BACHATA VERSION)": "GZq0LWDBYn0",  // Dani J - Entre Tú Y Mil Mares
+  "TRA TE E IL MARE (BACHATA VERSION)": "dtm9ukWtywA",  // Dani J - Tra Te e il Mare (versión Italiano)
+  "BIPOLAR": "3cKtiGX2SP0",  // Dani J, Dama - Bipolar
+  "BLINDING LIGHTS (BACHATA VERSION)": "xfX73hD51MA",  // Dani J - Blinding Lights (Bachata Cover)
+  "TENTACIÓN": "CCfkGngBblQ",  // Dani J - Tentación
+  "ALÉJATE DE MI (BACHATA VERSION)": "4409ycNRNlI",  // Dani J - Aléjate De Mi (Versión Bachata)
+  "UNA FLOR (BACHATA VERSION)": "R_o4F5sNPJw",  // Dani J Ft. Dimen5ions, DJ Alejandro - Una Flor (Versión Bachata)
+  "MI MALDICIÓN": "euxrnHCjfF0",  // Dani J - Mi Maldición
+  "FAVORITO (BACHATA VERSION)": "qxZeKpSXIGE",  // Dani J - Favorito (Version Bachata)
+  "QUÍEN LO DIRIA": "_MI0JPE4KC0",  // Dani J - Quién Lo Diría
+  "QUIERO QUEDARME CONTIGO": "l8TMwagrz3I",  // Dani J - Quiero Quedarme Contigo
+  "TODO DE MI": "M9IIxmKpJYk",  // Dani J - Todo De Mi
+  "SUPERSTICIÓN": "mBBdsvRAJrE",  // Dani J - Superstición
+  "AIRE": "IQyVbzMgt0E",  // Dani J Ft. Xriz - Aire
+  "TÚ O YO": "h-86Lv6Us4c",  // Manny Rod, Dani J - Tú o Yo
+  "BAILEMOS DESPACIO": "wOCEZyll1C4",  // Dani J - Bailemos Despacio
+  "ME DERRUMBO": "Pc7y1S_KyGs",  // Dani J - Me Derrumbo
+  "DEVUÉLVEME LA VIDA (BACHATA VERSION)": "j8etGnvwHnI",  // Dani J - Devuélveme La Vida (Versión Bachata)
+  "HASTA CUANDO (BACHATA VERSION)": "Y-uvuSzGEIM",  // Dani J Ft. Sanco - Hasta Cuando (Version Bachata)
+  "LA ÚLTIMA NOCHE (BACHATA VERSION)": "eiCr_6-Chc4",  // Dani J - La Última Noche (Versión Bachata)
+  "DJ GOT US FALLIN'IN LOVE (BACHATA VERSION)": "8DF2tLhNJBA",  // Dani J - DJ Got Us Fallin'in Love (Versión Bachata)
+  "IT'S A MANS WORLD (BACHATA VERSION)": "n5JISUrn8wo",  // Dani J - Is A Mans World (Versión Bachata)
+  "DECIDISTE DEJARME (BACHATA VERSION)": "LD-SVGvVUGs",  // Decidiste Dejarme - Dani J ft. Panacea Project
+  "PEDACITOS DE TI (BACHATA VERSION)": "c6x2QJ2zjPM",  // Pedacitos De Ti - Dj Khalid Ft. Dani J
+  "Y AHORA (BACHATA VERSION)": "r9psXg9m6Dw",  // Dani J - Y Ahora (Versión Bachata)
+  "COMO TE ATREVES (BACHATA VERSION)": "are0YLwGlEU",  // Dani J - Como Te Atreves (Versión Bachata)
+  "TODO NO ES CASUALIDAD (BACHATA VERSION)": "OuEB6pd8yrs",  // Todo No Es Casualidad - Dani J
+  "DESÁTAME (BACHATA VERSION)": "oXn_XCHvLPE",  // Bea J Ft. Dani J - Desátame (versión Bachata)
+  "CONTANDO MINUTOS": "IKa9THZPAVw",  // Daniel Santacruz, Dani J - Contando Minutos
+  "TAN LEJOS DE MÍ": "4-6Brm_oP10",  // Dani J - Tan Lejos De Mi
+  "AMOR ETERNO": "08mHlZ60eqM",  // Dani J - Amor Eterno
+  "QUITEMONOS LA ROPA (BACHATA VERSION)": "IQ3kiBUsexY",  // Dani J - Quitémonos La Ropa
+  "CONFIESALE": "VRhGMCYvWQ4",  // Dani J - Confiésale
+  "TÚ": "0i4H1CJC83k",  // Dani J - Tú
+  "AMOR PROHIBIDO": "5mCxZa9v3Po",  // Dani J - Amor Prohibido
+  "QUIERO HABLARTE": "TNHDbmSr6J0",  // Dani J - Quiero Hablarte
+  "SIN TI": "fS_0wjLdgXE",  // Dani J - Sin Ti
+  "TRAICIÓN": "Wjq_TmZUoXs",  // Dani J - Traición
+  "QUÉDATE CONMIGO": "fFS7fyKM6zM",  // Dani J - Quédate Conmigo
+};
+
 export const MAX_VOTOS = 10;
 
 // Cierre de la votación: lo que anuncia el flyer, 24 de octubre de 2026 a las
@@ -154,6 +267,8 @@ export const I18N = {
     cerradaTexto: "El plazo terminó el 24 de octubre a las 21:00. Nos vemos en el concierto.",
     plazo: "Se puede votar hasta el 24 de octubre a las 21:00 h.",
     maxAviso: "Ya tienes 10. Quita alguna si quieres cambiarla.",
+    escuchar: "Escuchar un trozo de",
+    cerrarPrev: "Cerrar la escucha",
   },
   en: {
     metaTitle: "You choose the setlist · Dani J in concert",
@@ -188,6 +303,8 @@ export const I18N = {
     cerradaTexto: "The deadline was 24 October at 21:00. See you at the concert.",
     plazo: "You can vote until 24 October at 21:00 (Spanish time).",
     maxAviso: "You already have 10. Remove one if you want to swap it.",
+    escuchar: "Preview",
+    cerrarPrev: "Close the preview",
   },
   it: {
     metaTitle: "Scegli tu la scaletta · Concerto di Dani J",
@@ -222,6 +339,8 @@ export const I18N = {
     cerradaTexto: "Il termine era il 24 ottobre alle 21:00. Ci vediamo al concerto.",
     plazo: "Si può votare fino al 24 ottobre alle 21:00 (ora spagnola).",
     maxAviso: "Ne hai già 10. Togline una se vuoi cambiarla.",
+    escuchar: "Ascolta un pezzo di",
+    cerrarPrev: "Chiudi l'anteprima",
   },
 };
 
