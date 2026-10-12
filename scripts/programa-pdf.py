@@ -70,8 +70,7 @@ ROTULO_COLOR = {
     "ciclo": ("ciclo", rgb("ffff00")),
     "comp-bachata": ("bachata", rgb("7a1fa2")),
     "comp-bachata-duos": ("bachata", rgb("7a1fa2")),
-    # El documento lo pone en rojo; aquí va en dorado, por decisión del cliente.
-    "comp-salsa": ("salsa", rgb("a0730f")),
+    "comp-salsa": ("salsa", rgb("c8102e")),
 }
 # En el azul del ciclo el cuerpo del texto va casi blanco.
 TINTA_SOBRE_AZUL = rgb("efefef")
@@ -107,9 +106,16 @@ except FileNotFoundError:
 # Cambios de color pedidos por el cliente sobre lo que dice el documento.
 # Se aplican DESPUÉS de leer colores-drive.json, para que valgan tanto si el
 # color viene del documento como si lo calcula la regla.
+# Es una permutación: el azul del Ciclo pasa al Mundial Bachata, el amarillo
+# del social dirigido pasa al Mundial Salsa y el lila de Bachata pasa al social.
+# Se aplica UNA sola vez sobre el color leído, así que no se encadenan.
 SUSTITUCIONES = {
-    "fce8eb": "f2dfae",   # Mundial Salsa: del rosa del documento a dorado
-    "fff2cc": "5c1130",   # Masterclass: del amarillo a granate, con letra blanca
+    "fce8eb": "ffff00",   # Mundial Salsa  → amarillo fluorescente
+    "f1e6f6": "0b5394",   # Mundial Bachata → azul, con letra blanca
+    "d9d2e9": "0b5394",   # Bachata Dúos Mixtos → el mismo azul
+    "0b5394": "5c1130",   # Ciclo formativo → granate
+    "ffff00": "f1e6f6",   # Social dirigido (batey y Korke) → lila claro
+    # Masterclass se queda con el amarillo del documento (#fff2cc).
 }
 
 # Rellenos oscuros del documento: ahí el texto va en blanco.
