@@ -70,7 +70,8 @@ ROTULO_COLOR = {
     "ciclo": ("ciclo", rgb("ffff00")),
     "comp-bachata": ("bachata", rgb("7a1fa2")),
     "comp-bachata-duos": ("bachata", rgb("7a1fa2")),
-    "comp-salsa": ("salsa", rgb("c8102e")),
+    # El documento lo pone en rojo; aquí va en dorado, por decisión del cliente.
+    "comp-salsa": ("salsa", rgb("a0730f")),
 }
 # En el azul del ciclo el cuerpo del texto va casi blanco.
 TINTA_SOBRE_AZUL = rgb("efefef")
@@ -169,6 +170,9 @@ TITULO_PDF = {
 }
 
 
+LOGO = ImageReader("public/img/logo-mundial-2026.png")
+
+
 def main(ruta_datos, lang, salida):
     datos = json.load(open(ruta_datos, encoding="utf8"))[lang]
     P = datos["dias"]
@@ -210,13 +214,15 @@ def main(ruta_datos, lang, salida):
     def cabecera(dia, fecha):
         # Cabecera sobre el papel: sin banda negra, el logo y los dos textos en negro.
         try:
-            c.drawImage(ImageReader("public/img/logo-lanegra-face.png"), M, H - 48,
-                        height=40, preserveAspectRatio=True, anchor="sw", mask="auto")
+            # El mismo ImageReader en las diez páginas: así reportlab incrusta
+            # el logo una sola vez y el PDF no engorda por página.
+            c.drawImage(LOGO, M, H - 56, height=52,
+                        preserveAspectRatio=True, anchor="sw", mask="auto")
         except Exception:
             pass
         # Un pelín de tracking negativo: el tamaño grande lo pide.
         c.setFillColorRGB(*NEGRO)
-        to = c.beginText(M + 74, H - 34)
+        to = c.beginText(M + 86, H - 36)
         to.setFont("Helvetica-Bold", 21)
         to.setCharSpace(-0.5)
         to.textOut(f"{dia} {fecha}")
