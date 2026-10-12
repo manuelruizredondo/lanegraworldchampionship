@@ -184,21 +184,42 @@ const network = [
   @media (max-width: 820px) { .nl-inner { justify-content: center; text-align: center; } .nl-consent { justify-content: center; } }
 </style>
 
-<script is:inline define:vars={{ okMsg: nl.ok, errMsg: nl.err }}>
+<script is:inline define:vars={{ okMsg: nl.ok, errMsg: nl.err, idioma: lang }}>
   (function () {
     var form = document.querySelector("[data-nl]");
     if (!form) return;
     var msg = form.querySelector("[data-nl-msg]");
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var data = new URLSearchParams(new FormData(form)).toString();
-      fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: data })
-        .then(function (r) {
-          if (!r.ok) throw new Error();
+      var datos = new FormData(form);
+      var email = String(datos.get("email") || "");
+
+      // El alta va a dos sitios: a Netlify Forms (el buzón de siempre) y a
+      // nuestra base, que es la que lee el panel de la organización. Basta con
+      // que uno de los dos salga bien para dar las gracias.
+      var aForms = fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(datos).toString(),
+      }).then(function (r) { if (!r.ok) throw new Error("forms"); });
+
+      var aBase = fetch("/.netlify/functions/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, idioma: idioma, bot: datos.get("bot-field") || "" }),
+      }).then(function (r) { if (!r.ok) throw new Error("base"); });
+
+      Promise.allSettled([aForms, aBase]).then(function (res) {
+        var alguno = res.some(function (x) { return x.status === "fulfilled"; });
+        if (alguno) {
           form.reset();
-          msg.textContent = okMsg; msg.className = "nl-msg ok"; msg.hidden = false;
-        })
-        .catch(function () { msg.textContent = errMsg; msg.className = "nl-msg err"; msg.hidden = false; });
+          msg.textContent = okMsg; msg.className = "nl-msg ok";
+        } else {
+          msg.textContent = errMsg; msg.className = "nl-msg err";
+        }
+        msg.hidden = false;
+      });
     });
   })();
 </script>

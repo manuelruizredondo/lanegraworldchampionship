@@ -132,7 +132,7 @@ export const COOKIES_BANNER = {
 
 // Newsletter (formulario de Netlify Forms en el footer)
 export const NEWSLETTER = {
-  es: { title: "No te pierdas nada", sub: "Line-up, entradas y sorpresas de La Negra, antes que nadie.", ph: "Tu email", btn: "Suscribirme", consent1: "Acepto la ", consentLink: "política de privacidad", consentUrl: "/politica-de-privacidad/", ok: "¡Gracias! Te avisaremos de las novedades.", err: "Ups, algo falló. Inténtalo de nuevo." },
-  en: { title: "Don't miss a thing", sub: "Line-up, tickets and surprises from La Negra, before anyone else.", ph: "Your email", btn: "Subscribe", consent1: "I accept the ", consentLink: "privacy policy", consentUrl: "/en/privacy-policy/", ok: "Thanks! We'll keep you posted.", err: "Oops, something went wrong. Try again." },
-  it: { title: "Non perderti nulla", sub: "Line-up, biglietti e sorprese di La Negra, prima di tutti.", ph: "La tua email", btn: "Iscriviti", consent1: "Accetto la ", consentLink: "privacy policy", consentUrl: "/it/privacy-policy/", ok: "Grazie! Ti terremo aggiornato.", err: "Ops, qualcosa è andato storto. Riprova." },
+  es: { title: "Suscríbete a la newsletter", sub: "Line-up, entradas y sorpresas de La Negra, antes que nadie.", ph: "Tu email", btn: "Suscribirme", consent1: "Acepto la ", consentLink: "política de privacidad", consentUrl: "/politica-de-privacidad/", ok: "¡Gracias! Te avisaremos de las novedades.", err: "Ups, algo falló. Inténtalo de nuevo." },
+  en: { title: "Subscribe to the newsletter", sub: "Line-up, tickets and surprises from La Negra, before anyone else.", ph: "Your email", btn: "Subscribe", consent1: "I accept the ", consentLink: "privacy policy", consentUrl: "/en/privacy-policy/", ok: "Thanks! We'll keep you posted.", err: "Oops, something went wrong. Try again." },
+  it: { title: "Iscriviti alla newsletter", sub: "Line-up, biglietti e sorprese di La Negra, prima di tutti.", ph: "La tua email", btn: "Iscriviti", consent1: "Accetto la ", consentLink: "privacy policy", consentUrl: "/it/privacy-policy/", ok: "Grazie! Ti terremo aggiornato.", err: "Ops, qualcosa è andato storto. Riprova." },
 };
