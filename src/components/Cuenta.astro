@@ -25,6 +25,19 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
     <div data-cu-fuera>
       <h3 class="cu-t" id="cu-t">{t.titulo}</h3>
       <p class="cu-lead">{t.lead}</p>
+
+      <button type="button" class="cu-google" data-cu-google>
+        <svg viewBox="0 0 48 48" width="19" height="19" aria-hidden="true">
+          <path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.5l-.1.3 6.5 5 .4.1c4.1-3.8 6.7-9.4 6.7-15.1"/>
+          <path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.3l-6.9-5.4c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9.1l-.3.1-6.7 5.2-.1.3C7.9 41 15.4 46 24 46"/>
+          <path fill="#FBBC05" d="M11.5 28.4c-.5-1.4-.7-2.9-.7-4.4s.3-3 .7-4.4v-.3l-6.8-5.3-.2.1C3 17 2.2 20.4 2.2 24s.8 7 2.3 9.9z"/>
+          <path fill="#EB4335" d="M24 10.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 4.4 29.9 2 24 2 15.4 2 7.9 7 4.5 14.1l7 5.5c1.8-5.3 6.7-9.1 12.5-9.1"/>
+        </svg>
+        <span>{t.google}</span>
+      </button>
+
+      <p class="cu-o"><span>{t.oEmail}</span></p>
+
       <label class="cu-lbl" for="cu-email">{t.email}</label>
       <input class="cu-input" id="cu-email" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com" />
       <button type="button" class="cu-btn" data-cu-enviar>{t.enviar}</button>
@@ -125,6 +138,21 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       bEnviar.disabled = false;
     });
 
+    panel.querySelector("[data-cu-google]").addEventListener("click", async () => {
+      aviso("");
+      try {
+        const c = await obtenerCliente();
+        const { error } = await c.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: window.location.href.split("#")[0] },
+        });
+        if (error) throw error;
+        // Si no hay error, el navegador se va a Google y vuelve con la sesión.
+      } catch (e) {
+        aviso((e && e.message) || T.errGoogle, true);
+      }
+    });
+
     panel.querySelector("[data-cu-salir]").addEventListener("click", async () => {
       const c = await obtenerCliente();
       await c.auth.signOut();
@@ -182,6 +210,19 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
   }
   .cu-btn:disabled { opacity: .5; cursor: default; }
   .cu-btn-sec { background: #fff; color: #14121a; }
+  .cu-google {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 12px 14px; border-radius: 999px; border: 2px solid #e0dcd4; background: #fff;
+    font-family: inherit; font-size: 15px; font-weight: 700; color: #14121a; cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .cu-google:hover { border-color: #c9c3b8; background: #fbfaf8; }
+  .cu-o {
+    display: flex; align-items: center; gap: 12px;
+    margin: 18px 0; font-size: 12.5px; color: #9a9aa2;
+  }
+  .cu-o::before, .cu-o::after { content: ""; flex: 1; height: 1px; background: #ece8e1; }
+
   .cu-msg { margin: 14px 0 0; font-size: 13.5px; font-weight: 600; line-height: 1.45; }
   .cu-msg[hidden] { display: none; }
   .cu-msg.ok { color: #2e7d52; }
