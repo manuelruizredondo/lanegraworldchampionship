@@ -109,10 +109,11 @@ except FileNotFoundError:
 # color viene del documento como si lo calcula la regla.
 SUSTITUCIONES = {
     "fce8eb": "f2dfae",   # Mundial Salsa: del rosa del documento a dorado
+    "fff2cc": "5c1130",   # Masterclass: del amarillo a granate, con letra blanca
 }
 
 # Rellenos oscuros del documento: ahí el texto va en blanco.
-OSCUROS = {"0b5394", "3a3a3a", "1a1a1a", "b3122e"}
+OSCUROS = {"0b5394", "3a3a3a", "1a1a1a", "b3122e", "5c1130"}
 
 
 def color_de(s):
@@ -195,7 +196,12 @@ def main(ruta_datos, lang, salida):
 
     def rotulo(s):
         par = ROTULO_COLOR.get(clave(s))
-        return (ET[par[0]], par[1]) if par else None
+        if not par:
+            return None
+        # En las tarjetas oscuras el color del rótulo del documento (rojo,
+        # morado) no se leería: se pasa a blanco como el resto del texto.
+        color = BLANCO if color_de(s)[1] == BLANCO else par[1]
+        return (ET[par[0]], color)
 
     def wrap(t, f, s, w):
         c.setFont(f, s)
@@ -265,7 +271,10 @@ def main(ruta_datos, lang, salida):
             fondo, tinta = PALETA[k]
             hx = "%02x%02x%02x" % tuple(round(v * 255) for v in fondo)
             if hx in SUSTITUCIONES:
-                fondo = rgb(SUSTITUCIONES[hx])
+                nuevo = SUSTITUCIONES[hx]
+                fondo = rgb(nuevo)
+                if nuevo in OSCUROS:
+                    tinta = BLANCO
             c.setFont("Helvetica-Bold", 5.6)
             an = c.stringWidth(etiqueta, "Helvetica-Bold", 5.6) + 11
             c.setFillColorRGB(*fondo)
@@ -293,7 +302,7 @@ def main(ruta_datos, lang, salida):
         k = clave(s)
         oscura = tinta == BLANCO
         t_titulo = BLANCO if oscura else TINTA_TITULO
-        t_profe = TINTA_SOBRE_AZUL if k == "ciclo" else (rgb("cfcfcf") if oscura else TINTA_PROFE)
+        t_profe = TINTA_SOBRE_AZUL if k == "ciclo" else (rgb("dcd2d5") if oscura else TINTA_PROFE)
         t_nivel = BLANCO if oscura else TINTA_NIVEL
 
         ty = y - 13
