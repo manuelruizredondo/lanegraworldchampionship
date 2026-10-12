@@ -3,7 +3,6 @@ import { PROGRAMA, ROOM_LIST, I18N, NOMBRES, PDF_PROGRAMA } from "@/data/program
 import { ARTISTS } from "@/data/artists.js";
 import { biosDe, PERFILES, IMG_TO_NAME } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
-import Cuenta from "@/components/Cuenta.astro";
 
 const { lang = "es", comingSoon = false, wip = false } = Astro.props;
 const t = I18N[lang] || I18N.es;
@@ -140,8 +139,6 @@ const describe = (s) => {
     </button>
     <button type="button" class="pr-sync-abrir" data-sync-abrir>{t.sync.abrir}</button>
     </div>
-
-    <Cuenta lang={lang} />
 
     <!-- Guardar / recuperar favoritos por email. Es un extra: los favoritos
          siguen viviendo en este móvil aunque esto falle. -->

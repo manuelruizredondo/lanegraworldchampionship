@@ -1,11 +1,13 @@
 ---
 import { MENU, LANGUAGES, CTA, HOME_HREF } from "../data/nav.js";
 import { routeFor } from "../data/routes.js";
+import { CUENTA_I18N } from "../data/supabase.js";
 const { lang = "es" } = Astro.props;
 const menu = MENU[lang];
 const cta = CTA[lang];
 const homeHref = HOME_HREF[lang];
 const ext = (h) => h.startsWith("http");
+const tc = CUENTA_I18N[lang] || CUENTA_I18N.es;
 
 // Al cambiar de idioma se mantiene la página actual (si está mapeada); si no, la home.
 const alternates = routeFor(Astro.url.pathname);
@@ -29,6 +31,10 @@ const T = {
         <svg class="cta-icon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h15A1.5 1.5 0 0 1 21 8.5v1a2 2 0 0 0 0 4v1a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 14.5v-1a2 2 0 0 0 0-4z"/><path d="M9 7v10"/></svg>
         {cta.label}
       </a>
+      <button class="btn-login" type="button" data-cu-abrir>
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 20c0-3.3 3.6-6 8-6s8 2.7 8 6"/></svg>
+        <span>{tc.entrar}</span>
+      </button>
       <select class="lang-select" aria-label={T.lang} data-lang-select>
         {LANGUAGES.map((l) => (
           <option value={langHref(l.code, l.home)} selected={l.code === lang}>{l.name} ({l.label})</option>
@@ -123,6 +129,22 @@ const T = {
   .lang-select:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
   /* Las opciones nativas se dibujan sobre fondo claro del SO: texto oscuro para que se lean */
   .lang-select option { color: #14102b; background: #fff; font-weight: 700; }
+
+  .btn-login {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px; border-radius: 999px;
+    border: 1.5px solid rgba(255, 255, 255, .34); background: transparent;
+    color: #fff; font-family: inherit; font-size: 14px; font-weight: 700;
+    cursor: pointer; white-space: nowrap;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .btn-login:hover { border-color: var(--gold); background: rgba(255, 255, 255, .08); }
+  /* Con sesión abierta se marca en dorado: así se sabe de un vistazo si estás dentro */
+  :global(html.con-sesion) .btn-login { border-color: var(--gold); color: var(--gold); }
+  @media (max-width: 860px) {
+    .btn-login span { display: none; }
+    .btn-login { padding: 7px 9px; }
+  }
 
   .burger {
     display: flex; flex-direction: column; justify-content: center; gap: 6px;

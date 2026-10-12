@@ -3,6 +3,7 @@ import "../styles/global.css";
 import "../styles/proposal.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import Cuenta from "../components/Cuenta.astro";
 import WhatsApp from "../components/WhatsApp.astro";
 import Analytics from "../components/Analytics.astro";
 import { routeFor } from "../data/routes.js";
@@ -144,6 +145,7 @@ const orgSchema = {
     <main id="main">
       <slot />
     </main>
+    <Cuenta lang={lang} />
     <Footer lang={lang} />
     <WhatsApp lang={lang} />
     <Analytics lang={lang} />

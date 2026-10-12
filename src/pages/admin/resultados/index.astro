@@ -5,7 +5,6 @@
 // puedes ver los votos. Quien no tenga rol de admin recibe una lista vacía de
 // la propia base de datos, no una pantalla que se lo oculte.
 import Base from "@/layouts/Base.astro";
-import Cuenta from "@/components/Cuenta.astro";
 import { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_CDN } from "@/data/supabase.js";
 import { MAX_VOTOS, CIERRE } from "@/data/danij.js";
 ---
@@ -53,8 +52,6 @@ import { MAX_VOTOS, CIERRE } from "@/data/danij.js";
       </div>
     </section>
   </div>
-
-  <Cuenta lang="es" />
 </Base>
 
 <script is:inline define:vars={{ URL_SB: SUPABASE_URL, KEY: SUPABASE_ANON_KEY, CDN: SUPABASE_CDN, CIERRE }}>
