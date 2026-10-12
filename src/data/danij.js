@@ -1,4 +1,4 @@
-// Votación del repertorio del concierto de Dani J (sábado 24 de octubre de 2026).
+// Votación del repertorio del concierto de Dani J (domingo 25 de octubre de 2026, 22:00).
 // El público elige sus 10 canciones y las ordena de mejor a peor.
 //
 // La lista viene del formulario que nos pasó la organización, en su mismo orden
@@ -238,7 +238,7 @@ export const I18N = {
     metaTitle: "Tú eliges el repertorio · Concierto de Dani J",
     metaDesc:
       "Vota tus 10 canciones favoritas de Dani J y ordénalas: las más votadas sonarán en el concierto del XV Mundial de Pasos Libres, en Calpe.",
-    eyebrow: "Dani J · Concierto del sábado 24",
+    eyebrow: "Dani J · Concierto del domingo 25",
     h1: "Tú eliges el repertorio",
     lead: "Imagina que pudieras elegir el repertorio del concierto. ¿Qué 10 canciones de Dani J no podrían faltar? Vota las tuyas y ordénalas de la que más te apetece a la que menos.",
     orden: "Están ordenadas de la más reciente a la más antigua.",
@@ -267,6 +267,17 @@ export const I18N = {
     cerradaTexto: "El plazo terminó el 24 de octubre a las 21:00. Nos vemos en el concierto.",
     plazo: "Se puede votar hasta el 24 de octubre a las 21:00 h.",
     maxAviso: "Ya tienes 10. Quita alguna si quieres cambiarla.",
+    concierto: {
+      eyebrow: "Domingo 25 de octubre · Gran Salón",
+      h2: "Dani J, en concierto",
+      lead: "El festival se cierra con el directo de Dani J a las 22:00, con una pre-party desde las 20:30. Tu Full Pass ya lo incluye; si solo quieres venir al concierto, hay entrada suelta por 35 € que da acceso también al social de después.",
+      btn: "Comprar entradas",
+      link: "Vota el repertorio del concierto",
+      nota: "Solo para mayores de 16 años.",
+      compraTitulo: "Entradas para el concierto",
+      compraLead: "El Full Pass (189 €) ya incluye el concierto. La entrada suelta son 35 € y vale para el concierto y el social de después.",
+      compraIr: "Ir a la página de entradas ↗",
+    },
     escuchar: "Escuchar un trozo de",
     cerrarPrev: "Cerrar la escucha",
   },
@@ -274,7 +285,7 @@ export const I18N = {
     metaTitle: "You choose the setlist · Dani J in concert",
     metaDesc:
       "Vote for your 10 favourite Dani J songs and rank them: the most voted ones will be played at the concert of the XV Pasos Libres World Championship, in Calpe.",
-    eyebrow: "Dani J · Saturday 24 concert",
+    eyebrow: "Dani J · Sunday 25 concert",
     h1: "You choose the setlist",
     lead: "Imagine you could pick the concert setlist. Which 10 Dani J songs simply have to be there? Vote for yours and rank them from the one you want most to the one you want least.",
     orden: "They are listed from the most recent to the oldest.",
@@ -303,6 +314,17 @@ export const I18N = {
     cerradaTexto: "The deadline was 24 October at 21:00. See you at the concert.",
     plazo: "You can vote until 24 October at 21:00 (Spanish time).",
     maxAviso: "You already have 10. Remove one if you want to swap it.",
+    concierto: {
+      eyebrow: "Sunday 25 October · Main Hall",
+      h2: "Dani J, live",
+      lead: "The festival closes with Dani J live at 22:00, with a pre-party from 20:30. Your Full Pass already includes it; if you only want the concert, there's a separate €35 ticket that also gets you into the social afterwards.",
+      btn: "Buy tickets",
+      link: "Vote for the concert setlist",
+      nota: "Over-16s only.",
+      compraTitulo: "Tickets for the concert",
+      compraLead: "The Full Pass (€189) already includes the concert. The separate ticket is €35 and covers the concert and the social afterwards.",
+      compraIr: "Go to the ticket page ↗",
+    },
     escuchar: "Preview",
     cerrarPrev: "Close the preview",
   },
@@ -310,7 +332,7 @@ export const I18N = {
     metaTitle: "Scegli tu la scaletta · Concerto di Dani J",
     metaDesc:
       "Vota le tue 10 canzoni preferite di Dani J e mettile in ordine: le più votate suoneranno al concerto del XV Mondiale di Pasos Libres, a Calpe.",
-    eyebrow: "Dani J · Concerto di sabato 24",
+    eyebrow: "Dani J · Concerto di domenica 25",
     h1: "Scegli tu la scaletta",
     lead: "Immagina di poter scegliere la scaletta del concerto. Quali 10 canzoni di Dani J non possono mancare? Vota le tue e mettile in ordine, dalla più desiderata alla meno.",
     orden: "Sono ordinate dalla più recente alla più vecchia.",
@@ -339,6 +361,17 @@ export const I18N = {
     cerradaTexto: "Il termine era il 24 ottobre alle 21:00. Ci vediamo al concerto.",
     plazo: "Si può votare fino al 24 ottobre alle 21:00 (ora spagnola).",
     maxAviso: "Ne hai già 10. Togline una se vuoi cambiarla.",
+    concierto: {
+      eyebrow: "Domenica 25 ottobre · Salone",
+      h2: "Dani J, in concerto",
+      lead: "Il festival si chiude con il live di Dani J alle 22:00, con un pre-party dalle 20:30. Il tuo Full Pass lo include già; se vuoi venire solo al concerto c'è il biglietto singolo da 35 €, che dà accesso anche al social successivo.",
+      btn: "Compra i biglietti",
+      link: "Vota la scaletta del concerto",
+      nota: "Solo per maggiori di 16 anni.",
+      compraTitulo: "Biglietti per il concerto",
+      compraLead: "Il Full Pass (189 €) include già il concerto. Il biglietto singolo costa 35 € e vale per il concerto e il social successivo.",
+      compraIr: "Vai alla pagina dei biglietti ↗",
+    },
     escuchar: "Ascolta un pezzo di",
     cerrarPrev: "Chiudi l'anteprima",
   },
@@ -348,6 +381,20 @@ export const I18N = {
 // se entiende igual en cualquiera de ellos.
 export const RUTA = { es: "/concierto-danij/", en: "/en/concierto-danij/", it: "/it/concierto-danij/" };
 export const RUTA_PROGRAMA = { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" };
+
+// Entradas (go&dance). El Full Pass ya incluye el concierto; la entrada suelta
+// vale solo para el concierto y el social de después, y es para mayores de 16.
+export const ENTRADAS = {
+  // Página de entradas del evento, con las dos opciones
+  url: "https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata",
+  // Widget embebido; el idioma del iframe va en la ruta (/es/, /en/)
+  iframe: (lang) =>
+    `https://www.goandance.com/${lang === "it" ? "es" : lang}/event-tickets/` +
+    "106ef4d5-c8be-4fce-8660-ea6854726bff" +
+    "?referer=https%3A%2F%2Fcampeonatopasoslibres.com%2Fconcierto-danij%2F",
+  precioConcierto: "35 €",
+  precioPase: "189 €",
+};
 
 // Imagen que sale al compartir el enlace (1200x630, una por idioma).
 // La genera scripts/og-concierto-danij.py a partir de la foto de prensa.

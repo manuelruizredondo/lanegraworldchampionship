@@ -25,19 +25,19 @@ HELVETICA = "/System/Library/Fonts/HelveticaNeue.ttc"
 TEXTOS = {
     "es": {
         "archivo": "concierto-danij.jpg",
-        "epigrafe": "DANI J · SÁBADO 24 DE OCTUBRE",
+        "epigrafe": "DANI J · DOMINGO 25 DE OCTUBRE",
         "titulo": ["Tú eliges", "el repertorio"],
         "pie": "Vota tus 10 canciones favoritas",
     },
     "en": {
         "archivo": "concierto-danij-en.jpg",
-        "epigrafe": "DANI J · SATURDAY 24 OCTOBER",
+        "epigrafe": "DANI J · SUNDAY 25 OCTOBER",
         "titulo": ["You choose", "the setlist"],
         "pie": "Vote for your 10 favourite songs",
     },
     "it": {
         "archivo": "concierto-danij-it.jpg",
-        "epigrafe": "DANI J · SABATO 24 OTTOBRE",
+        "epigrafe": "DANI J · DOMENICA 25 OTTOBRE",
         "titulo": ["Scegli tu", "la scaletta"],
         "pie": "Vota le tue 10 canzoni preferite",
     },

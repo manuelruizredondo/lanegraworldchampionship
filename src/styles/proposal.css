@@ -489,3 +489,14 @@
     .prog-cta-row .p-btn { flex: 1 1 100%; text-align: center; justify-content: center; }
   }
 
+  /* CONCIERTO DE DANI J (home) */
+  .dj-home-grid { display: grid; grid-template-columns: 420px 1fr; gap: clamp(28px, 4vw, 56px); align-items: center; }
+  .dj-home-foto { border-radius: var(--p-radius); overflow: hidden; background: #14121a; }
+  .dj-home-foto img { display: block; width: 100%; aspect-ratio: 4 / 3.3; object-fit: cover; object-position: center 18%; }
+  .dj-home-ctas { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 24px; }
+  .dj-home-link { color: var(--gold-dark); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+  .dj-home-nota { margin: 12px 0 0 4px; }
+  @media (max-width: 860px) {
+    .dj-home-grid { grid-template-columns: 1fr; }
+    .dj-home-foto img { aspect-ratio: 16 / 10; }
+  }

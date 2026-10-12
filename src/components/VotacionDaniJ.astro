@@ -2,7 +2,7 @@
 // Votación del repertorio del concierto de Dani J.
 // Se elige hasta MAX_VOTOS canciones y se ordenan: el orden ES el voto, así que
 // la posición viaja al servidor tal cual la deja la persona.
-import { CANCIONES, MAX_VOTOS, CIERRE, I18N, RUTA_PROGRAMA, YT } from "@/data/danij.js";
+import { CANCIONES, MAX_VOTOS, CIERRE, I18N, RUTA_PROGRAMA, YT, ENTRADAS } from "@/data/danij.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
@@ -103,6 +103,21 @@ const cerrada = Date.now() > Date.parse(CIERRE);
       </div>
     </div>
   )}
+
+  <!-- Entradas: al final, para que esté igual con la votación abierta,
+       cerrada o ya enviada. -->
+  <div class="p-container dj-entradas" id="entradas">
+    <h2 class="p-h2 dj-ent-h2">{t.concierto.compraTitulo}</h2>
+    <p class="p-lead p-narrow dj-ent-lead">{t.concierto.compraLead}</p>
+    <div class="dj-ent-widget">
+      <iframe src={ENTRADAS.iframe(lang)} title={t.concierto.compraTitulo}
+              loading="lazy" width="100%" height="100px" frameborder="0" scrolling="auto"></iframe>
+    </div>
+    <p class="dj-ent-pie">
+      <a href={ENTRADAS.url} target="_blank" rel="noopener">{t.concierto.compraIr}</a>
+    </p>
+    <p class="dj-ent-nota">{t.concierto.nota}</p>
+  </div>
 </section>
 </div>
 
@@ -480,6 +495,18 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   }
   .dj-barra-n { font-size: 13px; font-weight: 700; color: #6a6a74; font-variant-numeric: tabular-nums; }
   .dj-enviar:disabled { opacity: .45; cursor: default; }
+
+  /* Entradas (widget de go&dance) */
+  .dj-entradas { max-width: 900px; margin: 56px auto 0; padding-top: 44px; border-top: 1px solid #ece8e1; text-align: center; }
+  .dj-ent-h2 { font-size: clamp(24px, 3.2vw, 38px); margin-bottom: 12px; }
+  .dj-ent-lead { margin: 0 auto 22px; font-size: 15.5px; }
+  .dj-ent-widget { width: 100%; }
+  /* El auto-resize de go&dance por postMessage no siempre llega: se le fija
+     una altura suficiente para que se vean las dos entradas. */
+  .dj-ent-widget iframe { display: block; width: 100%; border: 0; min-height: 620px; border-radius: 16px; }
+  .dj-ent-pie { margin: 16px 0 0; font-size: 14px; }
+  .dj-ent-pie a { color: var(--gold-dark); font-weight: 700; }
+  .dj-ent-nota { margin: 8px 0 0; font-size: 12.5px; color: #8a8578; }
 
   .dj-ok { text-align: center; padding: 40px 0 10px; }
   .dj-ok[hidden] { display: none; }
