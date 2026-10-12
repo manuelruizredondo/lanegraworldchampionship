@@ -104,6 +104,13 @@ try:
 except FileNotFoundError:
     DRIVE = {}
 
+# Cambios de color pedidos por el cliente sobre lo que dice el documento.
+# Se aplican DESPUÉS de leer colores-drive.json, para que valgan tanto si el
+# color viene del documento como si lo calcula la regla.
+SUSTITUCIONES = {
+    "fce8eb": "f2dfae",   # Mundial Salsa: del rosa del documento a dorado
+}
+
 # Rellenos oscuros del documento: ahí el texto va en blanco.
 OSCUROS = {"0b5394", "3a3a3a", "1a1a1a", "b3122e"}
 
@@ -116,8 +123,13 @@ def color_de(s):
     """
     h = DRIVE.get(s.get("clave") or s.get("n") or "")
     if h:
+        h = SUSTITUCIONES.get(h, h)
         return rgb(h), (BLANCO if h in OSCUROS else NEGRO)
-    return PALETA[clave(s)]
+    fondo, tinta = PALETA[clave(s)]
+    hx = "%02x%02x%02x" % tuple(round(v * 255) for v in fondo)
+    if hx in SUSTITUCIONES:
+        return rgb(SUSTITUCIONES[hx]), tinta
+    return fondo, tinta
 
 
 def clave(s):
@@ -251,6 +263,9 @@ def main(ruta_datos, lang, salida):
                             (ET["kind_social"], "social"), (ET["kind_meal"], "meal")):
             etiqueta = etiqueta.upper()
             fondo, tinta = PALETA[k]
+            hx = "%02x%02x%02x" % tuple(round(v * 255) for v in fondo)
+            if hx in SUSTITUCIONES:
+                fondo = rgb(SUSTITUCIONES[hx])
             c.setFont("Helvetica-Bold", 5.6)
             an = c.stringWidth(etiqueta, "Helvetica-Bold", 5.6) + 11
             c.setFillColorRGB(*fondo)
