@@ -1,0 +1,190 @@
+---
+// Cuenta de usuario: entrar con un enlace por email (sin contraseñas) y salir.
+//
+// Expone en `window.laNegraCuenta` una API mínima para el resto de la página:
+//   .cliente()           → el cliente de Supabase, cargado solo cuando hace falta
+//   .sesion()            → la sesión actual, o null
+//   .alCambiar(fn)       → avisa cuando se entra o se sale
+//   .pedirEntrar()       → abre el panel de acceso
+//
+// La librería se carga desde CDN la primera vez que se usa, para no cargarle
+// 40 KB a quien solo entra a mirar el horario.
+import { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_CDN, CUENTA_I18N } from "@/data/supabase.js";
+
+const { lang = "es" } = Astro.props;
+const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
+---
+
+<div class="cu" data-cuenta hidden>
+  <div class="cu-fondo" data-cu-cerrar></div>
+  <div class="cu-caja" role="dialog" aria-modal="true" aria-labelledby="cu-t">
+    <button type="button" class="cu-x" data-cu-cerrar aria-label={t.cerrar}>
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+    </button>
+
+    <div data-cu-fuera>
+      <h3 class="cu-t" id="cu-t">{t.titulo}</h3>
+      <p class="cu-lead">{t.lead}</p>
+      <label class="cu-lbl" for="cu-email">{t.email}</label>
+      <input class="cu-input" id="cu-email" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com" />
+      <button type="button" class="cu-btn" data-cu-enviar>{t.enviar}</button>
+      <p class="cu-nota">{t.nota}</p>
+    </div>
+
+    <div data-cu-dentro hidden>
+      <h3 class="cu-t">{t.miCuenta}</h3>
+      <p class="cu-lead"><span class="cu-quien">{t.sesionDe}</span> <strong data-cu-email></strong></p>
+      <button type="button" class="cu-btn cu-btn-sec" data-cu-salir>{t.salir}</button>
+    </div>
+
+    <p class="cu-msg" data-cu-msg hidden role="status"></p>
+  </div>
+</div>
+
+<script is:inline define:vars={{ URL_SB: SUPABASE_URL, KEY: SUPABASE_ANON_KEY, CDN: SUPABASE_CDN, T: t }}>
+  (function () {
+    const panel = document.querySelector("[data-cuenta]");
+    if (!panel) return;
+    const fuera = panel.querySelector("[data-cu-fuera]");
+    const dentro = panel.querySelector("[data-cu-dentro]");
+    const input = panel.querySelector("#cu-email");
+    const msg = panel.querySelector("[data-cu-msg]");
+    const bEnviar = panel.querySelector("[data-cu-enviar]");
+
+    let cliente = null;
+    let sesion = null;
+    const oyentes = [];
+
+    const aviso = (txt, err) => {
+      msg.textContent = txt || "";
+      msg.className = "cu-msg" + (err ? " err" : " ok");
+      msg.hidden = !txt;
+    };
+
+    async function obtenerCliente() {
+      if (cliente) return cliente;
+      const { createClient } = await import(CDN);
+      cliente = createClient(URL_SB, KEY, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+      });
+      const { data } = await cliente.auth.getSession();
+      sesion = data.session || null;
+      cliente.auth.onAuthStateChange((_evt, s) => {
+        sesion = s || null;
+        pintar();
+        oyentes.forEach((fn) => { try { fn(sesion); } catch (e) {} });
+      });
+      return cliente;
+    }
+
+    function pintar() {
+      const hay = !!sesion;
+      fuera.hidden = hay;
+      dentro.hidden = !hay;
+      if (hay) panel.querySelector("[data-cu-email]").textContent = sesion.user.email || "";
+      document.querySelectorAll("[data-cu-abrir]").forEach((b) => {
+        b.textContent = hay ? T.miCuenta : T.entrar;
+      });
+      document.documentElement.classList.toggle("con-sesion", hay);
+    }
+
+    const abrir = async () => {
+      await obtenerCliente();
+      pintar();
+      aviso("");
+      panel.hidden = false;
+      if (!sesion) input.focus();
+    };
+    const cerrar = () => { panel.hidden = true; aviso(""); };
+
+    panel.querySelectorAll("[data-cu-cerrar]").forEach((b) => b.addEventListener("click", cerrar));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !panel.hidden) cerrar(); });
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("[data-cu-abrir]")) { e.preventDefault(); abrir(); }
+    });
+
+    bEnviar.addEventListener("click", async () => {
+      const email = input.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { aviso(T.errEmail, true); input.focus(); return; }
+      bEnviar.disabled = true;
+      const antes = bEnviar.textContent;
+      bEnviar.textContent = T.enviando;
+      try {
+        const c = await obtenerCliente();
+        // Se vuelve a esta misma página al pulsar el enlace del correo.
+        const { error } = await c.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: window.location.href.split("#")[0] },
+        });
+        if (error) throw error;
+        aviso(T.enviado, false);
+      } catch (e) {
+        aviso((e && e.message) || T.errEnvio, true);
+      }
+      bEnviar.textContent = antes;
+      bEnviar.disabled = false;
+    });
+
+    panel.querySelector("[data-cu-salir]").addEventListener("click", async () => {
+      const c = await obtenerCliente();
+      await c.auth.signOut();
+      cerrar();
+    });
+
+    // API para el resto de la página
+    window.laNegraCuenta = {
+      cliente: obtenerCliente,
+      sesion: () => sesion,
+      alCambiar: (fn) => { oyentes.push(fn); if (sesion) fn(sesion); },
+      pedirEntrar: abrir,
+    };
+
+    // Si venimos del enlace del correo, la URL trae el token: hay que arrancar
+    // el cliente ya para que lo canjee y se limpie la barra de direcciones.
+    if (location.hash.includes("access_token") || location.search.includes("code=")) {
+      obtenerCliente().then(() => {
+        pintar();
+        history.replaceState(null, "", location.pathname + location.search.replace(/[?&]code=[^&]*/, ""));
+      });
+    } else if (localStorage.getItem("sb-" + URL_SB.split("//")[1].split(".")[0] + "-auth-token")) {
+      // Ya había sesión guardada: se restaura sin esperar a que pulsen nada.
+      obtenerCliente().then(pintar);
+    }
+  })();
+</script>
+
+<style>
+  .cu { position: fixed; inset: 0; z-index: 3200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .cu[hidden] { display: none; }
+  .cu-fondo { position: absolute; inset: 0; background: rgba(15, 11, 30, .62); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .cu-caja {
+    position: relative; z-index: 1; width: 100%; max-width: 420px; background: #fff;
+    border-radius: 20px; padding: 28px 24px 22px; box-shadow: 0 30px 80px rgba(0, 0, 0, .42);
+  }
+  .cu-x {
+    position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%;
+    border: 0; background: #f0ede7; color: #6a6a74; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cu-x:hover { background: #e6e1d8; color: #14121a; }
+  .cu-t { margin: 0 30px 8px 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; color: #14121a; }
+  .cu-lead { margin: 0 0 18px; font-size: 14px; line-height: 1.5; color: #6a6a74; }
+  .cu-quien { color: #9a9aa2; }
+  .cu-lbl { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; color: #6a6a74; margin-bottom: 6px; }
+  .cu-input {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid #e6e1d8;
+    font-size: 16px; font-family: inherit; color: #14121a;
+  }
+  .cu-input:focus-visible { outline: none; border-color: var(--gold); }
+  .cu-btn {
+    width: 100%; margin-top: 14px; padding: 13px 10px; border-radius: 999px; border: 2px solid #14121a;
+    background: #14121a; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .cu-btn:disabled { opacity: .5; cursor: default; }
+  .cu-btn-sec { background: #fff; color: #14121a; }
+  .cu-msg { margin: 14px 0 0; font-size: 13.5px; font-weight: 600; line-height: 1.45; }
+  .cu-msg[hidden] { display: none; }
+  .cu-msg.ok { color: #2e7d52; }
+  .cu-msg.err { color: #c8324c; }
+  .cu-nota { margin: 12px 0 0; font-size: 12px; color: #9a9aa2; line-height: 1.45; }
+</style>

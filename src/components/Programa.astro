@@ -3,6 +3,7 @@ import { PROGRAMA, ROOM_LIST, I18N, NOMBRES, PDF_PROGRAMA } from "@/data/program
 import { ARTISTS } from "@/data/artists.js";
 import { biosDe, PERFILES, IMG_TO_NAME } from "@/data/artist-bios.js";
 import { img } from "@/data/img.js";
+import Cuenta from "@/components/Cuenta.astro";
 
 const { lang = "es", comingSoon = false, wip = false } = Astro.props;
 const t = I18N[lang] || I18N.es;
@@ -140,6 +141,8 @@ const describe = (s) => {
     <button type="button" class="pr-sync-abrir" data-sync-abrir>{t.sync.abrir}</button>
     </div>
 
+    <Cuenta lang={lang} />
+
     <!-- Guardar / recuperar favoritos por email. Es un extra: los favoritos
          siguen viviendo en este móvil aunque esto falle. -->
     <div class="pr-sync" data-sync hidden data-textos={JSON.stringify({
@@ -154,6 +157,8 @@ const describe = (s) => {
         </button>
         <h3 class="pr-sync-t" id="pr-sync-t">{t.sync.titulo}</h3>
         <p class="pr-sync-lead">{t.sync.lead}</p>
+        <button type="button" class="pr-sync-cuenta" data-cu-abrir>{t.sync.conCuenta}</button>
+        <p class="pr-sync-o">{t.sync.o}</p>
         <label class="pr-sync-lbl" for="pr-sync-email">{t.sync.email}</label>
         <input class="pr-sync-input" id="pr-sync-email" type="email" inputmode="email"
                autocomplete="email" placeholder="tu@email.com" />
@@ -407,6 +412,51 @@ const describe = (s) => {
       return { ok: r.ok, data: await r.json().catch(() => ({})) };
     };
 
+    // Con la cuenta iniciada, los favoritos se sincronizan solos: no hay que
+    // teclear ningún email ni acordarse de pulsar Guardar.
+    let sincronizando = false;
+    async function sincronizarConCuenta(sesion) {
+      if (!sesion || sincronizando) return;
+      sincronizando = true;
+      try {
+        const sb = await window.laNegraCuenta.cliente();
+        const uid = sesion.user.id;
+        // 1 · lo que ya hay en la cuenta se suma a lo de este móvil
+        const { data } = await sb.from("favoritos").select("clave").eq("user_id", uid);
+        (data || []).forEach((f) => favs.add(f.clave));
+        saveFavs(); markFavs(); syncFavCount(); apply();
+        // 2 · y el conjunto completo se sube
+        await subirACuenta(uid, sesion.user.email);
+      } catch (e) { /* si falla, los favoritos del móvil siguen intactos */ }
+      sincronizando = false;
+    }
+
+    async function subirACuenta(uid, email) {
+      const sb = await window.laNegraCuenta.cliente();
+      await sb.from("favoritos").delete().eq("user_id", uid);
+      if (!favs.size) return;
+      const filas = [...favs].map((c) => {
+        const p = c.split("|");
+        const dia = Number.parseInt(p[0], 10);
+        return { user_id: uid, email, clave: c,
+                 dia: Number.isInteger(dia) ? dia : null,
+                 sala: p[2] || null, titulo: p.slice(3).join("|") || null,
+                 idioma: T.idioma || "es" };
+      });
+      await sb.from("favoritos").insert(filas);
+    }
+
+    // Cada vez que se marca o desmarca algo, si hay sesión se sube.
+    let pendiente = null;
+    window.laNegraFavsCambiaron = () => {
+      const s = window.laNegraCuenta && window.laNegraCuenta.sesion && window.laNegraCuenta.sesion();
+      if (!s) return;
+      clearTimeout(pendiente);
+      pendiente = setTimeout(() => subirACuenta(s.user.id, s.user.email).catch(() => {}), 900);
+    };
+
+    if (window.laNegraCuenta) window.laNegraCuenta.alCambiar(sincronizarConCuenta);
+
     bGuardar.addEventListener("click", async () => {
       const email = input.value.trim();
       if (!emailValido(email)) { aviso(T.emailMal, true); input.focus(); return; }
@@ -453,6 +503,7 @@ const describe = (s) => {
     btn.setAttribute("aria-pressed", on ? "true" : "false");
     btn.classList.remove("pr-fav-pop"); void btn.offsetWidth; if (on) btn.classList.add("pr-fav-pop");
     syncFavCount();
+    if (window.laNegraFavsCambiaron) window.laNegraFavsCambiaron();
     if (filtros.has("fav")) apply();
   }));
   markFavs();
@@ -1066,6 +1117,12 @@ const describe = (s) => {
     font-size: 16px; font-family: inherit; color: #14121a;
   }
   .pr-sync-input:focus-visible { outline: none; border-color: var(--gold); }
+  .pr-sync-cuenta {
+    width: 100%; padding: 13px 10px; border-radius: 999px; border: 2px solid #14121a;
+    background: #14121a; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700;
+    cursor: pointer; margin-bottom: 16px;
+  }
+  .pr-sync-o { margin: 0 0 14px; font-size: 12.5px; color: #9a9aa2; text-align: center; }
   .pr-sync-btns { display: flex; gap: 10px; margin-top: 14px; }
   .pr-sync-btn {
     flex: 1; padding: 12px 10px; border-radius: 999px; border: 2px solid #14121a;
