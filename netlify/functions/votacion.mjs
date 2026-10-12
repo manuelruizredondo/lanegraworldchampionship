@@ -74,6 +74,21 @@ export default async (req) => {
   const url = `https://api.airtable.com/v0/${BASE}/${encodeURIComponent(TABLE)}`;
   const cabeceras = { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" };
 
+  // Supabase es ahora el registro principal; Airtable se mantiene en paralelo
+  // hasta que pase el concierto, para no quedarnos sin votación si uno falla.
+  const SB_URL = process.env.SUPABASE_URL;
+  const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
+  const sbApi = SB_URL ? `${SB_URL.replace(/\/$/, "")}/rest/v1/votos_danij` : null;
+  const sbCab = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, "content-type": "application/json" };
+
+  // 0) ¿Ha votado ya este email, según Supabase?
+  if (sbApi) {
+    try {
+      const r = await fetch(`${sbApi}?email=eq.${encodeURIComponent(email)}&select=email&limit=1`, { headers: sbCab });
+      if (r.ok && (await r.json()).length) return json({ error: m.repetida }, 409);
+    } catch { /* si falla, decide Airtable */ }
+  }
+
   // 1) ¿Ha votado ya este email?
   try {
     const filtro = encodeURIComponent(`LOWER({Email}) = '${escapa(email)}'`);
@@ -115,15 +130,41 @@ export default async (req) => {
         const minimo = { Email: fields.Email };
         canciones.forEach((c, i) => { minimo[`Voto ${i + 1}`] = c; });
         res = await escribir(minimo);
-        if (!res.ok) return json({ error: m.servidor, detail: await res.text() }, 502);
-      } else {
+      }
+      // Si Airtable sigue sin aceptarlo, el voto no se tira: se intenta
+      // Supabase, que es el registro principal.
+      if (!res.ok) {
+        const salvado = await guardarEnSupabase();
+        if (salvado) return json({ ok: true, recordId: null });
         return json({ error: m.servidor, detail: texto }, 502);
       }
     }
 
     const data = await res.json();
+    await guardarEnSupabase();
     return json({ ok: true, recordId: data.records?.[0]?.id });
   } catch (e) {
+    // Si Airtable falla del todo, aún se intenta Supabase: antes un voto en un
+    // sitio que ningún voto.
+    const salvado = await guardarEnSupabase();
+    if (salvado) return json({ ok: true, recordId: null });
     return json({ error: m.servidor, detail: String(e) }, 502);
+  }
+
+  async function guardarEnSupabase() {
+    if (!sbApi || !SB_KEY) return false;
+    try {
+      const filas = canciones.map((c, i) => ({
+        email, cancion: c, posicion: i + 1, idioma,
+      }));
+      const r = await fetch(sbApi, {
+        method: "POST",
+        headers: { ...sbCab, Prefer: "return=minimal" },
+        body: JSON.stringify(filas),
+      });
+      return r.ok;
+    } catch {
+      return false;
+    }
   }
 };
