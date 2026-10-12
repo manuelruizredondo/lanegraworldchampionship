@@ -242,12 +242,24 @@ const cerrada = Date.now() > Date.parse(CIERRE);
       prevTitulo.textContent = nombre || "";
       // Se crea aquí: hasta ahora no se había pedido nada a YouTube.
       const f = document.createElement("iframe");
+      // enablejsapi permite pedirle que arranque por mensaje si el navegador
+      // se ha saltado el autoplay=1 de la URL, que pasa a menudo en móvil.
       f.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) +
-              "?autoplay=1&rel=0&modestbranding=1&playsinline=1";
+              "?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1";
       f.title = nombre || "YouTube";
       f.allow = "autoplay; encrypted-media; picture-in-picture";
       f.allowFullscreen = true;
       f.referrerPolicy = "strict-origin-when-cross-origin";
+      // Segundo intento de arranque en cuanto el reproductor está listo. Se
+      // insiste un par de veces porque el iframe tarda en atender mensajes.
+      const dale = () => {
+        try {
+          f.contentWindow.postMessage(
+            JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+        } catch { /* el iframe aún no responde */ }
+      };
+      f.addEventListener("load", () => { dale(); setTimeout(dale, 350); setTimeout(dale, 900); });
+
       prevVideo.replaceChildren(f);
       prev.hidden = false;
       colocar();
@@ -424,7 +436,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
 
   /* Reproductor flotante: pequeño, pegado al botón de play que se ha pulsado.
      `left`/`top` los calcula el script; aquí solo van el tamaño y la capa. */
-  .dj-prev { position: fixed; z-index: 1400; top: 0; left: 0; width: 300px; }
+  .dj-prev { position: fixed; z-index: 1700; top: 0; left: 0; width: 300px; }
   .dj-prev[hidden] { display: none; }
   .dj-prev-caja {
     background: #14121a; border-radius: 14px; overflow: hidden;
@@ -460,7 +472,9 @@ const cerrada = Date.now() > Date.parse(CIERRE);
 
   /* Barra fija de envío */
   .dj-barra {
-    position: sticky; bottom: 0; z-index: 10; margin-top: 20px;
+    /* Por encima del botón flotante de WhatsApp (1500): en móvil se solapan y
+       el que tiene que quedar visible es el de enviar. */
+    position: sticky; bottom: 0; z-index: 1600; margin-top: 20px;
     display: flex; align-items: center; justify-content: space-between; gap: 14px;
     padding: 13px 0 16px; background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 22%);
   }
@@ -471,12 +485,6 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-ok[hidden] { display: none; }
   .dj-ok .p-btn { margin-top: 8px; }
 
-  /* En móvil el botón de WhatsApp flota en la esquina de abajo a la derecha y
-     se montaba encima del botón de enviar, que ocupa todo el ancho. Se sube la
-     barra lo justo para dejarlo libre (52px del botón + 14 de su margen). */
-  @media (max-width: 640px) {
-    .dj-barra { padding-bottom: 78px; }
-  }
   @media (max-width: 520px) {
     .dj-barra { flex-direction: column; align-items: stretch; gap: 8px; text-align: center; }
     .dj-enviar { width: 100%; }
