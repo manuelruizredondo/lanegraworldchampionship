@@ -20,6 +20,7 @@ reproduce el mismo criterio: tipo de sesión y, en los talleres, nivel.
 Si la organización recolorea el documento, regenera la tabla volviendo a leer
 los rellenos de word/document.xml y vuelve a lanzar este script.
 """
+import colorsys
 import json
 import os
 import re
@@ -118,8 +119,93 @@ SUSTITUCIONES = {
     # Masterclass se queda con el amarillo del documento (#fff2cc).
 }
 
+# Paleta alternativa con los colores de Google (los del selector de Drive),
+# para la propuesta de unificación. Se activa con la variable de entorno
+# PALETA=google y escribe en ficheros aparte, para no tocar el PDF publicado.
+# La asignación se eligió maximizando la distancia entre categorías: la pareja
+# más parecida queda a ΔE 32, muy por encima del umbral de confusión (~9).
+SUSTITUCIONES_GOOGLE = {
+    "fce8eb": "fbe3a7",   # Mundial Salsa     → amarillo pastel
+    "f1e6f6": "bac0e8",   # Mundial Bachata   → azul pastel
+    "d9d2e9": "bac0e8",   # Bachata Dúos      → el mismo azul
+    "0b5394": "f5adca",   # Ciclo formativo   → granate pastel
+    "fff2cc": "fab8a8",   # Masterclass       → naranja pastel
+    "ffff00": "e2b3ef",   # Social dirigido   → lila pastel
+    "d9ead3": "adf5cb",   # Taller Abierto    → verde pastel
+    "cfe2f3": "eaedb5",   # Taller Medio      → lima pastel
+    "c9daf8": "eaedb5",   # Taller Medio (variante del documento)
+    "f4cccc": "a6dcfc",   # Taller Medio-Alto → azul claro pastel
+    "00ffff": "a4fef5",   # Concierto         → turquesa pastel
+}
+
 # Rellenos oscuros del documento: ahí el texto va en blanco.
-OSCUROS = {"0b5394", "3a3a3a", "1a1a1a", "b3122e", "5c1130"}
+OSCUROS = {"0b5394", "3a3a3a", "1a1a1a", "b3122e", "5c1130",
+           # oscuros de la paleta de Google
+           "a2144c", "3847ab", "0e7639", "8422a0", "018b7d", "6d4b3d", "cf0000"}
+
+if os.environ.get("PALETA") == "google":
+    SUSTITUCIONES = SUSTITUCIONES_GOOGLE
+    # Fuera de public/ a propósito: es una propuesta, no se publica hasta que
+    # se apruebe. PALETA_SALIDA permite elegir dónde se escribe.
+    _d = os.environ.get("PALETA_SALIDA", ".")
+    PDF_POR_IDIOMA = {
+        "es": _d + "/propuesta-colores-google.pdf",
+        "en": _d + "/propuesta-colores-google-en.pdf",
+        "it": _d + "/propuesta-colores-google-it.pdf",
+    }
+
+
+def borde_de(fondo):
+    """El borde, en el mismo tono que el fondo pero mucho más oscuro.
+
+    Se baja la luminosidad en HLS y se deja la saturación como está: bajando
+    el canal RGB a secas el color se ensucia, y subiendo la saturación sale
+    un neón en vez del mismo color en versión profunda.
+    """
+    h, l, sat = colorsys.rgb_to_hls(*fondo)
+    return colorsys.hls_to_rgb(h, l * 0.48, sat)
+
+
+def luminancia(c):
+    """Luminancia relativa (WCAG) de un color ya en 0-1."""
+    f = lambda v: v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
+    r, g, b = (f(v) for v in c)
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contraste(a, b):
+    la, lb = luminancia(a), luminancia(b)
+    return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+
+
+def legible(fondo, preferido, minimo=4.5):
+    """El color pedido si se lee sobre ese fondo; si no, blanco o negro."""
+    if contraste(fondo, preferido) >= minimo:
+        return preferido
+    return BLANCO if contraste(fondo, BLANCO) > contraste(fondo, NEGRO) else NEGRO
+
+
+def tintas(fondo):
+    """Título, texto secundario y nivel, calculados sobre el fondo que toque.
+
+    Antes esto salía de una lista fija de colores «oscuros», que dejaba de
+    funcionar en cuanto se cambiaba la paleta: sobre un naranja saturado el
+    texto gris se volvía ilegible. Ahora se decide por contraste real.
+    """
+    sobre_oscuro = contraste(fondo, BLANCO) > contraste(fondo, NEGRO)
+    titulo = BLANCO if sobre_oscuro else TINTA_TITULO
+    # El secundario (hora, profesor) se acerca al fondo para que pese menos,
+    # pero nunca por debajo de 4,5:1, que es el mínimo para texto pequeño.
+    # Si ni mezclándolo poco llega, se queda con el color del título.
+    mezcla = lambda t: tuple(titulo[i] + (fondo[i] - titulo[i]) * t for i in range(3))
+    secundario = titulo
+    for t in (0.28, 0.18, 0.08):
+        cand = mezcla(t)
+        if contraste(fondo, cand) >= 4.5:
+            secundario = cand
+            break
+    nivel = legible(fondo, TINTA_NIVEL)
+    return titulo, secundario, nivel
 
 
 def color_de(s):
@@ -204,10 +290,10 @@ def main(ruta_datos, lang, salida):
         par = ROTULO_COLOR.get(clave(s))
         if not par:
             return None
-        # En las tarjetas oscuras el color del rótulo del documento (rojo,
-        # morado) no se leería: se pasa a blanco como el resto del texto.
-        color = BLANCO if color_de(s)[1] == BLANCO else par[1]
-        return (ET[par[0]], color)
+        # El color del rótulo que trae el documento (rojo, morado, amarillo) no
+        # siempre se lee sobre el fondo que toque: se respeta si contrasta y, si
+        # no, se cambia por blanco o negro.
+        return (ET[par[0]], legible(color_de(s)[0], par[1], minimo=4.0))
 
     def wrap(t, f, s, w):
         c.setFont(f, s)
@@ -284,8 +370,8 @@ def main(ruta_datos, lang, salida):
             c.setFont("Helvetica-Bold", 5.6)
             an = c.stringWidth(etiqueta, "Helvetica-Bold", 5.6) + 11
             c.setFillColorRGB(*fondo)
-            c.setStrokeColorRGB(*oscurece(fondo, .78))
-            c.setLineWidth(.5)
+            c.setStrokeColorRGB(*borde_de(fondo))
+            c.setLineWidth(.6)
             c.roundRect(x, y, an, 11, 5.5, fill=1, stroke=1)
             c.setFillColorRGB(*tinta)
             c.drawString(x + 5.5, y + 3.4, etiqueta)
@@ -301,15 +387,12 @@ def main(ruta_datos, lang, salida):
     def tarjeta(s, x, y, h):
         fondo, tinta = color_de(s)
         c.setFillColorRGB(*fondo)
-        c.setStrokeColorRGB(*oscurece(fondo, .78))
-        c.setLineWidth(.8)
+        c.setStrokeColorRGB(*borde_de(fondo))
+        c.setLineWidth(1.1)
         c.roundRect(x, y - h, CW, h, 4, fill=1, stroke=1)
 
         k = clave(s)
-        oscura = tinta == BLANCO
-        t_titulo = BLANCO if oscura else TINTA_TITULO
-        t_profe = TINTA_SOBRE_AZUL if k == "ciclo" else (rgb("dcd2d5") if oscura else TINTA_PROFE)
-        t_nivel = BLANCO if oscura else TINTA_NIVEL
+        t_titulo, t_profe, t_nivel = tintas(fondo)
 
         ty = y - 13
         c.setFillColorRGB(*t_profe)
