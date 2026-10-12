@@ -5,7 +5,7 @@
 // puedes ver los votos. Quien no tenga rol de admin recibe una lista vacía de
 // la propia base de datos, no una pantalla que se lo oculte.
 import Base from "@/layouts/Base.astro";
-import { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_CDN } from "@/data/supabase.js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_CDN, CUENTA_I18N } from "@/data/supabase.js";
 import { MAX_VOTOS, CIERRE } from "@/data/danij.js";
 ---
 
@@ -18,7 +18,7 @@ import { MAX_VOTOS, CIERRE } from "@/data/danij.js";
 
         <div id="gate" class="adm-box">
           <p id="gate-txt">Entra con tu cuenta para ver los resultados.</p>
-          <button type="button" class="p-btn p-btn-dark" data-cu-abrir>Entrar</button>
+          <button type="button" class="p-btn p-btn-dark" data-cu-abrir>{CUENTA_I18N.es.entrar}</button>
           <p id="gate-msg" class="adm-msg" role="alert"></p>
         </div>
 

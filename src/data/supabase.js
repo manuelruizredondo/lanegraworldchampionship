@@ -16,7 +16,7 @@ export const SUPABASE_CDN = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@
 
 export const CUENTA_I18N = {
   es: {
-    entrar: "Entrar",
+    entrar: "Iniciar sesión",
     salir: "Salir",
     miCuenta: "Mi cuenta",
     google: "Continuar con Google",
