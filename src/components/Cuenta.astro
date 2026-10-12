@@ -1,5 +1,5 @@
 ---
-// Cuenta de usuario: entrar con un enlace por email (sin contraseñas) y salir.
+// Cuenta de usuario: entrar con Google (sin contraseñas que guardar) y salir.
 //
 // Expone en `window.laNegraCuenta` una API mínima para el resto de la página:
 //   .cliente()           → el cliente de Supabase, cargado solo cuando hace falta
@@ -36,12 +36,7 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
         <span>{t.google}</span>
       </button>
 
-      <p class="cu-o"><span>{t.oEmail}</span></p>
-
-      <label class="cu-lbl" for="cu-email">{t.email}</label>
-      <input class="cu-input" id="cu-email" type="email" inputmode="email" autocomplete="email" placeholder="tu@email.com" />
-      <button type="button" class="cu-btn" data-cu-enviar>{t.enviar}</button>
-      <p class="cu-nota">{t.nota}</p>
+      <p class="cu-nota">{t.nota} <a href={t.rutaPrivacidad}>{t.privacidad}</a></p>
     </div>
 
     <div data-cu-dentro hidden>
@@ -60,9 +55,7 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
     if (!panel) return;
     const fuera = panel.querySelector("[data-cu-fuera]");
     const dentro = panel.querySelector("[data-cu-dentro]");
-    const input = panel.querySelector("#cu-email");
     const msg = panel.querySelector("[data-cu-msg]");
-    const bEnviar = panel.querySelector("[data-cu-enviar]");
 
     let cliente = null;
     let sesion = null;
@@ -106,7 +99,6 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       pintar();
       aviso("");
       panel.hidden = false;
-      if (!sesion) input.focus();
     };
     const cerrar = () => { panel.hidden = true; aviso(""); };
 
@@ -114,28 +106,6 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !panel.hidden) cerrar(); });
     document.addEventListener("click", (e) => {
       if (e.target.closest("[data-cu-abrir]")) { e.preventDefault(); abrir(); }
-    });
-
-    bEnviar.addEventListener("click", async () => {
-      const email = input.value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { aviso(T.errEmail, true); input.focus(); return; }
-      bEnviar.disabled = true;
-      const antes = bEnviar.textContent;
-      bEnviar.textContent = T.enviando;
-      try {
-        const c = await obtenerCliente();
-        // Se vuelve a esta misma página al pulsar el enlace del correo.
-        const { error } = await c.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: window.location.href.split("#")[0] },
-        });
-        if (error) throw error;
-        aviso(T.enviado, false);
-      } catch (e) {
-        aviso((e && e.message) || T.errEnvio, true);
-      }
-      bEnviar.textContent = antes;
-      bEnviar.disabled = false;
     });
 
     panel.querySelector("[data-cu-google]").addEventListener("click", async () => {
@@ -167,8 +137,8 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       pedirEntrar: abrir,
     };
 
-    // Si venimos del enlace del correo, la URL trae el token: hay que arrancar
-    // el cliente ya para que lo canjee y se limpie la barra de direcciones.
+    // Al volver de Google la URL trae el token: hay que arrancar el cliente ya
+    // para que lo canjee y se limpie la barra de direcciones.
     if (location.hash.includes("access_token") || location.search.includes("code=")) {
       obtenerCliente().then(() => {
         pintar();
@@ -198,18 +168,6 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
   .cu-t { margin: 0 30px 8px 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; color: #14121a; }
   .cu-lead { margin: 0 0 18px; font-size: 14px; line-height: 1.5; color: #6a6a74; }
   .cu-quien { color: #9a9aa2; }
-  .cu-lbl { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; color: #6a6a74; margin-bottom: 6px; }
-  .cu-input {
-    width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid #e6e1d8;
-    font-size: 16px; font-family: inherit; color: #14121a;
-  }
-  .cu-input:focus-visible { outline: none; border-color: var(--gold); }
-  .cu-btn {
-    width: 100%; margin-top: 14px; padding: 13px 10px; border-radius: 999px; border: 2px solid #14121a;
-    background: #14121a; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
-  }
-  .cu-btn:disabled { opacity: .5; cursor: default; }
-  .cu-btn-sec { background: #fff; color: #14121a; }
   .cu-google {
     width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
     padding: 12px 14px; border-radius: 999px; border: 2px solid #e0dcd4; background: #fff;
@@ -217,15 +175,18 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
     transition: border-color .15s ease, background .15s ease;
   }
   .cu-google:hover { border-color: #c9c3b8; background: #fbfaf8; }
-  .cu-o {
-    display: flex; align-items: center; gap: 12px;
-    margin: 18px 0; font-size: 12.5px; color: #9a9aa2;
+
+  .cu-btn {
+    width: 100%; margin-top: 14px; padding: 13px 10px; border-radius: 999px;
+    border: 2px solid #14121a; background: #fff; color: #14121a;
+    font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
   }
-  .cu-o::before, .cu-o::after { content: ""; flex: 1; height: 1px; background: #ece8e1; }
+  .cu-btn:hover { background: #f4f1ea; }
 
   .cu-msg { margin: 14px 0 0; font-size: 13.5px; font-weight: 600; line-height: 1.45; }
   .cu-msg[hidden] { display: none; }
   .cu-msg.ok { color: #2e7d52; }
   .cu-msg.err { color: #c8324c; }
   .cu-nota { margin: 12px 0 0; font-size: 12px; color: #9a9aa2; line-height: 1.45; }
+  .cu-nota a { color: #6a6a74; text-decoration: underline; }
 </style>

@@ -126,17 +126,24 @@ const T = {
   /* Las opciones nativas se dibujan sobre fondo claro del SO: texto oscuro para que se lean */
   .lang-select option { color: #14102b; background: #fff; font-weight: 700; }
 
+  /* La cabecera pasa del hero oscuro al blanco translúcido al hacer scroll.
+     Ni el blanco ni el dorado solos aguantan los dos: con relleno claro y
+     texto dorado se lee en ambos, y queda como el secundario del pase. */
   .btn-login {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 8px 14px; border-radius: 999px;
-    border: 1.5px solid rgba(255, 255, 255, .34); background: transparent;
-    color: #fff; font-family: inherit; font-size: 14px; font-weight: 700;
+    border: 1.5px solid var(--gold-dark);
+    background: rgba(255, 255, 255, .92);
+    color: var(--gold-dark); font-family: inherit; font-size: 14px; font-weight: 700;
     line-height: 1.6; cursor: pointer; white-space: nowrap;
-    transition: border-color .15s ease, background .15s ease;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
   }
-  .btn-login:hover { border-color: var(--gold); background: rgba(255, 255, 255, .08); }
-  /* Con sesión abierta se marca en dorado: se sabe de un vistazo si estás dentro */
-  :global(html.con-sesion) .btn-login { border-color: var(--gold); color: var(--gold); }
+  .btn-login:hover { background: #fff; border-color: var(--gold); color: var(--gold); }
+  /* Con sesión abierta se rellena de dorado: se ve de un vistazo que estás dentro */
+  :global(html.con-sesion) .btn-login {
+    background: var(--gold); border-color: var(--gold); color: #fff;
+  }
+  :global(html.con-sesion) .btn-login:hover { background: var(--gold-dark); border-color: var(--gold-dark); }
 
   .burger {
     display: flex; flex-direction: column; justify-content: center; gap: 6px;
