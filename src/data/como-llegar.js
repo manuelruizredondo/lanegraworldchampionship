@@ -36,7 +36,7 @@ export const I18N = {
     ruta: "/como-llegar/",
     metaTitle: "Cómo llegar a La Negra Dance Festival · Calpe, Alicante",
     metaDesc:
-      "Cómo llegar al Hotel AR Diamante Beach de Calpe: aeropuertos, transfer del festival, autobús, tranvía y coche. Toda la información en un sitio.",
+      "Cómo llegar al Hotel AR Diamante Beach de Calpe: aeropuertos, servicio de transfer, autobús, tranvía y coche. Toda la información en un sitio.",
     eyebrow: "Dónde nos vemos",
     h1: "Cómo llegar",
     lead: "Todo el festival pasa en el mismo sitio: el Hotel AR Diamante Beach de Calpe, en primera línea de mar y a los pies del Peñón de Ifach. Aquí tienes todas las formas de llegar hasta la puerta.",
@@ -44,13 +44,13 @@ export const I18N = {
     verMapa: "Ver en el mapa",
     rutaBtn: "Abrir la ruta en Google Maps",
 
-    transferTitulo: "El transfer del festival",
-    transferLead: "Lo organizamos nosotros y es compartido con el resto de asistentes. Es la forma más cómoda si llegas en avión o en tren.",
+    transferTitulo: "El transfer al hotel",
+    transferLead: "Hay servicio de transfer compartido con el resto de asistentes. Es la forma más cómoda si llegas en avión o en tren.",
     transferAvion: "Desde el aeropuerto de Alicante",
     transferAvionTxt: "Para llegadas y salidas entre las 7:00 y las 23:55.",
     transferTren: "Desde la estación de tren de Alicante",
     transferTrenTxt: "Para llegadas y salidas entre las 9:00 y las 20:15.",
-    transferNota: "Consúltanos el precio actualizado. Cuando nos digas tu vuelo o tu tren hacemos la reserva y te mandamos la confirmación con un enlace para pagar.",
+    transferNota: "Consúltanos el precio actualizado. Con los datos de tu vuelo o tu tren se tramita la reserva y recibirás la confirmación con un enlace para pagar.",
     transferBtn: "Pedir el transfer",
 
     avionTitulo: "En avión",
@@ -80,7 +80,7 @@ export const I18N = {
     ruta: "/en/getting-here/",
     metaTitle: "Getting to La Negra Dance Festival · Calpe, Alicante",
     metaDesc:
-      "How to reach the Hotel AR Diamante Beach in Calpe: airports, festival transfer, bus, tram and car. Everything in one place.",
+      "How to reach the Hotel AR Diamante Beach in Calpe: airports, transfer service, bus, tram and car. Everything in one place.",
     eyebrow: "Where we meet",
     h1: "Getting here",
     lead: "The whole festival happens in one place: the Hotel AR Diamante Beach in Calpe, on the seafront at the foot of the Peñón de Ifach. Here is every way to get to the door.",
@@ -88,13 +88,13 @@ export const I18N = {
     verMapa: "See it on the map",
     rutaBtn: "Open directions in Google Maps",
 
-    transferTitulo: "The festival transfer",
-    transferLead: "We organise it ourselves and you share it with other attendees. It's the easiest option if you arrive by plane or train.",
+    transferTitulo: "The transfer to the hotel",
+    transferLead: "There is a shared transfer service with other attendees. It's the easiest option if you arrive by plane or train.",
     transferAvion: "From Alicante airport",
     transferAvionTxt: "For arrivals and departures between 7:00 and 23:55.",
     transferTren: "From Alicante train station",
     transferTrenTxt: "For arrivals and departures between 9:00 and 20:15.",
-    transferNota: "Ask us for the current price. Once you tell us your flight or train we book it and send you the confirmation with a payment link.",
+    transferNota: "Ask us for the current price. With your flight or train details the booking is arranged and you will get the confirmation with a payment link.",
     transferBtn: "Request the transfer",
 
     avionTitulo: "By plane",
@@ -124,7 +124,7 @@ export const I18N = {
     ruta: "/it/come-arrivare/",
     metaTitle: "Come arrivare a La Negra Dance Festival · Calpe, Alicante",
     metaDesc:
-      "Come raggiungere l'Hotel AR Diamante Beach di Calpe: aeroporti, transfer del festival, autobus, tram e auto. Tutto in un unico posto.",
+      "Come raggiungere l'Hotel AR Diamante Beach di Calpe: aeroporti, servizio di transfer, autobus, tram e auto. Tutto in un unico posto.",
     eyebrow: "Dove ci vediamo",
     h1: "Come arrivare",
     lead: "Tutto il festival si svolge nello stesso posto: l'Hotel AR Diamante Beach di Calpe, sul lungomare ai piedi del Peñón de Ifach. Qui trovi tutti i modi per arrivare fino alla porta.",
@@ -132,13 +132,13 @@ export const I18N = {
     verMapa: "Vedi sulla mappa",
     rutaBtn: "Apri il percorso su Google Maps",
 
-    transferTitulo: "Il transfer del festival",
-    transferLead: "Lo organizziamo noi ed è condiviso con gli altri partecipanti. È la soluzione più comoda se arrivi in aereo o in treno.",
+    transferTitulo: "Il transfer per l'hotel",
+    transferLead: "C'è un servizio di transfer condiviso con gli altri partecipanti. È la soluzione più comoda se arrivi in aereo o in treno.",
     transferAvion: "Dall'aeroporto di Alicante",
     transferAvionTxt: "Per arrivi e partenze tra le 7:00 e le 23:55.",
     transferTren: "Dalla stazione ferroviaria di Alicante",
     transferTrenTxt: "Per arrivi e partenze tra le 9:00 e le 20:15.",
-    transferNota: "Chiedici il prezzo aggiornato. Quando ci dici il tuo volo o il tuo treno facciamo la prenotazione e ti mandiamo la conferma con un link per pagare.",
+    transferNota: "Chiedici il prezzo aggiornato. Con i dati del tuo volo o del tuo treno si gestisce la prenotazione e riceverai la conferma con un link per pagare.",
     transferBtn: "Richiedi il transfer",
 
     avionTitulo: "In aereo",
