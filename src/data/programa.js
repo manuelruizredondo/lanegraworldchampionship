@@ -422,7 +422,7 @@ export const I18N = {
     favEmpty: "Aún no tienes favoritos. Toca el corazón de cualquier tarjeta para guardarla aquí.",
     sync: {
       abrir: "Guardar en mi cuenta",
-      titulo: "Llévate tus favoritos a otro móvil",
+      titulo: "Guarda tus favoritos en tu cuenta",
       lead: "Entra con tu cuenta y lo que marques se guarda solo. Lo tendrás en cualquier dispositivo, y seguirá también en este móvil.",
       cerrar: "Cerrar",
       nota: "Solo guardamos tu email y las clases que marques.",
@@ -488,7 +488,7 @@ export const I18N = {
     favEmpty: "No favourites yet. Tap the heart on any card to save it here.",
     sync: {
       abrir: "Save to my account",
-      titulo: "Take your favourites to another phone",
+      titulo: "Save your favourites to your account",
       lead: "Sign in and whatever you mark is saved by itself. You'll have it on any device, and it stays on this phone too.",
       cerrar: "Close",
       nota: "We only store your email and the classes you mark.",
@@ -554,7 +554,7 @@ export const I18N = {
     favEmpty: "Ancora nessun preferito. Tocca il cuore di una card per salvarla qui.",
     sync: {
       abrir: "Salva nel mio account",
-      titulo: "Porta i preferiti su un altro telefono",
+      titulo: "Salva i preferiti nel tuo account",
       lead: "Accedi e quello che segni si salva da solo. Lo avrai su qualsiasi dispositivo e resterà anche su questo telefono.",
       cerrar: "Chiudi",
       nota: "Salviamo solo la tua email e le lezioni che segni.",
