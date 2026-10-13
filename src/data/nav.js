@@ -2,6 +2,16 @@
 
 export const MENU = {
   es: [
+    { label: "FESTIVAL", href: "/festival/", sub: [
+      { t: "EL FESTIVAL", h: "/festival/#info" },
+      { t: "ARTISTAS", h: "/artistas/" },
+      { t: "TALLERES", h: "/talleres/" },
+      { t: "FIESTA", h: "/fiesta/" },
+      { t: "Concierto Dani J", h: "/concierto-danij/", raw: true },
+      { t: "HOTEL", h: "/festival/#hotel" },
+    ]},
+    { label: "FULL PASS", href: "/tu-pase/", sub: [] },
+    { label: "CONTACTO", href: "/contacto/", sub: [] },
     { label: "MUNDIAL", href: "/mundial/", sub: [
       { t: "EL MUNDIAL", h: "/mundial/" },
       { t: "INSCRIPCIÓN", h: "/competicion/#inscripcion" },
@@ -10,15 +20,6 @@ export const MENU = {
       { t: "PASE COMPETIDOR", h: "/tu-pase/" },
       { t: "Hall of Fame", h: "/videos/", raw: true },
     ]},
-    { label: "FESTIVAL", href: "/festival/", sub: [
-      { t: "EL FESTIVAL", h: "/festival/#info" },
-      { t: "ARTISTAS", h: "/artistas/" },
-      { t: "TALLERES", h: "/talleres/" },
-      { t: "FIESTA", h: "/fiesta/" },
-      { t: "FULL PASS", h: "/tu-pase/" },
-      { t: "HOTEL", h: "/festival/#hotel" },
-    ]},
-    { label: "CONTACTO", href: "/contacto/", sub: [] },
     { label: "EDICIONES ANTERIORES", href: "/ediciones/", sub: [
       { t: "MUNDIAL 2025", h: "/ganadores-2025/" },
       { t: "MUNDIAL 2024", h: "/ganadores/" },
@@ -27,6 +28,16 @@ export const MENU = {
     ]},
   ],
   en: [
+    { label: "FESTIVAL", href: "/en/festival/", sub: [
+      { t: "THE FESTIVAL", h: "/en/festival/#info" },
+      { t: "ARTISTS", h: "/en/artists/" },
+      { t: "WORKSHOPS", h: "/en/workshops/" },
+      { t: "PARTY", h: "/en/fiesta/" },
+      { t: "Dani J concert", h: "/en/concierto-danij/", raw: true },
+      { t: "HOTEL", h: "/en/festival/#hotel" },
+    ]},
+    { label: "FULL PASS", href: "/en/your-pass/", sub: [] },
+    { label: "CONTACT", href: "/en/contact/", sub: [] },
     { label: "WORLD CUP", href: "/en/world-championship/", sub: [
       { t: "THE CHAMPIONSHIP", h: "/en/world-championship/" },
       { t: "REGISTRATION", h: "/en/competition/#registration" },
@@ -35,15 +46,6 @@ export const MENU = {
       { t: "COMPETITOR PASS", h: "/en/your-pass/" },
       { t: "Hall of Fame", h: "/en/videos/", raw: true },
     ]},
-    { label: "FESTIVAL", href: "/en/festival/", sub: [
-      { t: "THE FESTIVAL", h: "/en/festival/#info" },
-      { t: "ARTISTS", h: "/en/artists/" },
-      { t: "WORKSHOPS", h: "/en/workshops/" },
-      { t: "PARTY", h: "/en/fiesta/" },
-      { t: "FULL PASS", h: "/en/your-pass/" },
-      { t: "HOTEL", h: "/en/festival/#hotel" },
-    ]},
-    { label: "CONTACT", href: "/en/contact/", sub: [] },
     { label: "PAST EDITIONS", href: "/en/editions/", sub: [
       { t: "WORLD CUP 2025", h: "/en/winners-2025/" },
       { t: "WORLD CUP 2024", h: "/en/winners/" },
@@ -52,6 +54,16 @@ export const MENU = {
     ]},
   ],
   it: [
+    { label: "FESTIVAL", href: "/it/festival/", sub: [
+      { t: "IL FESTIVAL", h: "/it/festival/#info" },
+      { t: "ARTISTI", h: "/it/artists/" },
+      { t: "WORKSHOP", h: "/it/workshops/" },
+      { t: "FESTA", h: "/it/fiesta/" },
+      { t: "Concerto Dani J", h: "/it/concierto-danij/", raw: true },
+      { t: "HOTEL", h: "/it/festival/#hotel" },
+    ]},
+    { label: "FULL PASS", href: "/it/your-pass/", sub: [] },
+    { label: "CONTATTI", href: "/it/contact/", sub: [] },
     { label: "MONDIALE", href: "/it/mondiale/", sub: [
       { t: "IL MONDIALE", h: "/it/mondiale/" },
       { t: "ISCRIZIONE", h: "/it/competition/#registration" },
@@ -60,15 +72,6 @@ export const MENU = {
       { t: "PASS CONCORRENTE", h: "/it/your-pass/" },
       { t: "Hall of Fame", h: "/it/videos/", raw: true },
     ]},
-    { label: "FESTIVAL", href: "/it/festival/", sub: [
-      { t: "IL FESTIVAL", h: "/it/festival/#info" },
-      { t: "ARTISTI", h: "/it/artists/" },
-      { t: "WORKSHOP", h: "/it/workshops/" },
-      { t: "FESTA", h: "/it/fiesta/" },
-      { t: "FULL PASS", h: "/it/your-pass/" },
-      { t: "HOTEL", h: "/it/festival/#hotel" },
-    ]},
-    { label: "CONTATTI", href: "/it/contact/", sub: [] },
     { label: "EDIZIONI PRECEDENTI", href: "/it/edizioni/", sub: [
       { t: "MONDIALE 2025", h: "/it/winners-2025/" },
       { t: "MONDIALE 2024", h: "/it/winners/" },
