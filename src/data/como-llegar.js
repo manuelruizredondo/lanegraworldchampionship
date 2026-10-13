@@ -24,6 +24,15 @@ export const SEDE = {
     "%3A0x8f672c62926e85bf!2sAR%20Diamante%20Beach!5e0!3m2!1ses!2ses!4v1742755084006!5m2!1ses!2ses",
 };
 
+// Los traslados los opera Beniconnect, una agencia de la Costa Blanca; la
+// reserva se hace en su web, no aquí. El inglés vive en la raíz de su sitio y
+// no tienen versión italiana, así que el italiano va al inglés.
+export const BENICONNECT = {
+  es: "https://www.beniconnect.com/es/",
+  en: "https://www.beniconnect.com/",
+  it: "https://www.beniconnect.com/",
+};
+
 export const ENLACES = {
   alsa: "https://www.alsa.com/en/coach/alicante-calpe",
   tram: "https://www.tramalicante.es/",
@@ -44,14 +53,14 @@ export const I18N = {
     verMapa: "Ver en el mapa",
     rutaBtn: "Abrir la ruta en Google Maps",
 
-    transferTitulo: "El transfer al hotel",
-    transferLead: "Hay servicio de transfer compartido con el resto de asistentes. Es la forma más cómoda si llegas en avión o en tren.",
+    transferTitulo: "El transfer desde Alicante",
+    transferLead: "Los traslados los opera Beniconnect, una agencia de la Costa Blanca. Reservas con ellos el trayecto hasta la puerta del hotel: es la forma más cómoda si llegas en avión o en tren.",
     transferAvion: "Desde el aeropuerto de Alicante",
     transferAvionTxt: "Para llegadas y salidas entre las 7:00 y las 23:55.",
     transferTren: "Desde la estación de tren de Alicante",
     transferTrenTxt: "Para llegadas y salidas entre las 9:00 y las 20:15.",
-    transferNota: "Consúltanos el precio actualizado. Con los datos de tu vuelo o tu tren se tramita la reserva y recibirás la confirmación con un enlace para pagar.",
-    transferBtn: "Pedir el transfer",
+    transferNota: "Al reservar, elige Calpe como destino e indica el Hotel AR Diamante Beach. El precio, los horarios y la confirmación los lleva Beniconnect.",
+    transferBtn: "Reservar en Beniconnect ↗",
 
     avionTitulo: "En avión",
     avionAlc: "Alicante-Elche (ALC)",
@@ -88,14 +97,14 @@ export const I18N = {
     verMapa: "See it on the map",
     rutaBtn: "Open directions in Google Maps",
 
-    transferTitulo: "The transfer to the hotel",
-    transferLead: "There is a shared transfer service with other attendees. It's the easiest option if you arrive by plane or train.",
+    transferTitulo: "Transfers from Alicante",
+    transferLead: "Transfers are run by Beniconnect, a Costa Blanca travel agency. You book the trip to the hotel door with them: it's the easiest option if you arrive by plane or train.",
     transferAvion: "From Alicante airport",
     transferAvionTxt: "For arrivals and departures between 7:00 and 23:55.",
     transferTren: "From Alicante train station",
     transferTrenTxt: "For arrivals and departures between 9:00 and 20:15.",
-    transferNota: "Ask us for the current price. With your flight or train details the booking is arranged and you will get the confirmation with a payment link.",
-    transferBtn: "Request the transfer",
+    transferNota: "When booking, choose Calpe as your destination and give the Hotel AR Diamante Beach. Prices, timetables and the confirmation are handled by Beniconnect.",
+    transferBtn: "Book with Beniconnect ↗",
 
     avionTitulo: "By plane",
     avionAlc: "Alicante-Elche (ALC)",
@@ -132,14 +141,14 @@ export const I18N = {
     verMapa: "Vedi sulla mappa",
     rutaBtn: "Apri il percorso su Google Maps",
 
-    transferTitulo: "Il transfer per l'hotel",
-    transferLead: "C'è un servizio di transfer condiviso con gli altri partecipanti. È la soluzione più comoda se arrivi in aereo o in treno.",
+    transferTitulo: "Il transfer da Alicante",
+    transferLead: "I trasferimenti sono gestiti da Beniconnect, un'agenzia della Costa Blanca. Prenoti con loro il tragitto fino alla porta dell'hotel: è la soluzione più comoda se arrivi in aereo o in treno.",
     transferAvion: "Dall'aeroporto di Alicante",
     transferAvionTxt: "Per arrivi e partenze tra le 7:00 e le 23:55.",
     transferTren: "Dalla stazione ferroviaria di Alicante",
     transferTrenTxt: "Per arrivi e partenze tra le 9:00 e le 20:15.",
-    transferNota: "Chiedici il prezzo aggiornato. Con i dati del tuo volo o del tuo treno si gestisce la prenotazione e riceverai la conferma con un link per pagare.",
-    transferBtn: "Richiedi il transfer",
+    transferNota: "Al momento della prenotazione scegli Calpe come destinazione e indica l'Hotel AR Diamante Beach. Prezzi, orari e conferma li gestisce Beniconnect.",
+    transferBtn: "Prenota su Beniconnect ↗",
 
     avionTitulo: "In aereo",
     avionAlc: "Alicante-Elche (ALC)",
