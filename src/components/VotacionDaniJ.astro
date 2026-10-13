@@ -109,6 +109,18 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   <div class="p-container dj-entradas" id="entradas">
     <h2 class="p-h2 dj-ent-h2">{t.concierto.compraTitulo}</h2>
     <p class="p-lead p-narrow dj-ent-lead">{t.concierto.compraLead}</p>
+
+    {/* El widget de venta trae también el Full Pass y no se puede tocar desde
+        aquí, así que se señala antes cuál es la opción del concierto. */}
+    <div class="dj-ent-opcion">
+      <div class="dj-ent-opcion-t">
+        <span class="dj-ent-opcion-n">{t.concierto.compraOpcion}</span>
+        <span class="dj-ent-opcion-p">{t.concierto.compraPrecio}</span>
+      </div>
+      <p class="dj-ent-opcion-i">{t.concierto.compraIncluye}</p>
+      <p class="dj-ent-opcion-c">{t.concierto.compraComo}</p>
+    </div>
+
     <div class="dj-ent-widget">
       <iframe src={ENTRADAS.iframe(lang)} title={t.concierto.compraTitulo}
               loading="lazy" width="100%" height="100px" frameborder="0" scrolling="auto"></iframe>
@@ -116,6 +128,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
     <p class="dj-ent-pie">
       <a href={ENTRADAS.url} target="_blank" rel="noopener">{t.concierto.compraIr}</a>
     </p>
+    <p class="dj-ent-nota">{t.concierto.compraPase}</p>
     <p class="dj-ent-nota">{t.concierto.nota}</p>
   </div>
 </section>
@@ -511,6 +524,17 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-ent-widget { width: 100%; }
   /* El auto-resize de go&dance por postMessage no siempre llega: se le fija
      una altura suficiente para que se vean las dos entradas. */
+  .dj-ent-opcion {
+    max-width: 440px; margin: 0 auto 26px; padding: 18px 22px; text-align: left;
+    background: #fff; border: 2px solid var(--gold, #c9a227); border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(201, 162, 39, .12);
+  }
+  .dj-ent-opcion-t { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+  .dj-ent-opcion-n { font-size: 17px; font-weight: 800; letter-spacing: -.01em; color: #14121a; }
+  .dj-ent-opcion-p { font-size: 26px; font-weight: 800; letter-spacing: -.03em; color: var(--gold-dark, #a2823f); white-space: nowrap; }
+  .dj-ent-opcion-i { margin: 4px 0 0; font-size: 14px; font-weight: 600; color: #4a4a54; }
+  .dj-ent-opcion-c { margin: 10px 0 0; font-size: 13px; color: #8a8578; }
+
   .dj-ent-widget iframe { display: block; width: 100%; border: 0; min-height: 620px; border-radius: 16px; }
   .dj-ent-pie { margin: 16px 0 0; font-size: 14px; }
   .dj-ent-pie a { color: var(--gold-dark); font-weight: 700; }
