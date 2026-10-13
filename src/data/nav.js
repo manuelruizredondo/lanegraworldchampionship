@@ -3,6 +3,7 @@
 export const MENU = {
   es: [
     { label: "FESTIVAL", href: "/festival/", sub: [
+      { t: "FULL PASS", h: "/tu-pase/" },
       { t: "EL FESTIVAL", h: "/festival/#info" },
       { t: "ARTISTAS", h: "/artistas/" },
       { t: "TALLERES", h: "/talleres/" },
@@ -10,7 +11,6 @@ export const MENU = {
       { t: "Concierto Dani J", h: "/concierto-danij/", raw: true },
       { t: "HOTEL", h: "/festival/#hotel" },
     ]},
-    { label: "FULL PASS", href: "/tu-pase/", sub: [] },
     { label: "CONTACTO", href: "/contacto/", sub: [] },
     { label: "MUNDIAL", href: "/mundial/", sub: [
       { t: "EL MUNDIAL", h: "/mundial/" },
@@ -29,6 +29,7 @@ export const MENU = {
   ],
   en: [
     { label: "FESTIVAL", href: "/en/festival/", sub: [
+      { t: "FULL PASS", h: "/en/your-pass/" },
       { t: "THE FESTIVAL", h: "/en/festival/#info" },
       { t: "ARTISTS", h: "/en/artists/" },
       { t: "WORKSHOPS", h: "/en/workshops/" },
@@ -36,7 +37,6 @@ export const MENU = {
       { t: "Dani J concert", h: "/en/concierto-danij/", raw: true },
       { t: "HOTEL", h: "/en/festival/#hotel" },
     ]},
-    { label: "FULL PASS", href: "/en/your-pass/", sub: [] },
     { label: "CONTACT", href: "/en/contact/", sub: [] },
     { label: "WORLD CUP", href: "/en/world-championship/", sub: [
       { t: "THE CHAMPIONSHIP", h: "/en/world-championship/" },
@@ -55,6 +55,7 @@ export const MENU = {
   ],
   it: [
     { label: "FESTIVAL", href: "/it/festival/", sub: [
+      { t: "FULL PASS", h: "/it/your-pass/" },
       { t: "IL FESTIVAL", h: "/it/festival/#info" },
       { t: "ARTISTI", h: "/it/artists/" },
       { t: "WORKSHOP", h: "/it/workshops/" },
@@ -62,7 +63,6 @@ export const MENU = {
       { t: "Concerto Dani J", h: "/it/concierto-danij/", raw: true },
       { t: "HOTEL", h: "/it/festival/#hotel" },
     ]},
-    { label: "FULL PASS", href: "/it/your-pass/", sub: [] },
     { label: "CONTATTI", href: "/it/contact/", sub: [] },
     { label: "MONDIALE", href: "/it/mondiale/", sub: [
       { t: "IL MONDIALE", h: "/it/mondiale/" },
