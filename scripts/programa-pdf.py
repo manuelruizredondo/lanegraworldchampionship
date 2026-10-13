@@ -26,9 +26,12 @@ import os
 import re
 import sys
 
+from reportlab.lib.colors import Color
+from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4, landscape
-from reportlab.lib.utils import ImageReader
-from reportlab.pdfgen import canvas
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import (BaseDocTemplate, Frame, PageTemplate, Paragraph,
+                                Spacer, Table, TableStyle)
 
 
 def rgb(h):
@@ -275,200 +278,341 @@ TITULO_PDF = {
 }
 
 
-LOGO = ImageReader("public/img/logo-mundial-2026.png")
+# ── Medidas del documento del Drive ──────────────────────────────────────────
+# El Word es A4 apaisado con márgenes de 720 twips a los lados y 500 arriba y
+# abajo. Un twip es 1/20 de punto, así que las medidas salen exactas.
+TW_PT = 1 / 20.0
+MARGEN_X = 720 * TW_PT          # 36 pt
+MARGEN_Y = 500 * TW_PT          # 25 pt
+# Anchos de columna del documento: HORA + los cuatro salones.
+COLS_TWIPS = [1500, 3500, 3500, 3449, 3449]
+COLS = [w * TW_PT for w in COLS_TWIPS]
+
+# Colores del documento
+TINTA = rgb("1a1a1a")
+GRIS = rgb("6b6b6b")
+GRANATE = rgb("b3122e")
+LINEA = rgb("d9d9d9")
+FONDO_HORA = rgb("f7f7f7")
+FONDO_COMIDA = rgb("ededed")
+FONDO_CABECERA = rgb("1a1a1a")
+
+
+def col(c):
+    """De la tupla 0-1 que usa el resto del script al color de reportlab."""
+    return Color(*c)
+
+
+def estilo(nombre, tam, color, negrita=False, cursiva=False, **kw):
+    fuente = "Helvetica"
+    if negrita and cursiva:
+        fuente = "Helvetica-BoldOblique"
+    elif negrita:
+        fuente = "Helvetica-Bold"
+    elif cursiva:
+        fuente = "Helvetica-Oblique"
+    kw.setdefault("leading", tam * 1.22)
+    return ParagraphStyle(nombre, fontName=fuente, fontSize=tam, textColor=col(color), **kw)
+
+
+# Tamaños en puntos: en el Word van en medios puntos (sz 40 = 20 pt).
+E_TITULO = estilo("titulo", 20, TINTA, True, alignment=TA_CENTER, leading=23)
+E_SUBTITULO = estilo("subtitulo", 11, GRANATE, True, alignment=TA_CENTER, spaceBefore=4)
+E_SEDE = estilo("sede", 9, GRIS, alignment=TA_CENTER, spaceBefore=3)
+E_LEYENDA = estilo("leyenda", 7, TINTA, spaceBefore=10, leading=10)
+E_DIA = estilo("dia", 13, TINTA, True, spaceBefore=12, spaceAfter=6)
+E_DESCARGO = estilo("descargo", 6.5, GRIS, cursiva=True, spaceBefore=5, leading=8.5)
+E_CIERRE = estilo("cierre", 13, GRANATE, True, alignment=TA_CENTER, spaceBefore=12)
+E_CAB_TABLA = estilo("cabtabla", 7, BLANCO, True, alignment=TA_CENTER, leading=9)
+E_HORA = estilo("hora", 7.5, TINTA, True, leading=9.5)
+E_COMIDA = estilo("comida", 7.5, GRIS, True, leading=9.5)
+E_COMIDAS_CAB = estilo("comidascab", 7, BLANCO, True, leading=9)
+E_COMIDAS_CEL = estilo("comidascel", 7.5, TINTA, leading=9.5)
+
+TITULO_PDF = {
+    "es": "Programación 2026 · La Negra World Championship",
+    "en": "2026 Schedule · La Negra World Championship",
+    "it": "Programma 2026 · La Negra World Championship",
+}
+
+# Encabezados del documento, por idioma. El resto de textos viene de los datos.
+PORTADA = {
+    "es": ("LA NEGRA WORLD CHAMPIONSHIP & LA NEGRA DANCE FESTIVAL",
+           "PROGRAMACIÓN Y HORARIOS",
+           "21 al 25 de octubre de 2026  ·  Hotel Diamante Beach, Calpe (España)",
+           "¡Nos vemos del 20 al 24 de octubre de 2027!",
+           "La Negra World Championship 2026 · Programación",
+           "Pág.",
+           ("HORARIOS DE COMIDAS · HOTEL", "DESAYUNO", "COMIDA", "CENA",
+            "Horario general", "Días especiales"),
+           ("DESAYUNO", "COMIDA", "CENA"),
+           "Leyenda:", "Niveles de los talleres:"),
+    "en": ("LA NEGRA WORLD CHAMPIONSHIP & LA NEGRA DANCE FESTIVAL",
+           "PROGRAMME AND SCHEDULE",
+           "21–25 October 2026  ·  Hotel Diamante Beach, Calpe (Spain)",
+           "See you from 20 to 24 October 2027!",
+           "La Negra World Championship 2026 · Programme",
+           "P.",
+           ("MEAL TIMES · HOTEL", "BREAKFAST", "LUNCH", "DINNER",
+            "Usual times", "Special days"),
+           ("BREAKFAST", "LUNCH", "DINNER"),
+           "Key:", "Workshop levels:"),
+    "it": ("LA NEGRA WORLD CHAMPIONSHIP & LA NEGRA DANCE FESTIVAL",
+           "PROGRAMMA E ORARI",
+           "21–25 ottobre 2026  ·  Hotel Diamante Beach, Calpe (Spagna)",
+           "Ci vediamo dal 20 al 24 ottobre 2027!",
+           "La Negra World Championship 2026 · Programma",
+           "Pag.",
+           ("ORARI DEI PASTI · HOTEL", "COLAZIONE", "PRANZO", "CENA",
+            "Orario generale", "Giorni speciali"),
+           ("COLAZIONE", "PRANZO", "CENA"),
+           "Legenda:", "Livelli dei workshop:"),
+}
+
+
+# El documento escribe el mes entero: «MIÉRCOLES 21 DE OCTUBRE».
+MES_LARGO = {"es": "de octubre", "en": "October", "it": "ottobre"}
+
+
+def fecha_larga(fecha, lang):
+    m = re.match(r"^\s*(\d{1,2})\s*([A-Za-zÁÉÍÓÚáéíóú.]+)\s*$", fecha or "")
+    if not m:
+        return fecha
+    return f"{m.group(1)} {MES_LARGO.get(lang, MES_LARGO['es'])}"
+
+
+# El documento escribe «15:30 a 16:45h»; en los otros idiomas, su conector.
+CONECTOR = {"es": "a", "en": "to", "it": "alle"}
+
+
+def hora_texto(t, lang="es"):
+    """«15:30 – 16:45» → «15:30 a 16:45h», como lo escribe el documento."""
+    t = (t or "").strip()
+    m = re.match(r"^(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})$", t)
+    if m:
+        return f"{m.group(1)} {CONECTOR.get(lang, 'a')} {m.group(2)}h"
+    m = re.match(r"^(.*?)(\d{1,2}:\d{2})$", t)
+    return f"{t}h" if m else t
+
+
+def tabla_comidas(P, textos, lang):
+    """La tabla resumen de comidas de la cabecera, deducida de los propios datos.
+
+    El documento la trae a mano; aquí se calcula: el horario que más se repite
+    es el general y los días que se salen van en «Días especiales». Así no hay
+    que mantener dos sitios con la misma información.
+    """
+    COMIDAS = ("desayuno", "comida", "cena")
+    por_comida = {k: [] for k in COMIDAS}
+    for d in P:
+        for s in d["sessions"]:
+            if s.get("k") != "meal":
+                continue
+            clv = (s.get("clave") or s.get("n") or "").lower()
+            for k in COMIDAS:
+                if k in clv:
+                    por_comida[k].append((capitaliza(d["day"]), s.get("t") or ""))
+    generales, especiales = [], []
+    for k in COMIDAS:
+        filas = por_comida[k]
+        if not filas:
+            generales.append("—")
+            especiales.append("—")
+            continue
+        cuenta = {}
+        for _, t in filas:
+            cuenta[t] = cuenta.get(t, 0) + 1
+        general = max(cuenta, key=lambda t: cuenta[t])
+        generales.append(hora_texto(general, lang))
+        raros = [f"{dia}: {hora_texto(t, lang)}" for dia, t in filas if t != general]
+        especiales.append(" · ".join(raros) if raros else "—")
+
+    cab, c1, c2, c3, fila1, fila2 = textos[6]
+    datos = [
+        [Paragraph(x, E_COMIDAS_CAB) for x in (cab, c1, c2, c3)],
+        [Paragraph(fila1, E_COMIDAS_CEL)] + [Paragraph(x, E_COMIDAS_CEL) for x in generales],
+        [Paragraph(fila2, E_COMIDAS_CEL)] + [Paragraph(x, E_COMIDAS_CEL) for x in especiales],
+    ]
+    ancho = sum(COLS)
+    anchos = [ancho * 0.2, ancho * 0.2667, ancho * 0.2667, ancho * 0.2666]
+    t = Table(datos, colWidths=anchos, repeatRows=1)
+    t.setStyle(TableStyle([
+        ("GRID", (0, 0), (-1, -1), 0.5, col(LINEA)),
+        ("BACKGROUND", (0, 0), (-1, 0), col(GRANATE)),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 5),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]))
+    return t
+
+
+def celda_sesion(s, ET, niveles):
+    """El contenido de una celda de sesión: rótulo, título, profesor y nivel."""
+    fondo, _ = color_de(s)
+    t_titulo, t_profe, t_nivel = tintas(fondo)
+    k = clave(s)
+    partes = []
+
+    if k in ROTULO_COLOR:
+        clave_rotulo, color_rotulo = ROTULO_COLOR[k]
+        rotulo = ET.get(clave_rotulo, clave_rotulo).upper()
+        partes.append(Paragraph(rotulo, estilo("rot", 6.5, legible(fondo, color_rotulo), True, leading=8)))
+
+    partes.append(Paragraph(titulo(s), estilo("tit", 8.5 if k.startswith("comp") else 8,
+                                              t_titulo, True, leading=10)))
+    if s.get("p"):
+        partes.append(Paragraph(s["p"], estilo("prof", 7, t_profe, cursiva=True, leading=8.6)))
+    if s.get("l"):
+        nivel = niveles.get(s.get("lClave") or s["l"], s["l"])
+        partes.append(Paragraph("· " + nivel, estilo("niv", 6.5, t_nivel, True, leading=8)))
+    return partes
+
+
+def tabla_dia(d, ET, niveles, textos, lang):
+    """La tabla de un día: cabecera negra, columna de hora y los cuatro salones."""
+    filas = [[Paragraph(ET["leyenda_hora"], E_CAB_TABLA)] +
+             [Paragraph(ET["salas"][k], E_CAB_TABLA) for k in SALAS]]
+    estilos = [
+        ("GRID", (0, 0), (-1, -1), 0.5, col(LINEA)),
+        ("BACKGROUND", (0, 0), (-1, 0), col(FONDO_CABECERA)),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("VALIGN", (0, 0), (-1, 0), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 5),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+        ("TOPPADDING", (0, 0), (-1, -1), 4),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+    ]
+
+    n = 0
+    for sl in agrupa(d["sessions"]):
+        n += 1
+        banda = [s for s in sl["items"] if s["r"] == "full"]
+        if banda:
+            s = banda[0]
+            fondo, _ = color_de(s)
+            if s["k"] == "meal":
+                # Las comidas ocupan la fila entera y llevan la hora dentro.
+                txt = f'{s["n"].upper()}  ·  {hora_texto(sl["t"], lang)}'
+                filas.append([Paragraph(txt, E_COMIDA), "", "", "", ""])
+                estilos += [("SPAN", (0, n), (-1, n)),
+                            ("BACKGROUND", (0, n), (-1, n), col(FONDO_COMIDA)),
+                            ("VALIGN", (0, n), (-1, n), "MIDDLE")]
+            elif s["k"] == "info":
+                # Como en el documento: la hora aparte y el texto en el primer salón.
+                t_titulo, _, _ = tintas(BLANCO)
+                filas.append([Paragraph(hora_texto(sl["t"], lang), E_HORA),
+                              Paragraph(s["n"], estilo("info", 8, t_titulo, leading=10)), "", "", ""])
+                estilos += [("BACKGROUND", (0, n), (0, n), col(FONDO_HORA)),
+                            ("VALIGN", (0, n), (0, n), "MIDDLE")]
+            else:
+                t_titulo, _, _ = tintas(fondo)
+                filas.append([Paragraph(hora_texto(sl["t"], lang), E_HORA),
+                              Paragraph(s["n"], estilo("banda", 8, t_titulo, True, leading=10)), "", "", ""])
+                estilos += [("SPAN", (1, n), (-1, n)),
+                            ("BACKGROUND", (1, n), (-1, n), col(fondo)),
+                            ("BACKGROUND", (0, n), (0, n), col(FONDO_HORA)),
+                            ("VALIGN", (0, n), (-1, n), "MIDDLE")]
+            continue
+
+        fila = [Paragraph(hora_texto(sl["t"], lang), E_HORA)]
+        estilos += [("BACKGROUND", (0, n), (0, n), col(FONDO_HORA)),
+                    ("VALIGN", (0, n), (0, n), "MIDDLE")]
+        for i, k in enumerate(SALAS):
+            s = next((x for x in sl["items"] if x["r"] == k), None)
+            if s is None:
+                fila.append("")
+                continue
+            fila.append(celda_sesion(s, ET, niveles))
+            estilos.append(("BACKGROUND", (i + 1, n), (i + 1, n), col(color_de(s)[0])))
+        filas.append(fila)
+
+    t = Table(filas, colWidths=COLS, repeatRows=1)
+    t.setStyle(TableStyle(estilos))
+    return t
+
+
+def agrupa(sessions):
+    """Las sesiones por franja horaria, conservando el orden de los datos."""
+    franjas = []
+    for s in sessions:
+        if franjas and franjas[-1]["t"] == s["t"] and not any(
+                x["r"] == "full" for x in franjas[-1]["items"]) and s["r"] != "full":
+            franjas[-1]["items"].append(s)
+        else:
+            franjas.append({"t": s["t"], "items": [s]})
+    return franjas
 
 
 def main(ruta_datos, lang, salida):
     datos = json.load(open(ruta_datos, encoding="utf8"))[lang]
     P = datos["dias"]
-    ET = datos["etiquetas"]
-    c = canvas.Canvas(salida, pagesize=(W, H))
-    c.setTitle(TITULO_PDF.get(lang, TITULO_PDF["es"]))
-    c.setAuthor("La Negra Dance Festival")
+    ET = dict(datos["etiquetas"])
+    ET["leyenda_hora"] = {"es": "HORA", "en": "TIME", "it": "ORA"}[lang]
+    textos = PORTADA[lang]
+    niveles = datos["niveles"]
 
-    def rotulo(s):
-        par = ROTULO_COLOR.get(clave(s))
-        if not par:
-            return None
-        # El color del rótulo que trae el documento (rojo, morado, amarillo) no
-        # siempre se lee sobre el fondo que toque: se respeta si contrasta y, si
-        # no, se cambia por blanco o negro.
-        return (ET[par[0]], legible(color_de(s)[0], par[1], minimo=4.0))
+    doc = BaseDocTemplate(
+        salida, pagesize=landscape(A4),
+        leftMargin=MARGEN_X, rightMargin=MARGEN_X,
+        topMargin=MARGEN_Y, bottomMargin=MARGEN_Y + 10,
+        title=TITULO_PDF[lang], author="La Negra Dance Festival",
+    )
+    marco = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="cuerpo",
+                  leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
 
-    def wrap(t, f, s, w):
-        c.setFont(f, s)
-        out = []
-        for par in (t or "").split("\n"):
-            ln = ""
-            for pal in par.split():
-                p = (ln + " " + pal).strip()
-                if c.stringWidth(p, f, s) <= w:
-                    ln = p
-                else:
-                    out.append(ln)
-                    ln = pal
-            out.append(ln)
-        return [l for l in out if l]
-
-    def alto(s):
-        a = PAD + 10                                   # hora
-        if rotulo(s):
-            a += 9
-        a += len(wrap(titulo(s), "Helvetica-Bold", 7.6, CW - 2 * PAD)) * 9.4
-        if s.get("p"):
-            a += len(wrap(s["p"], "Helvetica-Oblique", 6.8, CW - 2 * PAD)) * 8
-        if s.get("l"):
-            a += 9
-        return max(a + PAD - 2, 40)
-
-    def cabecera(dia, fecha):
-        # Cabecera sobre el papel: sin banda negra, el logo y los dos textos en negro.
-        try:
-            # El mismo ImageReader en las diez páginas: así reportlab incrusta
-            # el logo una sola vez y el PDF no engorda por página.
-            c.drawImage(LOGO, M, H - 56, height=52,
-                        preserveAspectRatio=True, anchor="sw", mask="auto")
-        except Exception:
-            pass
-        # Un pelín de tracking negativo: el tamaño grande lo pide.
-        c.setFillColorRGB(*NEGRO)
-        to = c.beginText(M + 86, H - 36)
-        to.setFont("Helvetica-Bold", 21)
-        to.setCharSpace(-0.5)
-        to.textOut(f"{dia} {fecha}")
-        c.drawText(to)
-        c.setFont("Helvetica-Bold", 8.5)
-        c.drawRightString(W - M, H - 30, ET["cabecera"])
-
-        # Cabecera de las cuatro columnas, en negro como en el documento
-        y = H - 52 - 18
-        x = M + TW
-        for k in SALAS:
-            c.setFillColorRGB(*CABECERA_TABLA)
-            c.rect(x, y, CW, 14, fill=1, stroke=0)
-            c.setFillColorRGB(1, 1, 1)
-            c.setFont("Helvetica-Bold", 6.8)
-            c.drawCentredString(x + CW / 2, y + 4.6, ET["salas"][k])
-            x += CW + 3
-
-        # Leyenda de colores
-        y -= 17
-        x = M + TW
-        NIV = datos["niveles"]
-        for etiqueta, k in ((NIV["Abierto"], "taller-Abierto"), (NIV["Medio"], "taller-Medio"),
-                            (NIV["Medio-Alto"], "taller-Medio-Alto"), (ET["master"], "master"),
-                            (ET["bachata"], "comp-bachata"), (ET["salsa"], "comp-salsa"),
-                            (ET["kind_social"], "social"), (ET["kind_meal"], "meal")):
-            etiqueta = etiqueta.upper()
-            fondo, tinta = PALETA[k]
-            hx = "%02x%02x%02x" % tuple(round(v * 255) for v in fondo)
-            if hx in SUSTITUCIONES:
-                nuevo = SUSTITUCIONES[hx]
-                fondo = rgb(nuevo)
-                if nuevo in OSCUROS:
-                    tinta = BLANCO
-            c.setFont("Helvetica-Bold", 5.6)
-            an = c.stringWidth(etiqueta, "Helvetica-Bold", 5.6) + 11
-            c.setFillColorRGB(*fondo)
-            c.setStrokeColorRGB(*borde_de(fondo))
-            c.setLineWidth(.6)
-            c.rect(x, y, an, 11, fill=1, stroke=1)
-            c.setFillColorRGB(*tinta)
-            c.drawString(x + 5.5, y + 3.4, etiqueta)
-            x += an + 5
-        return y - 12
-
-    def pie(n):
-        c.setFillColorRGB(0.62, 0.60, 0.58)
+    def pie(c, d):
+        c.saveState()
         c.setFont("Helvetica", 6.5)
-        c.drawString(M, 14, datos["note"])
-        c.drawRightString(W - M, 14, f"campeonatopasoslibres.com · {ET['pag']} {n}")
+        c.setFillColorRGB(*GRIS)
+        c.drawCentredString(d.pagesize[0] / 2, 14,
+                            f"{textos[4]}  ·  {textos[5]} {d.page}")
+        c.restoreState()
 
-    def tarjeta(s, x, y, h):
-        fondo, tinta = color_de(s)
-        c.setFillColorRGB(*fondo)
-        c.setStrokeColorRGB(*borde_de(fondo))
-        c.setLineWidth(1.1)
-        c.rect(x, y - h, CW, h, fill=1, stroke=1)
+    doc.addPageTemplates([PageTemplate(id="normal", frames=[marco], onPage=pie)])
 
-        k = clave(s)
-        t_titulo, t_profe, t_nivel = tintas(fondo)
+    story = [
+        Paragraph(textos[0], E_TITULO),
+        Paragraph(textos[1], E_SUBTITULO),
+        Paragraph(textos[2], E_SEDE),
+        Spacer(1, 12),
+        tabla_comidas(P, textos, lang),
+        Paragraph(leyenda(ET, datos, textos), E_LEYENDA),
+    ]
 
-        ty = y - 13
-        c.setFillColorRGB(*t_profe)
-        c.setFont("Helvetica-Bold", 6.4)
-        c.drawString(x + PAD, ty, s["t"])
-        ty -= 9.5
-
-        rot = rotulo(s)
-        if rot:
-            c.setFillColorRGB(*rot[1])
-            c.setFont("Helvetica-Bold", 6.2)
-            c.drawString(x + PAD, ty, rot[0])
-            ty -= 9
-
-        c.setFillColorRGB(*t_titulo)
-        c.setFont("Helvetica-Bold", 7.6)
-        for l in wrap(titulo(s), "Helvetica-Bold", 7.6, CW - 2 * PAD):
-            c.drawString(x + PAD, ty, l)
-            ty -= 9.4
-
-        if s.get("p"):
-            c.setFillColorRGB(*t_profe)
-            c.setFont("Helvetica", 6.8)
-            for l in wrap(s["p"], "Helvetica", 6.8, CW - 2 * PAD):
-                c.drawString(x + PAD, ty, l)
-                ty -= 8
-
-        if s.get("l"):
-            c.setFillColorRGB(*t_nivel)
-            c.setFont("Helvetica-Bold", 6.4)
-            c.drawString(x + PAD, ty - 1, "· " + s["l"])
-
-    pag = 0
     for d in P:
-        slots = []
-        for s in d["sessions"]:
-            if slots and slots[-1]["t"] == s["t"]:
-                slots[-1]["items"].append(s)
-            else:
-                slots.append({"t": s["t"], "items": [s]})
-        pag += 1
-        y = cabecera(capitaliza(d["day"]), capitaliza(d["date"]))
-        pie(pag)
-        for sl in slots:
-            banda = [s for s in sl["items"] if s["r"] == "full"]
-            hh = 20 if banda else max([alto(s) for s in sl["items"]] or [40])
-            if y - hh < 34:
-                c.showPage()
-                pag += 1
-                y = cabecera(capitaliza(d["day"]) + f' ({ET["cont"]})', capitaliza(d["date"]))
-                pie(pag)
-            if banda:
-                s = banda[0]
-                fondo, tinta = color_de(s)
-                comida = s["k"] == "meal"
-                c.setFillColorRGB(*NEGRO)
-                c.setFont("Helvetica-Bold", 7.6)
-                c.drawString(M, y - hh + 7, sl["t"])
-                # La banda arranca donde arrancan las tarjetas, para que la hora
-                # quede alineada con la del resto de filas.
-                c.setFillColorRGB(*fondo)
-                c.rect(M + TW, y - hh, W - M - TW - M, hh, fill=1, stroke=0)
-                c.setFillColorRGB(*(ROJO_COMIDAS if comida else tinta))
-                c.setFont("Helvetica-Bold", 7.6)
-                c.drawCentredString(M + TW + (W - M - TW - M) / 2, y - hh + 7, s["n"].upper())
-                y -= hh + 5
-                continue
-            c.setFillColorRGB(*NEGRO)
-            c.setFont("Helvetica-Bold", 7.6)
-            c.drawString(M, y - 12, sl["t"])
-            for s in sl["items"]:
-                tarjeta(s, M + TW + SALAS.index(s["r"]) * (CW + 3), y, hh)
-            y -= hh + 5
-        c.showPage()
-    c.save()
-    print(f"PDF regenerado: {os.path.getsize(salida) // 1024} KB · {pag} páginas")
+        cab = f'{d["day"]} {fecha_larga(d["date"], lang)}'.upper()
+        story.append(Paragraph(cab, E_DIA))
+        story.append(tabla_dia(d, ET, niveles, textos, lang))
+        story.append(Paragraph(datos["note"], E_DESCARGO))
+
+    story.append(Paragraph(textos[3], E_CIERRE))
+    doc.build(story)
+
+    kb = os.path.getsize(salida) // 1024
+    print(f"PDF regenerado: {kb} KB · {salida}")
+
+
+def leyenda(ET, datos, textos):
+    """La línea de leyenda del documento, con los cuadraditos de color."""
+    def cuadro(hex_color, etiqueta):
+        h = SUSTITUCIONES.get(hex_color, hex_color)
+        return f'<font color="#{h}">■</font> {etiqueta}'
+
+    niveles = datos["niveles"]
+    orden = ["Abierto", "Medio", "Medio-Alto", "Avanzado"]
+    lista = " · ".join(niveles.get(k, k) for k in orden if k in niveles)
+    partes = [
+        f"<b>{textos[8]}</b>  ",
+        cuadro("fce8eb", ET["salsa"]) + "     ",
+        cuadro("f1e6f6", ET["bachata"]) + "     ",
+        cuadro("fff2cc", ET["master"]) + "     ",
+        cuadro("3a3a3a", ET["kind_social"]) + "     ",
+        cuadro("ededed", ET["kind_meal"]) + "     ",
+        f'<b>{textos[9]}</b> <font color="#b3122e"><b>{lista}</b></font>',
+    ]
+    return "".join(partes)
 
 
 if __name__ == "__main__":
