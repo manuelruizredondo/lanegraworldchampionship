@@ -32,6 +32,7 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import (BaseDocTemplate, Frame, PageTemplate, Paragraph,
                                 Spacer, Table, TableStyle)
+from reportlab.platypus.flowables import HRFlowable
 
 
 def rgb(h):
@@ -107,13 +108,15 @@ try:
 except FileNotFoundError:
     DRIVE = {}
 
-# Cambios de color pedidos por el cliente sobre lo que dice el documento.
+# Permutación de colores que se probó en octubre de 2026 y se descartó: el PDF
+# debe salir con los colores del documento del Drive. Se deja detrás de
+# PALETA=permutada por si hiciera falta recuperarla.
 # Se aplican DESPUÉS de leer colores-drive.json, para que valgan tanto si el
 # color viene del documento como si lo calcula la regla.
 # Es una permutación: el azul del Ciclo pasa al Mundial Bachata, el amarillo
 # del social dirigido pasa al Mundial Salsa y el lila de Bachata pasa al social.
 # Se aplica UNA sola vez sobre el color leído, así que no se encadenan.
-SUSTITUCIONES = {
+SUSTITUCIONES_PERMUTADA = {
     "fce8eb": "ffff00",   # Mundial Salsa  → amarillo fluorescente
     "f1e6f6": "0b5394",   # Mundial Bachata → azul, con letra blanca
     "d9d2e9": "0b5394",   # Bachata Dúos Mixtos → el mismo azul
@@ -146,7 +149,12 @@ OSCUROS = {"0b5394", "3a3a3a", "1a1a1a", "b3122e", "5c1130",
            # oscuros de la paleta de Google
            "a2144c", "3847ab", "0e7639", "8422a0", "018b7d", "6d4b3d", "cf0000"}
 
-if os.environ.get("PALETA") == "google":
+# Por defecto, los colores tal cual están en el documento del Drive.
+SUSTITUCIONES = {}
+
+if os.environ.get("PALETA") == "permutada":
+    SUSTITUCIONES = SUSTITUCIONES_PERMUTADA
+elif os.environ.get("PALETA") == "google":
     SUSTITUCIONES = SUSTITUCIONES_GOOGLE
     # Fuera de public/ a propósito: es una propuesta, no se publica hasta que
     # se apruebe. PALETA_SALIDA permite elegir dónde se escribe.
@@ -320,7 +328,8 @@ E_TITULO = estilo("titulo", 20, TINTA, True, alignment=TA_CENTER, leading=23)
 E_SUBTITULO = estilo("subtitulo", 11, GRANATE, True, alignment=TA_CENTER, spaceBefore=4)
 E_SEDE = estilo("sede", 9, GRIS, alignment=TA_CENTER, spaceBefore=3)
 E_LEYENDA = estilo("leyenda", 7, TINTA, spaceBefore=10, leading=10)
-E_DIA = estilo("dia", 13, TINTA, True, spaceBefore=12, spaceAfter=6)
+E_DIA = estilo("dia", 13, TINTA, True, spaceBefore=12, spaceAfter=2)
+E_DIA.keepWithNext = 1
 E_DESCARGO = estilo("descargo", 6.5, GRIS, cursiva=True, spaceBefore=5, leading=8.5)
 E_CIERRE = estilo("cierre", 13, GRANATE, True, alignment=TA_CENTER, spaceBefore=12)
 E_CAB_TABLA = estilo("cabtabla", 7, BLANCO, True, alignment=TA_CENTER, leading=9)
@@ -584,6 +593,9 @@ def main(ruta_datos, lang, salida):
     for d in P:
         cab = f'{d["day"]} {fecha_larga(d["date"], lang)}'.upper()
         story.append(Paragraph(cab, E_DIA))
+        # La raya granate bajo el título del día, como en el documento.
+        story.append(HRFlowable(width="100%", thickness=2.25, color=col(GRANATE),
+                                spaceBefore=2, spaceAfter=6, lineCap="butt"))
         story.append(tabla_dia(d, ET, niveles, textos, lang))
         story.append(Paragraph(datos["note"], E_DESCARGO))
 
