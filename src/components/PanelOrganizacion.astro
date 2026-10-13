@@ -1,0 +1,274 @@
+---
+// Panel de la organización: votación, talleres favoritos, cuentas y newsletter.
+//
+// Se usa en /admin/resultados/ y dentro del escritorio de cuenta. No decide
+// quién entra: lo monta la página cuando la base confirma el rol de admin.
+// Expone window.laNegraPanelOrg.pintar(cliente) para refrescarlo.
+//
+// Los textos van en castellano en los tres idiomas a propósito: es una
+// herramienta interna de la organización, no una página del público.
+import { MAX_VOTOS } from "@/data/danij.js";
+import { PROGRAMA, ROOMS } from "@/data/programa.js";
+
+const DIAS = PROGRAMA.map((d) => d.short);
+---
+
+<div class="panel-org" data-panel-org hidden>
+  <div class="adm-tabs" role="tablist">
+    <button type="button" class="adm-tab on" role="tab" data-ver="canciones">Canciones del concierto</button>
+    <button type="button" class="adm-tab" role="tab" data-ver="talleres">Talleres favoritos</button>
+    <button type="button" class="adm-tab" role="tab" data-ver="cuentas">Gente registrada</button>
+    <button type="button" class="adm-tab" role="tab" data-ver="newsletter">Newsletter</button>
+  </div>
+
+  <div class="adm-barra">
+    <button data-recargar type="button" class="p-btn p-btn-light p-btn-sm">Actualizar</button>
+    <button data-csv type="button" class="p-btn p-btn-light p-btn-sm">Descargar CSV</button>
+    <span data-msg class="adm-msg"></span>
+  </div>
+
+  <div class="vista" data-vista="canciones">
+    <div class="adm-kpis">
+      <div class="kpi"><span class="kpi-n" data-k="votantes">—</span><span class="kpi-l">Personas que han votado</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="marcadas">—</span><span class="kpi-l">Canciones marcadas</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="conVoto">—</span><span class="kpi-l">Canciones con al menos un voto</span></div>
+    </div>
+    <p class="adm-nota">
+      <strong>Puntos</strong>: {MAX_VOTOS} al nº 1 de cada persona, {MAX_VOTOS - 1} al nº 2… y 1 al nº {MAX_VOTOS}.
+      Es el orden que manda para armar el repertorio. <strong>Votos</strong> es cuánta gente la metió en su top,
+      sin mirar el puesto. <strong>Nº 1</strong>, cuántas personas la pusieron la primera de todas.
+    </p>
+    <div class="adm-tabla-wrap">
+      <table class="adm-tabla">
+        <thead><tr><th>#</th><th>Canción</th><th class="num">Puntos</th><th class="num">Votos</th><th class="num">Nº 1</th></tr></thead>
+        <tbody data-tbody="canciones"></tbody>
+      </table>
+    </div>
+    <p class="adm-pie">Cierre de la votación: 24 de octubre de 2026 a las 21:00 h.</p>
+  </div>
+
+  <div class="vista" data-vista="talleres" hidden>
+    <div class="adm-kpis">
+      <div class="kpi"><span class="kpi-n" data-k="sesiones">—</span><span class="kpi-l">Sesiones con algún favorito</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="marcas">—</span><span class="kpi-l">Marcas en total</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="quienes">—</span><span class="kpi-l">Personas que han marcado</span></div>
+    </div>
+    <p class="adm-nota">
+      Solo cuenta lo que se ha guardado en una cuenta o con un email. Quien marca favoritos
+      y no inicia sesión los tiene únicamente en su móvil, y eso no llega hasta aquí.
+    </p>
+    <div class="adm-tabla-wrap">
+      <table class="adm-tabla">
+        <thead><tr><th>#</th><th>Sesión</th><th>Día</th><th>Sala</th><th class="num">Personas</th></tr></thead>
+        <tbody data-tbody="talleres"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="vista" data-vista="cuentas" hidden>
+    <div class="adm-kpis">
+      <div class="kpi"><span class="kpi-n" data-k="cuentas">—</span><span class="kpi-l">Cuentas creadas</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="admins">—</span><span class="kpi-l">Con permiso de organización</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="ultima">—</span><span class="kpi-l">Última alta</span></div>
+    </div>
+    <p class="adm-nota">
+      Son las personas que han entrado con Google desde la web. Guardan sus favoritos en la cuenta
+      y los recuperan en cualquier móvil.
+    </p>
+    <div class="adm-tabla-wrap">
+      <table class="adm-tabla">
+        <thead><tr><th>#</th><th>Email</th><th>Permiso</th><th>Alta</th></tr></thead>
+        <tbody data-tbody="cuentas"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="vista" data-vista="newsletter" hidden>
+    <div class="adm-kpis">
+      <div class="kpi"><span class="kpi-n" data-k="subs">—</span><span class="kpi-l">Suscripciones</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="subs30">—</span><span class="kpi-l">En los últimos 30 días</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="idiomas">—</span><span class="kpi-l">Por idioma</span></div>
+    </div>
+    <p class="adm-nota">
+      Altas desde el formulario del pie. Siguen llegando además al buzón de Netlify Forms;
+      esta lista es la copia que podéis exportar.
+    </p>
+    <div class="adm-tabla-wrap">
+      <table class="adm-tabla">
+        <thead><tr><th>#</th><th>Email</th><th>Idioma</th><th>Alta</th></tr></thead>
+        <tbody data-tbody="newsletter"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ DIAS, ROOMS }}>
+  (function () {
+    const raiz = document.querySelector("[data-panel-org]");
+    if (!raiz) return;
+    const $ = (s) => raiz.querySelector(s);
+    const datos = { canciones: [], talleres: [], cuentas: [], newsletter: [] };
+    let vista = "canciones";
+
+    const fecha = (s) => {
+      if (!s) return "—";
+      const d = new Date(s);
+      return isNaN(d) ? "—" : d.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+    };
+    const kpi = (n, v) => { $('[data-k="' + n + '"]').textContent = v; };
+
+    raiz.querySelectorAll("[data-ver]").forEach((b) => {
+      b.addEventListener("click", () => {
+        vista = b.dataset.ver;
+        raiz.querySelectorAll("[data-ver]").forEach((x) => x.classList.toggle("on", x === b));
+        raiz.querySelectorAll("[data-vista]").forEach((v) => { v.hidden = v.dataset.vista !== vista; });
+      });
+    });
+
+    async function pintar(sb) {
+      $("[data-msg]").textContent = "Actualizando…";
+
+      const [rank, resumen, favs, favsCrudos, perfiles, subs] = await Promise.all([
+        sb.from("votos_danij_ranking").select("*"),
+        sb.from("votos_danij_resumen").select("*").maybeSingle(),
+        sb.from("favoritos_recuento").select("*").order("personas", { ascending: false }),
+        sb.from("favoritos").select("email"),
+        sb.from("perfiles").select("email, rol, creado_en").order("creado_en", { ascending: false }),
+        sb.from("newsletter").select("email, idioma, creado_en").order("creado_en", { ascending: false }),
+      ]);
+
+      const fallo = [rank, resumen, favs, favsCrudos, perfiles, subs].find((r) => r.error);
+      $("[data-msg]").textContent = fallo ? fallo.error.message : "";
+
+      datos.canciones = rank.data || [];
+      datos.talleres = favs.data || [];
+      datos.cuentas = perfiles.data || [];
+      datos.newsletter = subs.data || [];
+
+      const r = resumen.data;
+      kpi("votantes", (r && r.votantes) || 0);
+      kpi("marcadas", (r && r.canciones_marcadas) || 0);
+      kpi("conVoto", (r && r.canciones_con_voto) || 0);
+
+      const crudos = favsCrudos.data || [];
+      kpi("sesiones", datos.talleres.length);
+      kpi("marcas", crudos.length);
+      kpi("quienes", new Set(crudos.map((f) => f.email)).size);
+
+      kpi("cuentas", datos.cuentas.length);
+      kpi("admins", datos.cuentas.filter((c) => c.rol === "admin").length);
+      kpi("ultima", datos.cuentas.length ? fecha(datos.cuentas[0].creado_en) : "—");
+
+      const hace30 = Date.now() - 30 * 864e5;
+      kpi("subs", datos.newsletter.length);
+      kpi("subs30", datos.newsletter.filter((s) => Date.parse(s.creado_en) > hace30).length);
+      const porIdioma = {};
+      datos.newsletter.forEach((s) => { const i = (s.idioma || "es").toUpperCase(); porIdioma[i] = (porIdioma[i] || 0) + 1; });
+      kpi("idiomas", Object.keys(porIdioma).sort().map((k) => k + " " + porIdioma[k]).join(" · ") || "—");
+
+      tabla("canciones", datos.canciones, (x, i) => [
+        [i + 1, "pos"], [x.cancion, "cancion"], [x.puntos, "num fuerte"], [x.votos, "num"], [x.primeros, "num"],
+      ], "Todavía no hay votos.");
+
+      tabla("talleres", datos.talleres, (x, i) => [
+        [i + 1, "pos"], [x.titulo || x.clave, "cancion"],
+        [DIAS[x.dia] || "—", ""], [ROOMS[x.sala] || x.sala || "—", ""], [x.personas, "num fuerte"],
+      ], "Todavía nadie ha guardado favoritos en su cuenta.");
+
+      tabla("cuentas", datos.cuentas, (x, i) => [
+        [i + 1, "pos"], [x.email || "—", "cancion"],
+        [x.rol === "admin" ? "Organización" : "Público", x.rol === "admin" ? "destaca" : ""],
+        [fecha(x.creado_en), ""],
+      ], "Todavía no se ha registrado nadie.");
+
+      tabla("newsletter", datos.newsletter, (x, i) => [
+        [i + 1, "pos"], [x.email, "cancion"],
+        [(x.idioma || "es").toUpperCase(), ""], [fecha(x.creado_en), ""],
+      ], "Todavía no hay suscripciones.");
+    }
+
+    function tabla(nombre, filas, celdas, vacio) {
+      const tb = raiz.querySelector('[data-tbody="' + nombre + '"]');
+      tb.innerHTML = "";
+      if (!filas.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6; td.className = "vacio"; td.textContent = vacio;
+        tr.appendChild(td); tb.appendChild(tr); return;
+      }
+      filas.forEach((x, i) => {
+        const tr = document.createElement("tr");
+        if (i < 10) tr.className = "top";
+        celdas(x, i).forEach(([v, cls]) => {
+          const td = document.createElement("td");
+          td.textContent = String(v);
+          if (cls) td.className = cls;
+          tr.appendChild(td);
+        });
+        tb.appendChild(tr);
+      });
+    }
+
+    $("[data-recargar]").addEventListener("click", async () => pintar(await window.laNegraCuenta.cliente()));
+
+    const CSV = {
+      canciones: () => [["Puesto", "Canción", "Puntos", "Votos", "Nº 1"]].concat(
+        datos.canciones.map((x, i) => [i + 1, x.cancion, x.puntos, x.votos, x.primeros])),
+      talleres: () => [["Puesto", "Sesión", "Día", "Sala", "Personas"]].concat(
+        datos.talleres.map((x, i) => [i + 1, x.titulo || x.clave, DIAS[x.dia] || "", ROOMS[x.sala] || x.sala || "", x.personas])),
+      cuentas: () => [["Email", "Permiso", "Alta"]].concat(
+        datos.cuentas.map((x) => [x.email || "", x.rol === "admin" ? "Organización" : "Público", x.creado_en || ""])),
+      newsletter: () => [["Email", "Idioma", "Alta"]].concat(
+        datos.newsletter.map((x) => [x.email, (x.idioma || "es").toUpperCase(), x.creado_en || ""])),
+    };
+
+    $("[data-csv]").addEventListener("click", () => {
+      const esc = (v) => '"' + String(v).replace(/"/g, '""') + '"';
+      const blob = new Blob(["﻿" + CSV[vista]().map((f) => f.map(esc).join(";")).join("\r\n")],
+        { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "lanegra-" + vista + ".csv";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    window.laNegraPanelOrg = { pintar, raiz };
+  })();
+</script>
+
+<style>
+  .panel-org[hidden] { display: none; }
+
+  .adm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .adm-tab {
+    padding: 9px 15px; border-radius: 999px; border: 1.5px solid #e4ded3; background: #fff;
+    font-family: inherit; font-size: 13.5px; font-weight: 700; color: #6a6a74; cursor: pointer;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .adm-tab:hover { border-color: #cfc6b6; color: #14121a; }
+  .adm-tab.on { background: #14121a; border-color: #14121a; color: #fff; }
+
+  .adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 16px 18px; }
+  .kpi-n { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: #14121a; font-variant-numeric: tabular-nums; }
+  .kpi-l { display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #8a8578; line-height: 1.3; }
+  .adm-nota { max-width: 760px; margin: 0 0 18px; font-size: 13px; line-height: 1.6; color: #6a6a74; }
+  .adm-msg { margin: 0; font-size: 13.5px; color: #8a8578; }
+  .adm-barra { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .adm-tabla-wrap { overflow-x: auto; border: 1px solid #ece7dd; border-radius: 12px; }
+  .adm-tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  .adm-tabla th { text-align: left; padding: 12px; background: #faf7f1; font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark, #a2823f); white-space: nowrap; }
+  .adm-tabla th.num { text-align: right; }
+  /* Las filas las crea el JS, así que no llevan el atributo de ámbito de Astro. */
+  .adm-tabla :global(td) { padding: 10px 12px; border-top: 1px solid #f0ece4; }
+  .adm-tabla :global(tbody tr:hover) { background: #fdfbf7; }
+  .adm-tabla :global(tr.top) { background: #fdfaf3; }
+  .adm-tabla :global(td.pos) { width: 46px; font-weight: 800; color: var(--gold-dark, #a2823f); font-variant-numeric: tabular-nums; }
+  .adm-tabla :global(td.cancion) { font-weight: 600; color: #14121a; }
+  .adm-tabla :global(td.destaca) { font-weight: 800; color: var(--gold-dark, #a2823f); }
+  .adm-tabla :global(td.num) { text-align: right; font-variant-numeric: tabular-nums; width: 80px; }
+  .adm-tabla :global(td.fuerte) { font-weight: 800; }
+  .adm-tabla :global(td.vacio) { text-align: center; padding: 30px; color: #8a8578; }
+  .adm-pie { margin: 18px 0 0; font-size: 12.5px; color: #9a9aa2; }
+</style>

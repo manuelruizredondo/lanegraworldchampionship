@@ -1,5 +1,6 @@
 ---
 import { MENU, LANGUAGES, CTA, HOME_HREF } from "../data/nav.js";
+import { PANEL_I18N } from "../data/supabase.js";
 import { routeFor } from "../data/routes.js";
 import { CUENTA_I18N } from "../data/supabase.js";
 const { lang = "es" } = Astro.props;
@@ -8,6 +9,7 @@ const cta = CTA[lang];
 const homeHref = HOME_HREF[lang];
 const ext = (h) => h.startsWith("http");
 const tc = CUENTA_I18N[lang] || CUENTA_I18N.es;
+const tp = PANEL_I18N[lang] || PANEL_I18N.es;
 
 // Al cambiar de idioma se mantiene la página actual (si está mapeada); si no, la home.
 const alternates = routeFor(Astro.url.pathname);
@@ -30,7 +32,10 @@ const T = {
       <a class="btn btn-solid cta" href={cta.href}>
         {cta.label}
       </a>
-      <button class="btn-login" type="button" data-cu-abrir>{tc.entrar}</button>
+      {/* Sin sesión se abre el panel de acceso; con sesión se va al escritorio.
+          Los alterna la clase `con-sesion` que pone Cuenta.astro. */}
+      <button class="btn-login btn-fuera" type="button" data-cu-abrir>{tc.entrar}</button>
+      <a class="btn-login btn-dentro" href={tp.ruta}>{tc.miCuenta}</a>
       {/* Dos selectores: en móvil no cabe el nombre entero del idioma, así que
           se muestra solo la sigla. Un <select> nativo dibuja el texto de la
           opción elegida y eso no se puede recortar por CSS, de ahí los dos. */}
@@ -149,6 +154,9 @@ const T = {
   }
   .btn-login:hover { background: #fff; border-color: var(--gold); color: var(--gold); }
   /* Con sesión abierta se rellena de dorado: se ve de un vistazo que estás dentro */
+  .btn-dentro { display: none; text-decoration: none; }
+  :global(html.con-sesion) .btn-fuera { display: none; }
+  :global(html.con-sesion) .btn-dentro { display: inline-flex; }
   :global(html.con-sesion) .btn-login {
     background: var(--gold); border-color: var(--gold); color: #fff;
   }

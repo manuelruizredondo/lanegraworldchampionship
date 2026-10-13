@@ -1,15 +1,10 @@
 ---
-// Panel de la organización, leyendo de Supabase con tu cuenta.
-//
-// Aquí no hay contraseña compartida: entras con tu cuenta y la base decide qué
-// puedes ver. Quien no tenga rol de admin recibe listas vacías de la propia
-// base de datos, no una pantalla que se lo oculte.
+// Atajo al panel de la organización, por si alguien tiene guardada esta URL.
+// El escritorio de la cuenta (/cuenta/) hace ya lo mismo y de forma más
+// completa; aquí solo se monta el panel, sin los favoritos.
 import Base from "@/layouts/Base.astro";
-import { SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_CDN, CUENTA_I18N } from "@/data/supabase.js";
-import { MAX_VOTOS, CIERRE } from "@/data/danij.js";
-import { PROGRAMA, ROOMS } from "@/data/programa.js";
-
-const DIAS = PROGRAMA.map((d) => d.short);
+import PanelOrganizacion from "@/components/PanelOrganizacion.astro";
+import { CUENTA_I18N, PANEL_I18N } from "@/data/supabase.js";
 ---
 
 <Base noindex title="Panel de la organización" description="Zona privada de la organización." lang="es">
@@ -19,284 +14,54 @@ const DIAS = PROGRAMA.map((d) => d.short);
         <p class="p-eyebrow">Organización · La Negra World Championship</p>
         <h1 class="p-display adm-title">Panel de la organización</h1>
 
-        <div id="gate" class="adm-box">
+        <div id="gate" class="adm-box" hidden>
           <p id="gate-txt">Entra con tu cuenta para ver el panel.</p>
           <button type="button" class="p-btn p-btn-dark" data-cu-abrir>{CUENTA_I18N.es.entrar}</button>
           <p id="gate-msg" class="adm-msg" role="alert"></p>
         </div>
+        <p id="cargando" class="adm-msg">{PANEL_I18N.es.cargando}</p>
 
-        <div id="panel" hidden>
-          <div class="adm-tabs" role="tablist">
-            <button type="button" class="adm-tab on" role="tab" data-ver="canciones">Canciones del concierto</button>
-            <button type="button" class="adm-tab" role="tab" data-ver="talleres">Talleres favoritos</button>
-            <button type="button" class="adm-tab" role="tab" data-ver="cuentas">Gente registrada</button>
-            <button type="button" class="adm-tab" role="tab" data-ver="newsletter">Newsletter</button>
-          </div>
-
-          <div class="adm-barra">
-            <button id="recargar" type="button" class="p-btn p-btn-light p-btn-sm">Actualizar</button>
-            <button id="csv" type="button" class="p-btn p-btn-light p-btn-sm">Descargar CSV</button>
-            <span id="msg" class="adm-msg"></span>
-          </div>
-
-          <!-- CANCIONES ------------------------------------------------- -->
-          <div class="vista" data-vista="canciones">
-            <div class="adm-kpis">
-              <div class="kpi"><span class="kpi-n" id="k-votantes">—</span><span class="kpi-l">Personas que han votado</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-marcadas">—</span><span class="kpi-l">Canciones marcadas</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-conVoto">—</span><span class="kpi-l">Canciones con al menos un voto</span></div>
-            </div>
-            <p class="adm-nota">
-              <strong>Puntos</strong>: {MAX_VOTOS} al nº 1 de cada persona, {MAX_VOTOS - 1} al nº 2… y 1 al nº {MAX_VOTOS}.
-              Es el orden que manda para armar el repertorio. <strong>Votos</strong> es cuánta gente la metió en su top,
-              sin mirar el puesto. <strong>Nº 1</strong>, cuántas personas la pusieron la primera de todas.
-            </p>
-            <div class="adm-tabla-wrap">
-              <table class="adm-tabla">
-                <thead><tr><th>#</th><th>Canción</th><th class="num">Puntos</th><th class="num">Votos</th><th class="num">Nº 1</th></tr></thead>
-                <tbody data-tbody="canciones"></tbody>
-              </table>
-            </div>
-            <p class="adm-pie">Cierre de la votación: 24 de octubre de 2026 a las 21:00 h.</p>
-          </div>
-
-          <!-- TALLERES -------------------------------------------------- -->
-          <div class="vista" data-vista="talleres" hidden>
-            <div class="adm-kpis">
-              <div class="kpi"><span class="kpi-n" id="k-sesiones">—</span><span class="kpi-l">Sesiones con algún favorito</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-marcas">—</span><span class="kpi-l">Marcas en total</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-quienes">—</span><span class="kpi-l">Personas que han marcado</span></div>
-            </div>
-            <p class="adm-nota">
-              Solo cuenta lo que se ha guardado en una cuenta o con un email. Quien marca favoritos
-              y no inicia sesión los tiene únicamente en su móvil, y eso no llega hasta aquí.
-            </p>
-            <div class="adm-tabla-wrap">
-              <table class="adm-tabla">
-                <thead><tr><th>#</th><th>Sesión</th><th>Día</th><th>Sala</th><th class="num">Personas</th></tr></thead>
-                <tbody data-tbody="talleres"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- CUENTAS --------------------------------------------------- -->
-          <div class="vista" data-vista="cuentas" hidden>
-            <div class="adm-kpis">
-              <div class="kpi"><span class="kpi-n" id="k-cuentas">—</span><span class="kpi-l">Cuentas creadas</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-admins">—</span><span class="kpi-l">Con permiso de organización</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-ultima">—</span><span class="kpi-l">Última alta</span></div>
-            </div>
-            <p class="adm-nota">
-              Son las personas que han entrado con Google desde la web. Guardan sus favoritos en la cuenta
-              y los recuperan en cualquier móvil.
-            </p>
-            <div class="adm-tabla-wrap">
-              <table class="adm-tabla">
-                <thead><tr><th>#</th><th>Email</th><th>Permiso</th><th>Alta</th></tr></thead>
-                <tbody data-tbody="cuentas"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- NEWSLETTER ------------------------------------------------ -->
-          <div class="vista" data-vista="newsletter" hidden>
-            <div class="adm-kpis">
-              <div class="kpi"><span class="kpi-n" id="k-subs">—</span><span class="kpi-l">Suscripciones</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-subs30">—</span><span class="kpi-l">En los últimos 30 días</span></div>
-              <div class="kpi"><span class="kpi-n" id="k-idiomas">—</span><span class="kpi-l">Por idioma</span></div>
-            </div>
-            <p class="adm-nota">
-              Altas desde el formulario del pie. Siguen llegando además al buzón de Netlify Forms;
-              esta lista es la copia que podéis exportar.
-            </p>
-            <div class="adm-tabla-wrap">
-              <table class="adm-tabla">
-                <thead><tr><th>#</th><th>Email</th><th>Idioma</th><th>Alta</th></tr></thead>
-                <tbody data-tbody="newsletter"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <PanelOrganizacion />
       </div>
     </section>
   </div>
 </Base>
 
-<script is:inline define:vars={{ CIERRE, DIAS, ROOMS }}>
+<script is:inline>
   (function () {
     const $ = (s) => document.querySelector(s);
-    const datos = { canciones: [], talleres: [], cuentas: [], newsletter: [] };
-    let vista = "canciones";
 
-    const fecha = (s) => {
-      if (!s) return "—";
-      const d = new Date(s);
-      return isNaN(d) ? "—" : d.toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
-    };
-
-    // ── Pestañas ───────────────────────────────────────────────────────────
-    document.querySelectorAll("[data-ver]").forEach((b) => {
-      b.addEventListener("click", () => {
-        vista = b.dataset.ver;
-        document.querySelectorAll("[data-ver]").forEach((x) => x.classList.toggle("on", x === b));
-        document.querySelectorAll("[data-vista]").forEach((v) => { v.hidden = v.dataset.vista !== vista; });
-      });
-    });
-
-    // ── Acceso ─────────────────────────────────────────────────────────────
     async function cargar() {
       const sb = await window.laNegraCuenta.cliente();
       const sesion = window.laNegraCuenta.sesion();
-      if (!sesion) return;
+      $("#cargando").hidden = true;
+
+      if (!sesion) {
+        $("#gate").hidden = false;
+        $("[data-panel-org]").hidden = true;
+        return;
+      }
 
       // ¿Tiene rol de admin? Lo dice la base, no esta página.
       const { data: perfil } = await sb.from("perfiles").select("rol").eq("id", sesion.user.id).maybeSingle();
       if (!perfil || perfil.rol !== "admin") {
+        $("#gate").hidden = false;
         $("#gate-txt").textContent = "Tu cuenta (" + sesion.user.email + ") no tiene permiso para ver el panel.";
         $("#gate-msg").textContent = "Pide a la organización que te dé acceso.";
+        $("[data-panel-org]").hidden = true;
         return;
       }
 
       $("#gate").hidden = true;
-      $("#panel").hidden = false;
-      await pintar(sb);
+      $("[data-panel-org]").hidden = false;
+      await window.laNegraPanelOrg.pintar(sb);
     }
 
-    // ── Datos ──────────────────────────────────────────────────────────────
-    async function pintar(sb) {
-      $("#msg").textContent = "Actualizando…";
-
-      const [rank, resumen, favs, favsCrudos, perfiles, subs] = await Promise.all([
-        sb.from("votos_danij_ranking").select("*"),
-        sb.from("votos_danij_resumen").select("*").maybeSingle(),
-        sb.from("favoritos_recuento").select("*").order("personas", { ascending: false }),
-        sb.from("favoritos").select("email"),
-        sb.from("perfiles").select("email, rol, creado_en").order("creado_en", { ascending: false }),
-        sb.from("newsletter").select("email, idioma, creado_en").order("creado_en", { ascending: false }),
-      ]);
-
-      const fallo = [rank, resumen, favs, favsCrudos, perfiles, subs].find((r) => r.error);
-      $("#msg").textContent = fallo ? fallo.error.message
-        : (Date.now() > Date.parse(CIERRE) ? "La votación del concierto está cerrada." : "");
-
-      datos.canciones = rank.data || [];
-      datos.talleres = favs.data || [];
-      datos.cuentas = perfiles.data || [];
-      datos.newsletter = subs.data || [];
-
-      cancionesKpis(resumen.data);
-      talleresKpis(favsCrudos.data || []);
-      cuentasKpis();
-      newsletterKpis();
-
-      tabla("canciones", datos.canciones, (x, i) => [
-        [i + 1, "pos"], [x.cancion, "cancion"], [x.puntos, "num fuerte"], [x.votos, "num"], [x.primeros, "num"],
-      ], "Todavía no hay votos.");
-
-      tabla("talleres", datos.talleres, (x, i) => [
-        [i + 1, "pos"],
-        [x.titulo || x.clave, "cancion"],
-        [DIAS[x.dia] || "—", ""],
-        [ROOMS[x.sala] || x.sala || "—", ""],
-        [x.personas, "num fuerte"],
-      ], "Todavía nadie ha guardado favoritos en su cuenta.");
-
-      tabla("cuentas", datos.cuentas, (x, i) => [
-        [i + 1, "pos"],
-        [x.email || "—", "cancion"],
-        [x.rol === "admin" ? "Organización" : "Público", x.rol === "admin" ? "destaca" : ""],
-        [fecha(x.creado_en), ""],
-      ], "Todavía no se ha registrado nadie.");
-
-      tabla("newsletter", datos.newsletter, (x, i) => [
-        [i + 1, "pos"],
-        [x.email, "cancion"],
-        [(x.idioma || "es").toUpperCase(), ""],
-        [fecha(x.creado_en), ""],
-      ], "Todavía no hay suscripciones.");
-    }
-
-    function cancionesKpis(r) {
-      $("#k-votantes").textContent = (r && r.votantes) || 0;
-      $("#k-marcadas").textContent = (r && r.canciones_marcadas) || 0;
-      $("#k-conVoto").textContent = (r && r.canciones_con_voto) || 0;
-    }
-
-    function talleresKpis(crudos) {
-      $("#k-sesiones").textContent = datos.talleres.length;
-      $("#k-marcas").textContent = crudos.length;
-      $("#k-quienes").textContent = new Set(crudos.map((f) => f.email)).size;
-    }
-
-    function cuentasKpis() {
-      $("#k-cuentas").textContent = datos.cuentas.length;
-      $("#k-admins").textContent = datos.cuentas.filter((c) => c.rol === "admin").length;
-      $("#k-ultima").textContent = datos.cuentas.length ? fecha(datos.cuentas[0].creado_en) : "—";
-    }
-
-    function newsletterKpis() {
-      const hace30 = Date.now() - 30 * 864e5;
-      $("#k-subs").textContent = datos.newsletter.length;
-      $("#k-subs30").textContent = datos.newsletter.filter((s) => Date.parse(s.creado_en) > hace30).length;
-      const porIdioma = {};
-      datos.newsletter.forEach((s) => { const i = (s.idioma || "es").toUpperCase(); porIdioma[i] = (porIdioma[i] || 0) + 1; });
-      const txt = Object.keys(porIdioma).sort().map((k) => k + " " + porIdioma[k]).join(" · ");
-      $("#k-idiomas").textContent = txt || "—";
-    }
-
-    function tabla(nombre, filas, celdas, vacio) {
-      const tb = document.querySelector('[data-tbody="' + nombre + '"]');
-      tb.innerHTML = "";
-      if (!filas.length) {
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
-        td.colSpan = 6; td.className = "vacio"; td.textContent = vacio;
-        tr.appendChild(td); tb.appendChild(tr); return;
-      }
-      filas.forEach((x, i) => {
-        const tr = document.createElement("tr");
-        if (i < 10) tr.className = "top";
-        celdas(x, i).forEach(([v, cls]) => {
-          const td = document.createElement("td");
-          td.textContent = String(v);
-          if (cls) td.className = cls;
-          tr.appendChild(td);
-        });
-        tb.appendChild(tr);
-      });
-    }
-
-    // ── Acciones ───────────────────────────────────────────────────────────
-    $("#recargar").addEventListener("click", async () => pintar(await window.laNegraCuenta.cliente()));
-
-    const CSV = {
-      canciones: () => [["Puesto", "Canción", "Puntos", "Votos", "Nº 1"]].concat(
-        datos.canciones.map((x, i) => [i + 1, x.cancion, x.puntos, x.votos, x.primeros])),
-      talleres: () => [["Puesto", "Sesión", "Día", "Sala", "Personas"]].concat(
-        datos.talleres.map((x, i) => [i + 1, x.titulo || x.clave, DIAS[x.dia] || "", ROOMS[x.sala] || x.sala || "", x.personas])),
-      cuentas: () => [["Email", "Permiso", "Alta"]].concat(
-        datos.cuentas.map((x) => [x.email || "", x.rol === "admin" ? "Organización" : "Público", x.creado_en || ""])),
-      newsletter: () => [["Email", "Idioma", "Alta"]].concat(
-        datos.newsletter.map((x) => [x.email, (x.idioma || "es").toUpperCase(), x.creado_en || ""])),
-    };
-
-    $("#csv").addEventListener("click", () => {
-      const esc = (v) => '"' + String(v).replace(/"/g, '""') + '"';
-      const filas = CSV[vista]();
-      const blob = new Blob(["﻿" + filas.map((f) => f.map(esc).join(";")).join("\r\n")], { type: "text/csv;charset=utf-8" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "lanegra-" + vista + ".csv";
-      a.click();
-      URL.revokeObjectURL(a.href);
-    });
-
-    // Al entrar o salir, se recarga lo que toque.
     const esperar = setInterval(() => {
       if (!window.laNegraCuenta) return;
       clearInterval(esperar);
-      window.laNegraCuenta.alCambiar((s) => { if (s) cargar(); else { $("#gate").hidden = false; $("#panel").hidden = true; } });
-      window.laNegraCuenta.cliente().then(() => { if (window.laNegraCuenta.sesion()) cargar(); });
+      window.laNegraCuenta.alCambiar(() => cargar());
+      window.laNegraCuenta.cliente().then(cargar);
     }, 120);
   })();
 </script>
@@ -305,37 +70,8 @@ const DIAS = PROGRAMA.map((d) => d.short);
   .adm { padding-top: 20px; }
   .adm-title { font-size: clamp(30px, 4.4vw, 52px); margin-bottom: 22px; }
   .adm-box { max-width: 460px; background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 22px; }
+  .adm-box[hidden] { display: none; }
   .adm-box p { margin: 0 0 14px; }
   .adm-msg { margin: 10px 0 0; font-size: 13.5px; color: #8a8578; }
-
-  .adm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-  .adm-tab {
-    padding: 9px 15px; border-radius: 999px; border: 1.5px solid #e4ded3; background: #fff;
-    font-family: inherit; font-size: 13.5px; font-weight: 700; color: #6a6a74; cursor: pointer;
-    transition: border-color .15s ease, color .15s ease, background .15s ease;
-  }
-  .adm-tab:hover { border-color: #cfc6b6; color: #14121a; }
-  .adm-tab.on { background: #14121a; border-color: #14121a; color: #fff; }
-
-  .adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
-  .kpi { background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 16px 18px; }
-  .kpi-n { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: #14121a; font-variant-numeric: tabular-nums; }
-  .kpi-l { display: block; margin-top: 3px; font-size: 12px; font-weight: 600; color: #8a8578; line-height: 1.3; }
-  .adm-nota { max-width: 760px; margin: 0 0 18px; font-size: 13px; line-height: 1.6; color: #6a6a74; }
-  .adm-barra { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 18px; }
-  .adm-barra .adm-msg { margin: 0; }
-  .adm-tabla-wrap { overflow-x: auto; border: 1px solid #ece7dd; border-radius: 12px; }
-  .adm-tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
-  .adm-tabla th { text-align: left; padding: 12px; background: #faf7f1; font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark, #a2823f); white-space: nowrap; }
-  .adm-tabla th.num { text-align: right; }
-  .adm-tabla :global(td) { padding: 10px 12px; border-top: 1px solid #f0ece4; }
-  .adm-tabla :global(tbody tr:hover) { background: #fdfbf7; }
-  .adm-tabla :global(tr.top) { background: #fdfaf3; }
-  .adm-tabla :global(td.pos) { width: 46px; font-weight: 800; color: var(--gold-dark, #a2823f); font-variant-numeric: tabular-nums; }
-  .adm-tabla :global(td.cancion) { font-weight: 600; color: #14121a; }
-  .adm-tabla :global(td.destaca) { font-weight: 800; color: var(--gold-dark, #a2823f); }
-  .adm-tabla :global(td.num) { text-align: right; font-variant-numeric: tabular-nums; width: 80px; }
-  .adm-tabla :global(td.fuerte) { font-weight: 800; }
-  .adm-tabla :global(td.vacio) { text-align: center; padding: 30px; color: #8a8578; }
-  .adm-pie { margin: 18px 0 0; font-size: 12.5px; color: #9a9aa2; }
+  .adm-msg[hidden] { display: none; }
 </style>

@@ -29,6 +29,8 @@ export const ROUTES = [
   // La votación del repertorio de Dani J está aquí para que el selector de
   // idioma y el hreflang lleven a la misma página, pero lleva `sitemap: false`
   // porque es una página temporal y va con noindex: cierra el 24 de octubre.
+  // El escritorio de la cuenta es privado: fuera del sitemap y con noindex.
+  { es: "/cuenta/", en: "/en/account/", it: "/it/account/", sitemap: false },
   { es: "/concierto-danij/", en: "/en/concierto-danij/", it: "/it/concierto-danij/", sitemap: false },
 ];
 

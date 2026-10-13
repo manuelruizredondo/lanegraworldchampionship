@@ -1,0 +1,161 @@
+---
+// Escritorio de la cuenta: quién eres, cómo salir y, debajo, lo tuyo.
+//
+// Si la base dice que tienes rol de admin, se monta el panel de la
+// organización. Si no, tus talleres favoritos. Lo decide la base, no la
+// página: una cuenta sin permiso recibe listas vacías aunque trastee el HTML.
+import PanelOrganizacion from "@/components/PanelOrganizacion.astro";
+import { PANEL_I18N, CUENTA_I18N } from "@/data/supabase.js";
+import { PROGRAMA, ROOMS } from "@/data/programa.js";
+
+const { lang = "es" } = Astro.props;
+const t = PANEL_I18N[lang] || PANEL_I18N.es;
+const tc = CUENTA_I18N[lang] || CUENTA_I18N.es;
+const DIAS = PROGRAMA.map((d) => d.short);
+const PROGRAMA_HREF = { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" }[lang] || "/talleres/";
+---
+
+<div class="prop">
+  <section class="p-section esc">
+    <div class="p-container">
+      <p class="p-eyebrow">{t.eyebrow}</p>
+      <h1 class="p-display esc-title">{t.titulo}</h1>
+
+      <div class="esc-caja" data-fuera hidden>
+        <p>{t.sinSesion}</p>
+        <button type="button" class="p-btn p-btn-dark" data-cu-abrir>{tc.entrar}</button>
+      </div>
+
+      <p class="esc-cargando" data-cargando>{t.cargando}</p>
+
+      <div data-dentro hidden>
+        <div class="esc-id">
+          <p class="esc-quien"><span>{t.sesionDe}</span> <strong data-email></strong></p>
+          <button type="button" class="p-btn p-btn-light p-btn-sm" data-salir>{t.salir}</button>
+        </div>
+
+        <p class="esc-admin" data-aviso-admin hidden>{t.admin}</p>
+        <PanelOrganizacion />
+
+        <div data-favoritos hidden>
+          <h2 class="esc-h2">{t.favTitulo}</h2>
+          <p class="esc-lead">{t.favLead}</p>
+          <div class="esc-tabla-wrap">
+            <table class="esc-tabla">
+              <thead><tr><th>#</th><th>{t.colSesion}</th><th>{t.colDia}</th><th>{t.colSala}</th></tr></thead>
+              <tbody data-tbody-favs></tbody>
+            </table>
+          </div>
+          <p class="esc-pie"><a class="p-btn p-btn-light p-btn-sm" href={PROGRAMA_HREF}>{t.verPrograma}</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script is:inline define:vars={{ DIAS, ROOMS, T: t, HOME: { es: "/", en: "/en/", it: "/it/" }[lang] || "/" }}>
+  (function () {
+    const $ = (s) => document.querySelector(s);
+
+    async function pintar() {
+      const sb = await window.laNegraCuenta.cliente();
+      const sesion = window.laNegraCuenta.sesion();
+      $("[data-cargando]").hidden = true;
+
+      if (!sesion) {
+        $("[data-fuera]").hidden = false;
+        $("[data-dentro]").hidden = true;
+        return;
+      }
+      $("[data-fuera]").hidden = true;
+      $("[data-dentro]").hidden = false;
+      $("[data-email]").textContent = sesion.user.email || "";
+
+      // El rol lo dice la base.
+      const { data: perfil } = await sb.from("perfiles").select("rol").eq("id", sesion.user.id).maybeSingle();
+      const esAdmin = !!perfil && perfil.rol === "admin";
+
+      $("[data-aviso-admin]").hidden = !esAdmin;
+      $("[data-panel-org]").hidden = !esAdmin;
+      $("[data-favoritos]").hidden = esAdmin;
+
+      if (esAdmin) {
+        await window.laNegraPanelOrg.pintar(sb);
+      } else {
+        const { data } = await sb.from("favoritos").select("clave, titulo, dia, sala").order("dia");
+        pintarFavoritos(data || []);
+      }
+    }
+
+    function pintarFavoritos(filas) {
+      const tb = $("[data-tbody-favs]");
+      tb.innerHTML = "";
+      if (!filas.length) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 4; td.className = "vacio"; td.textContent = T.favVacio;
+        tr.appendChild(td); tb.appendChild(tr); return;
+      }
+      filas.forEach((x, i) => {
+        const tr = document.createElement("tr");
+        [[i + 1, "pos"], [x.titulo || x.clave, "titulo"], [DIAS[x.dia] || "—", ""], [ROOMS[x.sala] || x.sala || "—", ""]]
+          .forEach(([v, cls]) => {
+            const td = document.createElement("td");
+            td.textContent = String(v);
+            if (cls) td.className = cls;
+            tr.appendChild(td);
+          });
+        tb.appendChild(tr);
+      });
+    }
+
+    document.addEventListener("click", async (e) => {
+      if (!e.target.closest("[data-salir]")) return;
+      const sb = await window.laNegraCuenta.cliente();
+      await sb.auth.signOut();
+      window.location.href = HOME;
+    });
+
+    const esperar = setInterval(() => {
+      if (!window.laNegraCuenta) return;
+      clearInterval(esperar);
+      window.laNegraCuenta.alCambiar(() => pintar());
+      window.laNegraCuenta.cliente().then(pintar);
+    }, 120);
+  })();
+</script>
+
+<style>
+  .esc { padding-top: 20px; }
+  .esc-title { font-size: clamp(30px, 4.4vw, 52px); margin-bottom: 22px; }
+  .esc-cargando { color: #8a8578; font-size: 14px; }
+  .esc-caja { max-width: 460px; background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 22px; }
+  .esc-caja p { margin: 0 0 14px; }
+  .esc-caja[hidden], .esc-cargando[hidden] { display: none; }
+
+  .esc-id {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
+  }
+  .esc-quien { margin: 0; font-size: 14.5px; color: #14121a; }
+  .esc-quien span { color: #9a9aa2; }
+
+  .esc-admin {
+    margin: 0 0 18px; padding: 12px 16px; border-radius: 12px;
+    background: #fdfaf3; border: 1px solid #efe4cd;
+    font-size: 13.5px; font-weight: 600; color: var(--gold-dark, #a2823f);
+  }
+
+  .esc-h2 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; color: #14121a; margin: 0 0 6px; }
+  .esc-lead { max-width: 640px; margin: 0 0 18px; font-size: 13.5px; line-height: 1.6; color: #6a6a74; }
+  .esc-tabla-wrap { overflow-x: auto; border: 1px solid #ece7dd; border-radius: 12px; }
+  .esc-tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; background: #fff; }
+  .esc-tabla th { text-align: left; padding: 12px; background: #faf7f1; font-size: 11.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--gold-dark, #a2823f); white-space: nowrap; }
+  /* Las filas las crea el JS: sin el atributo de ámbito de Astro. */
+  .esc-tabla :global(td) { padding: 10px 12px; border-top: 1px solid #f0ece4; }
+  .esc-tabla :global(tbody tr:hover) { background: #fdfbf7; }
+  .esc-tabla :global(td.pos) { width: 46px; font-weight: 800; color: var(--gold-dark, #a2823f); font-variant-numeric: tabular-nums; }
+  .esc-tabla :global(td.titulo) { font-weight: 600; color: #14121a; }
+  .esc-tabla :global(td.vacio) { text-align: center; padding: 30px; color: #8a8578; }
+  .esc-pie { margin: 18px 0 0; }
+</style>
