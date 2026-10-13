@@ -77,7 +77,7 @@ const DIAS = PROGRAMA.map((d) => d.short);
     </p>
     <div class="adm-tabla-wrap">
       <table class="adm-tabla">
-        <thead><tr><th>#</th><th>Email</th><th>Permiso</th><th>Alta</th></tr></thead>
+        <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Permiso</th><th>Alta</th></tr></thead>
         <tbody data-tbody="cuentas"></tbody>
       </table>
     </div>
@@ -133,7 +133,7 @@ const DIAS = PROGRAMA.map((d) => d.short);
         sb.from("votos_danij_resumen").select("*").maybeSingle(),
         sb.from("favoritos_recuento").select("*").order("personas", { ascending: false }),
         sb.from("favoritos").select("email"),
-        sb.from("perfiles").select("email, rol, creado_en").order("creado_en", { ascending: false }),
+        sb.from("perfiles").select("nombre, email, rol, creado_en").order("creado_en", { ascending: false }),
         sb.from("newsletter").select("email, idioma, creado_en").order("creado_en", { ascending: false }),
       ]);
 
@@ -176,7 +176,7 @@ const DIAS = PROGRAMA.map((d) => d.short);
       ], "Todavía nadie ha guardado favoritos en su cuenta.");
 
       tabla("cuentas", datos.cuentas, (x, i) => [
-        [i + 1, "pos"], [x.email || "—", "cancion"],
+        [i + 1, "pos"], [x.nombre || "—", "cancion"], [x.email || "—", ""],
         [x.rol === "admin" ? "Organización" : "Público", x.rol === "admin" ? "destaca" : ""],
         [fecha(x.creado_en), ""],
       ], "Todavía no se ha registrado nadie.");
@@ -216,8 +216,8 @@ const DIAS = PROGRAMA.map((d) => d.short);
         datos.canciones.map((x, i) => [i + 1, x.cancion, x.puntos, x.votos, x.primeros])),
       talleres: () => [["Puesto", "Sesión", "Día", "Sala", "Personas"]].concat(
         datos.talleres.map((x, i) => [i + 1, x.titulo || x.clave, DIAS[x.dia] || "", ROOMS[x.sala] || x.sala || "", x.personas])),
-      cuentas: () => [["Email", "Permiso", "Alta"]].concat(
-        datos.cuentas.map((x) => [x.email || "", x.rol === "admin" ? "Organización" : "Público", x.creado_en || ""])),
+      cuentas: () => [["Nombre", "Email", "Permiso", "Alta"]].concat(
+        datos.cuentas.map((x) => [x.nombre || "", x.email || "", x.rol === "admin" ? "Organización" : "Público", x.creado_en || ""])),
       newsletter: () => [["Email", "Idioma", "Alta"]].concat(
         datos.newsletter.map((x) => [x.email, (x.idioma || "es").toUpperCase(), x.creado_en || ""])),
     };
