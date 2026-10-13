@@ -1,0 +1,132 @@
+---
+// Cómo llegar: aeropuertos, transfer, autobús, tranvía y coche en una página.
+import { SEDE, ENLACES, I18N } from "@/data/como-llegar.js";
+
+const { lang = "es" } = Astro.props;
+const t = I18N[lang] || I18N.es;
+const CONTACTO = { es: "/contacto/", en: "/en/contact/", it: "/it/contact/" }[lang] || "/contacto/";
+const direccion = `${SEDE.calle} · ${SEDE.cp} ${SEDE.ciudad} (${SEDE.provincia}) · ${SEDE.pais}`;
+
+const MEDIOS = [
+  { k: "bus", titulo: t.busTitulo, txt: t.busTxt, btn: t.busBtn, href: ENLACES.alsa },
+  { k: "tram", titulo: t.tramTitulo, txt: t.tramTxt, btn: t.tramBtn, href: ENLACES.tram },
+  { k: "coche", titulo: t.cocheTitulo, txt: t.cocheTxt, btn: t.cocheBtn, href: SEDE.comoLlegar },
+];
+---
+
+<div class="prop">
+  <!-- La sede -->
+  <section class="p-section cl-top">
+    <div class="p-container">
+      <p class="p-eyebrow">{t.eyebrow}</p>
+      <h1 class="p-display cl-h1">{t.h1}</h1>
+      <p class="p-lead p-narrow">{t.lead}</p>
+
+      <div class="cl-sede">
+        <div class="cl-sede-txt">
+          <h2 class="cl-h3">{t.sedeTitulo}</h2>
+          <p class="cl-sede-n">{SEDE.nombre}</p>
+          <p class="cl-sede-d">{direccion}</p>
+          <p class="cl-acciones">
+            <a class="p-btn p-btn-dark" href={SEDE.comoLlegar} target="_blank" rel="noopener">{t.rutaBtn}</a>
+            <a class="p-btn p-btn-light" href={SEDE.mapa} target="_blank" rel="noopener">{t.verMapa}</a>
+          </p>
+        </div>
+        <div class="cl-mapa">
+          <iframe src={SEDE.embed} title={SEDE.nombre} loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- El transfer, que es lo que más se pregunta -->
+  <section class="p-section p-gray">
+    <div class="p-container">
+      <h2 class="p-h2">{t.transferTitulo}</h2>
+      <p class="p-lead p-narrow">{t.transferLead}</p>
+      <div class="cl-grid-2">
+        <div class="cl-card">
+          <h3 class="cl-h3">{t.transferAvion}</h3>
+          <p>{t.transferAvionTxt}</p>
+        </div>
+        <div class="cl-card">
+          <h3 class="cl-h3">{t.transferTren}</h3>
+          <p>{t.transferTrenTxt}</p>
+        </div>
+      </div>
+      <p class="cl-nota">{t.transferNota}</p>
+      <p class="cl-acciones"><a class="p-btn p-btn-dark" href={CONTACTO}>{t.transferBtn}</a></p>
+    </div>
+  </section>
+
+  <!-- Aeropuertos -->
+  <section class="p-section">
+    <div class="p-container">
+      <h2 class="p-h2">{t.avionTitulo}</h2>
+      <div class="cl-grid-2">
+        <div class="cl-card">
+          <h3 class="cl-h3">{t.avionAlc}</h3>
+          <p>{t.avionAlcTxt}</p>
+          <p class="cl-mini"><a href={ENLACES.aenaAlc} target="_blank" rel="noopener">aena.es ↗</a></p>
+        </div>
+        <div class="cl-card">
+          <h3 class="cl-h3">{t.avionVlc}</h3>
+          <p>{t.avionVlcTxt}</p>
+          <p class="cl-mini"><a href={ENLACES.aenaVlc} target="_blank" rel="noopener">aena.es ↗</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Por tu cuenta -->
+  <section class="p-section p-gray">
+    <div class="p-container cl-medios">
+      {MEDIOS.map((m) => (
+        <div class="cl-medio">
+          <h2 class="p-h2 cl-medio-h">{m.titulo}</h2>
+          <p class="cl-medio-t">{m.txt}</p>
+          <p><a class="p-btn p-btn-light p-btn-sm" href={m.href} target="_blank" rel="noopener">{m.btn}</a></p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="p-section p-center">
+    <div class="p-container">
+      <h2 class="p-h2">{t.dudasTitulo}</h2>
+      <p class="p-lead p-narrow">{t.dudasTxt}</p>
+      <p class="cl-acciones cl-centro"><a class="p-btn p-btn-dark" href={CONTACTO}>{t.dudasBtn}</a></p>
+    </div>
+  </section>
+</div>
+
+<style>
+  .cl-top { padding-top: 20px; }
+  .cl-h1 { font-size: clamp(34px, 5vw, 60px); margin-bottom: 18px; }
+  .cl-h3 { font-size: 17px; font-weight: 800; letter-spacing: -.01em; color: #14121a; margin: 0 0 8px; }
+
+  .cl-sede { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; align-items: center; margin-top: 34px; }
+  .cl-sede-n { margin: 0 0 4px; font-size: 19px; font-weight: 700; color: #14121a; }
+  .cl-sede-d { margin: 0 0 20px; font-size: 15px; color: #6a6a74; line-height: 1.6; }
+  .cl-mapa { border-radius: 18px; overflow: hidden; box-shadow: 0 18px 44px rgba(0, 0, 0, .12); }
+  .cl-mapa iframe { display: block; width: 100%; height: 340px; border: 0; }
+
+  .cl-acciones { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 0; }
+  .cl-centro { justify-content: center; }
+
+  .cl-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 26px; }
+  .cl-card { background: #fff; border: 1px solid #ece7dd; border-radius: 16px; padding: 22px; }
+  .cl-card p { margin: 0; font-size: 14.5px; line-height: 1.6; color: #4a4a54; }
+  .cl-mini { margin-top: 10px !important; font-size: 13px !important; }
+  .cl-nota { max-width: 760px; margin: 20px 0 0; font-size: 14px; line-height: 1.65; color: #6a6a74; }
+
+  .cl-medios { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 34px; }
+  .cl-medio-h { font-size: clamp(22px, 2.4vw, 28px); margin-bottom: 10px; }
+  .cl-medio-t { margin: 0 0 16px; font-size: 15px; line-height: 1.7; color: #4a4a54; }
+
+  @media (max-width: 820px) {
+    .cl-sede { grid-template-columns: 1fr; }
+    .cl-mapa iframe { height: 260px; }
+  }
+</style>

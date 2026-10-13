@@ -1,0 +1,9 @@
+---
+import Base from "@/layouts/Base.astro";
+import ComoLlegar from "@/components/ComoLlegar.astro";
+import { I18N } from "@/data/como-llegar.js";
+const t = I18N["en"];
+---
+<Base title={t.metaTitle} description={t.metaDesc} lang="en">
+  <ComoLlegar lang="en" />
+</Base>

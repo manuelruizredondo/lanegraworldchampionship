@@ -13,6 +13,7 @@ export const ROUTES = [
   // /en/workshops/ y /it/workshops/ se redirigen con 301 desde netlify.toml; se dejan
   // FUERA de ROUTES para no meterlas en el
   // sitemap ni en el hreflang.
+  { es: "/como-llegar/", en: "/en/getting-here/", it: "/it/come-arrivare/" },
   { es: "/fiesta/", en: "/en/fiesta/", it: "/it/fiesta/" },
   { es: "/competidores/", en: "/en/competitors/", it: "/it/competitors/" },
   { es: "/ganadores-2025/", en: "/en/winners-2025/", it: "/it/winners-2025/" },

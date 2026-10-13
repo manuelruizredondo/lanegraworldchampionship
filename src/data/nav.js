@@ -5,6 +5,7 @@ export const MENU = {
     { label: "FESTIVAL", href: "/festival/", sub: [
       { t: "FULL PASS", h: "/tu-pase/" },
       { t: "HOTEL", h: "/festival/#hotel" },
+      { t: "CÓMO LLEGAR", h: "/como-llegar/" },
       { t: "EL FESTIVAL", h: "/festival/#info" },
       { t: "ARTISTAS", h: "/artistas/" },
       { t: "PROGRAMACIÓN 2026", h: "/programacion-2026/" },
@@ -31,6 +32,7 @@ export const MENU = {
     { label: "FESTIVAL", href: "/en/festival/", sub: [
       { t: "FULL PASS", h: "/en/your-pass/" },
       { t: "HOTEL", h: "/en/festival/#hotel" },
+      { t: "GETTING HERE", h: "/en/getting-here/" },
       { t: "THE FESTIVAL", h: "/en/festival/#info" },
       { t: "ARTISTS", h: "/en/artists/" },
       { t: "2026 PROGRAMME", h: "/en/programme-2026/" },
@@ -57,6 +59,7 @@ export const MENU = {
     { label: "FESTIVAL", href: "/it/festival/", sub: [
       { t: "FULL PASS", h: "/it/your-pass/" },
       { t: "HOTEL", h: "/it/festival/#hotel" },
+      { t: "COME ARRIVARE", h: "/it/come-arrivare/" },
       { t: "IL FESTIVAL", h: "/it/festival/#info" },
       { t: "ARTISTI", h: "/it/artists/" },
       { t: "PROGRAMMA 2026", h: "/it/programma-2026/" },
