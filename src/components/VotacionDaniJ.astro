@@ -117,7 +117,12 @@ const cerrada = Date.now() > Date.parse(CIERRE);
         <span class="dj-ent-opcion-n">{t.concierto.compraOpcion}</span>
         <span class="dj-ent-opcion-p">{t.concierto.compraPrecio}</span>
       </div>
-      <p class="dj-ent-opcion-i">{t.concierto.compraIncluye}</p>
+      <p class="dj-ent-opcion-i">{t.concierto.compraIncluyeT}</p>
+      <ul class="dj-ent-horario">
+        {t.concierto.compraHorario.map((x) => (
+          <li><span class="dj-ent-h">{x.h}</span><span class="dj-ent-q">{x.q}</span></li>
+        ))}
+      </ul>
       <p class="dj-ent-opcion-c">{t.concierto.compraComo}</p>
     </div>
 
@@ -532,7 +537,11 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   .dj-ent-opcion-t { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
   .dj-ent-opcion-n { font-size: 17px; font-weight: 800; letter-spacing: -.01em; color: #14121a; }
   .dj-ent-opcion-p { font-size: 26px; font-weight: 800; letter-spacing: -.03em; color: var(--gold-dark, #a2823f); white-space: nowrap; }
-  .dj-ent-opcion-i { margin: 4px 0 0; font-size: 14px; font-weight: 600; color: #4a4a54; }
+  .dj-ent-opcion-i { margin: 10px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #8a8578; }
+  .dj-ent-horario { list-style: none; margin: 0; padding: 0; border-top: 1px solid #f0ece4; }
+  .dj-ent-horario li { display: flex; gap: 12px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid #f0ece4; }
+  .dj-ent-h { flex: 0 0 auto; min-width: 92px; font-size: 14px; font-weight: 800; color: var(--gold-dark, #a2823f); font-variant-numeric: tabular-nums; }
+  .dj-ent-q { font-size: 14px; font-weight: 600; color: #14121a; }
   .dj-ent-opcion-c { margin: 10px 0 0; font-size: 13px; color: #8a8578; }
 
   .dj-ent-widget iframe { display: block; width: 100%; border: 0; min-height: 620px; border-radius: 16px; }

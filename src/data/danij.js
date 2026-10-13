@@ -280,7 +280,12 @@ export const I18N = {
       compraLead: "No hace falta pase de festival: puedes venir solo al concierto.",
       compraOpcion: "Concierto Dani J",
       compraPrecio: "35 €",
-      compraIncluye: "Concierto + fiesta de después",
+      compraIncluyeT: "Da acceso a",
+      compraHorario: [
+        { h: "20:30", q: "Party pre-concierto" },
+        { h: "22:00", q: "Concierto de Dani J" },
+        { h: "23:00 – 5:00", q: "Fiesta de cierre" },
+      ],
       compraComo: "Es la opción que tienes que elegir aquí abajo.",
       compraPase: "¿Ya tienes el Full Pass? Entonces no compres nada: el concierto va incluido.",
       compraIr: "Ir a la página de entradas ↗",
@@ -334,7 +339,12 @@ export const I18N = {
       compraLead: "You don't need a festival pass: you can come just for the concert.",
       compraOpcion: "Dani J concert",
       compraPrecio: "€35",
-      compraIncluye: "Concert + party afterwards",
+      compraIncluyeT: "Gets you into",
+      compraHorario: [
+        { h: "20:30", q: "Pre-concert party" },
+        { h: "22:00", q: "Dani J live" },
+        { h: "23:00 – 5:00", q: "Closing party" },
+      ],
       compraComo: "That's the option to pick below.",
       compraPase: "Already have the Full Pass? Then don't buy anything: the concert is included.",
       compraIr: "Go to the ticket page ↗",
@@ -388,7 +398,12 @@ export const I18N = {
       compraLead: "Non serve il pass del festival: puoi venire solo al concerto.",
       compraOpcion: "Concerto Dani J",
       compraPrecio: "35 €",
-      compraIncluye: "Concerto + festa dopo",
+      compraIncluyeT: "Dà accesso a",
+      compraHorario: [
+        { h: "20:30", q: "Party pre-concerto" },
+        { h: "22:00", q: "Concerto di Dani J" },
+        { h: "23:00 – 5:00", q: "Festa di chiusura" },
+      ],
       compraComo: "È l'opzione da scegliere qui sotto.",
       compraPase: "Hai già il Full Pass? Allora non comprare nulla: il concerto è incluso.",
       compraIr: "Vai alla pagina dei biglietti ↗",
@@ -404,7 +419,8 @@ export const RUTA = { es: "/concierto-danij/", en: "/en/concierto-danij/", it: "
 export const RUTA_PROGRAMA = { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" };
 
 // Entradas (go&dance). El Full Pass ya incluye el concierto; la entrada suelta
-// vale solo para el concierto y el social de después, y es para mayores de 16.
+// vale para la party previa, el concierto y la fiesta de cierre del domingo,
+// y es para mayores de 16.
 export const ENTRADAS = {
   // Página de entradas del evento, con las dos opciones
   url: "https://www.goandance.com/es/evento/8885/la-negra-dance-festival-2026-xv-campeonato-mundial-de-pasos-libres-la-negra-salsa-v-campeonato-mundial-de-pasos-libres-la-negra-bachata",
