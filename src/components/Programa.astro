@@ -140,14 +140,9 @@ const describe = (s) => {
     <button type="button" class="pr-sync-abrir" data-sync-abrir>{t.sync.abrir}</button>
     </div>
 
-    <!-- Guardar / recuperar favoritos por email. Es un extra: los favoritos
-         siguen viviendo en este móvil aunque esto falle. -->
-    <div class="pr-sync" data-sync hidden data-textos={JSON.stringify({
-      guardando: t.sync.guardando, recuperando: t.sync.recuperando,
-      guardado: t.sync.guardado, recuperado: t.sync.recuperado,
-      emailMal: t.sync.emailMal || "Escribe un email válido.", error: t.sync.error || "No se ha podido. Inténtalo en un momento.",
-      idioma: lang,
-    })}>
+    <!-- Los favoritos se guardan en la cuenta. Es un extra: siguen viviendo en
+         este móvil aunque la cuenta o el servidor fallen. -->
+    <div class="pr-sync" data-sync hidden data-textos={JSON.stringify({ idioma: lang })}>
       <div class="pr-sync-caja" role="dialog" aria-modal="true" aria-labelledby="pr-sync-t">
         <button type="button" class="pr-sync-x" data-sync-cerrar aria-label={t.sync.cerrar}>
           <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
@@ -155,15 +150,6 @@ const describe = (s) => {
         <h3 class="pr-sync-t" id="pr-sync-t">{t.sync.titulo}</h3>
         <p class="pr-sync-lead">{t.sync.lead}</p>
         <button type="button" class="pr-sync-cuenta" data-cu-abrir>{t.sync.conCuenta}</button>
-        <p class="pr-sync-o">{t.sync.o}</p>
-        <label class="pr-sync-lbl" for="pr-sync-email">{t.sync.email}</label>
-        <input class="pr-sync-input" id="pr-sync-email" type="email" inputmode="email"
-               autocomplete="email" placeholder="tu@email.com" />
-        <div class="pr-sync-btns">
-          <button type="button" class="pr-sync-btn pr-sync-guardar" data-sync-guardar>{t.sync.guardar}</button>
-          <button type="button" class="pr-sync-btn pr-sync-rec" data-sync-recuperar>{t.sync.recuperar}</button>
-        </div>
-        <p class="pr-sync-msg" data-sync-msg hidden role="status"></p>
         <p class="pr-sync-nota">{t.sync.nota}</p>
       </div>
       <div class="pr-sync-fondo" data-sync-cerrar></div>
@@ -369,52 +355,27 @@ const describe = (s) => {
     btn.classList.toggle("is-fav", on);
     btn.setAttribute("aria-pressed", on ? "true" : "false");
   });
-  // ── Guardar y recuperar favoritos por email ──────────────────────────────
-  // Es un añadido sobre localStorage, nunca un sustituto: si el servidor falla,
-  // los favoritos de este móvil siguen intactos.
+  // ── Favoritos en la cuenta ───────────────────────────────────────────────
+  // Es un añadido sobre localStorage, nunca un sustituto: si la cuenta o el
+  // servidor fallan, los favoritos de este móvil siguen intactos.
   (function sincronizacion() {
     const panel = document.querySelector("[data-sync]");
     if (!panel) return;
     const abrir = document.querySelector("[data-sync-abrir]");
-    const input = panel.querySelector("#pr-sync-email");
-    const msg = panel.querySelector("[data-sync-msg]");
-    const bGuardar = panel.querySelector("[data-sync-guardar]");
-    const bRecuperar = panel.querySelector("[data-sync-recuperar]");
-    const EMAIL_KEY = "lanegra:programa:email";
     const T = JSON.parse(panel.dataset.textos || "{}");
 
-    const aviso = (txt, err) => {
-      msg.textContent = txt || "";
-      msg.className = "pr-sync-msg" + (err ? " err" : " ok");
-      msg.hidden = !txt;
-    };
-    const cerrar = () => { panel.hidden = true; aviso(""); };
-    const abrirPanel = () => {
-      panel.hidden = false;
-      try { input.value = localStorage.getItem(EMAIL_KEY) || ""; } catch (e) {}
-      aviso("");
-      input.focus();
-    };
-    abrir.addEventListener("click", abrirPanel);
+    const cerrar = () => { panel.hidden = true; };
+    abrir.addEventListener("click", () => { panel.hidden = false; });
     panel.querySelectorAll("[data-sync-cerrar]").forEach((b) => b.addEventListener("click", cerrar));
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") cerrar(); });
 
-    const emailValido = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    const pedir = async (payload) => {
-      const r = await fetch("/.netlify/functions/favoritos", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...payload, idioma: T.idioma || "es" }),
-      });
-      return { ok: r.ok, data: await r.json().catch(() => ({})) };
-    };
-
-    // Con la cuenta iniciada, los favoritos se sincronizan solos: no hay que
-    // teclear ningún email ni acordarse de pulsar Guardar.
+    // Con la cuenta iniciada los favoritos se sincronizan solos: no hay que
+    // teclear nada ni acordarse de pulsar Guardar.
     let sincronizando = false;
     async function sincronizarConCuenta(sesion) {
       if (!sesion || sincronizando) return;
       sincronizando = true;
+      cerrar();
       try {
         const sb = await window.laNegraCuenta.cliente();
         const uid = sesion.user.id;
@@ -453,41 +414,6 @@ const describe = (s) => {
     };
 
     if (window.laNegraCuenta) window.laNegraCuenta.alCambiar(sincronizarConCuenta);
-
-    bGuardar.addEventListener("click", async () => {
-      const email = input.value.trim();
-      if (!emailValido(email)) { aviso(T.emailMal, true); input.focus(); return; }
-      bGuardar.disabled = bRecuperar.disabled = true;
-      const antes = bGuardar.textContent;
-      bGuardar.textContent = T.guardando;
-      const { ok, data } = await pedir({ action: "guardar", email, claves: [...favs] });
-      bGuardar.textContent = antes;
-      bGuardar.disabled = bRecuperar.disabled = false;
-      if (!ok) { aviso(data.error || T.error, true); return; }
-      try { localStorage.setItem(EMAIL_KEY, email); } catch (e) {}
-      aviso(T.guardado, false);
-    });
-
-    bRecuperar.addEventListener("click", async () => {
-      const email = input.value.trim();
-      if (!emailValido(email)) { aviso(T.emailMal, true); input.focus(); return; }
-      bRecuperar.disabled = bGuardar.disabled = true;
-      const antes = bRecuperar.textContent;
-      bRecuperar.textContent = T.recuperando;
-      const { ok, data } = await pedir({ action: "recuperar", email });
-      bRecuperar.textContent = antes;
-      bRecuperar.disabled = bGuardar.disabled = false;
-      if (!ok) { aviso(data.error || T.error, true); return; }
-      if (data.vacio) { aviso(data.mensajeVacio || T.error, true); return; }
-      // Se suman a los que ya hay en el móvil: nunca se borra nada de aquí.
-      (data.claves || []).forEach((c) => favs.add(c));
-      saveFavs();
-      markFavs();
-      syncFavCount();
-      apply();
-      try { localStorage.setItem(EMAIL_KEY, email); } catch (e) {}
-      aviso((T.recuperado || "").replace("{n}", (data.claves || []).length), false);
-    });
   })();
 
   favBtns.forEach((btn) => btn.addEventListener("click", (e) => {
@@ -1108,30 +1034,13 @@ const describe = (s) => {
   .pr-sync-x:hover { background: #e6e1d8; color: #14121a; }
   .pr-sync-t { margin: 0 30px 8px 0; font-size: 19px; font-weight: 800; letter-spacing: -.01em; color: #14121a; }
   .pr-sync-lead { margin: 0 0 18px; font-size: 14px; line-height: 1.5; color: #6a6a74; }
-  .pr-sync-lbl { display: block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; color: #6a6a74; margin-bottom: 6px; }
-  .pr-sync-input {
-    width: 100%; padding: 12px 14px; border-radius: 12px; border: 2px solid #e6e1d8;
-    font-size: 16px; font-family: inherit; color: #14121a;
-  }
-  .pr-sync-input:focus-visible { outline: none; border-color: var(--gold); }
+  /* Con la sesión iniciada no hay nada que pulsar: se guarda solo. */
+  :global(html.con-sesion) .pr-sync-abrir { display: none; }
   .pr-sync-cuenta {
     width: 100%; padding: 13px 10px; border-radius: 999px; border: 2px solid #14121a;
     background: #14121a; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700;
-    cursor: pointer; margin-bottom: 16px;
+    cursor: pointer; margin-bottom: 4px;
   }
-  .pr-sync-o { margin: 0 0 14px; font-size: 12.5px; color: #9a9aa2; text-align: center; }
-  .pr-sync-btns { display: flex; gap: 10px; margin-top: 14px; }
-  .pr-sync-btn {
-    flex: 1; padding: 12px 10px; border-radius: 999px; border: 2px solid #14121a;
-    font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer;
-  }
-  .pr-sync-guardar { background: #14121a; color: #fff; }
-  .pr-sync-rec { background: #fff; color: #14121a; }
-  .pr-sync-btn:disabled { opacity: .5; cursor: default; }
-  .pr-sync-msg { margin: 14px 0 0; font-size: 13.5px; font-weight: 600; line-height: 1.45; }
-  .pr-sync-msg[hidden] { display: none; }
-  .pr-sync-msg.ok { color: #2e7d52; }
-  .pr-sync-msg.err { color: #c8324c; }
   .pr-sync-nota { margin: 12px 0 0; font-size: 12px; color: #9a9aa2; }
   @media (max-width: 640px) {
     .pr-sync-abrir { margin-left: auto; }
