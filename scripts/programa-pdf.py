@@ -300,7 +300,10 @@ COLS = [w * TW_PT for w in COLS_TWIPS]
 TINTA = rgb("1a1a1a")
 GRIS = rgb("6b6b6b")
 GRANATE = rgb("b3122e")
-LINEA = rgb("d9d9d9")
+# El documento usa #d9d9d9, pero sobre los rellenos pastel la línea
+# desaparece: contra el rosa de Medio-Alto queda en 1,04:1, que no se ve.
+# Con este gris sube a 1,95:1 y las celdas se distinguen.
+LINEA = rgb("999999")
 FONDO_HORA = rgb("f7f7f7")
 FONDO_COMIDA = rgb("ededed")
 FONDO_CABECERA = rgb("1a1a1a")
