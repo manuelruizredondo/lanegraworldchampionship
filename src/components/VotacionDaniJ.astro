@@ -124,6 +124,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
 <script is:inline define:vars={{ MAX: MAX_VOTOS, LANG: lang, T: {
   subir: t.subir, bajar: t.bajar, quitar: t.quitar, enviando: t.enviar,
   enviandoTxt: t.enviando, errEmail: t.errEmail, errPocas: t.errPocas,
+  faltaUna: t.faltaUna, faltanVarias: t.faltanVarias,
   errGenerico: t.errGenerico, maxAviso: t.maxAviso,
 } }}>
   (function () {
@@ -183,7 +184,9 @@ const cerrada = Date.now() > Date.parse(CIERRE);
         b.querySelector(".dj-song-n").textContent = i !== -1 ? String(i + 1) : "";
       });
 
-      botonEnviar.disabled = elegidas.length === 0;
+      // El botón se queda activo aunque falten: así al pulsarlo se puede
+      // decir cuántas quedan, en vez de dejar un botón muerto sin explicación.
+      botonEnviar.disabled = false;
     }
 
     function alternar(nombre) {
@@ -324,7 +327,12 @@ const cerrada = Date.now() > Date.parse(CIERRE);
         form.querySelector("#dj-email").focus();
         return;
       }
-      if (!elegidas.length) { aviso(T.errPocas, "err"); return; }
+      // La votación es de 10 exactas: con menos no se envía.
+      if (elegidas.length !== MAX) {
+        const faltan = MAX - elegidas.length;
+        aviso(faltan === 1 ? T.faltaUna : T.faltanVarias.replace("{n}", String(faltan)), "err");
+        return;
+      }
 
       botonEnviar.disabled = true;
       botonEnviar.textContent = T.enviandoTxt;

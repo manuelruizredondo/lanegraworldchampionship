@@ -4,12 +4,12 @@ export const MENU = {
   es: [
     { label: "FESTIVAL", href: "/festival/", sub: [
       { t: "FULL PASS", h: "/tu-pase/" },
+      { t: "HOTEL", h: "/festival/#hotel" },
       { t: "EL FESTIVAL", h: "/festival/#info" },
       { t: "ARTISTAS", h: "/artistas/" },
       { t: "TALLERES", h: "/talleres/" },
       { t: "FIESTA", h: "/fiesta/" },
       { t: "Concierto Dani J", h: "/concierto-danij/", raw: true },
-      { t: "HOTEL", h: "/festival/#hotel" },
     ]},
     { label: "CONTACTO", href: "/contacto/", sub: [] },
     { label: "MUNDIAL", href: "/mundial/", sub: [
@@ -30,12 +30,12 @@ export const MENU = {
   en: [
     { label: "FESTIVAL", href: "/en/festival/", sub: [
       { t: "FULL PASS", h: "/en/your-pass/" },
+      { t: "HOTEL", h: "/en/festival/#hotel" },
       { t: "THE FESTIVAL", h: "/en/festival/#info" },
       { t: "ARTISTS", h: "/en/artists/" },
       { t: "WORKSHOPS", h: "/en/workshops/" },
       { t: "PARTY", h: "/en/fiesta/" },
       { t: "Dani J concert", h: "/en/concierto-danij/", raw: true },
-      { t: "HOTEL", h: "/en/festival/#hotel" },
     ]},
     { label: "CONTACT", href: "/en/contact/", sub: [] },
     { label: "WORLD CUP", href: "/en/world-championship/", sub: [
@@ -56,12 +56,12 @@ export const MENU = {
   it: [
     { label: "FESTIVAL", href: "/it/festival/", sub: [
       { t: "FULL PASS", h: "/it/your-pass/" },
+      { t: "HOTEL", h: "/it/festival/#hotel" },
       { t: "IL FESTIVAL", h: "/it/festival/#info" },
       { t: "ARTISTI", h: "/it/artists/" },
       { t: "WORKSHOP", h: "/it/workshops/" },
       { t: "FESTA", h: "/it/fiesta/" },
       { t: "Concerto Dani J", h: "/it/concierto-danij/", raw: true },
-      { t: "HOTEL", h: "/it/festival/#hotel" },
     ]},
     { label: "CONTATTI", href: "/it/contact/", sub: [] },
     { label: "MONDIALE", href: "/it/mondiale/", sub: [

@@ -19,7 +19,7 @@ const MENSAJE = {
     cerrada: "La votación se cerró el 24 de octubre a las 21:00.",
     repetida: "Con este email ya se ha votado. Solo se admite una votación por persona.",
     email: "Escribe un email válido.",
-    lista: "Selecciona entre 1 y 10 canciones.",
+    lista: "Hay que elegir exactamente 10 canciones.",
     desconocida: "Hay una canción que no está en la lista.",
     servidor: "No se ha podido guardar tu votación. Inténtalo de nuevo en un momento.",
   },
@@ -27,7 +27,7 @@ const MENSAJE = {
     cerrada: "Voting closed on 24 October at 21:00.",
     repetida: "This email has already voted. Only one vote per person is allowed.",
     email: "Please enter a valid email.",
-    lista: "Select between 1 and 10 songs.",
+    lista: "You must choose exactly 10 songs.",
     desconocida: "One of the songs is not on the list.",
     servidor: "We couldn't save your vote. Please try again in a moment.",
   },
@@ -35,7 +35,7 @@ const MENSAJE = {
     cerrada: "La votazione si è chiusa il 24 ottobre alle 21:00.",
     repetida: "Con questa email si è già votato. È ammesso un solo voto a persona.",
     email: "Inserisci un'email valida.",
-    lista: "Seleziona da 1 a 10 canzoni.",
+    lista: "Devi scegliere esattamente 10 canzoni.",
     desconocida: "Una delle canzoni non è in elenco.",
     servidor: "Non siamo riusciti a salvare il tuo voto. Riprova tra un momento.",
   },
@@ -61,7 +61,7 @@ export default async (req) => {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: m.email }, 400);
 
   const canciones = Array.isArray(body?.canciones) ? body.canciones.map(String) : [];
-  if (!canciones.length || canciones.length > MAX_VOTOS) return json({ error: m.lista }, 400);
+  if (canciones.length !== MAX_VOTOS) return json({ error: m.lista }, 400);
   if (new Set(canciones).size !== canciones.length) return json({ error: m.lista }, 400);
   const catalogo = new Set(CANCIONES);
   if (canciones.some((c) => !catalogo.has(c))) return json({ error: m.desconocida }, 400);
