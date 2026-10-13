@@ -345,7 +345,7 @@ def main(ruta_datos, lang, salida):
         x = M + TW
         for k in SALAS:
             c.setFillColorRGB(*CABECERA_TABLA)
-            c.roundRect(x, y, CW, 14, 3, fill=1, stroke=0)
+            c.rect(x, y, CW, 14, fill=1, stroke=0)
             c.setFillColorRGB(1, 1, 1)
             c.setFont("Helvetica-Bold", 6.8)
             c.drawCentredString(x + CW / 2, y + 4.6, ET["salas"][k])
@@ -372,7 +372,7 @@ def main(ruta_datos, lang, salida):
             c.setFillColorRGB(*fondo)
             c.setStrokeColorRGB(*borde_de(fondo))
             c.setLineWidth(.6)
-            c.roundRect(x, y, an, 11, 5.5, fill=1, stroke=1)
+            c.rect(x, y, an, 11, fill=1, stroke=1)
             c.setFillColorRGB(*tinta)
             c.drawString(x + 5.5, y + 3.4, etiqueta)
             x += an + 5
@@ -389,7 +389,7 @@ def main(ruta_datos, lang, salida):
         c.setFillColorRGB(*fondo)
         c.setStrokeColorRGB(*borde_de(fondo))
         c.setLineWidth(1.1)
-        c.roundRect(x, y - h, CW, h, 4, fill=1, stroke=1)
+        c.rect(x, y - h, CW, h, fill=1, stroke=1)
 
         k = clave(s)
         t_titulo, t_profe, t_nivel = tintas(fondo)
@@ -454,7 +454,7 @@ def main(ruta_datos, lang, salida):
                 # La banda arranca donde arrancan las tarjetas, para que la hora
                 # quede alineada con la del resto de filas.
                 c.setFillColorRGB(*fondo)
-                c.roundRect(M + TW, y - hh, W - M - TW - M, hh, 3, fill=1, stroke=0)
+                c.rect(M + TW, y - hh, W - M - TW - M, hh, fill=1, stroke=0)
                 c.setFillColorRGB(*(ROJO_COMIDAS if comida else tinta))
                 c.setFont("Helvetica-Bold", 7.6)
                 c.drawCentredString(M + TW + (W - M - TW - M) / 2, y - hh + 7, s["n"].upper())
