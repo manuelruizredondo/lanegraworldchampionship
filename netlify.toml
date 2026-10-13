@@ -30,20 +30,38 @@
 # Rutas antiguas que cambiaron de nombre. Antes eran páginas con <meta refresh>,
 # que es más lento y Google trata como redirección "blanda": mejor un 301 de verdad.
 [[redirects]]
+  from = "/talleres/*"
+  to = "/programacion-2026/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/workshops/*"
+  to = "/en/programme-2026/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/it/workshops/*"
+  to = "/it/programma-2026/"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/programacion/*"
-  to = "/talleres/"
+  to = "/programacion-2026/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/en/schedule/*"
-  to = "/en/workshops/"
+  to = "/en/programme-2026/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/it/programma/*"
-  to = "/it/workshops/"
+  to = "/it/programma-2026/"
   status = 301
   force = true
 

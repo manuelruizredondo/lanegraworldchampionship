@@ -386,7 +386,7 @@ export const I18N = {
 // Mismo slug en los tres idiomas: el QR del flyer apunta aquí y «concierto-danij»
 // se entiende igual en cualquiera de ellos.
 export const RUTA = { es: "/concierto-danij/", en: "/en/concierto-danij/", it: "/it/concierto-danij/" };
-export const RUTA_PROGRAMA = { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" };
+export const RUTA_PROGRAMA = { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" };
 
 // Entradas (go&dance). El Full Pass ya incluye el concierto; la entrada suelta
 // vale solo para el concierto y el social de después, y es para mayores de 16.

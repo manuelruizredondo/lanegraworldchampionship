@@ -8,9 +8,10 @@ export const ROUTES = [
   { es: "/bases-y-reglamento/", en: "/en/competition-rules/", it: "/it/regolamento/" },
   { es: "/festival/", en: "/en/festival/", it: "/it/festival/" },
   { es: "/artistas/", en: "/en/artists/", it: "/it/artists/" },
-  { es: "/talleres/", en: "/en/workshops/", it: "/it/workshops/" },
-  // Nota: /programacion/, /en/schedule/, /it/programma/ se redirigen con 301 desde netlify.toml y
-  // redirigen a /talleres/ — se dejan FUERA de ROUTES para no meterlos en el
+  { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" },
+  // Nota: /programacion/, /en/schedule/, /it/programma/ y las antiguas /talleres/,
+  // /en/workshops/ y /it/workshops/ se redirigen con 301 desde netlify.toml; se dejan
+  // FUERA de ROUTES para no meterlas en el
   // sitemap ni en el hreflang.
   { es: "/fiesta/", en: "/en/fiesta/", it: "/it/fiesta/" },
   { es: "/competidores/", en: "/en/competitors/", it: "/it/competitors/" },
