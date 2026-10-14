@@ -141,6 +141,15 @@ const ESPECIALIDADES = [
   .ins-msg { min-height: 20px; margin: 14px 0 0; font-size: 14px; font-weight: 600; color: #c0392b; }
   .ins-msg.ok { color: #1e8449; }
 
+  /* Campo con fallo: borde rojo y el porqué debajo, en rojo. */
+  :global(.campo-mal) { border-color: #c0392b !important; background: #fdf3f2; }
+  :global(.campo-mal:focus-visible) { outline-color: #c0392b; }
+  :global(.campo-err) {
+    margin: 6px 0 0; font-size: 13px; font-weight: 600; line-height: 1.35;
+    color: #c0392b; display: flex; gap: 6px; align-items: flex-start;
+  }
+  :global(.campo-err)::before { content: "!"; flex: 0 0 auto; width: 15px; height: 15px; margin-top: 1px; border-radius: 50%; background: #c0392b; color: #fff; font-size: 11px; font-weight: 800; text-align: center; line-height: 15px; }
+
   /* FORMULARIO */
   .ins-form { max-width: 720px; margin: 0 auto; text-align: left; }
   .req { color: var(--gold-dark, #a2823f); font-weight: 700; }
@@ -445,14 +454,105 @@ const ESPECIALIDADES = [
     processPhoto(lastFile);
   });
 
+  // --- Validación ---
+  // El navegador solo enseña el primer error y en un globito que se va solo.
+  // Aquí se marcan todos de una vez, en rojo y debajo de cada campo, y se
+  // lleva la pantalla al primero.
+  const MENSAJES = (el: HTMLInputElement) => {
+    const v = el.validity;
+    if (v.valueMissing) {
+      if (el.type === "checkbox") return "Tienes que marcar esta casilla.";
+      if (el.tagName === "SELECT") return "Elige una opción.";
+      if (el.type === "date") return "Pon la fecha.";
+      if (el.type === "file") return "Adjunta un archivo.";
+      return "Rellena este campo.";
+    }
+    if (v.typeMismatch && el.type === "email") return "Ese email no es válido. Revísalo.";
+    if (v.typeMismatch && el.type === "url") return "Pega el enlace completo, empezando por https://";
+    if (v.rangeUnderflow || v.rangeOverflow) return "Esa fecha no es correcta.";
+    if (v.tooShort) return "Falta texto.";
+    return el.validationMessage || "Revisa este campo.";
+  };
+
+  function limpiaError(el: Element) {
+    el.classList.remove("campo-mal");
+    el.removeAttribute("aria-invalid");
+    const cont = el.closest("label, .fld, .int-f, .foto-drop") || el.parentElement;
+    const previo = cont && cont.querySelector(".campo-err");
+    if (previo) previo.remove();
+  }
+
+  function ponError(el: Element, texto: string) {
+    el.classList.add("campo-mal");
+    el.setAttribute("aria-invalid", "true");
+    const cont = el.closest("label, .fld, .int-f, .foto-drop") || el.parentElement;
+    if (!cont || cont.querySelector(".campo-err")) return;
+    const p = document.createElement("p");
+    p.className = "campo-err";
+    p.textContent = texto;
+    cont.appendChild(p);
+  }
+
+  function irA(el: Element) {
+    const y = el.getBoundingClientRect().top + window.scrollY - 120;
+    window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    const foco = el as HTMLElement;
+    if (typeof foco.focus === "function") setTimeout(() => foco.focus({ preventScroll: true }), 420);
+  }
+
+  function validar(): Element[] {
+    form.querySelectorAll(".campo-mal").forEach(limpiaError);
+    const fallos: Element[] = [];
+
+    form.querySelectorAll("input, select, textarea").forEach((el: any) => {
+      if (el.disabled || el.type === "file") return;
+      // Un campo escondido (p. ej. el email de solista en grupos) no cuenta.
+      if (!el.offsetParent && el.type !== "checkbox") return;
+      if (el.checkValidity()) return;
+      ponError(el, MENSAJES(el));
+      fallos.push(el);
+    });
+
+    // Las dos comprobaciones que el navegador no puede hacer.
+    if (!photo) {
+      const zona = $("#foto-input");
+      ponError(zona, "Adjunta la foto: es obligatoria para el cartel.");
+      fallos.push(zona);
+    }
+    if (intList.children.length < min) {
+      const ultima = intList.lastElementChild || intList;
+      ponError(ultima, `Esta categoría necesita al menos ${min} integrantes.`);
+      fallos.push(ultima);
+    }
+
+    // El orden de la lista es el de aparición en la página, no el de comprobación.
+    fallos.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+    return fallos;
+  }
+
+  // En cuanto se corrige, desaparece el aviso: no se espera a reenviar.
+  form.addEventListener("input", (e) => {
+    const el = e.target as HTMLInputElement;
+    if (el.classList && el.classList.contains("campo-mal") && el.checkValidity()) limpiaError(el);
+  });
+  form.addEventListener("change", (e) => {
+    const el = e.target as HTMLInputElement;
+    if (el.classList && el.classList.contains("campo-mal") && el.checkValidity()) limpiaError(el);
+  });
+
   // --- Envío ---
   const msg = $("#ins-msg"), submitBtn = $("#ins-submit") as HTMLButtonElement;
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     msg.textContent = ""; msg.classList.remove("ok");
-    if (!(form as HTMLFormElement).checkValidity()) { (form as HTMLFormElement).reportValidity(); return; }
-    if (!photo) { msg.textContent = "Adjunta la foto."; return; }
-    if (intList.children.length < min) { msg.textContent = `Esta categoría necesita al menos ${min} integrantes.`; return; }
+    const fallos = validar();
+    if (fallos.length) {
+      msg.textContent = fallos.length === 1
+        ? "Falta un campo por rellenar. Te lo he marcado en rojo."
+        : `Faltan ${fallos.length} campos por rellenar. Te los he marcado en rojo.`;
+      irA(fallos[0]);
+      return;
+    }
 
     const fd = new FormData(form as HTMLFormElement);
     const fields = Object.fromEntries(fd.entries());
