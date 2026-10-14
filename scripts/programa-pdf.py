@@ -54,7 +54,7 @@ PALETA = {
     "taller-Medio":      (rgb("cfe2f3"), NEGRO),   # azul claro
     "taller-Medio-Alto": (rgb("f4cccc"), NEGRO),   # rosa claro
     "master":            (rgb("fff2cc"), NEGRO),   # amarillo claro
-    "ciclo":             (rgb("0b5394"), BLANCO),  # azul oscuro · Ciclo Crecimiento Profesional
+    "ciclo":             (rgb("0b5394"), BLANCO),  # azul oscuro · Ponencias
     "comp-bachata":      (rgb("f1e6f6"), NEGRO),   # lila
     "comp-bachata-duos": (rgb("d9d2e9"), NEGRO),   # lila más saturado · Dúos Mixtos
     "comp-salsa":        (rgb("fce8eb"), NEGRO),   # rosa
@@ -241,7 +241,7 @@ def clave(s):
     k = s["k"]
     n = s.get("clave") or s.get("n") or ""
     if k == "master":
-        return "ciclo" if n.startswith("Ciclo Crecimiento Profesional") else "master"
+        return "ciclo" if n.startswith("Ponencia:") else "master"
     if k == "taller":
         lv = s.get("lClave") or "Medio"
         lv = VECINO.get(lv, lv)

@@ -1,6 +1,6 @@
 // Ponencias · el ciclo de charlas profesionales del festival.
 //
-// Son las sesiones marcadas como "Ciclo Crecimiento Profesional" en
+// Son las sesiones marcadas como "Ponencia" en
 // src/data/programa.js. Aquí se repiten los datos que la página necesita
 // (ponente, foto, titular) porque el programa solo guarda una línea de texto.
 //
@@ -10,7 +10,7 @@
 export const PONENCIAS = [
   {
     // La clave con la que se busca en el programa: el texto español exacto.
-    clave: "Ciclo Crecimiento Profesional: el error en directo, estrategias para el reenfoque inmediato",
+    clave: "Ponencia: el error en directo, estrategias para el reenfoque inmediato",
     ponente: "Dr. Alessandro Massaro",
     img: "alessandro-massaro-ponencia.webp",
     ig: "https://www.instagram.com/ale.massaro86/",
@@ -36,7 +36,7 @@ export const PONENCIAS = [
     },
   },
   {
-    clave: "Ciclo Crecimiento Profesional: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
+    clave: "Ponencia: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
     ponente: "Esteban Molina Pérez",
     img: "esteban-molina.webp",
     credencial: {
@@ -61,7 +61,7 @@ export const PONENCIAS = [
     },
   },
   {
-    clave: "Ciclo Crecimiento Profesional: redes sociales sin humo, lo que funciona, lo que no y lo que viene con la IA en nuestro sector laboral",
+    clave: "Ponencia: redes sociales sin humo, lo que funciona, lo que no y lo que viene con la IA en nuestro sector laboral",
     ponente: "Manuel Ruiz",
     img: "manuel-ruiz.webp",
     web: "https://digitalstrategy.es",

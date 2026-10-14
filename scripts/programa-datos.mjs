@@ -9,7 +9,7 @@ import { PROGRAMA, I18N, NOMBRES } from "../src/data/programa.js";
 const ETIQUETAS = {
   es: {
     master: "MASTERCLASS",
-    ciclo: "CICLO CRECIMIENTO PROFESIONAL",
+    ciclo: "PONENCIA",
     bachata: "MUNDIAL BACHATA",
     salsa: "MUNDIAL SALSA",
     salas: { gs: "GRAN SALÓN DEL MUNDIAL", pb: "SALA PIANO BAR", s1: "SALA 1", s2: "SALA 2" },
@@ -20,7 +20,7 @@ const ETIQUETAS = {
   },
   en: {
     master: "MASTERCLASS",
-    ciclo: "PROFESSIONAL GROWTH SERIES",
+    ciclo: "TALK",
     bachata: "BACHATA CHAMPIONSHIP",
     salsa: "SALSA CHAMPIONSHIP",
     salas: { gs: "MAIN HALL", pb: "PIANO BAR", s1: "ROOM 1", s2: "ROOM 2" },
@@ -31,7 +31,7 @@ const ETIQUETAS = {
   },
   it: {
     master: "MASTERCLASS",
-    ciclo: "CICLO CRESCITA PROFESSIONALE",
+    ciclo: "CONFERENZA",
     bachata: "MONDIALE BACHATA",
     salsa: "MONDIALE SALSA",
     salas: { gs: "SALONE DEL MONDIALE", pb: "SALA PIANO BAR", s1: "SALA 1", s2: "SALA 2" },
