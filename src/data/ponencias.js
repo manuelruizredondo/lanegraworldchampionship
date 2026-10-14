@@ -11,9 +11,19 @@ export const PONENCIAS = [
   {
     // La clave con la que se busca en el programa: el texto español exacto.
     clave: "Ciclo Crecimiento Profesional: el error en directo, estrategias para el reenfoque inmediato",
-    ponente: "Alessandro Massaro",
-    img: "Alessandro-Massaro.webp",
+    ponente: "Dr. Alessandro Massaro",
+    img: "alessandro-massaro-ponencia.webp",
     ig: "https://www.instagram.com/ale.massaro86/",
+    credencial: {
+      es: "Psicólogo clínico y del deporte · Coreógrafo y juez internacional",
+      en: "Clinical and sports psychologist · International choreographer and judge",
+      it: "Psicologo clinico e dello sport · Coreografo e giudice internazionale",
+    },
+    bio: {
+      es: "Psicólogo clínico de orientación psicodinámica, une en un mismo recorrido la psicología y la danza. Formado en Psicología del Deporte con el Máster Psyco Sport y en Sexología Clínica, cursa la especialización en Psicoterapia Psicoanalítica en la SPP de Turín. Es miembro del Comité Médico-Científico de la IDO como psicólogo del deporte y Consejero Regional del Piamonte de la FIPSIS. Director Técnico y Artístico de Al Ma Academy, es juez internacional y entrenador de atletas multicampeones. Más de treinta años en la danza le permiten hablar a los bailarines desde una posición poco común: la de quien conoce la pista con su propio cuerpo, no solo por la teoría.",
+      en: "A clinical psychologist with a psychodynamic approach, he brings psychology and dance together in a single career. Trained in Sports Psychology through the Psyco Sport Master's and in Clinical Sexology, he is currently specialising in Psychoanalytic Psychotherapy at the SPP in Turin. He sits on the IDO Medical-Scientific Committee as a sports psychologist and is Regional Counsellor for Piedmont at FIPSIS. Technical and Artistic Director of Al Ma Academy, he is an international judge and coach to multi-champion athletes. Thirty years in dance let him speak to dancers from an unusual place: someone who knows the floor through his own body, not only through theory.",
+      it: "Psicologo clinico a orientamento psicodinamico, unisce in un unico percorso la psicologia e la danza. Formato in Psicologia dello Sport con il Master Psyco Sport e in Sessuologia Clinica, frequenta la specializzazione in Psicoterapia Psicoanalitica alla SPP di Torino. È membro del Comitato Medico-Scientifico della IDO come psicologo dello sport e Consigliere Regionale del Piemonte della FIPSIS. Direttore Tecnico e Artistico di Al Ma Academy, è giudice internazionale e coach di atleti pluricampioni. Oltre trent'anni di danza gli permettono di parlare ai ballerini da una posizione rara: quella di chi conosce la pista col proprio corpo, non solo con la teoria.",
+    },
     titulo: {
       es: "El error en directo",
       en: "Mistakes on stage",
@@ -27,17 +37,27 @@ export const PONENCIAS = [
   },
   {
     clave: "Ciclo Crecimiento Profesional: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
-    ponente: "Esteban Molina",
-    img: null, // pendiente: falta su foto
+    ponente: "Esteban Molina Pérez",
+    img: "esteban-molina.webp",
+    credencial: {
+      es: "Economista colegiado · Especialista en escuelas de baile y artistas",
+      en: "Chartered economist · Specialist in dance schools and performers",
+      it: "Economista iscritto all'albo · Specialista in scuole di ballo e artisti",
+    },
+    bio: {
+      es: "Licenciado en Ciencias Económicas y Empresariales por la Universidad Autónoma de Madrid y colegiado en el Colegio de Economistas de Madrid. Especialista en régimen fiscal de sociedades y autónomos, y en la gestión empresarial de escuelas de baile y artistas. Su despacho, constituido en 2005, lleva actualmente más de 60 empresas del sector del baile y la música.",
+      en: "A graduate in Economics and Business from the Universidad Autónoma de Madrid and a member of the Madrid Association of Economists. He specialises in the tax treatment of companies and the self-employed, and in the business side of dance schools and performers. His firm, founded in 2005, currently looks after more than 60 companies in the dance and music industry.",
+      it: "Laureato in Economia e Commercio all'Universidad Autónoma de Madrid e iscritto all'Ordine degli Economisti di Madrid. Specialista in regime fiscale di società e lavoratori autonomi e nella gestione aziendale di scuole di ballo e artisti. Il suo studio, fondato nel 2005, segue oggi più di 60 imprese del settore della danza e della musica.",
+    },
     titulo: {
       es: "Fiscalidad y gestión",
       en: "Tax and business",
       it: "Fisco e gestione",
     },
     bajada: {
-      es: "Para bailarines autónomos y escuelas de baile: facturar, declarar y no llevarse sustos.",
-      en: "For freelance dancers and dance schools: invoicing, taxes and no nasty surprises.",
-      it: "Per ballerini autonomi e scuole di ballo: fatturare, dichiarare e nessuna sorpresa.",
+      es: "Los primeros pasos para emprender tu negocio: cómo crear y desarrollar tu empresa, y todo lo relacionado con impuestos y Seguridad Social.",
+      en: "The first steps to starting your business: how to set it up and grow it, plus everything about taxes and social security.",
+      it: "I primi passi per avviare la tua attività: come creare e far crescere la tua impresa, più tutto su imposte e previdenza sociale.",
     },
   },
   {
@@ -45,6 +65,11 @@ export const PONENCIAS = [
     ponente: "Manuel Ruiz",
     img: "manuel-ruiz.webp",
     web: "https://digitalstrategy.es",
+    credencial: {
+      es: "Consultor de estrategia digital · 25 años y más de 500 clientes",
+      en: "Digital strategy consultant · 25 years and over 500 clients",
+      it: "Consulente di strategia digitale · 25 anni e oltre 500 clienti",
+    },
     titulo: {
       es: "Redes sociales sin humo",
       en: "Social media without the hype",
@@ -67,7 +92,7 @@ export const I18N = {
     h1: "Ponencias",
     lead: "Tres charlas sobre el oficio, no sobre los pasos: qué hacer cuando algo sale mal en el escenario, cómo llevar tus cuentas y qué funciona de verdad en redes. Entran con el Full Pass.",
     enPrograma: "Ver la programación completa",
-    pendiente: "Foto pendiente",
+    verBio: "Quién es",
     sinHorario: "Horario por confirmar",
   },
   en: {
@@ -78,7 +103,7 @@ export const I18N = {
     h1: "Talks",
     lead: "Three talks about the job, not the steps: what to do when something goes wrong on stage, how to handle your accounts and what really works on social media. Included with the Full Pass.",
     enPrograma: "See the full programme",
-    pendiente: "Photo coming",
+    verBio: "Who they are",
     sinHorario: "Time to be confirmed",
   },
   it: {
@@ -89,7 +114,7 @@ export const I18N = {
     h1: "Conferenze",
     lead: "Tre incontri sul mestiere, non sui passi: cosa fare quando qualcosa va storto sul palco, come gestire i conti e cosa funziona davvero sui social. Inclusi nel Full Pass.",
     enPrograma: "Vedi il programma completo",
-    pendiente: "Foto in arrivo",
+    verBio: "Chi è",
     sinHorario: "Orario da confermare",
   },
 };

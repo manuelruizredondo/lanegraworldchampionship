@@ -7,6 +7,7 @@
 import { PONENCIAS, I18N } from "@/data/ponencias.js";
 import { PROGRAMA, ROOMS, I18N as PROG_I18N } from "@/data/programa.js";
 import { img } from "@/data/img.js";
+import { biosDe } from "@/data/artist-bios.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
@@ -26,7 +27,13 @@ function cuando(clave) {
   return null;
 }
 
-const fichas = PONENCIAS.map((p) => ({ ...p, horario: cuando(p.clave) }));
+// Si la ponencia no trae bio propia se usa la de la ficha de artista.
+const BIOS = biosDe(lang);
+const fichas = PONENCIAS.map((p) => ({
+  ...p,
+  horario: cuando(p.clave),
+  textoBio: (p.bio && (p.bio[lang] || p.bio.es)) || BIOS[p.ponente] || null,
+}));
 const iniciales = (n) => n.split(" ").filter(Boolean).slice(0, 2).map((x) => x[0]).join("");
 ---
 
@@ -44,7 +51,6 @@ const iniciales = (n) => n.split(" ").filter(Boolean).slice(0, 2).map((x) => x[0
               {p.img
                 ? <img src={img(p.img)} alt={p.ponente} loading="lazy" decoding="async" />
                 : <span class="po-iniciales" aria-hidden="true">{iniciales(p.ponente)}</span>}
-              {!p.img && <span class="po-pendiente">{t.pendiente}</span>}
             </div>
 
             <div class="po-texto">
@@ -56,6 +62,15 @@ const iniciales = (n) => n.split(" ").filter(Boolean).slice(0, 2).map((x) => x[0
               <h2 class="po-titulo">{p.titulo[lang] || p.titulo.es}</h2>
               <p class="po-bajada">{p.bajada[lang] || p.bajada.es}</p>
               <p class="po-ponente">{p.ponente}</p>
+              {p.credencial && <p class="po-credencial">{p.credencial[lang] || p.credencial.es}</p>}
+
+              {p.textoBio && (
+                <details class="po-bio">
+                  <summary>{t.verBio}</summary>
+                  <p>{p.textoBio}</p>
+                </details>
+              )}
+
               {(p.ig || p.web) && (
                 <p class="po-enlace">
                   <a href={p.ig || p.web} target="_blank" rel="noopener">
@@ -112,6 +127,16 @@ const iniciales = (n) => n.split(" ").filter(Boolean).slice(0, 2).map((x) => x[0
   .po-titulo { margin: 0 0 8px; font-size: 21px; font-weight: 800; letter-spacing: -.01em; color: #14121a; line-height: 1.2; }
   .po-bajada { margin: 0 0 14px; font-size: 14.5px; line-height: 1.55; color: #4a4a54; flex: 1; }
   .po-ponente { margin: 0; font-size: 14.5px; font-weight: 700; color: #14121a; }
+  .po-credencial { margin: 2px 0 0; font-size: 12.5px; line-height: 1.4; color: #8a8578; }
+  .po-bio { margin-top: 10px; }
+  .po-bio summary {
+    cursor: pointer; font-size: 13px; font-weight: 700;
+    color: var(--gold-dark, #a2823f); list-style: none;
+  }
+  .po-bio summary::-webkit-details-marker { display: none; }
+  .po-bio summary::after { content: " ↓"; }
+  .po-bio[open] summary::after { content: " ↑"; }
+  .po-bio p { margin: 8px 0 0; font-size: 13.5px; line-height: 1.6; color: #4a4a54; }
   .po-enlace { margin: 4px 0 0; font-size: 13px; }
   .po-enlace a { color: var(--gold-dark, #a2823f); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 
