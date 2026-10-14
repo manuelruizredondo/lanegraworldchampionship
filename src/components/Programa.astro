@@ -388,6 +388,9 @@ const describe = (s) => {
       try {
         const sb = await window.laNegraCuenta.cliente();
         const uid = sesion.user.id;
+        // 0 · favoritos guardados antes de tener cuenta, con el mismo email:
+        //     se le asignan ahora, que si no no los ve ni los puede quitar.
+        try { await sb.rpc("reclamar_favoritos"); } catch (e) {}
         // 1 · lo que ya hay en la cuenta se suma a lo de este móvil
         const { data } = await sb.from("favoritos").select("clave").eq("user_id", uid);
         (data || []).forEach((f) => favs.add(f.clave));

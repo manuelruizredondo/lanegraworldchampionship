@@ -108,6 +108,9 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
       if (esAdmin) {
         await window.laNegraPanelOrg.pintar(sb);
       } else {
+        // Lo mismo aquí: si entra directo al escritorio sin pasar por la
+        // programación, también se le asignan los antiguos.
+        try { await sb.rpc("reclamar_favoritos"); } catch (e) {}
         const { data } = await sb.from("favoritos").select("clave, titulo, dia, sala").order("dia");
         pintarFavoritos(data || []);
       }
