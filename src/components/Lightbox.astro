@@ -1,20 +1,41 @@
 ---
 const { lang = "es" } = Astro.props;
+const IG = "https://www.instagram.com/lanegraworldchampionship/";
+const ARROBA = "@lanegraworldchampionship";
 const L = {
-  es: { close: "Cerrar", prev: "Anterior", next: "Siguiente" },
-  en: { close: "Close", prev: "Previous", next: "Next" },
-  it: { close: "Chiudi", prev: "Precedente", next: "Successiva" },
-}[lang] || { close: "Cerrar", prev: "Anterior", next: "Siguiente" };
+  es: { close: "Cerrar", prev: "Anterior", next: "Siguiente",
+        bajar: "Descargar imagen", bajando: "Preparando…",
+        pide: "Al subirla, etiqueta a", gracias: "¡Descargada! Ahora súbela y etiquétanos:",
+        abrirIG: "Abrir Instagram", fallo: "Ábrela y guárdala con una pulsación larga." },
+  en: { close: "Close", prev: "Previous", next: "Next",
+        bajar: "Download image", bajando: "Getting it ready…",
+        pide: "When you post it, tag", gracias: "Downloaded! Now post it and tag us:",
+        abrirIG: "Open Instagram", fallo: "Open it and save it with a long press." },
+  it: { close: "Chiudi", prev: "Precedente", next: "Successiva",
+        bajar: "Scarica immagine", bajando: "Un attimo…",
+        pide: "Quando la pubblichi, tagga", gracias: "Scaricata! Ora pubblicala e taggaci:",
+        abrirIG: "Apri Instagram", fallo: "Aprila e salvala con una pressione lunga." },
+}[lang] || {};
 // Lightbox reutilizable: haz click en cualquier <img data-lightbox> para verla en grande.
 // Navega entre todas las imágenes data-lightbox de la página con las flechas, el teclado
 // (← →) o deslizando en móvil. Cierra con click fuera, botón ✕ o tecla Escape.
 ---
-<div class="lightbox" data-lightbox-overlay hidden aria-hidden="true">
+<div class="lightbox" data-lightbox-overlay hidden aria-hidden="true" data-textos={JSON.stringify(L)}>
   <button class="lightbox-close" type="button" aria-label={L.close}>&times;</button>
   <button class="lightbox-nav lightbox-prev" type="button" aria-label={L.prev}>&#8249;</button>
   <figure class="lightbox-fig">
     <img class="lightbox-img" alt="" />
     <figcaption class="lightbox-count" data-lightbox-count></figcaption>
+
+    {/* Descarga + la petición de etiquetar. Es el circuito que trae gente de
+        vuelta: lo que reparten lleva nuestro usuario delante. */}
+    <div class="lb-bajar">
+      <button type="button" class="lb-btn" data-lb-bajar>{L.bajar}</button>
+      <p class="lb-pide" data-lb-pide>
+        <span data-lb-pide-txt>{L.pide}</span>
+        <a href={IG} target="_blank" rel="noopener">{ARROBA}</a>
+      </p>
+    </div>
   </figure>
   <button class="lightbox-nav lightbox-next" type="button" aria-label={L.next}>&#8250;</button>
 </div>
@@ -40,6 +61,18 @@ const L = {
   .lightbox.open .lightbox-img { transform: scale(1); }
   .lightbox-img.swap { animation: lb-swap .26s ease; }
   @keyframes lb-swap { from { opacity: .25; } to { opacity: 1; } }
+  .lb-bajar { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 14px; }
+  .lb-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 999px; border: 0; cursor: pointer;
+    background: var(--gold, #c9a227); color: #14121a;
+    font-family: var(--font-body); font-size: 14.5px; font-weight: 800;
+  }
+  .lb-btn:hover { background: #e0b73a; }
+  .lb-btn:disabled { opacity: .6; cursor: default; }
+  .lb-pide { margin: 0; text-align: center; font-family: var(--font-body); font-size: 13.5px; color: rgba(255,255,255,.82); line-height: 1.45; max-width: 420px; }
+  .lb-pide a { color: var(--gold, #c9a227); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+
   .lightbox-count {
     text-align: center; margin-top: 14px;
     color: rgba(255, 255, 255, .82); font-family: var(--font-body);
@@ -98,6 +131,9 @@ const L = {
       countEl.textContent = multi ? `${idx + 1} / ${items.length}` : "";
       prevBtn.hidden = !multi;
       nextBtn.hidden = !multi;
+      const pt = overlay.querySelector<HTMLElement>("[data-lb-pide-txt]");
+      const T0 = JSON.parse(overlay.dataset.textos || "{}");
+      if (pt && T0.pide) pt.textContent = T0.pide;
     };
     const open = (trigger: HTMLImageElement) => {
       items = [...document.querySelectorAll<HTMLImageElement>("img[data-lightbox]")];
@@ -122,6 +158,46 @@ const L = {
       imgEl.classList.add("swap");
       render();
     };
+
+    // Descargar la imagen que se está viendo.
+    const btnBajar = overlay.querySelector<HTMLButtonElement>("[data-lb-bajar]");
+    const pideTxt = overlay.querySelector<HTMLElement>("[data-lb-pide-txt]");
+    const T = JSON.parse(overlay.dataset.textos || "{}");
+
+    function nombreArchivo(url: string, alt: string) {
+      const ext = (url.split("?")[0].split(".").pop() || "webp").slice(0, 5);
+      const base = (alt || "la-negra-2026")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+      return `${base || "la-negra-2026"}-la-negra-2026.${ext}`;
+    }
+
+    btnBajar?.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const url = imgEl.src;
+      if (!url) return;
+      const antes = btnBajar.textContent;
+      btnBajar.disabled = true;
+      btnBajar.textContent = T.bajando;
+      try {
+        // Las imágenes viven en otro dominio: esto solo funciona si ese
+        // servidor manda la cabecera CORS. Si no, se abre en otra pestaña.
+        const r = await fetch(url, { mode: "cors" });
+        if (!r.ok) throw new Error("no");
+        const blob = await r.blob();
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = nombreArchivo(url, imgEl.alt);
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        if (pideTxt) pideTxt.textContent = T.gracias;
+      } catch {
+        window.open(url, "_blank", "noopener");
+        if (pideTxt) pideTxt.textContent = T.fallo + " " + T.pide;
+      }
+      btnBajar.disabled = false;
+      btnBajar.textContent = antes;
+    });
 
     document.addEventListener("click", (e) => {
       const target = e.target as Element | null;
