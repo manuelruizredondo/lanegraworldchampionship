@@ -63,7 +63,7 @@ export const PONENCIAS = [
   {
     clave: "Ponencia: redes sociales sin humo, lo que funciona, lo que no y lo que viene con la IA en nuestro sector laboral",
     ponente: "Manuel Ruiz",
-    img: "manuel-ruiz.webp",
+    img: "manuel-ruiz-ponencia.webp",
     web: "https://digitalstrategy.es",
     credencial: {
       es: "Consultor de estrategia digital · 25 años y más de 500 clientes",
