@@ -102,7 +102,22 @@ const artists = ARTISTS_EN.map((a) => {
   <div class="prop">
     <!-- HERO (oscuro) -->
     <section class="p-hero">
-      <video class="p-hero-video" autoplay muted loop playsinline preload="metadata" poster="/img/hero-lanegra-poster.jpg" src="https://media.lanegrasalsa.com/media/VIDEOWEB2025LANEGRACHAMPIONSCHIP_corto.mp4"></video>
+      <video class="p-hero-video" autoplay muted loop playsinline preload="none" poster="/img/hero-lanegra-poster.jpg" data-hero-video="https://media.lanegrasalsa.com/media/VIDEOWEB2025LANEGRACHAMPIONSCHIP_corto.mp4"></video>
+      <script is:inline>
+        // El vídeo del fondo pesa 36 MB. En móvil no se carga: se queda la
+        // imagen de cartel, que se ve prácticamente igual en una pantalla
+        // pequeña y ahorra toda esa descarga. Tampoco se carga si el
+        // navegador avisa de conexión lenta o de ahorro de datos.
+        (function () {
+          var v = document.querySelector("[data-hero-video]");
+          if (!v) return;
+          var red = navigator.connection || {};
+          var lenta = red.saveData === true || /^(slow-)?2g$/.test(red.effectiveType || "");
+          if (window.innerWidth < 900 || lenta) return;
+          v.src = v.getAttribute("data-hero-video");
+          v.load();
+        })();
+      </script>
       <div class="p-hero-inner">
         <h1 class="p-hero-title"><span class="p-hero-title-main"><span class="htl">La Negra</span><span class="htl">World</span><span class="htl">Championship</span></span><span class="p-hero-title-sub htl">Salsa &amp; Bachata Festival</span></h1>
         <p class="p-hero-date"><span>21–25 OCT 2026 · Calpe · Spain</span></p>
