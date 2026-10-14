@@ -463,10 +463,10 @@ const ESPECIALIDADES = [
     $("#help-ratio").innerHTML = esGrupo2
       ? 'Formato JPG o PNG, <strong>máximo 5 MB</strong>, <strong>apaisada (4:3)</strong> — por ejemplo <strong>1440 × 1080 px</strong>.'
       : 'Formato JPG o PNG, <strong>máximo 5 MB</strong>, <strong>cuadrada (1:1)</strong> — por ejemplo <strong>1080 × 1080 px</strong>.';
-    // El ejemplo que hay es de una pareja, cuadrado. Mientras no haya uno de
-    // grupo se avisa en el pie para que no choque con el 4:3 que acabamos de pedir.
+    // Cada modalidad ve su propio ejemplo, con la proporción que le toca.
+    ($("#foto-ejemplo-img") as HTMLImageElement).src = esGrupo2 ? "/img/preview-4-3.webp" : "/img/preview-1-1.webp";
     $("#foto-ejemplo-pie").textContent = esGrupo2
-      ? "Ejemplo: las caras, dentro del círculo verde. En equipos el recorte es apaisado."
+      ? "Ejemplo: todas las caras, dentro del óvalo verde"
       : "Ejemplo: las caras, dentro del círculo verde";
     // "Los dos juntos" solo tiene sentido en dúos/parejas; en equipos, que quepan todos.
     const juntos = $("#help-juntos");
