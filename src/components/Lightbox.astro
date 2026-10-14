@@ -7,23 +7,29 @@ const L = {
         bajar: "Descargar imagen", bajando: "Preparando…",
         pide: "Etiquétanos al subirla y podremos publicitarte:",
         gracias: "¡Ya es tuya! Etiquétanos al subirla y podremos publicitarte:",
+        compartir: "Compartir", oBajar: "o descargar la imagen", copiar: "Copiar", copiado: "¡Copiado!", copiaFallo: "Cópialo a mano",
+        textoCompartir: "Mundial de Pasos Libres 2026 · @lanegraworldchampionship",
         abrirIG: "Abrir Instagram", fallo: "Ábrela y guárdala con una pulsación larga." },
   en: { close: "Close", prev: "Previous", next: "Next",
         bajar: "Download image", bajando: "Getting it ready…",
         pide: "Tag us when you post it and we can give you a shout-out:",
         gracias: "It's yours! Tag us when you post it and we can give you a shout-out:",
+        compartir: "Share", oBajar: "or download the image", copiar: "Copy", copiado: "Copied!", copiaFallo: "Copy it by hand",
+        textoCompartir: "Pasos Libres World Championship 2026 · @lanegraworldchampionship",
         abrirIG: "Open Instagram", fallo: "Open it and save it with a long press." },
   it: { close: "Chiudi", prev: "Precedente", next: "Successiva",
         bajar: "Scarica immagine", bajando: "Un attimo…",
         pide: "Taggaci quando la pubblichi e potremo darti visibilità:",
         gracias: "È tua! Taggaci quando la pubblichi e potremo darti visibilità:",
+        compartir: "Condividi", oBajar: "o scarica l'immagine", copiar: "Copia", copiado: "Copiato!", copiaFallo: "Copialo a mano",
+        textoCompartir: "Mondiale di Pasos Libres 2026 · @lanegraworldchampionship",
         abrirIG: "Apri Instagram", fallo: "Aprila e salvala con una pressione lunga." },
 }[lang] || {};
 // Lightbox reutilizable: haz click en cualquier <img data-lightbox> para verla en grande.
 // Navega entre todas las imágenes data-lightbox de la página con las flechas, el teclado
 // (← →) o deslizando en móvil. Cierra con click fuera, botón ✕ o tecla Escape.
 ---
-<div class="lightbox" data-lightbox-overlay hidden aria-hidden="true" data-textos={JSON.stringify(L)}>
+<div class="lightbox" data-lightbox-overlay hidden aria-hidden="true" data-textos={JSON.stringify(L)} data-arroba={ARROBA}>
   <button class="lightbox-close" type="button" aria-label={L.close}>&times;</button>
   <button class="lightbox-nav lightbox-prev" type="button" aria-label={L.prev}>&#8249;</button>
   <figure class="lightbox-fig">
@@ -33,10 +39,12 @@ const L = {
     {/* Descarga + la petición de etiquetar. Es el circuito que trae gente de
         vuelta: lo que reparten lleva nuestro usuario delante. */}
     <div class="lb-bajar">
-      <button type="button" class="lb-btn" data-lb-bajar>{L.bajar}</button>
+      <button type="button" class="lb-btn" data-lb-principal>{L.bajar}</button>
+      <button type="button" class="lb-link" data-lb-otro hidden>{L.oBajar}</button>
       <p class="lb-pide" data-lb-pide>
         <span data-lb-pide-txt>{L.pide}</span>
         <a href={IG} target="_blank" rel="noopener">{ARROBA}</a>
+        <button type="button" class="lb-copiar" data-lb-copiar>{L.copiar}</button>
       </p>
     </div>
   </figure>
@@ -75,6 +83,19 @@ const L = {
   .lb-btn:disabled { opacity: .6; cursor: default; }
   .lb-pide { margin: 0; text-align: center; font-family: var(--font-body); font-size: 13.5px; color: rgba(255,255,255,.82); line-height: 1.45; max-width: 420px; }
   .lb-pide a { color: var(--gold, #c9a227); font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+  .lb-link {
+    border: 0; background: none; padding: 2px 4px; cursor: pointer;
+    font-family: var(--font-body); font-size: 13px; color: rgba(255,255,255,.7);
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .lb-link[hidden] { display: none; }
+  .lb-link:hover { color: #fff; }
+  .lb-copiar {
+    margin-left: 6px; padding: 2px 9px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.35); background: transparent;
+    font-family: var(--font-body); font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,.85);
+  }
+  .lb-copiar:hover { border-color: var(--gold, #c9a227); color: var(--gold, #c9a227); }
 
   .lightbox-count {
     text-align: center; margin-top: 14px;
@@ -162,10 +183,24 @@ const L = {
       render();
     };
 
-    // Descargar la imagen que se está viendo.
-    const btnBajar = overlay.querySelector<HTMLButtonElement>("[data-lb-bajar]");
+    // Compartir o descargar la imagen que se está viendo.
+    const btnPrincipal = overlay.querySelector<HTMLButtonElement>("[data-lb-principal]");
+    const btnOtro = overlay.querySelector<HTMLButtonElement>("[data-lb-otro]");
+    const btnCopiar = overlay.querySelector<HTMLButtonElement>("[data-lb-copiar]");
     const pideTxt = overlay.querySelector<HTMLElement>("[data-lb-pide-txt]");
     const T = JSON.parse(overlay.dataset.textos || "{}");
+    const ARROBA_TXT = overlay.dataset.arroba || "";
+
+    // Compartir archivos solo existe en móvil. Donde no esté, el botón
+    // principal descarga y no se ofrece la alternativa.
+    const puedeCompartir = (() => {
+      try {
+        const f = new File([new Blob([""])], "x.webp", { type: "image/webp" });
+        return !!(navigator.canShare && navigator.canShare({ files: [f] }));
+      } catch { return false; }
+    })();
+    if (btnPrincipal) btnPrincipal.textContent = puedeCompartir ? T.compartir : T.bajar;
+    if (btnOtro) btnOtro.hidden = !puedeCompartir;
 
     function nombreArchivo(url: string, alt: string) {
       const ext = (url.split("?")[0].split(".").pop() || "webp").slice(0, 5);
@@ -175,33 +210,78 @@ const L = {
       return `${base || "la-negra-2026"}-la-negra-2026.${ext}`;
     }
 
-    btnBajar?.addEventListener("click", async (e) => {
-      e.stopPropagation();
+    async function traerArchivo() {
       const url = imgEl.src;
-      if (!url) return;
-      const antes = btnBajar.textContent;
-      btnBajar.disabled = true;
-      btnBajar.textContent = T.bajando;
+      if (!url) return null;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error("no");
+      const blob = await r.blob();
+      return new File([blob], nombreArchivo(url, imgEl.alt), { type: blob.type || "image/webp" });
+    }
+
+    function guardar(file: File) {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(file);
+      a.download = file.name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }
+
+    async function accion(compartir: boolean, boton: HTMLButtonElement) {
+      const antes = boton.textContent;
+      boton.disabled = true;
+      boton.textContent = T.bajando;
       try {
-        // Las imágenes viven en otro dominio y ese servidor no manda CORS, así
-        // que se piden por /medios/, que Netlify sirve desde el mismo origen.
-        const MEDIOS = "https://media.lanegrasalsa.com/";
-        const propia = url.startsWith(MEDIOS) ? "/medios/" + url.slice(MEDIOS.length) : url;
-        const r = await fetch(propia);
-        if (!r.ok) throw new Error("no");
-        const blob = await r.blob();
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = nombreArchivo(url, imgEl.alt);
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        const file = await traerArchivo();
+        if (!file) return;
+        if (compartir) {
+          try {
+            await navigator.share({ files: [file], text: T.textoCompartir });
+          } catch (e: any) {
+            // Si cancela el menú no es un fallo: no se hace nada más.
+            if (e && e.name === "AbortError") { boton.disabled = false; boton.textContent = antes; return; }
+            guardar(file);
+          }
+        } else {
+          guardar(file);
+        }
         if (pideTxt) pideTxt.textContent = T.gracias;
       } catch {
-        window.open(url, "_blank", "noopener");
+        window.open(imgEl.src, "_blank", "noopener");
         if (pideTxt) pideTxt.textContent = T.fallo + " " + T.pide;
       }
-      btnBajar.disabled = false;
-      btnBajar.textContent = antes;
+      boton.disabled = false;
+      boton.textContent = antes;
+    }
+
+    btnPrincipal?.addEventListener("click", (e) => { e.stopPropagation(); accion(puedeCompartir, btnPrincipal); });
+    btnOtro?.addEventListener("click", (e) => { e.stopPropagation(); accion(false, btnOtro); });
+
+    // Copiar el usuario: Instagram no deja rellenar el texto desde fuera, así
+    // que lo más que se puede hacer es dejarlo listo para pegar.
+    btnCopiar?.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      let ok = false;
+      try {
+        await navigator.clipboard.writeText(ARROBA_TXT);
+        ok = true;
+      } catch {
+        // El portapapeles moderno falla en algunos navegadores y dentro de
+        // apps embebidas (el navegador de Instagram, sin ir más lejos).
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = ARROBA_TXT;
+          ta.setAttribute("readonly", "");
+          ta.style.cssText = "position:fixed;top:-100px;opacity:0";
+          document.body.appendChild(ta);
+          ta.select();
+          ok = document.execCommand("copy");
+          ta.remove();
+        } catch { ok = false; }
+      }
+      const antes = btnCopiar.textContent;
+      btnCopiar.textContent = ok ? T.copiado : T.copiaFallo;
+      setTimeout(() => { btnCopiar.textContent = antes; }, 1800);
     });
 
     document.addEventListener("click", (e) => {
