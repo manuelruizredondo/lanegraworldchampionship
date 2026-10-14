@@ -27,6 +27,20 @@
   status = 301
   force = true
 
+# El servidor de medios (IONOS) no procesa .htaccess, así que no hay manera de
+# que mande la cabecera CORS. Sin ella el navegador no deja descargar una
+# imagen de otro dominio. Esta regla la sirve A TRAVÉS de Netlify: para el
+# navegador pasa a ser del mismo origen y la descarga funciona.
+#
+# Solo la usa el botón de descarga. Las imágenes que se ven en las páginas
+# siguen pidiéndose directamente a media.lanegrasalsa.com, así que esto no
+# añade tráfico de navegación, solo el de las descargas.
+[[redirects]]
+  from = "/medios/*"
+  to = "https://media.lanegrasalsa.com/:splat"
+  status = 200
+  force = true
+
 # Rutas antiguas que cambiaron de nombre. Antes eran páginas con <meta refresh>,
 # que es más lento y Google trata como redirección "blanda": mejor un 301 de verdad.
 [[redirects]]

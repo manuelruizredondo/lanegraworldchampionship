@@ -180,9 +180,11 @@ const L = {
       btnBajar.disabled = true;
       btnBajar.textContent = T.bajando;
       try {
-        // Las imágenes viven en otro dominio: esto solo funciona si ese
-        // servidor manda la cabecera CORS. Si no, se abre en otra pestaña.
-        const r = await fetch(url, { mode: "cors" });
+        // Las imágenes viven en otro dominio y ese servidor no manda CORS, así
+        // que se piden por /medios/, que Netlify sirve desde el mismo origen.
+        const MEDIOS = "https://media.lanegrasalsa.com/";
+        const propia = url.startsWith(MEDIOS) ? "/medios/" + url.slice(MEDIOS.length) : url;
+        const r = await fetch(propia);
         if (!r.ok) throw new Error("no");
         const blob = await r.blob();
         const a = document.createElement("a");
