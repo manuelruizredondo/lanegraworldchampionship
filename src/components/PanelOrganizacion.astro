@@ -69,15 +69,18 @@ const DIAS = PROGRAMA.map((d) => d.short);
     <div class="adm-kpis">
       <div class="kpi"><span class="kpi-n" data-k="cuentas">—</span><span class="kpi-l">Cuentas creadas</span></div>
       <div class="kpi"><span class="kpi-n" data-k="admins">—</span><span class="kpi-l">Con permiso de organización</span></div>
+      <div class="kpi"><span class="kpi-n" data-k="hanVotado">—</span><span class="kpi-l">De ellas, han votado</span></div>
       <div class="kpi"><span class="kpi-n" data-k="ultima">—</span><span class="kpi-l">Última alta</span></div>
     </div>
     <p class="adm-nota">
-      Son las personas que han entrado con Google desde la web. Guardan sus favoritos en la cuenta
-      y los recuperan en cualquier móvil.
+      Son las personas que han entrado desde la web, con Google o con contraseña. Guardan sus
+      favoritos en la cuenta y los recuperan en cualquier móvil. La columna «Votó» cruza su email
+      con la votación del concierto: se puede votar sin tener cuenta, así que habrá votantes que
+      no aparezcan en esta lista.
     </p>
     <div class="adm-tabla-wrap">
       <table class="adm-tabla">
-        <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Permiso</th><th>Alta</th></tr></thead>
+        <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Permiso</th><th>Votó</th><th>Alta</th></tr></thead>
         <tbody data-tbody="cuentas"></tbody>
       </table>
     </div>
@@ -128,16 +131,17 @@ const DIAS = PROGRAMA.map((d) => d.short);
     async function pintar(sb) {
       $("[data-msg]").textContent = "Actualizando…";
 
-      const [rank, resumen, favs, favsCrudos, perfiles, subs] = await Promise.all([
+      const [rank, resumen, favs, favsCrudos, perfiles, subs, votantes] = await Promise.all([
         sb.from("votos_danij_ranking").select("*"),
         sb.from("votos_danij_resumen").select("*").maybeSingle(),
         sb.from("favoritos_recuento").select("*").order("personas", { ascending: false }),
         sb.from("favoritos").select("email"),
         sb.from("perfiles").select("nombre, email, rol, creado_en").order("creado_en", { ascending: false }),
         sb.from("newsletter").select("email, idioma, creado_en").order("creado_en", { ascending: false }),
+        sb.from("votos_danij").select("email"),
       ]);
 
-      const fallo = [rank, resumen, favs, favsCrudos, perfiles, subs].find((r) => r.error);
+      const fallo = [rank, resumen, favs, favsCrudos, perfiles, subs, votantes].find((r) => r.error);
       $("[data-msg]").textContent = fallo ? fallo.error.message : "";
 
       datos.canciones = rank.data || [];
@@ -155,7 +159,12 @@ const DIAS = PROGRAMA.map((d) => d.short);
       kpi("marcas", crudos.length);
       kpi("quienes", new Set(crudos.map((f) => f.email)).size);
 
+      // Quién ha votado, por email: votar no exige cuenta, así que es un cruce.
+      const haVotado = new Set((votantes.data || []).map((v) => (v.email || "").toLowerCase()));
+      datos.cuentas.forEach((c) => { c.voto = haVotado.has((c.email || "").toLowerCase()); });
+
       kpi("cuentas", datos.cuentas.length);
+      kpi("hanVotado", datos.cuentas.filter((c) => c.voto).length);
       kpi("admins", datos.cuentas.filter((c) => c.rol === "admin").length);
       kpi("ultima", datos.cuentas.length ? fecha(datos.cuentas[0].creado_en) : "—");
 
@@ -178,6 +187,7 @@ const DIAS = PROGRAMA.map((d) => d.short);
       tabla("cuentas", datos.cuentas, (x, i) => [
         [i + 1, "pos"], [x.nombre || "—", "cancion"], [x.email || "—", ""],
         [x.rol === "admin" ? "Organización" : "Público", x.rol === "admin" ? "destaca" : ""],
+        [x.voto ? "Sí" : "—", x.voto ? "destaca" : ""],
         [fecha(x.creado_en), ""],
       ], "Todavía no se ha registrado nadie.");
 
@@ -193,7 +203,7 @@ const DIAS = PROGRAMA.map((d) => d.short);
       if (!filas.length) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
-        td.colSpan = 6; td.className = "vacio"; td.textContent = vacio;
+        td.colSpan = 7; td.className = "vacio"; td.textContent = vacio;
         tr.appendChild(td); tb.appendChild(tr); return;
       }
       filas.forEach((x, i) => {
@@ -216,8 +226,8 @@ const DIAS = PROGRAMA.map((d) => d.short);
         datos.canciones.map((x, i) => [i + 1, x.cancion, x.puntos, x.votos, x.primeros])),
       talleres: () => [["Puesto", "Sesión", "Día", "Sala", "Personas"]].concat(
         datos.talleres.map((x, i) => [i + 1, x.titulo || x.clave, DIAS[x.dia] || "", ROOMS[x.sala] || x.sala || "", x.personas])),
-      cuentas: () => [["Nombre", "Email", "Permiso", "Alta"]].concat(
-        datos.cuentas.map((x) => [x.nombre || "", x.email || "", x.rol === "admin" ? "Organización" : "Público", x.creado_en || ""])),
+      cuentas: () => [["Nombre", "Email", "Permiso", "Votó", "Alta"]].concat(
+        datos.cuentas.map((x) => [x.nombre || "", x.email || "", x.rol === "admin" ? "Organización" : "Público", x.voto ? "Sí" : "No", x.creado_en || ""])),
       newsletter: () => [["Email", "Idioma", "Alta"]].concat(
         datos.newsletter.map((x) => [x.email, (x.idioma || "es").toUpperCase(), x.creado_en || ""])),
     };
