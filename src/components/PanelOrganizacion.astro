@@ -250,14 +250,35 @@ const DIAS = PROGRAMA.map((d) => d.short);
 <style>
   .panel-org[hidden] { display: none; }
 
-  .adm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
-  .adm-tab {
-    padding: 9px 15px; border-radius: 999px; border: 1.5px solid #e4ded3; background: #fff;
-    font-family: inherit; font-size: 13.5px; font-weight: 700; color: #6a6a74; cursor: pointer;
-    transition: border-color .15s ease, color .15s ease, background .15s ease;
+  /* Pestañas en caja, pegadas unas a otras: se leen como un selector único
+     en vez de como cuatro botones sueltos. */
+  .adm-tabs {
+    display: flex; margin-bottom: 18px;
+    border: 1px solid #e4ded3; border-radius: 10px; overflow: hidden; background: #fff;
   }
-  .adm-tab:hover { border-color: #cfc6b6; color: #14121a; }
-  .adm-tab.on { background: #14121a; border-color: #14121a; color: #fff; }
+  .adm-tab {
+    flex: 1 1 0; min-width: 0;
+    padding: 12px 10px; border: 0; border-right: 1px solid #e4ded3; background: #fff;
+    font-family: inherit; font-size: 13.5px; font-weight: 700; color: #6a6a74; cursor: pointer;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: color .15s ease, background .15s ease;
+  }
+  .adm-tab:last-child { border-right: 0; }
+  .adm-tab:hover { background: #faf7f1; color: #14121a; }
+  .adm-tab.on { background: #14121a; color: #fff; }
+
+  @media (max-width: 640px) {
+    /* Cuatro en fila no caben en un móvil: dos y dos. */
+    .adm-tabs { flex-wrap: wrap; }
+    .adm-tab {
+      flex: 1 1 50%; font-size: 12.5px; padding: 10px 8px;
+      /* Mejor dos líneas que cortar una palabra a la mitad. */
+      white-space: normal; text-overflow: clip; line-height: 1.25;
+      display: flex; align-items: center; justify-content: center; min-height: 44px;
+    }
+    .adm-tab:nth-child(2) { border-right: 0; }
+    .adm-tab:nth-child(1), .adm-tab:nth-child(2) { border-bottom: 1px solid #e4ded3; }
+  }
 
   .adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .kpi { background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 16px 18px; }
