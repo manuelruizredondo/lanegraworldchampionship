@@ -33,11 +33,31 @@ export const BENICONNECT = {
   it: "https://www.beniconnect.com/",
 };
 
+// Enlaces externos, en el idioma de cada versión de la página.
+//
+// Ojo con el TRAM: tramalicante.es redirige a tramalacant.es y, sin prefijo de
+// idioma, sale en valenciano. Hay que pedir /es/ o /en/ expresamente.
+// ALSA sí tiene italiano; el TRAM y Aena no (Aena solo es/en/valenciano),
+// así que en esos dos el italiano va al inglés.
 export const ENLACES = {
-  alsa: "https://www.alsa.com/en/coach/alicante-calpe",
-  tram: "https://www.tramalicante.es/",
-  aenaAlc: "https://www.aena.es/es/alicante-elche.html",
-  aenaVlc: "https://www.aena.es/es/valencia.html",
+  es: {
+    alsa: "https://www.alsa.es/ruta/alicante-calpe",
+    tram: "https://www.tramalacant.es/es/",
+    aenaAlc: "https://www.aena.es/es/alicante-elche-miguel-hernandez.html",
+    aenaVlc: "https://www.aena.es/es/valencia.html",
+  },
+  en: {
+    alsa: "https://www.alsa.com/en/coach/alicante-calpe",
+    tram: "https://www.tramalacant.es/en/",
+    aenaAlc: "https://www.aena.es/en/alicante-elche-miguel-hernandez.html",
+    aenaVlc: "https://www.aena.es/en/valencia.html",
+  },
+  it: {
+    alsa: "https://www.alsa.com/it/pullman/alicante-calpe",
+    tram: "https://www.tramalacant.es/en/",
+    aenaAlc: "https://www.aena.es/en/alicante-elche-miguel-hernandez.html",
+    aenaVlc: "https://www.aena.es/en/valencia.html",
+  },
 };
 
 export const I18N = {

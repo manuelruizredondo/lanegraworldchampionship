@@ -7,10 +7,11 @@ const t = I18N[lang] || I18N.es;
 const CONTACTO = { es: "/contacto/", en: "/en/contact/", it: "/it/contact/" }[lang] || "/contacto/";
 const direccion = `${SEDE.calle} · ${SEDE.cp} ${SEDE.ciudad} (${SEDE.provincia}) · ${SEDE.pais}`;
 const transferHref = BENICONNECT[lang] || BENICONNECT.es;
+const enlaces = ENLACES[lang] || ENLACES.es;
 
 const MEDIOS = [
-  { k: "bus", titulo: t.busTitulo, txt: t.busTxt, btn: t.busBtn, href: ENLACES.alsa },
-  { k: "tram", titulo: t.tramTitulo, txt: t.tramTxt, btn: t.tramBtn, href: ENLACES.tram },
+  { k: "bus", titulo: t.busTitulo, txt: t.busTxt, btn: t.busBtn, href: enlaces.alsa },
+  { k: "tram", titulo: t.tramTitulo, txt: t.tramTxt, btn: t.tramBtn, href: enlaces.tram },
   { k: "coche", titulo: t.cocheTitulo, txt: t.cocheTxt, btn: t.cocheBtn, href: SEDE.comoLlegar },
 ];
 ---
@@ -69,12 +70,12 @@ const MEDIOS = [
         <div class="cl-card">
           <h3 class="cl-h3">{t.avionAlc}</h3>
           <p>{t.avionAlcTxt}</p>
-          <p class="cl-mini"><a href={ENLACES.aenaAlc} target="_blank" rel="noopener">aena.es ↗</a></p>
+          <p class="cl-mini"><a href={enlaces.aenaAlc} target="_blank" rel="noopener">aena.es ↗</a></p>
         </div>
         <div class="cl-card">
           <h3 class="cl-h3">{t.avionVlc}</h3>
           <p>{t.avionVlcTxt}</p>
-          <p class="cl-mini"><a href={ENLACES.aenaVlc} target="_blank" rel="noopener">aena.es ↗</a></p>
+          <p class="cl-mini"><a href={enlaces.aenaVlc} target="_blank" rel="noopener">aena.es ↗</a></p>
         </div>
       </div>
     </div>
