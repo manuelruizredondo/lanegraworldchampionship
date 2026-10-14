@@ -1,4 +1,4 @@
-// Inscripción de competidores → Airtable.
+// Inscripción de competidores → Supabase (principal) y Airtable (copia).
 // Netlify Function (v2). Endpoint: /.netlify/functions/inscripcion
 //
 // Variables de entorno necesarias (se configuran en Netlify, NO en el código):
@@ -6,6 +6,11 @@
 //   AIRTABLE_TOKEN        → Personal Access Token de Airtable (scopes: data.records:write)
 //   AIRTABLE_BASE_ID      → id de la base (empieza por "app...")
 //   AIRTABLE_TABLE        → nombre de la tabla (por defecto "Inscripciones")
+//   SUPABASE_URL          → https://xxxx.supabase.co
+//   SUPABASE_SERVICE_KEY  → service_role key. NUNCA va al navegador.
+//
+// Supabase es el registro principal; Airtable se mantiene como seguridad. Una
+// solicitud solo se da por perdida si fallan LOS DOS.
 //
 // El cuerpo es JSON. Dos acciones:
 //   { action: "auth",   password }                        → valida el password (para la "puerta")
@@ -35,8 +40,12 @@ export default async (req) => {
   // Solo comprobar la contraseña (puerta de acceso)
   if (body.action === "auth") return json({ ok: true });
 
-  // --- Envío de la inscripción ---
-  if (!TOKEN || !BASE) return json({ error: "Servidor sin configurar (faltan claves de Airtable)." }, 500);
+  // --- Envío de la solicitud ---
+  const SB_URL = process.env.SUPABASE_URL;
+  const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
+  if ((!TOKEN || !BASE) && (!SB_URL || !SB_KEY)) {
+    return json({ error: "Servidor sin configurar (no hay dónde guardar)." }, 500);
+  }
 
   const f = (body.fields && typeof body.fields === "object") ? body.fields : {};
   for (const k of REQUIRED) {
@@ -79,58 +88,131 @@ export default async (req) => {
     "Estado": "Pendiente",
   };
 
-  // 1) Crear el registro
-  let recId;
-  try {
-    const res = await fetch(`https://api.airtable.com/v0/${BASE}/${encodeURIComponent(TABLE)}`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
-      body: JSON.stringify({ records: [{ fields }], typecast: true }),
-    });
-    if (!res.ok) return json({ error: "No se pudo guardar en Airtable.", detail: await res.text() }, 502);
-    const data = await res.json();
-    recId = data.records?.[0]?.id;
-  } catch (e) {
-    return json({ error: "Error de conexión con Airtable.", detail: String(e) }, 502);
+  // ── 1 · Supabase, que es el registro principal ───────────────────────────
+  const sbCab = SB_KEY
+    ? { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, "content-type": "application/json" }
+    : null;
+  let filaId = null;
+
+  async function guardarEnSupabase(airtableId) {
+    if (!sbCab) return null;
+    const fila = {
+      airtable_id: airtableId || null,
+      especialidad: fields["Especialidad"],
+      grupo: fields["Pareja/Equipo"] || null,
+      n_integrantes: fields["Nº integrantes"],
+      integrantes: fields["Integrantes"] || null,
+      nombre: fields["Nombre"], apellidos: fields["Apellidos"],
+      email: fields["Email"], telefono: fields["Teléfono"],
+      pais: fields["País"], representa: fields["Representa a"] || null,
+      ciudad: fields["Ciudad"] || null, nacimiento: fields["Fecha de nacimiento"],
+      academia: fields["Academia"] || null, instagram: fields["Instagram"] || null,
+      video: fields["Vídeo"],
+      otras_categorias: fields["Otras categorías"] || null,
+      veces_participado: fields["Veces participado"] || null,
+      ediciones_previas: fields["Ediciones previas"] || null,
+      resultado_previo: fields["Resultado previo"] || null,
+      observaciones: fields["Observaciones"] || null,
+      acepta_bases: fields["Acepta bases"], acepta_rgpd: fields["Acepta RGPD"],
+      estado: "Pendiente",
+      tiene_foto: !!body.photo?.base64, tiene_logo: !!body.logo?.base64,
+    };
+    try {
+      const r = await fetch(`${SB_URL.replace(/\/$/, "")}/rest/v1/inscripciones`, {
+        method: "POST",
+        headers: { ...sbCab, Prefer: "return=representation" },
+        body: JSON.stringify([fila]),
+      });
+      if (!r.ok) return null;
+      const d = await r.json();
+      return d?.[0]?.id ?? null;
+    } catch { return null; }
   }
 
-  // 2) Adjuntos: la foto del competidor y, si viene, el logotipo de la escuela.
-  //    Tope de 5 MB también aquí (el navegador ya valida, pero no se fía uno).
-  async function adjunta(campo, archivo, nombrePorDefecto) {
-    if (!archivo?.base64 || !archivo?.type) return null;
-    const bytes = Math.floor((String(archivo.base64).length * 3) / 4);
-    if (bytes > 5 * 1024 * 1024) return `${campo}: supera los 5 MB y no se ha adjuntado.`;
+  // Sube un archivo al almacén de Supabase y devuelve su ruta.
+  async function subirArchivo(archivo, nombre) {
+    if (!sbCab || !archivo?.base64 || !filaId) return null;
+    const ext = (archivo.type || "image/jpeg").split("/")[1].replace("jpeg", "jpg");
+    const ruta = `${filaId}/${nombre}.${ext}`;
     try {
-      const up = await fetch(
-        `https://content.airtable.com/v0/${BASE}/${recId}/${encodeURIComponent(campo)}/uploadAttachment`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
-          body: JSON.stringify({
-            contentType: archivo.type,
-            filename: archivo.name || nombrePorDefecto,
-            file: archivo.base64,
-          }),
+      const bin = Uint8Array.from(atob(archivo.base64), (c) => c.charCodeAt(0));
+      const r = await fetch(`${SB_URL.replace(/\/$/, "")}/storage/v1/object/solicitudes/${ruta}`, {
+        method: "POST",
+        headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, "content-type": archivo.type },
+        body: bin,
+      });
+      return r.ok ? ruta : null;
+    } catch { return null; }
+  }
+
+  filaId = await guardarEnSupabase(null);
+
+  if (filaId) {
+    const rutas = {};
+    const fotoRuta = await subirArchivo(body.photo, "foto");
+    const logoRuta = await subirArchivo(body.logo, "logotipo");
+    if (fotoRuta) rutas.foto_ruta = fotoRuta;
+    if (logoRuta) rutas.logo_ruta = logoRuta;
+    if (Object.keys(rutas).length) {
+      try {
+        await fetch(`${SB_URL.replace(/\/$/, "")}/rest/v1/inscripciones?id=eq.${filaId}`, {
+          method: "PATCH", headers: { ...sbCab, Prefer: "return=minimal" }, body: JSON.stringify(rutas),
         });
-      if (!up.ok) return `${campo}: ${await up.text()}`;
-      return null;
-    } catch (e) {
-      return `${campo}: ${String(e)}`;
+      } catch { /* la solicitud ya está guardada; las rutas son un extra */ }
     }
   }
 
-  // La solicitud ya está guardada: si un adjunto falla se avisa, pero no se
-  // pierde el envío. Es peor perder una solicitud que quedarse sin el logo.
-  const avisos = [];
+  // ── 2 · Airtable, como copia de seguridad ────────────────────────────────
+  let recId = null;
+  if (TOKEN && BASE) {
+    try {
+      const res = await fetch(`https://api.airtable.com/v0/${BASE}/${encodeURIComponent(TABLE)}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+        body: JSON.stringify({ records: [{ fields }], typecast: true }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        recId = data.records?.[0]?.id ?? null;
+        // Se anota la referencia cruzada para poder casar los dos sitios.
+        if (recId && filaId && sbCab) {
+          fetch(`${SB_URL.replace(/\/$/, "")}/rest/v1/inscripciones?id=eq.${filaId}`, {
+            method: "PATCH", headers: { ...sbCab, Prefer: "return=minimal" },
+            body: JSON.stringify({ airtable_id: recId }),
+          }).catch(() => {});
+        }
+      }
+    } catch { /* Airtable es la copia: que falle no tumba la solicitud */ }
+  }
+
+  // ── 3 · Los adjuntos en Airtable, si llegó a crearse el registro ─────────
+  //    En Supabase ya están subidos arriba; esto es la copia.
   if (recId) {
     for (const [campo, archivo, nombre] of [
       ["Foto", body.photo, "foto.jpg"],
       ["Logotipo", body.logo, "logotipo.png"],
     ]) {
-      const fallo = await adjunta(campo, archivo, nombre);
-      if (fallo) avisos.push(fallo);
+      if (!archivo?.base64 || !archivo?.type) continue;
+      if (Math.floor((String(archivo.base64).length * 3) / 4) > 5 * 1024 * 1024) continue;
+      try {
+        await fetch(
+          `https://content.airtable.com/v0/${BASE}/${recId}/${encodeURIComponent(campo)}/uploadAttachment`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+            body: JSON.stringify({
+              contentType: archivo.type,
+              filename: archivo.name || nombre,
+              file: archivo.base64,
+            }),
+          });
+      } catch { /* la copia no es crítica */ }
     }
   }
-  if (avisos.length) return json({ ok: true, recordId: recId, photoWarning: avisos.join(" · ") });
 
-  return json({ ok: true, recordId: recId });
+  // Solo se pierde si fallan los dos.
+  if (!filaId && !recId) {
+    return json({ error: "No se ha podido guardar la solicitud. Inténtalo en un momento." }, 502);
+  }
+
+  return json({ ok: true, recordId: recId, id: filaId });
 };
