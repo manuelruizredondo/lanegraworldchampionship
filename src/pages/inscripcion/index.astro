@@ -17,14 +17,26 @@ const ESPECIALIDADES = [
 ];
 ---
 
-<Base title="Inscripción de competidores" description="Acceso privado para inscribir competidores en el Mundial de Pasos Libres 2026." lang="es">
+<Base title="Envío de solicitudes 2027" description="Envío de solicitudes para competir en el Mundial de Pasos Libres 2027. Solicitar no garantiza la plaza." lang="es">
   <meta slot="head" name="robots" content="noindex, nofollow" />
 
   <div class="prop">
     <section class="p-section p-center ins">
       <div class="p-container">
-        <p class="p-eyebrow">Mundial de Pasos Libres · 2026</p>
-        <h1 class="p-display">Inscripción de competidores</h1>
+        <p class="p-eyebrow">Inscripciones 2027 · 20 al 24 de octubre · Calpe, España</p>
+        <h1 class="p-display">Envío de solicitudes</h1>
+
+        {/* Que quede claro desde el primer momento: mandar la solicitud no es
+            tener la plaza. Lo pidió la organización por las confusiones de 2026. */}
+        <p class="p-lead p-narrow ins-aclara">
+          Esto es una <strong>solicitud</strong>, no una inscripción. La organización revisa cada
+          envío y confirma después quién entra en el campeonato.
+        </p>
+
+        <div class="ins-plazo">
+          <div><span class="ins-plazo-k">Apertura</span><strong>23 de octubre</strong></div>
+          <div><span class="ins-plazo-k">Cierre</span><strong>15 de diciembre</strong><em>no prorrogable</em></div>
+        </div>
 
         <!-- PUERTA DE ACCESO -->
         <div id="ins-gate" class="ins-box">
@@ -102,6 +114,14 @@ const ESPECIALIDADES = [
               </div>
             </div>
 
+            {/* Logotipo · solo tiene sentido si hay escuela o compañía detrás. */}
+            <div class="fld-set logo-set">
+              <legend>Logotipo de la escuela o compañía</legend>
+              <p class="fld-ayuda">Opcional. JPG o PNG, máximo 5 MB. Si lo tienes en PNG con fondo transparente, mejor.</p>
+              <input id="logo-input" name="logo" type="file" accept="image/jpeg,image/png" />
+              <p class="logo-nombre" id="logo-nombre"></p>
+            </div>
+
             <label class="fld"><span id="video-label">Enlace a un vídeo bailando (YouTube o Instagram) <span class="req">*</span></span>
               <input name="video" type="url" placeholder="https://…" required />
             </label>
@@ -112,20 +132,42 @@ const ESPECIALIDADES = [
               <label class="fld"><span>Academia / Escuela</span><input name="academia" type="text" /></label>
               <label class="fld"><span>Ciudad</span><input name="ciudad" type="text" /></label>
             </div>
+            {/* Otras categorías · el tope de 3 lo marca la organización, contando esta. */}
+            <fieldset class="fld-set">
+              <legend>¿En qué otras categorías de 2027 te postulas?</legend>
+              <p class="fld-ayuda">Máximo 3 en total, contando la de arriba. Deja en blanco si solo te presentas a una.</p>
+              <div class="cats" id="otras-cats">
+                {ESPECIALIDADES.map((e) => (
+                  <label class="cat"><input type="checkbox" value={e.v} /> <span>{e.v}</span></label>
+                ))}
+              </div>
+              <p class="cats-cuenta" id="cats-cuenta"></p>
+            </fieldset>
+
+            {/* Historial · ayuda a la organización a valorar la solicitud. */}
+            <fieldset class="fld-set">
+              <legend>¿Has participado en ediciones anteriores del campeonato?</legend>
+              <div class="grid2">
+                <label class="fld"><span>¿Cuántas veces?</span><input name="veces_participado" type="number" min="0" max="20" placeholder="0" /></label>
+                <label class="fld"><span>¿En qué años y categorías?</span><input name="ediciones_previas" type="text" placeholder="Ej.: 2025 Salsa Parejas, 2024 Salsa Equipos" /></label>
+              </div>
+              <label class="fld"><span>Resultado reseñable</span><input name="resultado_previo" type="text" placeholder="Ej.: finalista 2025, 3er puesto 2024…" /></label>
+            </fieldset>
+
             <label class="fld"><span>Observaciones</span><textarea name="observaciones" rows="3"></textarea></label>
 
             <label class="chk"><input type="checkbox" name="acepta_bases" required /> <span>He leído y acepto las <a href="/bases-y-reglamento/" target="_blank" rel="noopener">bases y el reglamento</a> del campeonato. <span class="req">*</span></span></label>
             <label class="chk"><input type="checkbox" name="acepta_rgpd" required /> <span>Acepto la <a href="/politica-de-privacidad/" target="_blank" rel="noopener">política de privacidad</a> y el uso de la imagen para la promoción del festival. <span class="req">*</span></span></label>
 
-            <button type="submit" id="ins-submit" class="p-btn p-btn-solid ins-submit">Enviar inscripción</button>
+            <button type="submit" id="ins-submit" class="p-btn p-btn-solid ins-submit">Enviar solicitud</button>
             <p id="ins-msg" class="ins-msg" role="alert"></p>
           </div>
         </form>
 
         <!-- ÉXITO -->
         <div id="ins-ok" class="ins-box ins-ok" hidden>
-          <h2 class="ins-ok-title">¡Inscripción enviada! ✅</h2>
-          <p class="p-narrow">Hemos recibido los datos. La organización los revisará. ¡Gracias!</p>
+          <h2 class="ins-ok-title">¡Solicitud enviada! ✅</h2>
+          <p class="p-narrow">Hemos recibido tu solicitud. La organización la revisará y te escribirá para confirmarte si entras en el campeonato. ¡Gracias!</p>
           <button type="button" id="ins-again" class="p-btn p-btn-light">Hacer otra inscripción</button>
         </div>
       </div>
@@ -138,6 +180,24 @@ const ESPECIALIDADES = [
   .ins-box { max-width: 560px; margin: 0 auto; background: var(--p-card, #f6f2ec); border-radius: 16px; padding: clamp(24px, 4vw, 40px); text-align: center; }
   .gate-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
   .gate-row input { flex: 1 1 240px; max-width: 300px; padding: 13px 16px; border: 1.5px solid #d8d2c7; border-radius: 10px; font-size: 16px; }
+  .ins-aclara { margin-top: 10px; }
+  .ins-plazo { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 18px 0 6px; }
+  .ins-plazo > div { background: #fff; border: 1px solid #ece7dd; border-radius: 14px; padding: 12px 20px; min-width: 150px; }
+  .ins-plazo-k { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #8a8578; margin-bottom: 2px; }
+  .ins-plazo strong { display: block; font-size: 16px; color: #14121a; }
+  .ins-plazo em { display: block; font-size: 11.5px; font-style: normal; color: #c0392b; font-weight: 700; margin-top: 2px; }
+
+  .fld-set { border: 1px solid #ece7dd; border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; background: #fff; }
+  .fld-set legend { font-size: 13.5px; font-weight: 800; color: #14121a; padding: 0 6px; }
+  .fld-ayuda { margin: 4px 0 12px; font-size: 12.5px; color: #8a8578; line-height: 1.45; }
+  .cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 6px 14px; }
+  .cat { display: flex; align-items: center; gap: 8px; font-size: 13.5px; cursor: pointer; }
+  .cat[hidden] { display: none; }
+  .cat input:disabled + span { opacity: .45; }
+  .cats-cuenta { margin: 10px 0 0; font-size: 12.5px; font-weight: 700; color: var(--gold-dark, #a2823f); }
+  .logo-set input[type=file] { font-size: 13.5px; }
+  .logo-nombre { margin: 8px 0 0; font-size: 12.5px; color: #6a6a74; }
+
   .ins-msg { min-height: 20px; margin: 14px 0 0; font-size: 14px; font-weight: 600; color: #c0392b; }
   .ins-msg.ok { color: #1e8449; }
 
@@ -269,12 +329,14 @@ const ESPECIALIDADES = [
     c.className = "int-card";
     c.innerHTML = `
       <div class="int-card-h"><span class="int-card-t">Integrante ${n}</span></div>
-      <p class="int-aviso">Se representa a un solo país y hay que estar nacionalizado para hacerlo.</p>
+      <p class="int-aviso">Se representa a un solo país y hay que estar nacionalizado para hacerlo. La nacionalidad, dónde vives y a quién representas pueden ser tres países distintos: por eso se preguntan por separado.</p>
       <div class="int-grid">
         <label class="int-f"><span>Nombre *</span><input data-c="nombre" type="text" required /></label>
         <label class="int-f"><span>Apellidos *</span><input data-c="apellidos" type="text" required /></label>
         <label class="int-f"><span>Fecha de nacimiento *</span><input data-c="nacimiento" type="date" required /><span class="int-edad" data-edad></span></label>
         <label class="int-f"><span>Nacionalidad *</span><input data-c="pais" type="text" required /></label>
+        <label class="int-f"><span>Ciudad donde vive *</span><input data-c="ciudad_res" type="text" required /></label>
+        <label class="int-f"><span>País donde vive *</span><input data-c="pais_res" type="text" required /></label>
         <label class="int-f"><span>País al que representa *</span><input data-c="representa" type="text" required /></label>
         <label class="int-f"><span>Documento (DNI/Pasaporte) *</span><input data-c="documento" type="text" required /></label>
         <label class="int-f"><span>Email *</span><input data-c="email" type="email" required /></label>
@@ -377,6 +439,8 @@ const ESPECIALIDADES = [
         bits.push(`nacido ${g("nacimiento")}` + (e !== null ? ` (${e} años en el evento)` : ""));
       }
       if (g("pais")) bits.push("nacionalidad " + g("pais"));
+      const donde = [g("ciudad_res"), g("pais_res")].filter(Boolean).join(", ");
+      if (donde) bits.push("vive en " + donde);
       if (g("representa")) bits.push("representa a " + g("representa"));
       if (g("documento")) bits.push("doc. " + g("documento"));
       if (g("email")) bits.push(g("email"));
@@ -452,6 +516,47 @@ const ESPECIALIDADES = [
     $("#foto-ratio").classList.remove("err");
     lastFile = f;
     processPhoto(lastFile);
+  });
+
+  // --- Otras categorías (tope de 3 contando la principal) ---
+  const MAX_CATS = 3;
+  const catsBox = $("#otras-cats"), catsCuenta = $("#cats-cuenta");
+  const catsInputs = [...catsBox.querySelectorAll("input")] as HTMLInputElement[];
+
+  function pintarCats() {
+    // La especialidad principal no se puede marcar también como "otra".
+    const principal = sel.value;
+    let marcadas = 0;
+    catsInputs.forEach((c) => {
+      const esPrincipal = c.value === principal;
+      c.closest(".cat").hidden = esPrincipal;
+      if (esPrincipal) c.checked = false;
+      if (c.checked) marcadas++;
+    });
+    const tope = MAX_CATS - (principal ? 1 : 0);
+    catsInputs.forEach((c) => { c.disabled = !c.checked && marcadas >= tope; });
+    catsCuenta.textContent = principal
+      ? `${marcadas + 1} de ${MAX_CATS} categorías elegidas.`
+      : `Elige primero la especialidad principal, arriba.`;
+  }
+  catsInputs.forEach((c) => c.addEventListener("change", pintarCats));
+  sel.addEventListener("change", pintarCats);
+  pintarCats();
+
+  // --- Logotipo de la escuela ---
+  let logo = null;
+  const logoInput = $("#logo-input") as HTMLInputElement, logoNombre = $("#logo-nombre");
+  logoInput.addEventListener("change", () => {
+    const f = logoInput.files && logoInput.files[0];
+    logo = null; logoNombre.textContent = "";
+    if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { logoNombre.textContent = "Ese archivo pasa de 5 MB. Prueba con uno más ligero."; return; }
+    const lector = new FileReader();
+    lector.onload = () => {
+      logo = { base64: String(lector.result).split(",")[1], type: f.type, name: f.name };
+      logoNombre.textContent = "Listo: " + f.name;
+    };
+    lector.readAsDataURL(f);
   });
 
   // --- Validación ---
@@ -567,6 +672,7 @@ const ESPECIALIDADES = [
     fields.instagram = g1("instagram");
     // En solistas, el email de contacto es el del propio competidor
     if (max === 1) fields.email = g1("email");
+    fields.otras_categorias = catsInputs.filter((c) => c.checked).map((c) => c.value).join(" · ");
     fields.integrantes = buildIntegrantes();
     fields.n_integrantes = String(intList.children.length);
     fields.acepta_bases = (form.querySelector('[name="acepta_bases"]') as HTMLInputElement).checked;
@@ -575,7 +681,7 @@ const ESPECIALIDADES = [
 
     submitBtn.disabled = true; submitBtn.textContent = "Enviando…";
     try {
-      const r = await fetch(FN, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "submit", password: pass, fields, photo }) });
+      const r = await fetch(FN, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "submit", password: pass, fields, photo, logo }) });
       const d = await r.json();
       if (r.ok && d.ok) { form.hidden = true; $("#ins-ok").hidden = false; window.scrollTo({ top: 0, behavior: "smooth" }); }
       else { msg.textContent = d.error || "No se pudo enviar. Inténtalo de nuevo."; }

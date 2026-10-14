@@ -67,6 +67,10 @@ export default async (req) => {
     "Academia": f.academia ? String(f.academia).trim() : "",
     "Vídeo": String(f.video).trim(),
     "Instagram": f.instagram ? String(f.instagram).trim() : "",
+    "Otras categorías": f.otras_categorias ? String(f.otras_categorias).trim() : "",
+    "Veces participado": f.veces_participado ? Number(f.veces_participado) : 0,
+    "Ediciones previas": f.ediciones_previas ? String(f.ediciones_previas).trim() : "",
+    "Resultado previo": f.resultado_previo ? String(f.resultado_previo).trim() : "",
     "Observaciones": f.observaciones ? String(f.observaciones).trim() : "",
     "Acepta bases": !!f.acepta_bases,
     "Acepta RGPD": !!f.acepta_rgpd,
@@ -88,28 +92,43 @@ export default async (req) => {
     return json({ error: "Error de conexión con Airtable.", detail: String(e) }, 502);
   }
 
-  // 2) Subir la foto como adjunto al campo "Foto" (si viene)
-  //    Tope de 5 MB también en el servidor (el navegador ya la reescala y valida).
-  if (recId && body.photo?.base64 && body.photo?.type) {
-    const bytes = Math.floor((String(body.photo.base64).length * 3) / 4);
-    if (bytes > 5 * 1024 * 1024) {
-      return json({ ok: true, recordId: recId, photoWarning: "La foto supera los 5 MB y no se ha adjuntado." });
-    }
+  // 2) Adjuntos: la foto del competidor y, si viene, el logotipo de la escuela.
+  //    Tope de 5 MB también aquí (el navegador ya valida, pero no se fía uno).
+  async function adjunta(campo, archivo, nombrePorDefecto) {
+    if (!archivo?.base64 || !archivo?.type) return null;
+    const bytes = Math.floor((String(archivo.base64).length * 3) / 4);
+    if (bytes > 5 * 1024 * 1024) return `${campo}: supera los 5 MB y no se ha adjuntado.`;
     try {
-      const up = await fetch(`https://content.airtable.com/v0/${BASE}/${recId}/Foto/uploadAttachment`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
-        body: JSON.stringify({
-          contentType: body.photo.type,
-          filename: body.photo.name || "foto.jpg",
-          file: body.photo.base64,
-        }),
-      });
-      if (!up.ok) return json({ ok: true, recordId: recId, photoWarning: await up.text() });
+      const up = await fetch(
+        `https://content.airtable.com/v0/${BASE}/${recId}/${encodeURIComponent(campo)}/uploadAttachment`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" },
+          body: JSON.stringify({
+            contentType: archivo.type,
+            filename: archivo.name || nombrePorDefecto,
+            file: archivo.base64,
+          }),
+        });
+      if (!up.ok) return `${campo}: ${await up.text()}`;
+      return null;
     } catch (e) {
-      return json({ ok: true, recordId: recId, photoWarning: String(e) });
+      return `${campo}: ${String(e)}`;
     }
   }
+
+  // La solicitud ya está guardada: si un adjunto falla se avisa, pero no se
+  // pierde el envío. Es peor perder una solicitud que quedarse sin el logo.
+  const avisos = [];
+  if (recId) {
+    for (const [campo, archivo, nombre] of [
+      ["Foto", body.photo, "foto.jpg"],
+      ["Logotipo", body.logo, "logotipo.png"],
+    ]) {
+      const fallo = await adjunta(campo, archivo, nombre);
+      if (fallo) avisos.push(fallo);
+    }
+  }
+  if (avisos.length) return json({ ok: true, recordId: recId, photoWarning: avisos.join(" · ") });
 
   return json({ ok: true, recordId: recId });
 };
