@@ -95,8 +95,8 @@ const ESPECIALIDADES = [
                   </ul>
                   <figure class="foto-ejemplo">
                     <!-- Si aún no existe la guía 4:3 de grupos, se muestra la 1:1 -->
-                    <img id="foto-ejemplo-img" src="/img/preview-1-1.webp" alt="Ejemplo: las caras dentro del círculo, con espacio hasta el borde" loading="lazy" decoding="async" onerror="if(!this.src.endsWith('preview-1-1.webp')){this.src='/img/preview-1-1.webp';}" />
-                    <figcaption>Ejemplo: las caras, dentro del círculo verde</figcaption>
+                    <img id="foto-ejemplo-img" src="/img/preview-1-1.webp" alt="Ejemplo: las caras dentro del círculo, con espacio hasta el borde" loading="lazy" decoding="async" />
+                    <figcaption id="foto-ejemplo-pie">Ejemplo: las caras, dentro del círculo verde</figcaption>
                   </figure>
                 </div>
                 <div class="foto-drop">
@@ -461,9 +461,13 @@ const ESPECIALIDADES = [
     const esGrupo2 = max > 2;
     // La medida recomendada solo se indica en solistas y dúos/parejas (foto cuadrada).
     $("#help-ratio").innerHTML = esGrupo2
-      ? "Formato JPG o PNG, <strong>máximo 5 MB</strong>. Se recorta sola, no hace falta que la prepares."
+      ? 'Formato JPG o PNG, <strong>máximo 5 MB</strong>, <strong>apaisada (4:3)</strong> — por ejemplo <strong>1440 × 1080 px</strong>.'
       : 'Formato JPG o PNG, <strong>máximo 5 MB</strong>, <strong>cuadrada (1:1)</strong> — por ejemplo <strong>1080 × 1080 px</strong>.';
-    ($("#foto-ejemplo-img") as HTMLImageElement).src = esGrupo2 ? "/img/preview-4-3.webp" : "/img/preview-1-1.webp";
+    // El ejemplo que hay es de una pareja, cuadrado. Mientras no haya uno de
+    // grupo se avisa en el pie para que no choque con el 4:3 que acabamos de pedir.
+    $("#foto-ejemplo-pie").textContent = esGrupo2
+      ? "Ejemplo: las caras, dentro del círculo verde. En equipos el recorte es apaisado."
+      : "Ejemplo: las caras, dentro del círculo verde";
     // "Los dos juntos" solo tiene sentido en dúos/parejas; en equipos, que quepan todos.
     const juntos = $("#help-juntos");
     if (max === 1) { juntos.hidden = true; }
