@@ -672,7 +672,9 @@ const ESPECIALIDADES = [
     fields.instagram = g1("instagram");
     // En solistas, el email de contacto es el del propio competidor
     if (max === 1) fields.email = g1("email");
-    fields.otras_categorias = catsInputs.filter((c) => c.checked).map((c) => c.value).join(" · ");
+    // Una por línea: los nombres de categoría ya llevan " · " dentro, así que
+    // separarlas con el mismo signo las volvía ilegibles en Airtable.
+    fields.otras_categorias = catsInputs.filter((c) => c.checked).map((c) => c.value).join("\n");
     fields.integrantes = buildIntegrantes();
     fields.n_integrantes = String(intList.children.length);
     fields.acepta_bases = (form.querySelector('[name="acepta_bases"]') as HTMLInputElement).checked;

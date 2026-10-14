@@ -68,7 +68,9 @@ export default async (req) => {
     "Vídeo": String(f.video).trim(),
     "Instagram": f.instagram ? String(f.instagram).trim() : "",
     "Otras categorías": f.otras_categorias ? String(f.otras_categorias).trim() : "",
-    "Veces participado": f.veces_participado ? Number(f.veces_participado) : 0,
+    // La columna de Airtable es de texto, así que se manda como texto y no
+    // se depende de que typecast convierta el número.
+    "Veces participado": f.veces_participado ? String(f.veces_participado).trim() : "",
     "Ediciones previas": f.ediciones_previas ? String(f.ediciones_previas).trim() : "",
     "Resultado previo": f.resultado_previo ? String(f.resultado_previo).trim() : "",
     "Observaciones": f.observaciones ? String(f.observaciones).trim() : "",
