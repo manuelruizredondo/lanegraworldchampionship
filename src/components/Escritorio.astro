@@ -34,6 +34,25 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
           <button type="button" class="p-btn p-btn-light p-btn-sm" data-salir>{t.salir}</button>
         </div>
 
+        {/* Editar los propios datos. El rol y el email no se tocan desde aquí:
+            lo impide un disparador en la base, no solo esta pantalla. */}
+        <details class="esc-editar">
+          <summary>{tc.editarTitulo}</summary>
+          <div class="esc-editar-cuerpo">
+            <label class="esc-lbl" for="esc-nombre">{tc.campoNombre}</label>
+            <input class="esc-input" id="esc-nombre" type="text" autocomplete="name" placeholder={tc.phNombre} />
+
+            <div data-esc-pass hidden>
+              <label class="esc-lbl" for="esc-pass">{tc.passNueva}</label>
+              <input class="esc-input" id="esc-pass" type="password" autocomplete="new-password" minlength="8" />
+            </div>
+            <p class="esc-nota-pass" data-esc-nota-google hidden>{tc.soloGoogle}</p>
+
+            <button type="button" class="p-btn p-btn-dark p-btn-sm" data-esc-guardar>{tc.guardar}</button>
+            <p class="esc-msg" data-esc-msg hidden role="status"></p>
+          </div>
+        </details>
+
         <p class="esc-admin" data-aviso-admin hidden>{t.admin}</p>
         <PanelOrganizacion />
 
@@ -42,18 +61,18 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
           <p class="esc-lead">{t.favLead}</p>
           <div class="esc-tabla-wrap">
             <table class="esc-tabla">
-              <thead><tr><th>#</th><th>{t.colSesion}</th><th>{t.colDia}</th><th>{t.colSala}</th></tr></thead>
+              <thead><tr><th>#</th><th>{t.colSesion}</th><th>{t.colDia}</th><th>{t.colSala}</th><th></th></tr></thead>
               <tbody data-tbody-favs></tbody>
             </table>
           </div>
-          <p class="esc-pie"><a class="p-btn p-btn-light p-btn-sm" href={PROGRAMA_HREF}>{t.verPrograma}</a></p>
+          <p class="esc-pie"><a class="p-btn p-btn-dark p-btn-sm" href={PROGRAMA_HREF}>{tc.anadirMas}</a></p>
         </div>
       </div>
     </div>
   </section>
 </div>
 
-<script is:inline define:vars={{ DIAS, ROOMS, T: t, HOME: { es: "/", en: "/en/", it: "/it/" }[lang] || "/" }}>
+<script is:inline define:vars={{ DIAS, ROOMS, T: { ...t, ...tc }, HOME: { es: "/", en: "/en/", it: "/it/" }[lang] || "/" }}>
   (function () {
     const $ = (s) => document.querySelector(s);
 
@@ -72,12 +91,19 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
       $("[data-email]").textContent = sesion.user.email || "";
 
       // El rol lo dice la base.
-      const { data: perfil } = await sb.from("perfiles").select("rol").eq("id", sesion.user.id).maybeSingle();
+      const { data: perfil } = await sb.from("perfiles").select("rol, nombre").eq("id", sesion.user.id).maybeSingle();
       const esAdmin = !!perfil && perfil.rol === "admin";
 
       $("[data-aviso-admin]").hidden = !esAdmin;
       $("[data-panel-org]").hidden = !esAdmin;
       $("[data-favoritos]").hidden = esAdmin;
+
+      // Los datos editables
+      const porGoogle = (sesion.user.app_metadata || {}).provider === "google";
+      $("[data-esc-pass]").hidden = porGoogle;
+      $("[data-esc-nota-google]").hidden = !porGoogle;
+      const inNombre = $("#esc-nombre");
+      if (perfil && !inNombre.value) inNombre.value = perfil.nombre || "";
 
       if (esAdmin) {
         await window.laNegraPanelOrg.pintar(sb);
@@ -87,17 +113,25 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
       }
     }
 
+    function renumerarFavoritos() {
+      const tb = $("[data-tbody-favs]");
+      const filas = [...tb.querySelectorAll("tr[data-clave]")];
+      filas.forEach((tr, i) => { tr.querySelector("td.pos").textContent = String(i + 1); });
+      if (!filas.length) pintarFavoritos([]);
+    }
+
     function pintarFavoritos(filas) {
       const tb = $("[data-tbody-favs]");
       tb.innerHTML = "";
       if (!filas.length) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
-        td.colSpan = 4; td.className = "vacio"; td.textContent = T.favVacio;
+        td.colSpan = 5; td.className = "vacio"; td.textContent = T.favVacio;
         tr.appendChild(td); tb.appendChild(tr); return;
       }
       filas.forEach((x, i) => {
         const tr = document.createElement("tr");
+        tr.dataset.clave = x.clave;
         [[i + 1, "pos"], [x.titulo || x.clave, "titulo"], [DIAS[x.dia] || "—", ""], [ROOMS[x.sala] || x.sala || "—", ""]]
           .forEach(([v, cls]) => {
             const td = document.createElement("td");
@@ -105,11 +139,74 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
             if (cls) td.className = cls;
             tr.appendChild(td);
           });
+        const tdB = document.createElement("td");
+        tdB.className = "acciones";
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "esc-quitar";
+        b.textContent = T.quitar;
+        b.setAttribute("aria-label", T.quitarAria + ": " + (x.titulo || x.clave));
+        b.dataset.quitar = x.clave;
+        tdB.appendChild(b); tr.appendChild(tdB);
         tb.appendChild(tr);
       });
     }
 
+    const FAV_KEY = "lanegra:programa:favs";
+
     document.addEventListener("click", async (e) => {
+      const quitar = e.target.closest("[data-quitar]");
+      if (quitar) {
+        const clave = quitar.dataset.quitar;
+        quitar.disabled = true;
+        try {
+          const sb = await window.laNegraCuenta.cliente();
+          const sesion = window.laNegraCuenta.sesion();
+          const { error } = await sb.from("favoritos").delete()
+            .eq("user_id", sesion.user.id).eq("clave", clave);
+          if (error) throw error;
+          // También del navegador: si no, al volver a la programación
+          // reaparecería y se volvería a subir.
+          try {
+            const g = new Set(JSON.parse(localStorage.getItem(FAV_KEY) || "[]"));
+            g.delete(clave);
+            localStorage.setItem(FAV_KEY, JSON.stringify([...g]));
+          } catch (err) {}
+          const fila = quitar.closest("tr");
+          fila.remove();
+          renumerarFavoritos();
+        } catch (err) {
+          quitar.disabled = false;
+        }
+        return;
+      }
+      if (e.target.closest("[data-esc-guardar]")) {
+        const boton = e.target.closest("[data-esc-guardar]");
+        const msg = $("[data-esc-msg]");
+        const nombre = ($("#esc-nombre").value || "").trim();
+        const pass = ($("#esc-pass").value || "");
+        const decir = (txt, err) => { msg.textContent = txt; msg.className = "esc-msg" + (err ? " err" : " ok"); msg.hidden = false; };
+        if (nombre.length < 2) { decir(T.errNombre, true); return; }
+        if (pass && pass.length < 8) { decir(T.errPassCorta, true); return; }
+
+        const antes = boton.textContent;
+        boton.disabled = true; boton.textContent = T.guardando;
+        try {
+          const sb = await window.laNegraCuenta.cliente();
+          const sesion = window.laNegraCuenta.sesion();
+          const { error } = await sb.from("perfiles").update({ nombre }).eq("id", sesion.user.id);
+          if (error) throw error;
+          // Se guarda también en la cuenta, para que no queden descuadrados.
+          const extra = { data: { full_name: nombre } };
+          if (pass) extra.password = pass;
+          await sb.auth.updateUser(extra);
+          decir(pass ? T.guardado + " " + T.passCambiada : T.guardado, false);
+          $("#esc-pass").value = "";
+        } catch (err) {
+          decir((err && err.message) || T.errGenerico, true);
+        }
+        boton.disabled = false; boton.textContent = antes;
+        return;
+      }
       if (!e.target.closest("[data-salir]")) return;
       const sb = await window.laNegraCuenta.cliente();
       await sb.auth.signOut();
@@ -140,6 +237,21 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
   .esc-quien { margin: 0; font-size: 14.5px; color: #14121a; }
   .esc-quien span { color: #9a9aa2; }
 
+  .esc-editar { background: #fff; border: 1px solid #ece7dd; border-radius: 14px; margin-bottom: 18px; }
+  .esc-editar summary { padding: 14px 18px; cursor: pointer; font-size: 14.5px; font-weight: 700; color: #14121a; }
+  .esc-editar-cuerpo { padding: 0 18px 18px; max-width: 420px; }
+  .esc-lbl { display: block; font-size: 12px; font-weight: 800; color: #6a6a74; margin-bottom: 5px; }
+  .esc-input {
+    width: 100%; padding: 10px 13px; border-radius: 12px; border: 2px solid #e6e1d8;
+    font-size: 16px; font-family: inherit; color: #14121a; margin-bottom: 12px;
+  }
+  .esc-input:focus-visible { outline: none; border-color: var(--gold, #c9a227); }
+  .esc-nota-pass { margin: 0 0 12px; font-size: 12.5px; color: #8a8578; }
+  .esc-msg { margin: 10px 0 0; font-size: 13.5px; font-weight: 600; }
+  .esc-msg[hidden] { display: none; }
+  .esc-msg.ok { color: #2e7d52; }
+  .esc-msg.err { color: #c8324c; }
+
   .esc-admin {
     margin: 0 0 18px; padding: 12px 16px; border-radius: 12px;
     background: #fdfaf3; border: 1px solid #efe4cd;
@@ -157,5 +269,13 @@ const PROGRAMA_HREF = { es: "/programacion-2026/", en: "/en/programme-2026/", it
   .esc-tabla :global(td.pos) { width: 46px; font-weight: 800; color: var(--gold-dark, #a2823f); font-variant-numeric: tabular-nums; }
   .esc-tabla :global(td.titulo) { font-weight: 600; color: #14121a; }
   .esc-tabla :global(td.vacio) { text-align: center; padding: 30px; color: #8a8578; }
+  .esc-tabla :global(td.acciones) { width: 74px; text-align: right; }
+  .esc-tabla :global(.esc-quitar) {
+    border: 1.5px solid #e6e1d8; background: #fff; border-radius: 999px;
+    padding: 4px 12px; cursor: pointer; font-family: inherit; font-size: 12.5px;
+    font-weight: 700; color: #6a6a74;
+  }
+  .esc-tabla :global(.esc-quitar:hover) { border-color: #c8324c; color: #c8324c; }
+  .esc-tabla :global(.esc-quitar:disabled) { opacity: .5; cursor: default; }
   .esc-pie { margin: 18px 0 0; }
 </style>

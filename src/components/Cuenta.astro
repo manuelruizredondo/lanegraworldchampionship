@@ -41,6 +41,12 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       {/* El mismo formulario sirve para entrar, darse de alta y recuperar la
           contraseña; cambia el título, el botón y qué campos se ven. */}
       <form class="cu-form" data-cu-form>
+        <div data-cu-campo-nombre hidden>
+          <label class="cu-lbl" for="cu-nombre">{t.campoNombre}</label>
+          <input class="cu-input" id="cu-nombre" type="text" autocomplete="name"
+                 placeholder={t.phNombre} />
+        </div>
+
         <label class="cu-lbl" for="cu-email">{t.campoEmail}</label>
         <input class="cu-input" id="cu-email" type="email" autocomplete="email"
                inputmode="email" placeholder="tu@email.com" required />
@@ -152,6 +158,8 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
     const form = panel.querySelector("[data-cu-form]");
     const inEmail = panel.querySelector("#cu-email");
     const inPass = panel.querySelector("#cu-pass");
+    const inNombre = panel.querySelector("#cu-nombre");
+    const campoNombre = panel.querySelector("[data-cu-campo-nombre]");
     const campoPass = panel.querySelector("[data-cu-campo-pass]");
     const bEnviar = panel.querySelector("[data-cu-enviar]");
     const titulo = panel.querySelector("#cu-t");
@@ -168,6 +176,9 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       titulo.textContent = alta ? T.tituloAlta : olvido ? T.tituloOlvido : TITULO_INICIAL;
       lead.textContent = alta ? T.leadAlta : olvido ? T.leadOlvido : LEAD_INICIAL;
       campoPass.hidden = olvido;
+      // Google manda el nombre; con contraseña hay que pedirlo o la ficha
+      // se queda sin él y la organización no sabe quién es.
+      campoNombre.hidden = !alta;
       inPass.required = !olvido;
       inPass.setAttribute("autocomplete", alta ? "new-password" : "current-password");
       bEnviar.textContent = alta ? T.crearCuenta : olvido ? T.enviarEnlace : T.entrarPass;
@@ -201,6 +212,8 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       const pass = inPass.value;
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { aviso(T.errEmailMal, true); inEmail.focus(); return; }
       if (modo !== "olvido" && pass.length < 8) { aviso(T.errPassCorta, true); inPass.focus(); return; }
+      const nombre = (inNombre.value || "").trim();
+      if (modo === "alta" && nombre.length < 2) { aviso(T.errNombre, true); inNombre.focus(); return; }
 
       const antes = bEnviar.textContent;
       bEnviar.disabled = true;
@@ -214,7 +227,12 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
         } else if (modo === "alta") {
           const { data, error } = await c.auth.signUp({
             email, password: pass,
-            options: { emailRedirectTo: window.location.href.split("#")[0] },
+            options: {
+              emailRedirectTo: window.location.href.split("#")[0],
+              // Va a raw_user_meta_data.full_name, que es de donde lo lee el
+              // disparador que crea la ficha.
+              data: { full_name: nombre },
+            },
           });
           if (error) throw error;
           // Si el proyecto exige confirmar el email no hay sesión todavía.
