@@ -36,6 +36,30 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
         <span>{t.google}</span>
       </button>
 
+      <p class="cu-o" data-cu-o><span>{t.oBien}</span></p>
+
+      {/* El mismo formulario sirve para entrar, darse de alta y recuperar la
+          contraseña; cambia el título, el botón y qué campos se ven. */}
+      <form class="cu-form" data-cu-form>
+        <label class="cu-lbl" for="cu-email">{t.campoEmail}</label>
+        <input class="cu-input" id="cu-email" type="email" autocomplete="email"
+               inputmode="email" placeholder="tu@email.com" required />
+
+        <div data-cu-campo-pass>
+          <label class="cu-lbl" for="cu-pass">{t.campoPass}</label>
+          <input class="cu-input" id="cu-pass" type="password" autocomplete="current-password"
+                 minlength="8" />
+        </div>
+
+        <button type="submit" class="cu-btn" data-cu-enviar>{t.entrarPass}</button>
+      </form>
+
+      <p class="cu-links">
+        <button type="button" class="cu-link" data-cu-modo="alta">{t.crearCuenta}</button>
+        <button type="button" class="cu-link" data-cu-modo="olvido">{t.olvide}</button>
+        <button type="button" class="cu-link" data-cu-modo="entrar" hidden>{t.yaTengo}</button>
+      </p>
+
       <p class="cu-nota">{t.nota} <a href={t.rutaPrivacidad}>{t.privacidad}</a></p>
     </div>
 
@@ -99,6 +123,7 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       pintar();
       aviso("");
       panel.hidden = false;
+      if (typeof pintarModo === "function") { modo = "entrar"; pintarModo(); }
     };
     const cerrar = () => { panel.hidden = true; aviso(""); };
 
@@ -121,6 +146,89 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       } catch (e) {
         aviso((e && e.message) || T.errGoogle, true);
       }
+    });
+
+    // ── Entrar / crear cuenta / recuperar, con email y contraseña ─────────
+    const form = panel.querySelector("[data-cu-form]");
+    const inEmail = panel.querySelector("#cu-email");
+    const inPass = panel.querySelector("#cu-pass");
+    const campoPass = panel.querySelector("[data-cu-campo-pass]");
+    const bEnviar = panel.querySelector("[data-cu-enviar]");
+    const titulo = panel.querySelector("#cu-t");
+    const lead = panel.querySelector(".cu-lead");
+    const google = panel.querySelector("[data-cu-google]");
+    const separador = panel.querySelector("[data-cu-o]");
+    const enlaces = panel.querySelectorAll("[data-cu-modo]");
+    const TITULO_INICIAL = titulo.textContent;
+    const LEAD_INICIAL = lead.textContent;
+    let modo = "entrar";
+
+    function pintarModo() {
+      const alta = modo === "alta", olvido = modo === "olvido";
+      titulo.textContent = alta ? T.tituloAlta : olvido ? T.tituloOlvido : TITULO_INICIAL;
+      lead.textContent = alta ? T.leadAlta : olvido ? T.leadOlvido : LEAD_INICIAL;
+      campoPass.hidden = olvido;
+      inPass.required = !olvido;
+      inPass.setAttribute("autocomplete", alta ? "new-password" : "current-password");
+      bEnviar.textContent = alta ? T.crearCuenta : olvido ? T.enviarEnlace : T.entrarPass;
+      // Con Google solo tiene sentido en la pantalla de entrar.
+      google.hidden = olvido;
+      separador.hidden = olvido;
+      enlaces.forEach((b) => { b.hidden = (b.dataset.cuModo === modo) || (modo === "entrar" && b.dataset.cuModo === "entrar"); });
+      if (modo !== "entrar") panel.querySelector('[data-cu-modo="entrar"]').hidden = false;
+      aviso("");
+    }
+
+    enlaces.forEach((b) => b.addEventListener("click", () => { modo = b.dataset.cuModo; pintarModo(); }));
+
+    // Supabase contesta en inglés; aquí se traduce a algo que se entienda.
+    function traduce(e) {
+      const m = ((e && e.message) || "").toLowerCase();
+      if (m.includes("invalid login credentials")) return T.errCredenciales;
+      if (m.includes("email not confirmed")) return T.errSinConfirmar;
+      if (m.includes("already registered") || m.includes("already been registered")) return T.errYaExiste;
+      if (m.includes("password should be at least")) return T.errPassCorta;
+      if (m.includes("invalid email") || m.includes("unable to validate email")) return T.errEmailMal;
+      return (e && e.message) || T.errGenerico;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = inEmail.value.trim();
+      const pass = inPass.value;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { aviso(T.errEmailMal, true); inEmail.focus(); return; }
+      if (modo !== "olvido" && pass.length < 8) { aviso(T.errPassCorta, true); inPass.focus(); return; }
+
+      const antes = bEnviar.textContent;
+      bEnviar.disabled = true;
+      bEnviar.textContent = T.trabajando;
+      try {
+        const c = await obtenerCliente();
+        if (modo === "entrar") {
+          const { error } = await c.auth.signInWithPassword({ email, password: pass });
+          if (error) throw error;
+          cerrar();
+        } else if (modo === "alta") {
+          const { data, error } = await c.auth.signUp({
+            email, password: pass,
+            options: { emailRedirectTo: window.location.href.split("#")[0] },
+          });
+          if (error) throw error;
+          // Si el proyecto exige confirmar el email no hay sesión todavía.
+          if (data && data.session) { aviso(T.altaLista, false); setTimeout(cerrar, 1200); }
+          else aviso(T.altaConfirma, false);
+        } else {
+          const { error } = await c.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + window.location.pathname,
+          });
+          if (error) throw error;
+          aviso(T.olvidoEnviado, false);
+        }
+      } catch (err) {
+        aviso(traduce(err), true);
+      }
+      bEnviar.disabled = false;
+      bEnviar.textContent = antes;
     });
 
     panel.querySelector("[data-cu-salir]").addEventListener("click", async () => {
@@ -175,6 +283,30 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
     transition: border-color .15s ease, background .15s ease;
   }
   .cu-google:hover { border-color: #c9c3b8; background: #fbfaf8; }
+  .cu-google[hidden] { display: none; }
+
+  .cu-o { display: flex; align-items: center; gap: 10px; margin: 16px 0 14px; }
+  .cu-o[hidden] { display: none; }
+  .cu-o::before, .cu-o::after { content: ""; flex: 1; height: 1px; background: #ece7dd; }
+  .cu-o span { font-size: 12px; color: #9a9aa2; }
+
+  .cu-form { display: block; }
+  .cu-lbl { display: block; font-size: 12px; font-weight: 800; letter-spacing: .02em; color: #6a6a74; margin-bottom: 5px; }
+  .cu-input {
+    width: 100%; padding: 11px 13px; border-radius: 12px; border: 2px solid #e6e1d8;
+    font-size: 16px; font-family: inherit; color: #14121a; margin-bottom: 12px;
+  }
+  .cu-input:focus-visible { outline: none; border-color: var(--gold, #c9a227); }
+  .cu-form [data-cu-campo-pass][hidden] { display: none; }
+
+  .cu-links { display: flex; flex-wrap: wrap; gap: 14px; margin: 12px 0 0; }
+  .cu-link {
+    border: 0; background: none; padding: 0; cursor: pointer; font-family: inherit;
+    font-size: 13px; font-weight: 700; color: var(--gold-dark, #a2823f);
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .cu-link[hidden] { display: none; }
+  .cu-link:hover { color: #14121a; }
 
   .cu-btn {
     width: 100%; margin-top: 14px; padding: 13px 10px; border-radius: 999px;
