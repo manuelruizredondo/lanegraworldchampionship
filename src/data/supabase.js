@@ -51,6 +51,8 @@ export const CUENTA_I18N = {
     errSinConfirmar: "Falta confirmar la cuenta. Busca el correo que te mandamos.",
     errYaExiste: "Ya hay una cuenta con ese email. Entra con tu contraseña o recupérala.",
     errGenerico: "No se ha podido. Inténtalo de nuevo en un momento.",
+    errLimite: "Se han mandado demasiados correos en poco tiempo. Espera unos minutos, o entra con Google y listo.",
+    errEspera: "Un momento, que acabamos de mandarte uno. Prueba otra vez en un minuto.",
   },
   en: {
     entrar: "Sign in",
@@ -88,6 +90,8 @@ export const CUENTA_I18N = {
     errSinConfirmar: "The account still needs confirming. Look for the email we sent you.",
     errYaExiste: "There's already an account with that email. Sign in, or reset the password.",
     errGenerico: "That didn't work. Please try again in a moment.",
+    errLimite: "Too many emails have gone out in a short time. Wait a few minutes, or just sign in with Google.",
+    errEspera: "Hold on, we just sent you one. Try again in a minute.",
   },
   it: {
     entrar: "Accedi",
@@ -125,6 +129,8 @@ export const CUENTA_I18N = {
     errSinConfirmar: "Manca la conferma dell'account. Cerca l'email che ti abbiamo mandato.",
     errYaExiste: "Esiste già un account con questa email. Accedi o recupera la password.",
     errGenerico: "Non ha funzionato. Riprova tra un momento.",
+    errLimite: "Sono state inviate troppe email in poco tempo. Aspetta qualche minuto, oppure accedi con Google.",
+    errEspera: "Un attimo, te ne abbiamo appena mandata una. Riprova tra un minuto.",
   },
 };
 
