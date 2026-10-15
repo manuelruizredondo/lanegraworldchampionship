@@ -1,45 +1,139 @@
 ---
-// Página de directos: una pantalla por sala, y cada una se enciende sola
-// cuando en esa sala empieza algo, leyendo el horario de programa.js.
+// Página de directos: una pantalla por competición (las once del Mundial), y
+// cada una se enciende sola cuando esa competición sale al escenario.
 //
-// El cálculo va en el navegador, no en el build: la página es estática y el
-// HTML se genera una vez, así que "qué hay ahora" tiene que resolverse en
-// tiempo real en el cliente. Se recalcula cada 30 s.
-import { PANTALLAS, ZONA, ANIO, I18N } from "@/data/directos.js";
+// El reparto de sesiones por competición se hace AQUÍ, en el build, leyendo
+// programa.js: así, si una sesión no encaja en ninguna, la compilación falla
+// y nos enteramos, en vez de quedarse una pantalla muda durante el festival.
+//
+// El "qué hay ahora" sí se resuelve en el navegador: la página es estática y
+// el HTML se genera una vez. Se recalcula cada 30 s.
+import { COMPETICIONES, NOMBRES_COMP, EMISIONES, ZONA, I18N } from "@/data/directos.js";
 import { PROGRAMA, NOMBRES, I18N as PROG_I18N } from "@/data/programa.js";
-import { I18N as PROG } from "@/data/programa.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
 const tp = PROG_I18N[lang] || PROG_I18N.es;
+const nombres = NOMBRES_COMP[lang] || NOMBRES_COMP.es;
 const RUTA_PROGRAMA = { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" }[lang];
 
-// Solo las salas que se emiten, y solo lo que la página necesita saber de
-// cada sesión. Así el JSON que viaja al navegador son unos pocos KB en vez de
-// los 48 de programa.js entero.
-const SALAS = PANTALLAS.map((p) => p.sala);
 const traduce = (n) => (lang === "es" ? n : (NOMBRES[lang] && NOMBRES[lang][n]) || n);
 
-const AGENDA = PROGRAMA.map((d) => ({
-  dia: (tp.days && tp.days[d.day]) || d.day,
-  fecha: d.date,
-  sesiones: d.sessions
-    .filter((s) => SALAS.includes(s.r))
-    .map((s) => ({ t: s.t, r: s.r, n: traduce(s.n), p: s.p || null })),
-})).filter((d) => d.sesiones.length > 0);
+// ── Reparto de sesiones por competición ─────────────────────────────────
+// Una sesión de competición casa con la competición cuya disciplina abre su
+// nombre ("Bachata: …" / "Salsa: …") y cuya modalidad aparece en él.
+function competicionDe(nombre) {
+  const disc = /^bachata\s*:/i.test(nombre) ? "bachata" : /^salsa\s*:/i.test(nombre) ? "salsa" : null;
+  if (!disc) return null;
+  return COMPETICIONES.find((c) => c.disciplina === disc && c.busca.test(nombre)) || null;
+}
 
-const pantallas = PANTALLAS.map((p) => ({
-  ...p,
-  nombre: (tp.roomFull && tp.roomFull[p.sala]) || (tp.rooms && tp.rooms[p.sala]) || p.sala,
+// ── Horas y fechas ───────────────────────────────────────────────────────
+// Se resuelve todo aquí, en el build, y al navegador llega ya masticado:
+// día del mes, mes, y minutos de inicio y fin. Así el script del cliente solo
+// compara números.
+const MESES = { ENE: 0, FEB: 1, MAR: 2, ABR: 3, MAY: 4, JUN: 5, JUL: 6, AGO: 7, SEP: 8, OCT: 9, NOV: 10, DIC: 11 };
+const AMANECER = 6 * 60;
+const aMinutos = (hhmm) => {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm).trim());
+  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+};
+
+// "16:00 – 16:55" · "23:00 – 00:00" (termina pasada medianoche) · "01:30 – 06:00"
+function tramo(txt) {
+  const partes = String(txt).split(/\s*[–—-]\s*/);
+  if (partes.length !== 2) return null;
+  const ini = aMinutos(partes[0]);
+  if (ini === null) return null;
+  const finTxt = partes[1].trim();
+  const fin = /amanecer|dawn|alba/i.test(finTxt) ? AMANECER : aMinutos(finTxt);
+  if (fin === null) return null;
+  return { ini, fin: fin <= ini ? fin + 1440 : fin };
+}
+
+// El programa mete las sesiones de madrugada en el bloque del día anterior:
+// el 23 de octubre termina con "23:00 – 00:00", "00:00 – 00:50" y "01:30 –
+// 06:00", y esas dos últimas son ya del 24. Hay que corregir la fecha o esas
+// finales no se marcarían nunca como en directo.
+//
+// No vale con detectar cualquier retroceso de hora: ese mismo día, a un
+// "Desde 09:30" le sigue un "09:00 – 12:00" y no hay cambio de día. El salto
+// solo cuenta cuando se pasa de la noche cerrada a la madrugada.
+function diasExtra(sessions) {
+  let extra = 0, anterior = null;
+  return sessions.map((s) => {
+    const m = /(\d{1,2}:\d{2})/.exec(String(s.t));
+    const ini = m ? aMinutos(m[1]) : null;
+    if (ini !== null) {
+      if (anterior !== null && ini < 7 * 60 && anterior >= 20 * 60) extra += 1;
+      anterior = ini;
+    }
+    return extra;
+  });
+}
+
+const porComp = {};
+COMPETICIONES.forEach((c) => { porComp[c.clave] = []; });
+const huerfanas = [];
+const sinHora = [];
+
+PROGRAMA.forEach((d) => {
+  const f = /^(\d{1,2})\s*([A-ZÁÉÍÓÚ]{3})/i.exec(d.date);
+  if (!f) return;
+  const extras = diasExtra(d.sessions);
+
+  d.sessions.forEach((s, i) => {
+    if (s.k !== "comp") return;
+    const c = competicionDe(s.n);
+    if (!c) { huerfanas.push(`${d.date} · ${s.n}`); return; }
+    const r = tramo(s.t);
+    if (!r) { sinHora.push(`${d.date} · ${s.t} · ${s.n}`); return; }
+
+    const real = new Date(Date.UTC(2026, MESES[f[2].toUpperCase()], Number(f[1]) + extras[i]));
+    porComp[c.clave].push({
+      dia: real.getUTCDate(), mes: real.getUTCMonth(),
+      ini: r.ini, fin: r.fin, r: s.r, n: traduce(s.n),
+    });
+  });
+});
+
+// Si el programa cambia y aparece una modalidad nueva o un horario con otro
+// formato, que se vea aquí y no en el escenario el día 21.
+if (huerfanas.length) {
+  throw new Error(
+    "EnDirecto: hay sesiones de competición que no encajan en ninguna de las " +
+    "once competiciones de directos.js. Añade su modalidad a COMPETICIONES:\n  " +
+    huerfanas.join("\n  ")
+  );
+}
+if (sinHora.length) {
+  throw new Error(
+    "EnDirecto: hay sesiones de competición cuyo horario no se entiende. " +
+    "Hace falta 'HH:MM – HH:MM':\n  " + sinHora.join("\n  ")
+  );
+}
+
+const pantallas = COMPETICIONES.map((c) => ({
+  clave: c.clave,
+  nombre: nombres[c.clave] || c.clave,
+  portada: c.portada,
+  disciplina: c.disciplina,
+  sesiones: porComp[c.clave],
 }));
 
-const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
-  directo: t.directo, ahora: t.ahora, luego: t.luego, enEspera: t.enEspera,
-  sinEmision: t.sinEmision, sinEnlace: t.sinEnlace, verAhora: t.verAhora,
-  proximo: t.proximo, ningunaActiva: t.ningunaActiva,
-  antesDelFestival: t.antesDelFestival, despuesDelFestival: t.despuesDelFestival,
-  una: t.salasActivas(1), varias: t.salasActivas(2).replace(/^2\s*/, ""),
-} };
+const DATOS = {
+  zona: ZONA,
+  emisiones: EMISIONES,
+  salas: tp.rooms || {},
+  comps: pantallas.map((p) => ({ clave: p.clave, sesiones: p.sesiones })),
+  textos: {
+    directo: t.directo, luego: t.luego, sinEmision: t.sinEmision, sinEnlace: t.sinEnlace,
+    proximo: t.proximo, terminada: t.terminada, enSala: t.enSala,
+    ningunaActiva: t.ningunaActiva, antesDelFestival: t.antesDelFestival,
+    despuesDelFestival: t.despuesDelFestival,
+    una: t.activas(1), varias: t.activas(2).replace(/^2\s*/, ""),
+  },
+};
 ---
 
 <div class="prop">
@@ -50,7 +144,6 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
         <span class="dir-rec" aria-hidden="true"></span>{t.h1}
       </h1>
       <p class="p-lead p-narrow">{t.lead}</p>
-
       <p class="dir-estado" data-dir-estado role="status" aria-live="polite">{t.cargando}</p>
       <p class="dir-zona">{t.horaLocal}</p>
     </div>
@@ -58,13 +151,13 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
 
   <section class="p-section p-tight">
     <div class="p-container">
-      <div class="dir-grid">
+      <div class="dir-grid" data-dir-grid>
         {pantallas.map((p) => (
-          <article class="dir-pantalla" data-sala={p.sala} data-tipo={p.tipo} data-fuente={p.fuente || ""}>
+          <article class="dir-pantalla" data-comp={p.clave} data-disc={p.disciplina}>
             <div class="dir-marco">
-              {p.cartel
-                ? <img class="dir-cartel" src={p.cartel} alt="" loading="lazy" decoding="async" />
-                : <div class="dir-cartel dir-cartel-vacio"></div>}
+              {p.portada
+                ? <img class="dir-cartel" src={p.portada} alt="" loading="lazy" decoding="async" />
+                : <div class="dir-cartel dir-cartel-vacio"><span>{p.nombre}</span></div>}
               <div class="dir-capa">
                 <button class="dir-play" type="button" data-dir-play hidden>
                   <span class="dir-play-icono" aria-hidden="true"></span>
@@ -76,7 +169,7 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
             </div>
             <div class="dir-pie">
               <div class="dir-pie-txt">
-                <h2 class="dir-sala">{p.nombre}</h2>
+                <h2 class="dir-comp">{p.nombre}</h2>
                 <p class="dir-sesion" data-dir-sesion></p>
               </div>
               <span class="dir-badge" data-dir-badge hidden>
@@ -101,104 +194,70 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
     if (!nodo) return;
     const D = JSON.parse(nodo.textContent || "{}");
     const T = D.textos || {};
-    const MESES = { ENE: 0, FEB: 1, MAR: 2, ABR: 3, MAY: 4, JUN: 5, JUL: 6, AGO: 7, SEP: 8, OCT: 9, NOV: 10, DIC: 11 };
-
     // ── Hora de Calpe ────────────────────────────────────────────────────
     // El festival es en España y el horario de programa.js está en hora local
     // de allí. Quien mire desde México o Italia tiene que ver marcada la misma
-    // sala, así que se convierte la hora del dispositivo a la de Madrid en vez
-    // de usarla tal cual.
+    // competición, así que se convierte la hora del dispositivo a la de Madrid.
     function ahoraEnSede() {
-      const f = new Intl.DateTimeFormat("en-CA", {
+      const partes = new Intl.DateTimeFormat("en-CA", {
         timeZone: D.zona, year: "numeric", month: "2-digit", day: "2-digit",
         hour: "2-digit", minute: "2-digit", hour12: false,
       }).formatToParts(new Date());
       const v = {};
-      f.forEach((p) => { v[p.type] = p.value; });
-      // Minutos desde el 1 de enero, en hora de sede. Sirve para comparar sin
-      // arrastrar husos ni horario de verano por segunda vez.
+      partes.forEach((p) => { v[p.type] = p.value; });
       return {
-        dia: Number(v.day), mes: Number(v.month) - 1, anio: Number(v.year),
+        dia: Number(v.day), mes: Number(v.month) - 1,
         minutos: Number(v.hour === "24" ? 0 : v.hour) * 60 + Number(v.minute),
       };
     }
 
-    function aMinutos(hhmm) {
-      const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm.trim());
-      return m ? Number(m[1]) * 60 + Number(m[2]) : null;
-    }
-
-    // "15:30 – 16:45" · "22:00 – 00:45" (cruza medianoche) · "22:00 – amanecer"
-    // · "Desde 00:30" (el baile social de madrugada, que no tiene hora de fin).
-    const AMANECER = 6 * 60;
-    function tramo(txt) {
-      const partes = String(txt).split(/\s*[–—-]\s*/);
-      if (partes.length === 2) {
-        const ini = aMinutos(partes[0]);
-        if (ini === null) return null;
-        const finTxt = partes[1].trim();
-        // "amanecer": se cierra a las 06:00 del día siguiente.
-        const fin = /amanecer|dawn|alba/i.test(finTxt) ? AMANECER : aMinutos(finTxt);
-        if (fin === null) return null;
-        return { ini, fin: fin <= ini ? fin + 1440 : fin };
-      }
-      // "Desde HH:MM" sin hora de fin. Solo cuenta como directo si empieza de
-      // madrugada o muy de noche: son los bailes sociales, que duran hasta el
-      // amanecer. Un "Desde 09:30" es la entrega de acreditaciones y no debe
-      // dejar la sala marcada en directo todo el día.
-      const suelta = /(\d{1,2}:\d{2})/.exec(String(txt));
-      if (suelta) {
-        const ini = aMinutos(suelta[1]);
-        if (ini !== null && (ini >= 22 * 60 || ini < 7 * 60)) {
-          return { ini, fin: ini < AMANECER ? AMANECER : AMANECER + 1440 };
-        }
-      }
-      return null;
-    }
-
-    const dias = (D.agenda || []).map((d) => {
-      const m = /^(\d{1,2})\s*([A-ZÁÉÍÓÚ]{3})/i.exec(d.fecha || "");
-      const dia = m ? Number(m[1]) : null;
-      const mes = m ? MESES[m[2].toUpperCase()] : null;
-      return { ...d, dia, mes };
-    }).filter((d) => d.dia !== null && d.mes !== null);
+    // Las sesiones llegan ya resueltas desde el build: día, mes y minutos de
+    // inicio y fin. Aquí solo se comparan números.
+    const comps = D.comps || [];
 
     function estado() {
       const n = ahoraEnSede();
-      const porSala = {};
+      const out = {};
       let activas = 0;
 
-      dias.forEach((d) => {
-        // Minutos de "ahora" medidos desde las 00:00 de ESTE día del programa.
-        // Si ahora es el día siguiente, se le suman 1440: así una sesión que
-        // acaba a las 00:45 o al amanecer sigue contando como en directo.
-        let desplaz = null;
-        if (d.mes === n.mes && d.dia === n.dia) desplaz = n.minutos;
-        else if (d.mes === n.mes && d.dia === n.dia - 1) desplaz = n.minutos + 1440;
-        if (desplaz === null) return;
+      comps.forEach((c) => {
+        let viva = null, proxima = null, quedan = 0;
 
-        d.sesiones.forEach((s) => {
-          const r = tramo(s.t);
-          if (!r) return;
-          const viva = desplaz >= r.ini && desplaz < r.fin;
-          const previa = r.ini > desplaz && r.ini - desplaz <= 180;
-          if (viva) {
-            porSala[s.r] = { tipo: "directo", sesion: s, hora: s.t };
-            activas++;
-          } else if (previa && (!porSala[s.r] || (porSala[s.r].tipo === "proxima" && r.ini < porSala[s.r].ini))) {
-            if (!porSala[s.r] || porSala[s.r].tipo !== "directo") {
-              porSala[s.r] = { tipo: "proxima", sesion: s, ini: r.ini, hora: s.t };
-            }
+        c.sesiones.forEach((s) => {
+          // Minutos de "ahora" contados desde las 00:00 del día de la sesión.
+          // Si ya es el día siguiente se suman 1440, y así una sesión que acaba
+          // a las 00:50 sigue contando como en directo.
+          let desplaz = null;
+          if (s.mes === n.mes && s.dia === n.dia) desplaz = n.minutos;
+          else if (s.mes === n.mes && s.dia === n.dia - 1) desplaz = n.minutos + 1440;
+
+          if (desplaz !== null && desplaz >= s.ini && desplaz < s.fin) { viva = s; return; }
+
+          // Pendiente: o es de un día posterior, o es hoy y aún no ha empezado.
+          const futura = (s.mes > n.mes) || (s.mes === n.mes && s.dia > n.dia) ||
+                         (desplaz !== null && s.ini > desplaz);
+          if (futura) {
+            quedan++;
+            const hoy = desplaz !== null && s.ini > desplaz;
+            if (hoy && (!proxima || s.ini < proxima.ini)) proxima = s;
           }
         });
+
+        if (viva) { out[c.clave] = { tipo: "directo", s: viva }; activas++; }
+        else if (proxima) out[c.clave] = { tipo: "proxima", s: proxima };
+        else if (quedan === 0) out[c.clave] = { tipo: "terminada" };
+        else out[c.clave] = { tipo: "espera" };
       });
 
-      return { porSala, activas, ahora: n };
+      return { out, activas, ahora: n };
     }
 
     // ── Pintado ──────────────────────────────────────────────────────────
+    const rejilla = document.querySelector("[data-dir-grid]");
     const pantallas = Array.prototype.slice.call(document.querySelectorAll(".dir-pantalla"));
     const elEstado = document.querySelector("[data-dir-estado]");
+    const orden = {};
+    pantallas.forEach((p, i) => { orden[p.getAttribute("data-comp")] = i; });
 
     function limpiarReproductor(p) {
       const caja = p.querySelector("[data-dir-reproductor]");
@@ -207,20 +266,19 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
     }
 
     function abrir(p) {
-      const tipo = p.getAttribute("data-tipo");
-      const fuente = p.getAttribute("data-fuente");
-      if (!fuente) return;
-      // Solo una sala sonando a la vez: cuatro directos simultáneos saturan la
-      // conexión y además se pisan los audios.
+      const em = p._emision;
+      if (!em || !em.fuente) return;
+      // Solo una competición sonando a la vez: varios directos simultáneos
+      // saturan la conexión y además se pisan los audios.
       pantallas.forEach((o) => { if (o !== p) limpiarReproductor(o); });
 
       const caja = p.querySelector("[data-dir-reproductor]");
-      const src = tipo === "youtube"
-        ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(fuente) + "?autoplay=1&rel=0"
-        : fuente;
+      const src = em.tipo === "youtube"
+        ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(em.fuente) + "?autoplay=1&rel=0"
+        : em.fuente;
       const marco = document.createElement("iframe");
       marco.src = src;
-      marco.title = (p.querySelector(".dir-sala") || {}).textContent || "";
+      marco.title = (p.querySelector(".dir-comp") || {}).textContent || "";
       marco.setAttribute("allow", "autoplay; fullscreen; picture-in-picture");
       marco.setAttribute("allowfullscreen", "");
       marco.setAttribute("loading", "lazy");
@@ -229,41 +287,46 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
       p.classList.add("reproduciendo");
     }
 
+    function hhmm(min) {
+      return String(Math.floor(min / 60) % 24).padStart(2, "0") + ":" + String(min % 60).padStart(2, "0");
+    }
+
     function pintar() {
-      const { porSala, activas, ahora } = estado();
+      const { out, activas, ahora } = estado();
 
       pantallas.forEach((p) => {
-        const sala = p.getAttribute("data-sala");
-        const fuente = p.getAttribute("data-fuente");
-        const info = porSala[sala];
+        const clave = p.getAttribute("data-comp");
+        const info = out[clave] || { tipo: "espera" };
         const badge = p.querySelector("[data-dir-badge]");
         const sesion = p.querySelector("[data-dir-sesion]");
         const nota = p.querySelector("[data-dir-nota]");
         const play = p.querySelector("[data-dir-play]");
-        const enDirecto = !!info && info.tipo === "directo";
+        const enDirecto = info.tipo === "directo";
 
         p.classList.toggle("activa", enDirecto);
-        if (badge) badge.hidden = !enDirecto;
+        p.classList.toggle("terminada", info.tipo === "terminada");
+        badge.hidden = !enDirecto;
 
         if (enDirecto) {
-          sesion.textContent = info.sesion.n + (info.sesion.p ? " · " + info.sesion.p : "");
-          if (fuente) {
-            play.hidden = false;
-            nota.hidden = true;
-          } else {
-            play.hidden = true;
-            nota.hidden = false;
-            nota.textContent = T.sinEnlace;
-          }
+          // La cámara está en la sala, así que el enlace sale de la sala en la
+          // que compite ahora mismo.
+          const em = D.emisiones[info.s.r] || null;
+          p._emision = em;
+          const sala = D.salas[info.s.r] || info.s.r;
+          sesion.textContent = info.s.n + " · " + T.enSala + " " + sala;
+          if (em && em.fuente) { play.hidden = false; nota.hidden = true; }
+          else { play.hidden = true; nota.hidden = false; nota.textContent = T.sinEnlace; }
         } else {
           limpiarReproductor(p);
+          p._emision = null;
           play.hidden = true;
           nota.hidden = false;
-          if (info && info.tipo === "proxima") {
-            const h = String(Math.floor(info.ini / 60) % 24).padStart(2, "0") + ":" +
-                      String(info.ini % 60).padStart(2, "0");
-            sesion.textContent = T.luego + " · " + info.sesion.n;
-            nota.textContent = T.proximo + " " + h;
+          if (info.tipo === "proxima") {
+            sesion.textContent = T.luego + " · " + info.s.n;
+            nota.textContent = T.proximo + " " + hhmm(info.s.ini);
+          } else if (info.tipo === "terminada") {
+            sesion.textContent = "";
+            nota.textContent = T.terminada;
           } else {
             sesion.textContent = "";
             nota.textContent = T.sinEmision;
@@ -271,10 +334,23 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
         }
       });
 
+      // Con once pantallas, lo que está en directo tiene que estar arriba.
+      const peso = { directo: 0, proxima: 1, espera: 2, terminada: 3 };
+      pantallas.slice()
+        .sort((a, b) => {
+          const pa = peso[(out[a.getAttribute("data-comp")] || {}).tipo] ?? 2;
+          const pb = peso[(out[b.getAttribute("data-comp")] || {}).tipo] ?? 2;
+          return pa - pb || orden[a.getAttribute("data-comp")] - orden[b.getAttribute("data-comp")];
+        })
+        .forEach((p, i) => { p.style.order = String(i); });
+
       if (elEstado) {
-        const primerDia = dias[0], ultimoDia = dias[dias.length - 1];
-        const antes = primerDia && (ahora.mes < primerDia.mes || (ahora.mes === primerDia.mes && ahora.dia < primerDia.dia));
-        const despues = ultimoDia && (ahora.mes > ultimoDia.mes || (ahora.mes === ultimoDia.mes && ahora.dia > ultimoDia.dia));
+        const primera = comps.flatMap((c) => c.sesiones).reduce((a, s) =>
+          !a || s.mes < a.mes || (s.mes === a.mes && s.dia < a.dia) ? s : a, null);
+        const ultima = comps.flatMap((c) => c.sesiones).reduce((a, s) =>
+          !a || s.mes > a.mes || (s.mes === a.mes && s.dia > a.dia) ? s : a, null);
+        const antes = primera && (ahora.mes < primera.mes || (ahora.mes === primera.mes && ahora.dia < primera.dia));
+        const despues = ultima && (ahora.mes > ultima.mes || (ahora.mes === ultima.mes && ahora.dia > ultima.dia));
         elEstado.textContent = activas > 0
           ? (activas === 1 ? T.una : activas + " " + T.varias)
           : antes ? T.antesDelFestival
@@ -291,7 +367,6 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
 
     pintar();
     setInterval(pintar, 30000);
-    // Al volver a la pestaña se repinta ya, sin esperar al siguiente turno.
     document.addEventListener("visibilitychange", function () {
       if (!document.hidden) pintar();
     });
@@ -316,41 +391,49 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
     100% { box-shadow: 0 0 0 0 rgba(224, 32, 32, 0); opacity: 1; }
   }
 
-  .dir-estado {
-    margin: 26px 0 0; font-weight: 700; font-size: 17px;
-    color: var(--p-muted);
-  }
+  .dir-estado { margin: 26px 0 0; font-weight: 700; font-size: 17px; color: var(--p-muted); }
   .dir-estado.hay-directo { color: #c21818; }
   .dir-zona { margin: 4px 0 0; font-size: 14px; color: var(--p-muted); }
 
-  .dir-grid {
-    display: grid; gap: 26px;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  }
+  .dir-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); }
 
   .dir-pantalla {
     border: 1px solid var(--p-line); border-radius: var(--p-radius);
     overflow: hidden; background: #fff; min-width: 0;
-    transition: border-color .2s ease, box-shadow .2s ease;
+    transition: border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
   }
   .dir-pantalla.activa { border-color: #e02020; box-shadow: 0 0 0 1px #e02020; }
+  .dir-pantalla.terminada { opacity: .58; }
 
   .dir-marco { position: relative; aspect-ratio: 16 / 9; background: #0f0b1e; }
   .dir-cartel {
     position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; opacity: .34; max-width: 100%;
+    object-fit: cover; opacity: .38; max-width: 100%;
   }
+  /* Mientras no haya portada del diseñador, un fondo con el nombre. Cambia de
+     tono según la disciplina, para distinguirlas de un vistazo. */
+  /* Provisional hasta que lleguen las portadas del diseñador: el nombre va
+     arriba, no centrado, para no pisarse con el aviso del centro. */
   .dir-cartel-vacio {
-    background: linear-gradient(135deg, #1a1430 0%, #0f0b1e 60%, #241c3f 100%);
-    opacity: 1;
+    display: flex; align-items: flex-start; justify-content: flex-start;
+    padding: 18px 20px; opacity: 1;
   }
-  .dir-pantalla.activa .dir-cartel { opacity: .5; }
+  .dir-cartel-vacio span {
+    font-weight: 800; font-size: 12px; line-height: 1.3; text-transform: uppercase;
+    letter-spacing: .12em; color: rgba(255,255,255,.34);
+  }
+  [data-disc="bachata"] .dir-cartel-vacio { background: linear-gradient(140deg, #2a1536 0%, #0f0b1e 68%); }
+  [data-disc="salsa"] .dir-cartel-vacio { background: linear-gradient(140deg, #16263f 0%, #0f0b1e 68%); }
+  .dir-pantalla.activa .dir-cartel { opacity: .52; }
 
   .dir-capa {
     position: absolute; inset: 0; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 12px; padding: 20px; text-align: center;
   }
-  .dir-nota { margin: 0; color: rgba(255,255,255,.82); font-size: 14.5px; max-width: 30ch; }
+  .dir-nota {
+    margin: 0; color: rgba(255,255,255,.85); font-size: 14px; max-width: 30ch;
+    background: rgba(15,11,30,.55); border-radius: 999px; padding: 5px 14px;
+  }
 
   .dir-play {
     display: inline-flex; align-items: center; gap: 12px; cursor: pointer;
@@ -370,11 +453,11 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
 
   .dir-pie {
     display: flex; align-items: flex-start; justify-content: space-between;
-    gap: 14px; padding: 18px 22px 20px;
+    gap: 14px; padding: 17px 20px 19px;
   }
   .dir-pie-txt { min-width: 0; }
-  .dir-sala { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
-  .dir-sesion { margin: 5px 0 0; font-size: 14.5px; color: var(--p-muted); line-height: 1.45; }
+  .dir-comp { margin: 0; font-size: 17.5px; font-weight: 700; letter-spacing: -.012em; line-height: 1.25; }
+  .dir-sesion { margin: 5px 0 0; font-size: 14px; color: var(--p-muted); line-height: 1.45; }
 
   .dir-badge {
     display: inline-flex; align-items: center; gap: 7px; flex: 0 0 auto;
@@ -396,7 +479,7 @@ const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
   }
 
   @media (max-width: 560px) {
-    .dir-grid { grid-template-columns: 1fr; gap: 20px; }
+    .dir-grid { grid-template-columns: 1fr; gap: 18px; }
     .dir-h1 { gap: 12px; }
   }
 </style>
