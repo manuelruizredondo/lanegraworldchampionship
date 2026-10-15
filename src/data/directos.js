@@ -162,6 +162,7 @@ export const MES = 9; // octubre
 export const I18N = {
   es: {
     ruta: "/en-directo/",
+    og: "/img/og/en-directo.jpg",
     metaTitle: "En directo · La Negra Dance Festival",
     metaDesc: "Sigue las semifinales y las finales del Mundial, del 23 al 25 de octubre, en directo desde Calpe.",
     eyebrow: "Mundial de Pasos Libres · 2026",
@@ -186,6 +187,7 @@ export const I18N = {
   },
   en: {
     ruta: "/en/live/",
+    og: "/img/og/en-directo-en.jpg",
     metaTitle: "Live · La Negra Dance Festival",
     metaDesc: "Follow the World Championship semifinals and finals, 23 to 25 October, live from Calpe.",
     eyebrow: "Pasos Libres World Championship · 2026",
@@ -210,6 +212,7 @@ export const I18N = {
   },
   it: {
     ruta: "/it/in-diretta/",
+    og: "/img/og/en-directo-it.jpg",
     metaTitle: "In diretta · La Negra Dance Festival",
     metaDesc: "Segui le semifinali e le finali del Mondiale, dal 23 al 25 ottobre, in diretta da Calpe.",
     eyebrow: "Mondiale Pasos Libres · 2026",
