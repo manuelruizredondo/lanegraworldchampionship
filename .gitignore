@@ -12,3 +12,7 @@ public/comp-preview/
 # Python
 __pycache__/
 *.pyc
+
+# Los MOV del rótulo animado pesan cientos de MB: se regeneran con
+# scripts/rotulo-animado.py y no tienen por qué vivir en el repositorio.
+docs/rotulos/*.mov
