@@ -1,0 +1,9 @@
+---
+import Base from "@/layouts/Base.astro";
+import EnDirecto from "@/components/EnDirecto.astro";
+import { I18N } from "@/data/directos.js";
+const t = I18N["en"];
+---
+<Base title={t.metaTitle} description={t.metaDesc} lang="en">
+  <EnDirecto lang="en" />
+</Base>

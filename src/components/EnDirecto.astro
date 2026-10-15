@@ -1,0 +1,402 @@
+---
+// Página de directos: una pantalla por sala, y cada una se enciende sola
+// cuando en esa sala empieza algo, leyendo el horario de programa.js.
+//
+// El cálculo va en el navegador, no en el build: la página es estática y el
+// HTML se genera una vez, así que "qué hay ahora" tiene que resolverse en
+// tiempo real en el cliente. Se recalcula cada 30 s.
+import { PANTALLAS, ZONA, ANIO, I18N } from "@/data/directos.js";
+import { PROGRAMA, NOMBRES, I18N as PROG_I18N } from "@/data/programa.js";
+import { I18N as PROG } from "@/data/programa.js";
+
+const { lang = "es" } = Astro.props;
+const t = I18N[lang] || I18N.es;
+const tp = PROG_I18N[lang] || PROG_I18N.es;
+const RUTA_PROGRAMA = { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" }[lang];
+
+// Solo las salas que se emiten, y solo lo que la página necesita saber de
+// cada sesión. Así el JSON que viaja al navegador son unos pocos KB en vez de
+// los 48 de programa.js entero.
+const SALAS = PANTALLAS.map((p) => p.sala);
+const traduce = (n) => (lang === "es" ? n : (NOMBRES[lang] && NOMBRES[lang][n]) || n);
+
+const AGENDA = PROGRAMA.map((d) => ({
+  dia: (tp.days && tp.days[d.day]) || d.day,
+  fecha: d.date,
+  sesiones: d.sessions
+    .filter((s) => SALAS.includes(s.r))
+    .map((s) => ({ t: s.t, r: s.r, n: traduce(s.n), p: s.p || null })),
+})).filter((d) => d.sesiones.length > 0);
+
+const pantallas = PANTALLAS.map((p) => ({
+  ...p,
+  nombre: (tp.roomFull && tp.roomFull[p.sala]) || (tp.rooms && tp.rooms[p.sala]) || p.sala,
+}));
+
+const DATOS = { agenda: AGENDA, zona: ZONA, anio: ANIO, textos: {
+  directo: t.directo, ahora: t.ahora, luego: t.luego, enEspera: t.enEspera,
+  sinEmision: t.sinEmision, sinEnlace: t.sinEnlace, verAhora: t.verAhora,
+  proximo: t.proximo, ningunaActiva: t.ningunaActiva,
+  antesDelFestival: t.antesDelFestival, despuesDelFestival: t.despuesDelFestival,
+  una: t.salasActivas(1), varias: t.salasActivas(2).replace(/^2\s*/, ""),
+} };
+---
+
+<div class="prop">
+  <section class="p-section p-tight dir-top">
+    <div class="p-container">
+      <p class="p-eyebrow">{t.eyebrow}</p>
+      <h1 class="p-display dir-h1">
+        <span class="dir-rec" aria-hidden="true"></span>{t.h1}
+      </h1>
+      <p class="p-lead p-narrow">{t.lead}</p>
+
+      <p class="dir-estado" data-dir-estado role="status" aria-live="polite">{t.cargando}</p>
+      <p class="dir-zona">{t.horaLocal}</p>
+    </div>
+  </section>
+
+  <section class="p-section p-tight">
+    <div class="p-container">
+      <div class="dir-grid">
+        {pantallas.map((p) => (
+          <article class="dir-pantalla" data-sala={p.sala} data-tipo={p.tipo} data-fuente={p.fuente || ""}>
+            <div class="dir-marco">
+              {p.cartel
+                ? <img class="dir-cartel" src={p.cartel} alt="" loading="lazy" decoding="async" />
+                : <div class="dir-cartel dir-cartel-vacio"></div>}
+              <div class="dir-capa">
+                <button class="dir-play" type="button" data-dir-play hidden>
+                  <span class="dir-play-icono" aria-hidden="true"></span>
+                  <span class="dir-play-txt">{t.verAhora}</span>
+                </button>
+                <p class="dir-nota" data-dir-nota>{t.sinEmision}</p>
+              </div>
+              <div class="dir-reproductor" data-dir-reproductor hidden></div>
+            </div>
+            <div class="dir-pie">
+              <div class="dir-pie-txt">
+                <h2 class="dir-sala">{p.nombre}</h2>
+                <p class="dir-sesion" data-dir-sesion></p>
+              </div>
+              <span class="dir-badge" data-dir-badge hidden>
+                <span class="dir-badge-punto" aria-hidden="true"></span>{t.directo}
+              </span>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p class="dir-aviso">{t.avisoDatos}</p>
+      <p class="dir-acciones"><a class="p-btn p-btn-dark" href={RUTA_PROGRAMA}>{t.verPrograma}</a></p>
+    </div>
+  </section>
+</div>
+
+<script type="application/json" id="dir-datos" set:html={JSON.stringify(DATOS)} is:inline />
+
+<script>
+  (function () {
+    const nodo = document.getElementById("dir-datos");
+    if (!nodo) return;
+    const D = JSON.parse(nodo.textContent || "{}");
+    const T = D.textos || {};
+    const MESES = { ENE: 0, FEB: 1, MAR: 2, ABR: 3, MAY: 4, JUN: 5, JUL: 6, AGO: 7, SEP: 8, OCT: 9, NOV: 10, DIC: 11 };
+
+    // ── Hora de Calpe ────────────────────────────────────────────────────
+    // El festival es en España y el horario de programa.js está en hora local
+    // de allí. Quien mire desde México o Italia tiene que ver marcada la misma
+    // sala, así que se convierte la hora del dispositivo a la de Madrid en vez
+    // de usarla tal cual.
+    function ahoraEnSede() {
+      const f = new Intl.DateTimeFormat("en-CA", {
+        timeZone: D.zona, year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", hour12: false,
+      }).formatToParts(new Date());
+      const v = {};
+      f.forEach((p) => { v[p.type] = p.value; });
+      // Minutos desde el 1 de enero, en hora de sede. Sirve para comparar sin
+      // arrastrar husos ni horario de verano por segunda vez.
+      return {
+        dia: Number(v.day), mes: Number(v.month) - 1, anio: Number(v.year),
+        minutos: Number(v.hour === "24" ? 0 : v.hour) * 60 + Number(v.minute),
+      };
+    }
+
+    function aMinutos(hhmm) {
+      const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm.trim());
+      return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+    }
+
+    // "15:30 – 16:45" · "22:00 – 00:45" (cruza medianoche) · "22:00 – amanecer"
+    // · "Desde 00:30" (el baile social de madrugada, que no tiene hora de fin).
+    const AMANECER = 6 * 60;
+    function tramo(txt) {
+      const partes = String(txt).split(/\s*[–—-]\s*/);
+      if (partes.length === 2) {
+        const ini = aMinutos(partes[0]);
+        if (ini === null) return null;
+        const finTxt = partes[1].trim();
+        // "amanecer": se cierra a las 06:00 del día siguiente.
+        const fin = /amanecer|dawn|alba/i.test(finTxt) ? AMANECER : aMinutos(finTxt);
+        if (fin === null) return null;
+        return { ini, fin: fin <= ini ? fin + 1440 : fin };
+      }
+      // "Desde HH:MM" sin hora de fin. Solo cuenta como directo si empieza de
+      // madrugada o muy de noche: son los bailes sociales, que duran hasta el
+      // amanecer. Un "Desde 09:30" es la entrega de acreditaciones y no debe
+      // dejar la sala marcada en directo todo el día.
+      const suelta = /(\d{1,2}:\d{2})/.exec(String(txt));
+      if (suelta) {
+        const ini = aMinutos(suelta[1]);
+        if (ini !== null && (ini >= 22 * 60 || ini < 7 * 60)) {
+          return { ini, fin: ini < AMANECER ? AMANECER : AMANECER + 1440 };
+        }
+      }
+      return null;
+    }
+
+    const dias = (D.agenda || []).map((d) => {
+      const m = /^(\d{1,2})\s*([A-ZÁÉÍÓÚ]{3})/i.exec(d.fecha || "");
+      const dia = m ? Number(m[1]) : null;
+      const mes = m ? MESES[m[2].toUpperCase()] : null;
+      return { ...d, dia, mes };
+    }).filter((d) => d.dia !== null && d.mes !== null);
+
+    function estado() {
+      const n = ahoraEnSede();
+      const porSala = {};
+      let activas = 0;
+
+      dias.forEach((d) => {
+        // Minutos de "ahora" medidos desde las 00:00 de ESTE día del programa.
+        // Si ahora es el día siguiente, se le suman 1440: así una sesión que
+        // acaba a las 00:45 o al amanecer sigue contando como en directo.
+        let desplaz = null;
+        if (d.mes === n.mes && d.dia === n.dia) desplaz = n.minutos;
+        else if (d.mes === n.mes && d.dia === n.dia - 1) desplaz = n.minutos + 1440;
+        if (desplaz === null) return;
+
+        d.sesiones.forEach((s) => {
+          const r = tramo(s.t);
+          if (!r) return;
+          const viva = desplaz >= r.ini && desplaz < r.fin;
+          const previa = r.ini > desplaz && r.ini - desplaz <= 180;
+          if (viva) {
+            porSala[s.r] = { tipo: "directo", sesion: s, hora: s.t };
+            activas++;
+          } else if (previa && (!porSala[s.r] || (porSala[s.r].tipo === "proxima" && r.ini < porSala[s.r].ini))) {
+            if (!porSala[s.r] || porSala[s.r].tipo !== "directo") {
+              porSala[s.r] = { tipo: "proxima", sesion: s, ini: r.ini, hora: s.t };
+            }
+          }
+        });
+      });
+
+      return { porSala, activas, ahora: n };
+    }
+
+    // ── Pintado ──────────────────────────────────────────────────────────
+    const pantallas = Array.prototype.slice.call(document.querySelectorAll(".dir-pantalla"));
+    const elEstado = document.querySelector("[data-dir-estado]");
+
+    function limpiarReproductor(p) {
+      const caja = p.querySelector("[data-dir-reproductor]");
+      if (caja && caja.firstChild) { caja.innerHTML = ""; caja.hidden = true; }
+      p.classList.remove("reproduciendo");
+    }
+
+    function abrir(p) {
+      const tipo = p.getAttribute("data-tipo");
+      const fuente = p.getAttribute("data-fuente");
+      if (!fuente) return;
+      // Solo una sala sonando a la vez: cuatro directos simultáneos saturan la
+      // conexión y además se pisan los audios.
+      pantallas.forEach((o) => { if (o !== p) limpiarReproductor(o); });
+
+      const caja = p.querySelector("[data-dir-reproductor]");
+      const src = tipo === "youtube"
+        ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(fuente) + "?autoplay=1&rel=0"
+        : fuente;
+      const marco = document.createElement("iframe");
+      marco.src = src;
+      marco.title = (p.querySelector(".dir-sala") || {}).textContent || "";
+      marco.setAttribute("allow", "autoplay; fullscreen; picture-in-picture");
+      marco.setAttribute("allowfullscreen", "");
+      marco.setAttribute("loading", "lazy");
+      caja.appendChild(marco);
+      caja.hidden = false;
+      p.classList.add("reproduciendo");
+    }
+
+    function pintar() {
+      const { porSala, activas, ahora } = estado();
+
+      pantallas.forEach((p) => {
+        const sala = p.getAttribute("data-sala");
+        const fuente = p.getAttribute("data-fuente");
+        const info = porSala[sala];
+        const badge = p.querySelector("[data-dir-badge]");
+        const sesion = p.querySelector("[data-dir-sesion]");
+        const nota = p.querySelector("[data-dir-nota]");
+        const play = p.querySelector("[data-dir-play]");
+        const enDirecto = !!info && info.tipo === "directo";
+
+        p.classList.toggle("activa", enDirecto);
+        if (badge) badge.hidden = !enDirecto;
+
+        if (enDirecto) {
+          sesion.textContent = info.sesion.n + (info.sesion.p ? " · " + info.sesion.p : "");
+          if (fuente) {
+            play.hidden = false;
+            nota.hidden = true;
+          } else {
+            play.hidden = true;
+            nota.hidden = false;
+            nota.textContent = T.sinEnlace;
+          }
+        } else {
+          limpiarReproductor(p);
+          play.hidden = true;
+          nota.hidden = false;
+          if (info && info.tipo === "proxima") {
+            const h = String(Math.floor(info.ini / 60) % 24).padStart(2, "0") + ":" +
+                      String(info.ini % 60).padStart(2, "0");
+            sesion.textContent = T.luego + " · " + info.sesion.n;
+            nota.textContent = T.proximo + " " + h;
+          } else {
+            sesion.textContent = "";
+            nota.textContent = T.sinEmision;
+          }
+        }
+      });
+
+      if (elEstado) {
+        const primerDia = dias[0], ultimoDia = dias[dias.length - 1];
+        const antes = primerDia && (ahora.mes < primerDia.mes || (ahora.mes === primerDia.mes && ahora.dia < primerDia.dia));
+        const despues = ultimoDia && (ahora.mes > ultimoDia.mes || (ahora.mes === ultimoDia.mes && ahora.dia > ultimoDia.dia));
+        elEstado.textContent = activas > 0
+          ? (activas === 1 ? T.una : activas + " " + T.varias)
+          : antes ? T.antesDelFestival
+          : despues ? T.despuesDelFestival
+          : T.ningunaActiva;
+        elEstado.classList.toggle("hay-directo", activas > 0);
+      }
+    }
+
+    pantallas.forEach((p) => {
+      const b = p.querySelector("[data-dir-play]");
+      if (b) b.addEventListener("click", function () { abrir(p); });
+    });
+
+    pintar();
+    setInterval(pintar, 30000);
+    // Al volver a la pestaña se repinta ya, sin esperar al siguiente turno.
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) pintar();
+    });
+  })();
+</script>
+
+<style>
+  /* `display` gana al atributo `hidden`, y aquí hay varios inline-flex que lo
+     pisaban: sin esto salían a la vez el botón, el aviso y el rótulo rojo. */
+  .dir-pantalla [hidden] { display: none !important; }
+
+  .dir-top { padding-top: 20px; }
+  .dir-h1 { display: flex; align-items: center; gap: 18px; }
+  .dir-rec {
+    width: .42em; height: .42em; border-radius: 50%; background: #e02020;
+    flex: 0 0 auto; box-shadow: 0 0 0 0 rgba(224, 32, 32, .55);
+    animation: dir-latido 1.6s ease-out infinite;
+  }
+  @keyframes dir-latido {
+    0%   { box-shadow: 0 0 0 0 rgba(224, 32, 32, .55); opacity: 1; }
+    70%  { box-shadow: 0 0 0 .55em rgba(224, 32, 32, 0); opacity: .75; }
+    100% { box-shadow: 0 0 0 0 rgba(224, 32, 32, 0); opacity: 1; }
+  }
+
+  .dir-estado {
+    margin: 26px 0 0; font-weight: 700; font-size: 17px;
+    color: var(--p-muted);
+  }
+  .dir-estado.hay-directo { color: #c21818; }
+  .dir-zona { margin: 4px 0 0; font-size: 14px; color: var(--p-muted); }
+
+  .dir-grid {
+    display: grid; gap: 26px;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  }
+
+  .dir-pantalla {
+    border: 1px solid var(--p-line); border-radius: var(--p-radius);
+    overflow: hidden; background: #fff; min-width: 0;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .dir-pantalla.activa { border-color: #e02020; box-shadow: 0 0 0 1px #e02020; }
+
+  .dir-marco { position: relative; aspect-ratio: 16 / 9; background: #0f0b1e; }
+  .dir-cartel {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; opacity: .34; max-width: 100%;
+  }
+  .dir-cartel-vacio {
+    background: linear-gradient(135deg, #1a1430 0%, #0f0b1e 60%, #241c3f 100%);
+    opacity: 1;
+  }
+  .dir-pantalla.activa .dir-cartel { opacity: .5; }
+
+  .dir-capa {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 12px; padding: 20px; text-align: center;
+  }
+  .dir-nota { margin: 0; color: rgba(255,255,255,.82); font-size: 14.5px; max-width: 30ch; }
+
+  .dir-play {
+    display: inline-flex; align-items: center; gap: 12px; cursor: pointer;
+    border: 0; border-radius: 999px; padding: 13px 26px 13px 20px;
+    background: #fff; color: var(--p-ink); font: inherit; font-weight: 700; font-size: 15px;
+    transition: transform .15s ease;
+  }
+  .dir-play:hover { transform: translateY(-2px); }
+  .dir-play-icono {
+    width: 0; height: 0; border-left: 13px solid var(--p-ink);
+    border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+  }
+
+  .dir-reproductor { position: absolute; inset: 0; background: #000; }
+  .dir-reproductor :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .dir-pantalla.reproduciendo .dir-capa { display: none; }
+
+  .dir-pie {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 14px; padding: 18px 22px 20px;
+  }
+  .dir-pie-txt { min-width: 0; }
+  .dir-sala { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+  .dir-sesion { margin: 5px 0 0; font-size: 14.5px; color: var(--p-muted); line-height: 1.45; }
+
+  .dir-badge {
+    display: inline-flex; align-items: center; gap: 7px; flex: 0 0 auto;
+    background: #e02020; color: #fff; border-radius: 999px;
+    padding: 5px 13px 5px 11px; font-size: 12px; font-weight: 800; letter-spacing: .06em;
+  }
+  .dir-badge-punto {
+    width: 7px; height: 7px; border-radius: 50%; background: #fff;
+    animation: dir-parpadeo 1.3s steps(1, end) infinite;
+  }
+  @keyframes dir-parpadeo { 0%, 55% { opacity: 1; } 56%, 100% { opacity: .25; } }
+
+  .dir-aviso { margin: 28px 0 0; font-size: 14px; color: var(--p-muted); }
+  .dir-acciones { margin: 22px 0 0; }
+
+  /* Quien pide menos animación no ve parpadeos: el punto se queda fijo. */
+  @media (prefers-reduced-motion: reduce) {
+    .dir-rec, .dir-badge-punto { animation: none; }
+  }
+
+  @media (max-width: 560px) {
+    .dir-grid { grid-template-columns: 1fr; gap: 20px; }
+    .dir-h1 { gap: 12px; }
+  }
+</style>

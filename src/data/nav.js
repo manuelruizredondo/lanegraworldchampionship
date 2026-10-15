@@ -2,6 +2,7 @@
 
 export const MENU = {
   es: [
+    { label: "EN DIRECTO", href: "/en-directo/", live: true, sub: [] },
     { label: "FESTIVAL", href: "/festival/", sub: [
       { t: "FULL PASS", h: "/tu-pase/" },
       { t: "HOTEL", h: "/festival/#hotel" },
@@ -30,6 +31,7 @@ export const MENU = {
     ]},
   ],
   en: [
+    { label: "LIVE", href: "/en/live/", live: true, sub: [] },
     { label: "FESTIVAL", href: "/en/festival/", sub: [
       { t: "FULL PASS", h: "/en/your-pass/" },
       { t: "HOTEL", h: "/en/festival/#hotel" },
@@ -58,6 +60,7 @@ export const MENU = {
     ]},
   ],
   it: [
+    { label: "IN DIRETTA", href: "/it/in-diretta/", live: true, sub: [] },
     { label: "FESTIVAL", href: "/it/festival/", sub: [
       { t: "FULL PASS", h: "/it/your-pass/" },
       { t: "HOTEL", h: "/it/festival/#hotel" },

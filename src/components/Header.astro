@@ -75,8 +75,10 @@ const T = {
               </ul>
             </li>
           ) : (
-            <li class="menu-single">
-              <a href={item.href} {...(ext(item.href) ? { target: "_blank", rel: "noopener" } : {})}>{item.label}</a>
+            <li class:list={["menu-single", item.live && "menu-live"]}>
+              <a href={item.href} {...(ext(item.href) ? { target: "_blank", rel: "noopener" } : {})}>
+                {item.live && <span class="live-punto" aria-hidden="true"></span>}<span class="live-txt">{item.label}</span>
+              </a>
             </li>
           )
         ))}
@@ -229,6 +231,27 @@ const T = {
     letter-spacing: -.01em; text-transform: lowercase; transition: color .2s;
   }
   .menu-single { margin-bottom: 22px; }
+
+  /* «En directo»: punto rojo con latido, como el testigo de grabación. Va
+     dentro del enlace para que acompañe al texto en cualquier tamaño. */
+  .menu-live > a { display: inline-flex; align-items: center; gap: 11px; }
+  /* El ::first-letter del enlace ya no llega al texto, porque delante va el
+     punto. Se le pone al propio texto, que necesita ser inline-block para
+     que ::first-letter le aplique. */
+  .live-txt { display: inline-block; }
+  .live-txt::first-letter { text-transform: uppercase; }
+  .live-punto {
+    width: 10px; height: 10px; border-radius: 50%; background: #ff2d2d; flex: 0 0 auto;
+    box-shadow: 0 0 0 0 rgba(255, 45, 45, .6);
+    animation: live-latido 1.6s ease-out infinite;
+  }
+  @keyframes live-latido {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 45, 45, .6); opacity: 1; }
+    70%  { box-shadow: 0 0 0 9px rgba(255, 45, 45, 0); opacity: .7; }
+    100% { box-shadow: 0 0 0 0 rgba(255, 45, 45, 0); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .live-punto { animation: none; } }
+
   /* Solo la primera letra en mayúscula */
   .submenu a::first-letter, .menu-single > a::first-letter { text-transform: uppercase; }
   .submenu a:hover, .menu-single > a:hover { color: var(--gold); }

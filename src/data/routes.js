@@ -10,6 +10,7 @@ export const ROUTES = [
   { es: "/artistas/", en: "/en/artists/", it: "/it/artists/" },
   { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" },
   { es: "/ponencias/", en: "/en/talks/", it: "/it/conferenze/" },
+  { es: "/en-directo/", en: "/en/live/", it: "/it/in-diretta/" },
   // Nota: /programacion/, /en/schedule/, /it/programma/ y las antiguas /talleres/,
   // /en/workshops/ y /it/workshops/ se redirigen con 301 desde netlify.toml; se dejan
   // FUERA de ROUTES para no meterlas en el
