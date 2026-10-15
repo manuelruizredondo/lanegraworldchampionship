@@ -36,6 +36,8 @@
   .p-btn { display: inline-block; padding: 15px 30px; border-radius: 999px; font-weight: 700; font-size: 16px; text-decoration: none; white-space: nowrap; transition: transform .15s ease, opacity .2s, background .2s, color .2s; }
   .p-btn:hover { transform: translateY(-2px); }
   .p-btn-sm { padding: 11px 22px; font-size: 14px; }
+  .p-btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .p-center.p-btn-row, .p-center .p-btn-row { justify-content: center; }
   .p-btn-dark { background: var(--p-ink); color: #fff; }
   .p-btn-light { background: #fff; color: var(--p-ink); border: 1px solid var(--p-line); }
   .p-btn-outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
