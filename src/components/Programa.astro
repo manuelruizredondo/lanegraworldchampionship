@@ -245,7 +245,15 @@ const describe = (s) => {
                         <span class={"pr-kind kb-" + s.k}>{t.kind[s.k]}</span>
                       </div>
                     )}
-                    <span class="pr-card-time">{hora(s.t)}</span>
+                    {/* Dentro del recuadro, las pruebas del Mundial llevan
+                        solo la hora de comienzo: la de fin se mueve y confunde.
+                        La columna de horas de la izquierda no se toca.
+                        `th` permite dar a una sesión una hora propia distinta
+                        de su franja (la semifinal de solistas chicos empieza a
+                        las 13:30 pero cae en la franja de las 14:00). */}
+                    <span class="pr-card-time">
+                      {s.th || (s.k === "comp" ? hora(s.t).split(/\s*[–—-]\s*/)[0] : hora(s.t))}
+                    </span>
                     <h3 class="pr-title">{title(s)}</h3>
                     {s.p && (() => {
                       const p0 = s.p;

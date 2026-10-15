@@ -276,6 +276,12 @@ def titulo(s):
             # Masterclass / Ciclo…: fuera todo lo que precede a los dos puntos.
             n = re.sub(r"^[^:]{0,45}:\s*", "", n, count=1)
         n = n[:1].upper() + n[1:]
+    # Una sesión puede empezar a una hora distinta de la de su franja: la
+    # semifinal de solistas chicos es a las 13:30 pero cae en la fila de las
+    # 14:00. La columna de la izquierda no se toca, así que la hora real se
+    # pone junto al nombre de la actividad.
+    if s.get("th"):
+        n = f'{s["th"]} · {n}'
     return n
 
 
