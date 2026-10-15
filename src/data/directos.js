@@ -1,51 +1,82 @@
-// Emisiones en directo del festival, organizadas POR COMPETICIÓN.
+// Emisiones en directo del Mundial, organizadas POR COMPETICIÓN.
 //
-// Hay una pantalla por cada una de las 11 competiciones del Mundial, no por
-// sala. Cada pantalla se enciende cuando esa competición está en el escenario,
-// leyendo el horario de programa.js.
+// ── Importante ───────────────────────────────────────────────────────────
+// La parrilla de abajo NO sale de programa.js: sale del plan de producción
+// presupuestado, que es el que manda sobre qué se emite y a qué hora. Solo se
+// emiten TRES jornadas —viernes 23, sábado 24 y domingo 25— y algunos horarios
+// no coinciden con los de la programación del festival.
 //
-// ── Lo que hay que rellenar ───────────────────────────────────────────────
+// Si cambia el plan de producción, se cambia aquí y la página se ajusta sola.
 //
-// 1) EMISIONES: las cámaras son físicas y están en las salas, así que el
-//    enlace del directo se configura por sala. Una competición reproduce el
-//    enlace de la sala en la que esté compitiendo en ese momento.
+// ── Lo que hay que rellenar ──────────────────────────────────────────────
+// `fuente` de cada jornada en EMISIONES. Mientras esté vacío, la pantalla sale
+// en modo «aún no disponible», el testigo rojo del menú no se enciende y el
+// botón del hero de la home no aparece. Es decir: se puede publicar ya.
 //
-//      tipo: "youtube"  → `fuente` es el ID del vídeo o de la emisión
-//                         (lo que va detrás de ?v= o de youtu.be/)
-//      tipo: "iframe"   → `fuente` es la URL completa que dé el proveedor
+//   tipo: "vimeo"   → `fuente` es el ID numérico del vídeo de Vimeo
+//   tipo: "iframe"  → `fuente` es la URL completa del reproductor
 //
-//    Mientras `fuente` esté vacío la pantalla sale en modo «aún no
-//    disponible» y la página sigue funcionando: se puede publicar antes de
-//    tener los enlaces.
-//
-// 2) `portada` de cada competición: el cartel que diseñe el diseñador
-//    (pieza C de la hoja de trabajo de rótulos). Mientras sea null se pinta
-//    un fondo con el nombre, así que tampoco bloquea.
+// Cada jornada lleva su propia producción (un especialista de streaming, un
+// operador de cámara y una cámara fija), así que el enlace se configura por
+// día. Si un pase concreto tiene un iframe distinto, se le pueden poner
+// `fuente` y `tipo` propios en su línea de la parrilla y mandan sobre el día.
 
 export const EMISIONES = {
-  gs: { tipo: "youtube", fuente: "" },   // Gran Salón del Mundial
-  pb: { tipo: "youtube", fuente: "" },   // Piano Bar
+  23: { tipo: "vimeo", fuente: "" },   // Viernes 23
+  24: { tipo: "vimeo", fuente: "" },   // Sábado 24
+  25: { tipo: "vimeo", fuente: "" },   // Domingo 25
 };
 
-// Las 11 competiciones, en el orden en que se presentan.
+// ── Parrilla de emisión ──────────────────────────────────────────────────
+// `dia` es el día de octubre REAL del pase: los dos que empiezan pasada la
+// medianoche del viernes y del sábado van fechados en el día siguiente, que es
+// cuando ocurren de verdad.
 //
-// `busca` es cómo se reconoce una sesión de programa.js: tiene que casar la
-// disciplina y la modalidad. Los nombres del programa usan «Chicas/Chicos»
-// y «Dúos Mixtos», de ahí las expresiones. Ojo al orden de los términos:
-// «Dúos Chicas» y «Solistas Chicas» comparten palabra, por eso se busca la
-// modalidad entera y no solo el género.
+// `fin` marcado con «inferido»: el plan de producción solo daba la hora de
+// comienzo y se ha cerrado con la duración que da la programación del
+// festival. Conviene confirmarlos con realización.
+export const PARRILLA = [
+  // VIERNES 23
+  { dia: 23, ini: "13:00", fin: "14:50", comp: "bachata-solista-femenino",  titulo: "Semifinal Solistas Chicas" },   // fin inferido (dos pases: 13:00 y 14:00)
+  { dia: 23, ini: "16:00", fin: "17:50", comp: "salsa-solista-femenino",    titulo: "Semifinal Solistas Chicas" },   // fin inferido (dos pases: 16:00 y 17:00)
+  { dia: 23, ini: "18:00", fin: "18:45", comp: "bachata-solista-masculino", titulo: "Gran Final Solistas Chicos" },
+  { dia: 23, ini: "19:00", fin: "19:50", comp: "bachata-solista-femenino",  titulo: "Gran Final Solistas Chicas" },  // fin inferido
+  { dia: 23, ini: "22:00", fin: "23:00", comp: "salsa-duos-femeninos",      titulo: "Gran Final Dúos Chicas" },
+  // El plan ponía "23:00 a 00:30", que se solapaba con el pase siguiente de
+  // las 00:00. Se cierra a las 00:00, como en la programación del festival.
+  { dia: 23, ini: "23:00", fin: "00:00", comp: "salsa-duos-masculinos",     titulo: "Gran Final Dúos Chicos" },
+  { dia: 24, ini: "00:00", fin: "00:55", comp: "salsa-solista-femenino",    titulo: "Gran Final Solistas Chicas" },
+
+  // SÁBADO 24
+  { dia: 24, ini: "12:00", fin: "13:50", comp: "salsa-solista-masculino",   titulo: "Semifinal Solistas Chicos" },   // fin inferido (dos pases: 12:00 y 13:00)
+  { dia: 24, ini: "16:00", fin: "17:50", comp: "bachata-duos",              titulo: "Semifinal Dúos Mixtos" },       // fin inferido (dos pases: 16:00 y 17:00)
+  { dia: 24, ini: "18:00", fin: "19:50", comp: "salsa-parejas",             titulo: "Semifinal Parejas" },           // fin inferido (dos pases: 18:00 y 19:00)
+  // OJO: la programación del festival pone esta final a las 20:00 y el plan de
+  // producción a las 22:00. Se respeta el plan, que es el que se emite.
+  { dia: 24, ini: "22:00", fin: "23:00", comp: "salsa-solista-masculino",   titulo: "Gran Final Solistas Chicos" },
+  { dia: 24, ini: "23:00", fin: "00:55", comp: "salsa-equipos",             titulo: "Gran Final Equipos" },
+
+  // DOMINGO 25
+  { dia: 25, ini: "13:00", fin: "14:50", comp: "bachata-parejas",           titulo: "Gran Final Parejas" },
+  { dia: 25, ini: "17:00", fin: "18:00", comp: "bachata-duos",              titulo: "Gran Final Dúos Mixtos" },
+  { dia: 25, ini: "18:00", fin: "19:00", comp: "salsa-parejas",             titulo: "Gran Final Parejas" },
+  { dia: 25, ini: "19:00", fin: "21:00", comp: "bachata-equipos",           titulo: "Gran Final Equipos" },
+];
+
+// Las once competiciones. El orden en que se presentan en la página lo decide
+// la parrilla, no esta lista.
 export const COMPETICIONES = [
-  { clave: "bachata-solista-femenino",  disciplina: "bachata", busca: /Solistas Chicas/i,  portada: null },
-  { clave: "bachata-solista-masculino", disciplina: "bachata", busca: /Solistas Chicos/i,  portada: null },
-  { clave: "bachata-duos",              disciplina: "bachata", busca: /Dúos Mixtos/i,      portada: null },
-  { clave: "bachata-parejas",           disciplina: "bachata", busca: /Parejas/i,          portada: null },
-  { clave: "bachata-equipos",           disciplina: "bachata", busca: /Equipos/i,          portada: null },
-  { clave: "salsa-solista-femenino",    disciplina: "salsa",   busca: /Solistas Chicas/i,  portada: null },
-  { clave: "salsa-solista-masculino",   disciplina: "salsa",   busca: /Solistas Chicos/i,  portada: null },
-  { clave: "salsa-duos-femeninos",      disciplina: "salsa",   busca: /Dúos Chicas/i,      portada: null },
-  { clave: "salsa-duos-masculinos",     disciplina: "salsa",   busca: /Dúos Chicos/i,      portada: null },
-  { clave: "salsa-parejas",             disciplina: "salsa",   busca: /Parejas/i,          portada: null },
-  { clave: "salsa-equipos",             disciplina: "salsa",   busca: /Equipos/i,          portada: null },
+  { clave: "bachata-solista-femenino",  disciplina: "bachata", portada: null },
+  { clave: "bachata-solista-masculino", disciplina: "bachata", portada: null },
+  { clave: "bachata-duos",              disciplina: "bachata", portada: null },
+  { clave: "bachata-parejas",           disciplina: "bachata", portada: null },
+  { clave: "bachata-equipos",           disciplina: "bachata", portada: null },
+  { clave: "salsa-solista-femenino",    disciplina: "salsa",   portada: null },
+  { clave: "salsa-solista-masculino",   disciplina: "salsa",   portada: null },
+  { clave: "salsa-duos-femeninos",      disciplina: "salsa",   portada: null },
+  { clave: "salsa-duos-masculinos",     disciplina: "salsa",   portada: null },
+  { clave: "salsa-parejas",             disciplina: "salsa",   portada: null },
+  { clave: "salsa-equipos",             disciplina: "salsa",   portada: null },
 ];
 
 export const NOMBRES_COMP = {
@@ -90,33 +121,63 @@ export const NOMBRES_COMP = {
   },
 };
 
+// Títulos de los pases, para las versiones en inglés e italiano.
+export const TITULOS = {
+  en: {
+    "Semifinal Solistas Chicas": "Women's Solo Semifinal",
+    "Semifinal Solistas Chicos": "Men's Solo Semifinal",
+    "Gran Final Solistas Chicas": "Women's Solo Grand Final",
+    "Gran Final Solistas Chicos": "Men's Solo Grand Final",
+    "Gran Final Dúos Chicas": "Women's Duos Grand Final",
+    "Gran Final Dúos Chicos": "Men's Duos Grand Final",
+    "Semifinal Dúos Mixtos": "Mixed Duos Semifinal",
+    "Gran Final Dúos Mixtos": "Mixed Duos Grand Final",
+    "Semifinal Parejas": "Couples Semifinal",
+    "Gran Final Parejas": "Couples Grand Final",
+    "Gran Final Equipos": "Teams Grand Final",
+  },
+  it: {
+    "Semifinal Solistas Chicas": "Semifinale Soliste Donne",
+    "Semifinal Solistas Chicos": "Semifinale Solisti Uomini",
+    "Gran Final Solistas Chicas": "Gran Finale Soliste Donne",
+    "Gran Final Solistas Chicos": "Gran Finale Solisti Uomini",
+    "Gran Final Dúos Chicas": "Gran Finale Duo Donne",
+    "Gran Final Dúos Chicos": "Gran Finale Duo Uomini",
+    "Semifinal Dúos Mixtos": "Semifinale Duo Misti",
+    "Gran Final Dúos Mixtos": "Gran Finale Duo Misti",
+    "Semifinal Parejas": "Semifinale Coppie",
+    "Gran Final Parejas": "Gran Finale Coppie",
+    "Gran Final Equipos": "Gran Finale Team",
+  },
+};
+
 // El festival se celebra en España: lo que está «en directo ahora» se calcula
-// siempre en hora de Madrid, no en la del dispositivo de quien mira. Si no,
-// alguien en México vería la competición equivocada marcada como activa.
+// siempre en hora de Madrid, no en la del dispositivo de quien mira.
 export const ZONA = "Europe/Madrid";
+export const ANIO = 2026;
+export const MES = 9; // octubre
 
 export const I18N = {
   es: {
     ruta: "/en-directo/",
     metaTitle: "En directo · La Negra Dance Festival",
-    metaDesc: "Sigue en directo el XV Mundial de Pasos Libres desde Calpe: las once competiciones emitiendo en vivo, del 21 al 25 de octubre de 2026.",
+    metaDesc: "Sigue en directo el XV Mundial de Pasos Libres desde Calpe: las semifinales y grandes finales, del 23 al 25 de octubre de 2026.",
     eyebrow: "Mundial de Pasos Libres · 2026",
     h1: "En directo",
-    lead: "Las once competiciones del Mundial, en vivo desde Calpe. Cada pantalla se enciende sola cuando esa competición sale al escenario.",
+    lead: "Las semifinales y las grandes finales del Mundial, en vivo desde Calpe. Cada pantalla se enciende sola cuando esa competición sale al escenario.",
+    jornadas: "Se emiten las jornadas del viernes 23, el sábado 24 y el domingo 25.",
     menu: "EN DIRECTO",
     directo: "EN DIRECTO",
     luego: "A continuación",
-    sinEmision: "No está compitiendo ahora mismo.",
     sinEnlace: "El directo se activará durante el festival.",
     verAhora: "Ver en directo",
     cargando: "Un momento…",
     activas: (n) => (n === 1 ? "1 competición en directo" : n + " competiciones en directo"),
     ningunaActiva: "Ahora mismo no hay ninguna competición en el escenario.",
-    antesDelFestival: "El directo empieza el miércoles 21 de octubre.",
-    despuesDelFestival: "El festival ha terminado. Los vídeos se publicarán en los próximos días.",
+    antesDelFestival: "El directo empieza el viernes 23 de octubre.",
+    despuesDelFestival: "El Mundial ha terminado. Los vídeos se publicarán en los próximos días.",
     proximo: "Empieza a las",
     terminada: "Terminada",
-    enSala: "en",
     verPrograma: "Ver la programación completa",
     horaLocal: "Horario de Calpe (España)",
     avisoDatos: "El directo consume bastantes datos. Si estás fuera de casa, mejor con wifi.",
@@ -124,24 +185,23 @@ export const I18N = {
   en: {
     ruta: "/en/live/",
     metaTitle: "Live · La Negra Dance Festival",
-    metaDesc: "Watch the XV Pasos Libres World Championship live from Calpe: all eleven competitions streaming, 21–25 October 2026.",
+    metaDesc: "Watch the XV Pasos Libres World Championship live from Calpe: semifinals and grand finals, 23–25 October 2026.",
     eyebrow: "Pasos Libres World Championship · 2026",
     h1: "Live",
-    lead: "The championship's eleven competitions, live from Calpe. Each screen switches itself on when that competition takes the stage.",
+    lead: "The championship's semifinals and grand finals, live from Calpe. Each screen switches itself on when that competition takes the stage.",
+    jornadas: "Friday 23, Saturday 24 and Sunday 25 are broadcast.",
     menu: "LIVE",
     directo: "LIVE",
     luego: "Up next",
-    sinEmision: "Not competing right now.",
     sinEnlace: "The stream goes live during the festival.",
     verAhora: "Watch live",
     cargando: "One moment…",
     activas: (n) => (n === 1 ? "1 competition live" : n + " competitions live"),
     ningunaActiva: "No competition is on stage right now.",
-    antesDelFestival: "The stream starts on Wednesday 21 October.",
-    despuesDelFestival: "The festival is over. Videos will go up over the next few days.",
+    antesDelFestival: "The stream starts on Friday 23 October.",
+    despuesDelFestival: "The championship is over. Videos will go up over the next few days.",
     proximo: "Starts at",
     terminada: "Finished",
-    enSala: "in",
     verPrograma: "See the full programme",
     horaLocal: "Calpe time (Spain)",
     avisoDatos: "Live video uses a lot of data. On the move, wifi is a better idea.",
@@ -149,24 +209,23 @@ export const I18N = {
   it: {
     ruta: "/it/in-diretta/",
     metaTitle: "In diretta · La Negra Dance Festival",
-    metaDesc: "Segui in diretta il XV Mondiale Pasos Libres da Calpe: le undici competizioni in streaming, dal 21 al 25 ottobre 2026.",
+    metaDesc: "Segui in diretta il XV Mondiale Pasos Libres da Calpe: semifinali e gran finali, dal 23 al 25 ottobre 2026.",
     eyebrow: "Mondiale Pasos Libres · 2026",
     h1: "In diretta",
-    lead: "Le undici competizioni del Mondiale, in diretta da Calpe. Ogni schermo si accende da solo quando quella competizione sale sul palco.",
+    lead: "Le semifinali e le gran finali del Mondiale, in diretta da Calpe. Ogni schermo si accende da solo quando quella competizione sale sul palco.",
+    jornadas: "Si trasmettono le giornate di venerdì 23, sabato 24 e domenica 25.",
     menu: "IN DIRETTA",
     directo: "IN DIRETTA",
     luego: "A seguire",
-    sinEmision: "Non è in gara in questo momento.",
     sinEnlace: "La diretta si attiverà durante il festival.",
     verAhora: "Guarda in diretta",
     cargando: "Un momento…",
     activas: (n) => (n === 1 ? "1 competizione in diretta" : n + " competizioni in diretta"),
     ningunaActiva: "In questo momento nessuna competizione è sul palco.",
-    antesDelFestival: "La diretta inizia mercoledì 21 ottobre.",
-    despuesDelFestival: "Il festival è finito. I video saranno pubblicati nei prossimi giorni.",
+    antesDelFestival: "La diretta inizia venerdì 23 ottobre.",
+    despuesDelFestival: "Il Mondiale è finito. I video saranno pubblicati nei prossimi giorni.",
     proximo: "Inizia alle",
     terminada: "Conclusa",
-    enSala: "in",
     verPrograma: "Vedi il programma completo",
     horaLocal: "Orario di Calpe (Spagna)",
     avisoDatos: "La diretta consuma parecchi dati. Fuori casa, meglio con il wifi.",

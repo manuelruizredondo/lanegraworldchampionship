@@ -2,16 +2,17 @@
 // Página de directos: una pantalla por competición (las once del Mundial), y
 // cada una se enciende sola cuando esa competición sale al escenario.
 //
-// El horario sale de directos-horario.js, que lo deriva de programa.js en el
-// build. Aquí solo se ordena y se pinta. El "qué hay ahora" sí se resuelve en
-// el navegador, porque la página es estática: se recalcula cada 30 s.
-import { COMPETICIONES, NOMBRES_COMP, EMISIONES, ZONA, I18N } from "@/data/directos.js";
+// El horario sale de directos-horario.js, que lo deriva de la PARRILLA de
+// emisión (el plan de producción), no de programa.js: solo se emiten tres
+// jornadas y algunos horarios no coinciden con los del festival.
+//
+// Aquí solo se ordena y se pinta. El "qué hay ahora" se resuelve en el
+// navegador, porque la página es estática: se recalcula cada 30 s.
+import { COMPETICIONES, NOMBRES_COMP, ZONA, I18N } from "@/data/directos.js";
 import { horarioPorCompeticion } from "@/data/directos-horario.js";
-import { I18N as PROG_I18N } from "@/data/programa.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
-const tp = PROG_I18N[lang] || PROG_I18N.es;
 const nombres = NOMBRES_COMP[lang] || NOMBRES_COMP.es;
 const RUTA_PROGRAMA = { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" }[lang];
 
@@ -31,7 +32,6 @@ const pantallas = COMPETICIONES.map((c) => ({
 
 const DATOS = {
   zona: ZONA,
-  emisiones: EMISIONES,
   comps: pantallas.map((p) => ({ clave: p.clave, sesiones: p.sesiones })),
   textos: {
     directo: t.directo, luego: t.luego, sinEnlace: t.sinEnlace,
@@ -52,7 +52,7 @@ const DATOS = {
       </h1>
       <p class="p-lead p-narrow">{t.lead}</p>
       <p class="dir-estado" data-dir-estado role="status" aria-live="polite">{t.cargando}</p>
-      <p class="dir-zona">{t.horaLocal}</p>
+      <p class="dir-zona">{t.jornadas} · {t.horaLocal}</p>
     </div>
   </section>
 
@@ -90,7 +90,7 @@ const DATOS = {
                   <li class="dir-hora" data-i={i}>
                     <span class="dir-hora-dia">{s.etiqueta}</span>
                     <span class="dir-hora-h">{s.hora}</span>
-                    <span class="dir-hora-sala">{s.sala}</span>
+                    <span class="dir-hora-n">{s.n}</span>
                   </li>
                 ))}
               </ul>
@@ -113,30 +113,13 @@ const DATOS = {
     if (!nodo) return;
     const D = JSON.parse(nodo.textContent || "{}");
     const T = D.textos || {};
-    // ── Hora de Calpe ────────────────────────────────────────────────────
-    // El festival es en España y el horario de programa.js está en hora local
-    // de allí. Quien mire desde México o Italia tiene que ver marcada la misma
-    // competición, así que se convierte la hora del dispositivo a la de Madrid.
-    function ahoraEnSede() {
-      const partes = new Intl.DateTimeFormat("en-CA", {
-        timeZone: D.zona, year: "numeric", month: "2-digit", day: "2-digit",
-        hour: "2-digit", minute: "2-digit", hour12: false,
-      }).formatToParts(new Date());
-      const v = {};
-      partes.forEach((p) => { v[p.type] = p.value; });
-      return {
-        dia: Number(v.day), mes: Number(v.month) - 1,
-        minutos: Number(v.hour === "24" ? 0 : v.hour) * 60 + Number(v.minute),
-      };
-    }
-
-    // Las sesiones llegan ya resueltas desde el build: día, mes y minutos de
-    // inicio y fin. Aquí solo se comparan números.
+    // Cada pase trae ya calculados `desde` y `hasta` en milisegundos UTC, con
+    // el cambio de hora del domingo 25 resuelto en el build. Aquí basta con
+    // comparar relojes: no hace falta saber nada de husos.
     const comps = D.comps || [];
-    const momento = (s) => s.dia * 1440 + s.ini;
 
     function estado() {
-      const n = ahoraEnSede();
+      const t = Date.now();
       const out = {};
       let activas = 0;
 
@@ -145,34 +128,17 @@ const DATOS = {
         const pasadas = [];
 
         c.sesiones.forEach((s, i) => {
-          // Minutos de "ahora" contados desde las 00:00 del día de la sesión.
-          // Si ya es el día siguiente se suman 1440, y así una sesión que acaba
-          // a las 00:50 sigue contando como en directo.
-          let desplaz = null;
-          if (s.mes === n.mes && s.dia === n.dia) desplaz = n.minutos;
-          else if (s.mes === n.mes && s.dia === n.dia - 1) desplaz = n.minutos + 1440;
-
-          if (desplaz !== null && desplaz >= s.ini && desplaz < s.fin) { viva = s; vivaI = i; return; }
-
-          // ¿Está por venir? O es de un día posterior, o es de hoy y todavía
-          // no ha empezado. La próxima es la primera de todas las que quedan,
-          // sea hoy o dentro de tres días: así cada tarjeta dice siempre a qué
-          // hora le toca.
-          const futura = (s.mes > n.mes) || (s.mes === n.mes && s.dia > n.dia) ||
-                         (desplaz !== null && s.ini > desplaz);
-          if (futura) {
-            if (!sig || momento(s) < momento(sig)) { sig = s; sigI = i; }
-          } else {
-            pasadas.push(i);
-          }
+          if (t >= s.desde && t < s.hasta) { viva = s; vivaI = i; }
+          else if (t < s.desde) { if (!sig || s.desde < sig.desde) { sig = s; sigI = i; } }
+          else pasadas.push(i);
         });
 
-        if (viva) { out[c.clave] = { tipo: "directo", s: viva, i: vivaI, pasadas, orden: momento(viva) }; activas++; }
-        else if (sig) out[c.clave] = { tipo: "proxima", s: sig, i: sigI, pasadas, orden: momento(sig) };
+        if (viva) { out[c.clave] = { tipo: "directo", s: viva, i: vivaI, pasadas, orden: viva.desde }; activas++; }
+        else if (sig) out[c.clave] = { tipo: "proxima", s: sig, i: sigI, pasadas, orden: sig.desde };
         else out[c.clave] = { tipo: "terminada", pasadas, orden: Infinity };
       });
 
-      return { out, activas, ahora: n };
+      return { out, activas, ahora: t };
     }
 
     // ── Pintado ──────────────────────────────────────────────────────────
@@ -196,7 +162,9 @@ const DATOS = {
       pantallas.forEach((o) => { if (o !== p) limpiarReproductor(o); });
 
       const caja = p.querySelector("[data-dir-reproductor]");
-      const src = em.tipo === "youtube"
+      const src = em.tipo === "vimeo"
+        ? "https://player.vimeo.com/video/" + encodeURIComponent(em.fuente) + "?autoplay=1"
+        : em.tipo === "youtube"
         ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(em.fuente) + "?autoplay=1&rel=0"
         : em.fuente;
       const marco = document.createElement("iframe");
@@ -241,10 +209,10 @@ const DATOS = {
         if (enDirecto) {
           // La cámara está en la sala, así que el enlace sale de la sala en la
           // que compite ahora mismo.
-          const em = D.emisiones[info.s.r] || null;
+          const em = info.s.emision || null;
           p._emision = em;
           sesion.textContent = info.s.hora + " · " + info.s.n;
-          if (em && em.fuente) { play.hidden = false; nota.hidden = true; }
+          if (em) { play.hidden = false; nota.hidden = true; }
           else { play.hidden = true; nota.hidden = false; nota.textContent = T.sinEnlace; }
         } else {
           limpiarReproductor(p);
@@ -273,16 +241,13 @@ const DATOS = {
         .forEach(function (p, i) { p.style.order = String(i); });
 
       if (elEstado) {
-        const primera = comps.flatMap((c) => c.sesiones).reduce((a, s) =>
-          !a || s.mes < a.mes || (s.mes === a.mes && s.dia < a.dia) ? s : a, null);
-        const ultima = comps.flatMap((c) => c.sesiones).reduce((a, s) =>
-          !a || s.mes > a.mes || (s.mes === a.mes && s.dia > a.dia) ? s : a, null);
-        const antes = primera && (ahora.mes < primera.mes || (ahora.mes === primera.mes && ahora.dia < primera.dia));
-        const despues = ultima && (ahora.mes > ultima.mes || (ahora.mes === ultima.mes && ahora.dia > ultima.dia));
+        const todos = comps.reduce(function (a, c) { return a.concat(c.sesiones); }, []);
+        const primera = Math.min.apply(null, todos.map(function (s) { return s.desde; }));
+        const ultima = Math.max.apply(null, todos.map(function (s) { return s.hasta; }));
         elEstado.textContent = activas > 0
           ? (activas === 1 ? T.una : activas + " " + T.varias)
-          : antes ? T.antesDelFestival
-          : despues ? T.despuesDelFestival
+          : ahora < primera ? T.antesDelFestival
+          : ahora >= ultima ? T.despuesDelFestival
           : T.ningunaActiva;
         elEstado.classList.toggle("hay-directo", activas > 0);
       }
@@ -400,7 +365,7 @@ const DATOS = {
     font-variant-numeric: tabular-nums;
   }
   .dir-hora-dia { font-weight: 700; color: var(--p-ink); opacity: .72; }
-  .dir-hora-sala { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dir-hora-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .dir-hora.pasada { opacity: .42; }
   .dir-hora.pasada .dir-hora-h { text-decoration: line-through; }
   .dir-hora.ahora { color: #c21818; font-weight: 700; }
