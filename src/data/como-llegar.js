@@ -100,9 +100,6 @@ export const I18N = {
     cocheTxt: "Por la AP-7 (autopista de peaje), salida 64, Altea/Calpe. La N-332 es la alternativa gratuita y va paralela a la costa: se tarda algo más, pero el paisaje lo compensa. El hotel tiene aparcamiento.",
     cocheBtn: "Abrir la ruta en Google Maps",
 
-    dudasTitulo: "¿Te queda alguna duda?",
-    dudasTxt: "Escríbenos y te ayudamos a organizar la llegada.",
-    dudasBtn: "Contacto",
   },
 
   en: {
@@ -144,9 +141,6 @@ export const I18N = {
     cocheTxt: "Take the AP-7 toll motorway, exit 64, Altea/Calpe. The N-332 is the free alternative and runs along the coast: a little slower, but the views make up for it. The hotel has parking.",
     cocheBtn: "Open directions in Google Maps",
 
-    dudasTitulo: "Still have a question?",
-    dudasTxt: "Write to us and we'll help you plan your arrival.",
-    dudasBtn: "Contact",
   },
 
   it: {
@@ -188,8 +182,5 @@ export const I18N = {
     cocheTxt: "Dalla AP-7 (autostrada a pedaggio), uscita 64, Altea/Calpe. La N-332 è l'alternativa gratuita e costeggia il mare: si impiega un po' di più, ma il paesaggio ripaga. L'hotel ha parcheggio.",
     cocheBtn: "Apri il percorso su Google Maps",
 
-    dudasTitulo: "Hai ancora qualche dubbio?",
-    dudasTxt: "Scrivici e ti aiutiamo a organizzare l'arrivo.",
-    dudasBtn: "Contatti",
   },
 };
