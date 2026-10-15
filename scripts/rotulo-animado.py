@@ -26,13 +26,16 @@ from PIL import Image, ImageFilter
 from scipy import ndimage
 
 FPS = 25
-F_ENTRADA = 50            # 2 s
+F_ENTRADA = 60            # 2,4 s
 F_BUCLE = 100             # 4 s
 DUR_BUCLE = F_BUCLE / FPS
 
 CORTE_CHAPA = 352         # a la izquierda, la chapa del logo; a la derecha, el banner
 ORO = np.array([255, 214, 120], np.float32)
 FONDO_PREVIEW = "public/img/2025/03/lanegra-dance-festival-slide-2.webp"
+# Verde de croma estándar. El arte es azul y oro, así que no hay color del
+# rótulo que se parezca y el recorte sale limpio.
+VERDE = np.array([0, 177, 64], np.float32)
 
 
 def suave(t):
@@ -126,11 +129,29 @@ def fotograma(rgb, alfa, peso, fase, k, halo, t, prog_banner, prog_chapa):
 
 
 
-def escribe(ruta, fotogramas, W, H, alfa=True):
+def sobre_verde(fr):
+    """Compone el fotograma RGBA sobre el verde de croma."""
+    c = fr.astype(np.float32)
+    al = c[..., 3:4] / 255.0
+    return np.clip(c[..., :3] * al + VERDE * (1 - al), 0, 255).astype(np.uint8)
+
+
+def escribe(ruta, fotogramas, W, H, alfa=True, codec="prores4444"):
     if alfa:
         cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
                "-f", "rawvideo", "-pix_fmt", "rgba", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                "-c:v", "prores_ks", "-profile:v", "4444", "-pix_fmt", "yuva444p10le", ruta]
+    elif codec == "prores422":
+        # Para cromar hace falta croma sin submuestrear en exceso: 4:2:2 da un
+        # recorte mucho más limpio que el 4:2:0 de un MP4 normal.
+        cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+               "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+               "-c:v", "prores_ks", "-profile:v", "3", "-pix_fmt", "yuv422p10le", ruta]
+    elif codec == "h264-444":
+        cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
+               "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+               "-c:v", "libx264", "-pix_fmt", "yuv444p", "-crf", "14",
+               "-movflags", "+faststart", ruta]
     else:
         cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
                "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
@@ -182,7 +203,10 @@ def main(origen, destino):
         esc = 0.62 + 0.38 * rebote(p)
         nw, nh = max(1, round(CW * esc)), max(1, round(CH * esc))
         pieza = np.asarray(chapa_img.resize((nw, nh), Image.LANCZOS)).astype(np.float32)
-        pieza[..., 3] *= suave(p / 0.55)                     # entra fundiendo
+        # Entra opaca, solo creciendo. Un fundido dejaría la chapa
+        # semitransparente durante medio segundo, y eso sobre el verde de croma
+        # se tiñe y no hay forma de recortarlo limpio.
+        pieza[..., 3] *= suave(p / 0.12)                     # solo el primer destello
         x0, y0 = round(ccx - nw / 2), round(ccy - nh / 2)
         # Recorte por si el rebote se sale del lienzo.
         sx0, sy0 = max(0, -x0), max(0, -y0)
@@ -210,9 +234,12 @@ def main(origen, destino):
 
     # La entrada ocupa el tiempo ANTERIOR al bucle, para encadenar sin salto.
     t0 = -F_ENTRADA / FPS
+    # Primero aterriza la chapa y, cuando ya está, el banner sale de detrás
+    # hacia la derecha. Se solapan un poco (el banner arranca en .28, con la
+    # chapa aún asentándose) para que no parezcan dos animaciones pegadas.
     entrada = list(serie(F_ENTRADA, t0,
-                         lambda p: np.clip(p / .78, 0, 1),
-                         lambda p: np.clip((p - .18) / .42, 0, 1)))
+                         lambda p: np.clip((p - .28) / .62, 0, 1),
+                         lambda p: np.clip(p / .40, 0, 1)))
     bucle = list(serie(F_BUCLE, 0, lambda p: 1.0, lambda p: 1.0))
 
     print("\nCon canal alfa, para realización:")
@@ -233,6 +260,15 @@ def main(origen, destino):
         al = (c[..., 3:4] / 255.0)
         out[py:py + nh, px:px + nw] = c[..., :3] * al + out[py:py + nh, px:px + nw] * (1 - al)
         return out.astype(np.uint8)
+
+    print("\nCon fondo verde, para cromar:")
+    escribe(os.path.join(destino, "rotulo-entrada-chroma.mov"),
+            (sobre_verde(f) for f in entrada), W, H, alfa=False, codec="prores422")
+    escribe(os.path.join(destino, "rotulo-bucle-chroma.mov"),
+            (sobre_verde(f) for f in bucle), W, H, alfa=False, codec="prores422")
+    escribe(os.path.join(destino, "rotulo-chroma.mp4"),
+            (sobre_verde(f) for f in (entrada + bucle + bucle)), W, H,
+            alfa=False, codec="h264-444")
 
     print("\nVista previa:")
     escribe(os.path.join(destino, "rotulo-preview.mp4"),
