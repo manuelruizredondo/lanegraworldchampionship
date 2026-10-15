@@ -11,6 +11,20 @@ import { MAX_VOTOS } from "@/data/danij.js";
 import { PROGRAMA, ROOMS } from "@/data/programa.js";
 
 const DIAS = PROGRAMA.map((d) => d.short);
+
+// Todas las sesiones que se pueden marcar como favoritas, con la MISMA clave
+// que compone el botón de la programación (`${díaÍndice}|${franja}|${sala}|
+// ${nombre}`). Se mandan al panel para poder listar también las que están a
+// cero: la vista `favoritos_recuento` solo trae las que alguien ha marcado, y
+// sin esto no hay forma de saber qué taller no ha querido nadie, que es justo
+// lo que interesa para decidir salas y aforos.
+const SESIONES = [];
+PROGRAMA.forEach((d, di) => {
+  d.sessions.forEach((x) => {
+    if (x.r === "full") return;            // comidas y avisos no son marcables
+    SESIONES.push({ clave: `${di}|${x.t}|${x.r}|${x.n}`, titulo: x.n, dia: di, sala: x.r });
+  });
+});
 ---
 
 <div class="panel-org" data-panel-org hidden>
@@ -54,8 +68,10 @@ const DIAS = PROGRAMA.map((d) => d.short);
       <div class="kpi"><span class="kpi-n" data-k="quienes">—</span><span class="kpi-l">Personas que han marcado</span></div>
     </div>
     <p class="adm-nota">
-      Solo cuenta lo que se ha guardado en una cuenta o con un email. Quien marca favoritos
-      y no inicia sesión los tiene únicamente en su móvil, y eso no llega hasta aquí.
+      Están todas las sesiones de la programación, también las que no ha marcado nadie:
+      salen atenuadas y con un cero. Solo cuenta lo que se ha guardado en una cuenta o con
+      un email: quien marca favoritos sin iniciar sesión los tiene únicamente en su móvil,
+      y eso no llega hasta aquí.
     </p>
     <div class="adm-tabla-wrap">
       <table class="adm-tabla">
@@ -105,7 +121,7 @@ const DIAS = PROGRAMA.map((d) => d.short);
   </div>
 </div>
 
-<script is:inline define:vars={{ DIAS, ROOMS }}>
+<script is:inline define:vars={{ DIAS, ROOMS, SESIONES }}>
   (function () {
     const raiz = document.querySelector("[data-panel-org]");
     if (!raiz) return;
@@ -145,7 +161,17 @@ const DIAS = PROGRAMA.map((d) => d.short);
       $("[data-msg]").textContent = fallo ? fallo.error.message : "";
 
       datos.canciones = rank.data || [];
-      datos.talleres = favs.data || [];
+      // Se parte de todas las sesiones a cero y se les superpone el recuento.
+      // Si queda alguna clave antigua en la base (porque el programa cambió
+      // después de que alguien la marcara) se añade igual: es un dato real.
+      const porClave = new Map(SESIONES.map((x, i) => [x.clave, { ...x, personas: 0, orden: i }]));
+      (favs.data || []).forEach((f) => {
+        const ya = porClave.get(f.clave);
+        if (ya) ya.personas = f.personas;
+        else porClave.set(f.clave, { ...f, orden: 1e6 });
+      });
+      datos.talleres = [...porClave.values()]
+        .sort((a, b) => b.personas - a.personas || a.orden - b.orden);
       datos.cuentas = perfiles.data || [];
       datos.newsletter = subs.data || [];
 
@@ -155,7 +181,7 @@ const DIAS = PROGRAMA.map((d) => d.short);
       kpi("conVoto", (r && r.canciones_con_voto) || 0);
 
       const crudos = favsCrudos.data || [];
-      kpi("sesiones", datos.talleres.length);
+      kpi("sesiones", datos.talleres.filter((x) => x.personas > 0).length);
       kpi("marcas", crudos.length);
       kpi("quienes", new Set(crudos.map((f) => f.email)).size);
 
@@ -180,9 +206,11 @@ const DIAS = PROGRAMA.map((d) => d.short);
       ], "Todavía no hay votos.");
 
       tabla("talleres", datos.talleres, (x, i) => [
-        [i + 1, "pos"], [x.titulo || x.clave, "cancion"],
-        [DIAS[x.dia] || "—", ""], [ROOMS[x.sala] || x.sala || "—", ""], [x.personas, "num fuerte"],
-      ], "Todavía nadie ha guardado favoritos en su cuenta.");
+        [i + 1, "pos"], [x.titulo || x.clave, "cancion" + (x.personas ? "" : " flojo")],
+        [DIAS[x.dia] || "—", x.personas ? "" : "flojo"],
+        [ROOMS[x.sala] || x.sala || "—", x.personas ? "" : "flojo"],
+        [x.personas, x.personas ? "num fuerte" : "num flojo"],
+      ], "Todavía no hay sesiones en la programación.");
 
       tabla("cuentas", datos.cuentas, (x, i) => [
         [i + 1, "pos"], [x.nombre || "—", "cancion"], [x.email || "—", ""],
@@ -299,6 +327,9 @@ const DIAS = PROGRAMA.map((d) => d.short);
   .adm-tabla :global(td.cancion) { font-weight: 600; color: #14121a; }
   .adm-tabla :global(td.destaca) { font-weight: 800; color: var(--gold-dark, #a2823f); }
   .adm-tabla :global(td.num) { text-align: right; font-variant-numeric: tabular-nums; width: 80px; }
+  /* Las sesiones que nadie ha marcado salen igual, pero atenuadas: así se ven
+     de un vistazo sin que compitan con las que sí tienen gente. */
+  .adm-tabla :global(td.flojo) { opacity: .5; }
   .adm-tabla :global(td.fuerte) { font-weight: 800; }
   .adm-tabla :global(td.vacio) { text-align: center; padding: 30px; color: #8a8578; }
   .adm-pie { margin: 18px 0 0; font-size: 12.5px; color: #9a9aa2; }
