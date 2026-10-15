@@ -29,7 +29,9 @@ export const PROGRAMA = [
   {
     day: "Miércoles", date: "21 OCT", short: "Mié 21",
     sessions: [
+      { t: "07:30 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
       { t: "Desde 09:30", r: "full", k: "info", n: "Entrega de acreditaciones" },
+      { t: "13:00 – 15:30", r: "full", k: "meal", n: "Horario de comida" },
       { t: "15:30 – 16:45", r: "pb", k: "master", n: "Más allá del resultado: herramientas emocionales para competir y crecer", p: "Franco Rocha" },
       { t: "17:00 – 18:30", r: "pb", k: "comp", n: "Bachata: Preeliminatoria Solistas Chicas" },
       { t: "18:30 – 20:30", r: "pb", k: "comp", n: "Salsa: Preeliminatoria Solistas Chicos" },
@@ -40,7 +42,7 @@ export const PROGRAMA = [
   {
     day: "Jueves", date: "22 OCT", short: "Jue 22",
     sessions: [
-      { t: "08:00 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
+      { t: "07:30 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
       { t: "08:00 – 11:00", r: "gs", k: "info", n: "Ensayo de competidores" },
       { t: "Desde 09:30", r: "full", k: "info", n: "Entrega de pulseras y acreditaciones" },
       { t: "10:00 – 10:55", r: "pb", k: "taller", n: "Bachata Street: enriquece tus recursos en footwork y pareja", p: "Mica y Fran", l: "Medio-Alto" },
@@ -49,7 +51,7 @@ export const PROGRAMA = [
       { t: "12:00 – 12:50", r: "pb", k: "master", n: "Masterclass: Latin Jazz", p: "Marco Ferrigno" },
       { t: "13:00 – 13:50", r: "gs", k: "comp", n: "Bachata: Eliminatoria Solistas Chicas" },
       { t: "13:00 – 13:50", r: "pb", k: "master", n: "Masterclass: Timba Mix Afro Rumba On2", p: "Bárbara Jiménez" },
-      { t: "13:00 – 15:30", r: "full", k: "meal", n: "Horario de comida" },
+      { t: "13:00 – 16:00", r: "full", k: "meal", n: "Horario de comida" },
       { t: "14:00 – 14:50", th: "13:30", r: "gs", k: "comp", n: "Bachata: Eliminatoria Solistas Chicos" },
       { t: "14:00 – 14:50", r: "pb", k: "master", n: "Masterclass: musicalidad, interpretación y fundamentos", p: "Angelo Rito" },
       { t: "15:00 – 15:50", r: "pb", k: "taller", n: "El Sabor del Mambo: Competition Shines", p: "Jorge Martínez", l: "Medio-Alto" },
@@ -70,7 +72,7 @@ export const PROGRAMA = [
   {
     day: "Viernes", date: "23 OCT", short: "Vie 23",
     sessions: [
-      { t: "08:00 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
+      { t: "07:30 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
       { t: "Desde 09:30", r: "full", k: "info", n: "Entrega de pulseras y acreditaciones" },
       { t: "09:00 – 12:00", r: "gs", k: "info", n: "Ensayos de competidores" },
       { t: "10:00 – 10:50", r: "pb", k: "master", n: "Ponencia: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile", p: "Esteban Molina" },
@@ -112,7 +114,7 @@ export const PROGRAMA = [
   {
     day: "Sábado", date: "24 OCT", short: "Sáb 24",
     sessions: [
-      { t: "08:00 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
+      { t: "07:30 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
       { t: "Desde 09:30", r: "full", k: "info", n: "Entrega de pulseras y acreditaciones" },
       { t: "09:00 – 11:00", r: "gs", k: "info", n: "Ensayo de competidores" },
       { t: "10:00 – 10:50", r: "pb", k: "master", n: "Masterclass (acceso solo en dúos): técnicas coreográficas para dúos de salsa con dos campeones del mundo de la categoría", p: "Gabriele Di Marzo y Daniel Maiorano", l: "Medio-Alto" },
@@ -157,7 +159,7 @@ export const PROGRAMA = [
   {
     day: "Domingo", date: "25 OCT", short: "Dom 25",
     sessions: [
-      { t: "08:00 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
+      { t: "07:30 – 11:00", r: "full", k: "meal", n: "Horario de desayuno" },
       { t: "10:00 – 10:50", r: "pb", k: "taller", n: "Pachanga: de Cuba a Nueva York", p: "Sebastián Ibarra", l: "Medio" },
       { t: "10:00 – 10:50", r: "s1", k: "taller", n: "Dos visiones de la pareja en lo tradicional: social frente a competición", p: "Juan Pablo Paredes · Mica y Fran", l: "Abierto" },
       { t: "11:00 – 11:50", r: "pb", k: "taller", n: "Mambo a lo Ayala", p: "Benny Ayala y Ashley", l: "Medio-Alto" },
@@ -169,13 +171,14 @@ export const PROGRAMA = [
       { t: "13:00 – 13:50", r: "gs", k: "comp", n: "Bachata: Gran Final Parejas" },
       { t: "13:00 – 13:50", r: "pb", k: "taller", n: "¡Descarga total! Mambo Fusión Footwork", p: "Víctor Ortega y Jorge Aguilar", l: "Medio-Alto" },
       { t: "13:00 – 13:50", r: "s1", k: "taller", n: "Heels Latin Fusion: ¡no olvides tus tacones!", p: "Gabriele Di Marzo y Daniel Maiorano", l: "Medio" },
-      { t: "13:00 – 16:00", r: "full", k: "meal", n: "Horario de comida" },
+      { t: "13:00 – 15:30", r: "full", k: "meal", n: "Horario de comida" },
       { t: "14:00 – 14:50", r: "pb", k: "taller", n: "Caleño, afro y mambo: el arte de fusionarlos", p: "Xiomar Rivas", l: "Medio" },
       { t: "14:00 – 14:50", r: "s1", k: "taller", n: "Bachata Fusión: New Moves", p: "Darío y Sara", l: "Medio" },
       { t: "14:00 – 14:50", r: "s2", k: "taller", n: "Salsa on1: footwork y musicalidad", p: "Franco Rocha", l: "Medio" },
       { t: "17:00 – 17:50", r: "gs", k: "comp", n: "Bachata: Gran Final Dúos Mixtos" },
       { t: "18:00 – 18:55", r: "gs", k: "comp", n: "Salsa: Gran Final Parejas" },
       { t: "19:00 – 20:30", r: "gs", k: "comp", n: "Bachata: Gran Final Equipos" },
+      { t: "19:30 – 22:30", r: "full", k: "meal", n: "Horario de cena" },
       { t: "20:30 – 22:00", r: "pb", k: "social", n: "Pre-party previa al concierto", p: "DJ Killo" },
       { t: "22:00 – 23:00", r: "gs", k: "social", n: "Dani J en concierto" },
       { t: "23:00 – amanecer", r: "gs", k: "social", n: "Ceremonia de premiación y baile social", p: "DJ Fabrizio Zoro · La Negra DJ · DJ Killo · LissJ" },
