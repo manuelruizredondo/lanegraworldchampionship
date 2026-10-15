@@ -39,8 +39,8 @@ export const PARRILLA = [
   // VIERNES 23
   { dia: 23, ini: "13:00", fin: "14:50", comp: "bachata-solista-femenino",  titulo: "Semifinal Solistas Chicas" },   // fin inferido (dos pases: 13:00 y 14:00)
   { dia: 23, ini: "16:00", fin: "17:50", comp: "salsa-solista-femenino",    titulo: "Semifinal Solistas Chicas" },   // fin inferido (dos pases: 16:00 y 17:00)
-  { dia: 23, ini: "18:00", fin: "18:45", comp: "bachata-solista-masculino", titulo: "Gran Final Solistas Chicos" },
-  { dia: 23, ini: "19:00", fin: "19:50", comp: "bachata-solista-femenino",  titulo: "Gran Final Solistas Chicas" },  // fin inferido
+  { dia: 23, ini: "18:00", fin: "18:45", comp: "bachata-solista-masculino", titulo: "Final Solistas Chicos" },
+  { dia: 23, ini: "19:00", fin: "19:50", comp: "bachata-solista-femenino",  titulo: "Final Solistas Chicas" },  // fin inferido
   { dia: 23, ini: "22:00", fin: "23:00", comp: "salsa-duos-femeninos",      titulo: "Gran Final Dúos Chicas" },
   // El plan ponía "23:00 a 00:30", que se solapaba con el pase siguiente de
   // las 00:00. Se cierra a las 00:00, como en la programación del festival.
@@ -51,9 +51,7 @@ export const PARRILLA = [
   { dia: 24, ini: "12:00", fin: "13:50", comp: "salsa-solista-masculino",   titulo: "Semifinal Solistas Chicos" },   // fin inferido (dos pases: 12:00 y 13:00)
   { dia: 24, ini: "16:00", fin: "17:50", comp: "bachata-duos",              titulo: "Semifinal Dúos Mixtos" },       // fin inferido (dos pases: 16:00 y 17:00)
   { dia: 24, ini: "18:00", fin: "19:50", comp: "salsa-parejas",             titulo: "Semifinal Parejas" },           // fin inferido (dos pases: 18:00 y 19:00)
-  // OJO: la programación del festival pone esta final a las 20:00 y el plan de
-  // producción a las 22:00. Se respeta el plan, que es el que se emite.
-  { dia: 24, ini: "22:00", fin: "23:00", comp: "salsa-solista-masculino",   titulo: "Gran Final Solistas Chicos" },
+  { dia: 24, ini: "20:00", fin: "21:00", comp: "salsa-solista-masculino",   titulo: "Gran Final Solistas Chicos" },
   { dia: 24, ini: "23:00", fin: "00:55", comp: "salsa-equipos",             titulo: "Gran Final Equipos" },
 
   // DOMINGO 25
@@ -127,6 +125,8 @@ export const TITULOS = {
     "Semifinal Solistas Chicas": "Women's Solo Semifinal",
     "Semifinal Solistas Chicos": "Men's Solo Semifinal",
     "Gran Final Solistas Chicas": "Women's Solo Grand Final",
+    "Final Solistas Chicos": "Men's Solo Final",
+    "Final Solistas Chicas": "Women's Solo Final",
     "Gran Final Solistas Chicos": "Men's Solo Grand Final",
     "Gran Final Dúos Chicas": "Women's Duos Grand Final",
     "Gran Final Dúos Chicos": "Men's Duos Grand Final",
@@ -140,6 +140,8 @@ export const TITULOS = {
     "Semifinal Solistas Chicas": "Semifinale Soliste Donne",
     "Semifinal Solistas Chicos": "Semifinale Solisti Uomini",
     "Gran Final Solistas Chicas": "Gran Finale Soliste Donne",
+    "Final Solistas Chicos": "Finale Solisti Uomini",
+    "Final Solistas Chicas": "Finale Soliste Donne",
     "Gran Final Solistas Chicos": "Gran Finale Solisti Uomini",
     "Gran Final Dúos Chicas": "Gran Finale Duo Donne",
     "Gran Final Dúos Chicos": "Gran Finale Duo Uomini",
