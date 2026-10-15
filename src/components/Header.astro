@@ -1,5 +1,6 @@
 ---
 import { MENU, LANGUAGES, CTA, HOME_HREF } from "../data/nav.js";
+import { ventanasDirecto } from "../data/directos-horario.js";
 import { PANEL_I18N } from "../data/supabase.js";
 import { routeFor } from "../data/routes.js";
 import { CUENTA_I18N } from "../data/supabase.js";
@@ -16,6 +17,11 @@ const alternates = routeFor(Astro.url.pathname);
 const langHref = (code, home) => alternates?.[code] || home;
 
 // Textos de accesibilidad en el idioma de la página
+// Ventanas de emisión en milisegundos UTC. Van en el Header porque el
+// Header está en todas las páginas: un solo script enciende el punto del
+// menú y el botón del hero de la home.
+const VENTANAS = ventanasDirecto();
+
 const T = {
   es: { lang: "Idioma", open: "Abrir menú", close: "Cerrar menú", nav: "Menú principal", sub: "Abrir submenú" },
   en: { lang: "Language", open: "Open menu", close: "Close menu", nav: "Main menu", sub: "Open submenu" },
@@ -87,6 +93,33 @@ const T = {
     </div>
   </div>
 </div>
+
+<script type="application/json" id="directo-ventanas" set:html={JSON.stringify(VENTANAS)} is:inline />
+
+<script>
+  (function () {
+    // Marca <body> con `hay-directo` mientras alguna competición se está
+    // emitiendo. Todo lo que tenga que reaccionar al directo (el punto del
+    // menú, el botón del hero) cuelga de esa clase: así hay un único sitio
+    // que decide, y el resto es CSS.
+    const nodo = document.getElementById("directo-ventanas");
+    if (!nodo) return;
+    let ventanas = [];
+    try { ventanas = JSON.parse(nodo.textContent || "[]"); } catch (e) { return; }
+    if (!ventanas.length) return;   // sin emisiones configuradas, nada que encender
+
+    function mirar() {
+      const t = Date.now();
+      const hay = ventanas.some(function (v) { return t >= v[0] && t < v[1]; });
+      document.body.classList.toggle("hay-directo", hay);
+    }
+    mirar();
+    setInterval(mirar, 30000);
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) mirar();
+    });
+  })();
+</script>
 
 <style>
   .site-header {
@@ -240,8 +273,16 @@ const T = {
      que ::first-letter le aplique. */
   .live-txt { display: inline-block; }
   .live-txt::first-letter { text-transform: uppercase; }
+  /* Apagado mientras no haya emisión: gris, sin brillo y sin latido. El
+     testigo solo se enciende cuando de verdad hay algo que ver, que es lo que
+     lo hace creíble. Lo decide `hay-directo` en <body>. */
   .live-punto {
-    width: 10px; height: 10px; border-radius: 50%; background: #ff2d2d; flex: 0 0 auto;
+    width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto;
+    background: rgba(246, 242, 236, .32);
+    transition: background .3s ease;
+  }
+  :global(body.hay-directo) .live-punto {
+    background: #ff2d2d;
     box-shadow: 0 0 0 0 rgba(255, 45, 45, .6);
     animation: live-latido 1.6s ease-out infinite;
   }
@@ -250,7 +291,9 @@ const T = {
     70%  { box-shadow: 0 0 0 9px rgba(255, 45, 45, 0); opacity: .7; }
     100% { box-shadow: 0 0 0 0 rgba(255, 45, 45, 0); opacity: 1; }
   }
-  @media (prefers-reduced-motion: reduce) { .live-punto { animation: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    :global(body.hay-directo) .live-punto { animation: none; }
+  }
 
   /* Solo la primera letra en mayúscula */
   .submenu a::first-letter, .menu-single > a::first-letter { text-transform: uppercase; }

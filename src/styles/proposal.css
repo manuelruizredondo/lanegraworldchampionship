@@ -37,6 +37,18 @@
   .p-btn:hover { transform: translateY(-2px); }
   .p-btn-sm { padding: 11px 22px; font-size: 14px; }
   .p-btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* Botón de «ver el directo». Solo aparece mientras se está emitiendo: la
+     clase `hay-directo` la pone y la quita el script del Header, que es el
+     único sitio donde se decide si hay directo. */
+  .btn-directo { display: none; align-items: center; gap: 10px; background: #e02020; color: #fff; }
+  body.hay-directo .btn-directo { display: inline-flex; }
+  .btn-directo-punto {
+    width: 9px; height: 9px; border-radius: 50%; background: #fff; flex: 0 0 auto;
+    animation: btn-directo-parpadeo 1.3s steps(1, end) infinite;
+  }
+  @keyframes btn-directo-parpadeo { 0%, 55% { opacity: 1; } 56%, 100% { opacity: .3; } }
+  @media (prefers-reduced-motion: reduce) { .btn-directo-punto { animation: none; } }
   .p-center.p-btn-row, .p-center .p-btn-row { justify-content: center; }
   .p-btn-dark { background: var(--p-ink); color: #fff; }
   .p-btn-light { background: #fff; color: var(--p-ink); border: 1px solid var(--p-line); }

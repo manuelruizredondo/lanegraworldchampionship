@@ -2,14 +2,12 @@
 // Página de directos: una pantalla por competición (las once del Mundial), y
 // cada una se enciende sola cuando esa competición sale al escenario.
 //
-// El reparto de sesiones por competición se hace AQUÍ, en el build, leyendo
-// programa.js: así, si una sesión no encaja en ninguna, la compilación falla
-// y nos enteramos, en vez de quedarse una pantalla muda durante el festival.
-//
-// El "qué hay ahora" sí se resuelve en el navegador: la página es estática y
-// el HTML se genera una vez. Se recalcula cada 30 s.
+// El horario sale de directos-horario.js, que lo deriva de programa.js en el
+// build. Aquí solo se ordena y se pinta. El "qué hay ahora" sí se resuelve en
+// el navegador, porque la página es estática: se recalcula cada 30 s.
 import { COMPETICIONES, NOMBRES_COMP, EMISIONES, ZONA, I18N } from "@/data/directos.js";
-import { PROGRAMA, NOMBRES, I18N as PROG_I18N } from "@/data/programa.js";
+import { horarioPorCompeticion } from "@/data/directos-horario.js";
+import { I18N as PROG_I18N } from "@/data/programa.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
@@ -17,118 +15,27 @@ const tp = PROG_I18N[lang] || PROG_I18N.es;
 const nombres = NOMBRES_COMP[lang] || NOMBRES_COMP.es;
 const RUTA_PROGRAMA = { es: "/programacion-2026/", en: "/en/programme-2026/", it: "/it/programma-2026/" }[lang];
 
-const traduce = (n) => (lang === "es" ? n : (NOMBRES[lang] && NOMBRES[lang][n]) || n);
+const porComp = horarioPorCompeticion(lang);
 
-// ── Reparto de sesiones por competición ─────────────────────────────────
-// Una sesión de competición casa con la competición cuya disciplina abre su
-// nombre ("Bachata: …" / "Salsa: …") y cuya modalidad aparece en él.
-function competicionDe(nombre) {
-  const disc = /^bachata\s*:/i.test(nombre) ? "bachata" : /^salsa\s*:/i.test(nombre) ? "salsa" : null;
-  if (!disc) return null;
-  return COMPETICIONES.find((c) => c.disciplina === disc && c.busca.test(nombre)) || null;
-}
-
-// ── Horas y fechas ───────────────────────────────────────────────────────
-// Se resuelve todo aquí, en el build, y al navegador llega ya masticado:
-// día del mes, mes, y minutos de inicio y fin. Así el script del cliente solo
-// compara números.
-const MESES = { ENE: 0, FEB: 1, MAR: 2, ABR: 3, MAY: 4, JUN: 5, JUL: 6, AGO: 7, SEP: 8, OCT: 9, NOV: 10, DIC: 11 };
-const AMANECER = 6 * 60;
-const aMinutos = (hhmm) => {
-  const m = /^(\d{1,2}):(\d{2})$/.exec(String(hhmm).trim());
-  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
-};
-
-// "16:00 – 16:55" · "23:00 – 00:00" (termina pasada medianoche) · "01:30 – 06:00"
-function tramo(txt) {
-  const partes = String(txt).split(/\s*[–—-]\s*/);
-  if (partes.length !== 2) return null;
-  const ini = aMinutos(partes[0]);
-  if (ini === null) return null;
-  const finTxt = partes[1].trim();
-  const fin = /amanecer|dawn|alba/i.test(finTxt) ? AMANECER : aMinutos(finTxt);
-  if (fin === null) return null;
-  return { ini, fin: fin <= ini ? fin + 1440 : fin };
-}
-
-// El programa mete las sesiones de madrugada en el bloque del día anterior:
-// el 23 de octubre termina con "23:00 – 00:00", "00:00 – 00:50" y "01:30 –
-// 06:00", y esas dos últimas son ya del 24. Hay que corregir la fecha o esas
-// finales no se marcarían nunca como en directo.
-//
-// No vale con detectar cualquier retroceso de hora: ese mismo día, a un
-// "Desde 09:30" le sigue un "09:00 – 12:00" y no hay cambio de día. El salto
-// solo cuenta cuando se pasa de la noche cerrada a la madrugada.
-function diasExtra(sessions) {
-  let extra = 0, anterior = null;
-  return sessions.map((s) => {
-    const m = /(\d{1,2}:\d{2})/.exec(String(s.t));
-    const ini = m ? aMinutos(m[1]) : null;
-    if (ini !== null) {
-      if (anterior !== null && ini < 7 * 60 && anterior >= 20 * 60) extra += 1;
-      anterior = ini;
-    }
-    return extra;
-  });
-}
-
-const porComp = {};
-COMPETICIONES.forEach((c) => { porComp[c.clave] = []; });
-const huerfanas = [];
-const sinHora = [];
-
-PROGRAMA.forEach((d) => {
-  const f = /^(\d{1,2})\s*([A-ZÁÉÍÓÚ]{3})/i.exec(d.date);
-  if (!f) return;
-  const extras = diasExtra(d.sessions);
-
-  d.sessions.forEach((s, i) => {
-    if (s.k !== "comp") return;
-    const c = competicionDe(s.n);
-    if (!c) { huerfanas.push(`${d.date} · ${s.n}`); return; }
-    const r = tramo(s.t);
-    if (!r) { sinHora.push(`${d.date} · ${s.t} · ${s.n}`); return; }
-
-    const real = new Date(Date.UTC(2026, MESES[f[2].toUpperCase()], Number(f[1]) + extras[i]));
-    porComp[c.clave].push({
-      dia: real.getUTCDate(), mes: real.getUTCMonth(),
-      ini: r.ini, fin: r.fin, r: s.r, n: traduce(s.n),
-    });
-  });
-});
-
-// Si el programa cambia y aparece una modalidad nueva o un horario con otro
-// formato, que se vea aquí y no en el escenario el día 21.
-if (huerfanas.length) {
-  throw new Error(
-    "EnDirecto: hay sesiones de competición que no encajan en ninguna de las " +
-    "once competiciones de directos.js. Añade su modalidad a COMPETICIONES:\n  " +
-    huerfanas.join("\n  ")
-  );
-}
-if (sinHora.length) {
-  throw new Error(
-    "EnDirecto: hay sesiones de competición cuyo horario no se entiende. " +
-    "Hace falta 'HH:MM – HH:MM':\n  " + sinHora.join("\n  ")
-  );
-}
-
+// De antes a después: manda cuándo empieza cada competición, no la disciplina.
+// Es el orden con el que se publica la página; luego, en el navegador, lo que
+// esté en directo sube al principio.
+const momento = (s) => s.dia * 1440 + s.ini;
 const pantallas = COMPETICIONES.map((c) => ({
   clave: c.clave,
   nombre: nombres[c.clave] || c.clave,
   portada: c.portada,
   disciplina: c.disciplina,
   sesiones: porComp[c.clave],
-}));
+})).sort((a, b) => momento(a.sesiones[0]) - momento(b.sesiones[0]));
 
 const DATOS = {
   zona: ZONA,
   emisiones: EMISIONES,
-  salas: tp.rooms || {},
   comps: pantallas.map((p) => ({ clave: p.clave, sesiones: p.sesiones })),
   textos: {
-    directo: t.directo, luego: t.luego, sinEmision: t.sinEmision, sinEnlace: t.sinEnlace,
-    proximo: t.proximo, terminada: t.terminada, enSala: t.enSala,
+    directo: t.directo, luego: t.luego, sinEnlace: t.sinEnlace,
+    proximo: t.proximo, terminada: t.terminada,
     ningunaActiva: t.ningunaActiva, antesDelFestival: t.antesDelFestival,
     despuesDelFestival: t.despuesDelFestival,
     una: t.activas(1), varias: t.activas(2).replace(/^2\s*/, ""),
@@ -168,13 +75,25 @@ const DATOS = {
               <div class="dir-reproductor" data-dir-reproductor hidden></div>
             </div>
             <div class="dir-pie">
-              <div class="dir-pie-txt">
+              <div class="dir-pie-cab">
                 <h2 class="dir-comp">{p.nombre}</h2>
-                <p class="dir-sesion" data-dir-sesion></p>
+                <span class="dir-badge" data-dir-badge hidden>
+                  <span class="dir-badge-punto" aria-hidden="true"></span>{t.directo}
+                </span>
               </div>
-              <span class="dir-badge" data-dir-badge hidden>
-                <span class="dir-badge-punto" aria-hidden="true"></span>{t.directo}
-              </span>
+              <p class="dir-sesion" data-dir-sesion></p>
+              {/* El calendario completo de la competición. Va en el HTML, no lo
+                  pinta el JS: así se lee aunque el script no llegue a correr, y
+                  los buscadores ven los horarios. */}
+              <ul class="dir-horas">
+                {p.sesiones.map((s, i) => (
+                  <li class="dir-hora" data-i={i}>
+                    <span class="dir-hora-dia">{s.etiqueta}</span>
+                    <span class="dir-hora-h">{s.hora}</span>
+                    <span class="dir-hora-sala">{s.sala}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </article>
         ))}
@@ -214,6 +133,7 @@ const DATOS = {
     // Las sesiones llegan ya resueltas desde el build: día, mes y minutos de
     // inicio y fin. Aquí solo se comparan números.
     const comps = D.comps || [];
+    const momento = (s) => s.dia * 1440 + s.ini;
 
     function estado() {
       const n = ahoraEnSede();
@@ -221,9 +141,10 @@ const DATOS = {
       let activas = 0;
 
       comps.forEach((c) => {
-        let viva = null, proxima = null, quedan = 0;
+        let viva = null, vivaI = -1, sig = null, sigI = -1;
+        const pasadas = [];
 
-        c.sesiones.forEach((s) => {
+        c.sesiones.forEach((s, i) => {
           // Minutos de "ahora" contados desde las 00:00 del día de la sesión.
           // Si ya es el día siguiente se suman 1440, y así una sesión que acaba
           // a las 00:50 sigue contando como en directo.
@@ -231,22 +152,24 @@ const DATOS = {
           if (s.mes === n.mes && s.dia === n.dia) desplaz = n.minutos;
           else if (s.mes === n.mes && s.dia === n.dia - 1) desplaz = n.minutos + 1440;
 
-          if (desplaz !== null && desplaz >= s.ini && desplaz < s.fin) { viva = s; return; }
+          if (desplaz !== null && desplaz >= s.ini && desplaz < s.fin) { viva = s; vivaI = i; return; }
 
-          // Pendiente: o es de un día posterior, o es hoy y aún no ha empezado.
+          // ¿Está por venir? O es de un día posterior, o es de hoy y todavía
+          // no ha empezado. La próxima es la primera de todas las que quedan,
+          // sea hoy o dentro de tres días: así cada tarjeta dice siempre a qué
+          // hora le toca.
           const futura = (s.mes > n.mes) || (s.mes === n.mes && s.dia > n.dia) ||
                          (desplaz !== null && s.ini > desplaz);
           if (futura) {
-            quedan++;
-            const hoy = desplaz !== null && s.ini > desplaz;
-            if (hoy && (!proxima || s.ini < proxima.ini)) proxima = s;
+            if (!sig || momento(s) < momento(sig)) { sig = s; sigI = i; }
+          } else {
+            pasadas.push(i);
           }
         });
 
-        if (viva) { out[c.clave] = { tipo: "directo", s: viva }; activas++; }
-        else if (proxima) out[c.clave] = { tipo: "proxima", s: proxima };
-        else if (quedan === 0) out[c.clave] = { tipo: "terminada" };
-        else out[c.clave] = { tipo: "espera" };
+        if (viva) { out[c.clave] = { tipo: "directo", s: viva, i: vivaI, pasadas, orden: momento(viva) }; activas++; }
+        else if (sig) out[c.clave] = { tipo: "proxima", s: sig, i: sigI, pasadas, orden: momento(sig) };
+        else out[c.clave] = { tipo: "terminada", pasadas, orden: Infinity };
       });
 
       return { out, activas, ahora: n };
@@ -296,7 +219,7 @@ const DATOS = {
 
       pantallas.forEach((p) => {
         const clave = p.getAttribute("data-comp");
-        const info = out[clave] || { tipo: "espera" };
+        const info = out[clave] || { tipo: "terminada", pasadas: [] };
         const badge = p.querySelector("[data-dir-badge]");
         const sesion = p.querySelector("[data-dir-sesion]");
         const nota = p.querySelector("[data-dir-nota]");
@@ -307,13 +230,20 @@ const DATOS = {
         p.classList.toggle("terminada", info.tipo === "terminada");
         badge.hidden = !enDirecto;
 
+        // Las horas: tachada la que ya pasó, resaltada la de ahora o la que viene.
+        const horas = p.querySelectorAll(".dir-hora");
+        Array.prototype.forEach.call(horas, function (li, i) {
+          li.classList.toggle("pasada", info.pasadas.indexOf(i) !== -1);
+          li.classList.toggle("ahora", enDirecto && i === info.i);
+          li.classList.toggle("siguiente", info.tipo === "proxima" && i === info.i);
+        });
+
         if (enDirecto) {
           // La cámara está en la sala, así que el enlace sale de la sala en la
           // que compite ahora mismo.
           const em = D.emisiones[info.s.r] || null;
           p._emision = em;
-          const sala = D.salas[info.s.r] || info.s.r;
-          sesion.textContent = info.s.n + " · " + T.enSala + " " + sala;
+          sesion.textContent = info.s.hora + " · " + info.s.n;
           if (em && em.fuente) { play.hidden = false; nota.hidden = true; }
           else { play.hidden = true; nota.hidden = false; nota.textContent = T.sinEnlace; }
         } else {
@@ -322,27 +252,25 @@ const DATOS = {
           play.hidden = true;
           nota.hidden = false;
           if (info.tipo === "proxima") {
-            sesion.textContent = T.luego + " · " + info.s.n;
-            nota.textContent = T.proximo + " " + hhmm(info.s.ini);
-          } else if (info.tipo === "terminada") {
-            sesion.textContent = "";
-            nota.textContent = T.terminada;
+            sesion.textContent = T.luego + " · " + info.s.etiqueta + " " + info.s.hora;
+            nota.textContent = info.s.etiqueta + " · " + T.proximo + " " + info.s.horaIni;
           } else {
             sesion.textContent = "";
-            nota.textContent = T.sinEmision;
+            nota.textContent = T.terminada;
           }
         }
       });
 
-      // Con once pantallas, lo que está en directo tiene que estar arriba.
-      const peso = { directo: 0, proxima: 1, espera: 2, terminada: 3 };
+      // De antes a después: primero lo que está en directo, luego lo que viene
+      // por orden de hora, y al final lo que ya ha terminado.
       pantallas.slice()
-        .sort((a, b) => {
-          const pa = peso[(out[a.getAttribute("data-comp")] || {}).tipo] ?? 2;
-          const pb = peso[(out[b.getAttribute("data-comp")] || {}).tipo] ?? 2;
-          return pa - pb || orden[a.getAttribute("data-comp")] - orden[b.getAttribute("data-comp")];
+        .sort(function (a, b) {
+          const oa = (out[a.getAttribute("data-comp")] || {}).orden;
+          const ob = (out[b.getAttribute("data-comp")] || {}).orden;
+          return (oa === ob ? 0 : oa < ob ? -1 : 1) ||
+                 orden[a.getAttribute("data-comp")] - orden[b.getAttribute("data-comp")];
         })
-        .forEach((p, i) => { p.style.order = String(i); });
+        .forEach(function (p, i) { p.style.order = String(i); });
 
       if (elEstado) {
         const primera = comps.flatMap((c) => c.sesiones).reduce((a, s) =>
@@ -451,13 +379,34 @@ const DATOS = {
   .dir-reproductor :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
   .dir-pantalla.reproduciendo .dir-capa { display: none; }
 
-  .dir-pie {
-    display: flex; align-items: flex-start; justify-content: space-between;
-    gap: 14px; padding: 17px 20px 19px;
+  .dir-pie { padding: 17px 20px 19px; }
+  .dir-pie-cab {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
   }
-  .dir-pie-txt { min-width: 0; }
-  .dir-comp { margin: 0; font-size: 17.5px; font-weight: 700; letter-spacing: -.012em; line-height: 1.25; }
+  .dir-comp { margin: 0; font-size: 17.5px; font-weight: 700; letter-spacing: -.012em; line-height: 1.25; min-width: 0; }
   .dir-sesion { margin: 5px 0 0; font-size: 14px; color: var(--p-muted); line-height: 1.45; }
+  .dir-sesion:empty { display: none; }
+
+  /* Calendario de la competición: una línea por pase, con su día, su hora y
+     su sala. Lo que ya pasó se atenúa; lo de ahora se marca en rojo. */
+  .dir-horas {
+    list-style: none; margin: 13px 0 0; padding: 13px 0 0;
+    border-top: 1px solid var(--p-line);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .dir-hora {
+    display: grid; grid-template-columns: 4.6em 8.4em 1fr; gap: 8px;
+    font-size: 13px; line-height: 1.7; color: var(--p-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .dir-hora-dia { font-weight: 700; color: var(--p-ink); opacity: .72; }
+  .dir-hora-sala { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dir-hora.pasada { opacity: .42; }
+  .dir-hora.pasada .dir-hora-h { text-decoration: line-through; }
+  .dir-hora.ahora { color: #c21818; font-weight: 700; }
+  .dir-hora.ahora .dir-hora-dia { color: #c21818; opacity: 1; }
+  .dir-hora.siguiente { color: var(--p-ink); font-weight: 700; }
+  .dir-hora.siguiente .dir-hora-dia { opacity: 1; }
 
   .dir-badge {
     display: inline-flex; align-items: center; gap: 7px; flex: 0 0 auto;
