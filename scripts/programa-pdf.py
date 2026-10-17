@@ -241,7 +241,7 @@ def clave(s):
     k = s["k"]
     n = s.get("clave") or s.get("n") or ""
     if k == "master":
-        return "ciclo" if n.startswith("Ponencia:") else "master"
+        return "ciclo" if n.startswith("Ciclo Profesional:") else "master"
     if k == "taller":
         lv = s.get("lClave") or "Medio"
         lv = VECINO.get(lv, lv)

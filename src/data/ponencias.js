@@ -10,7 +10,7 @@
 export const PONENCIAS = [
   {
     // La clave con la que se busca en el programa: el texto español exacto.
-    clave: "Ponencia: el error en directo, estrategias para el reenfoque inmediato",
+    clave: "Ciclo Profesional: el error en directo, estrategias para el reenfoque inmediato",
     ponente: "Dr. Alessandro Massaro",
     img: "alessandro-massaro-ponencia-bn.webp",
     ig: "https://www.instagram.com/alessandro_massaro_psicologo/",
@@ -36,7 +36,7 @@ export const PONENCIAS = [
     },
   },
   {
-    clave: "Ponencia: redes sociales sin humo, lo que funciona, lo que no y lo que viene con la IA en nuestro sector laboral",
+    clave: "Ciclo Profesional: redes sociales sin humo, lo que funciona, lo que no y lo que viene con la IA en nuestro sector laboral",
     ponente: "Manuel Ruiz",
     img: "manuel-ruiz-ponencia.webp",
     web: "https://digitalstrategy.es",
@@ -57,7 +57,7 @@ export const PONENCIAS = [
     },
   },
   {
-    clave: "Ponencia: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
+    clave: "Ciclo Profesional: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
     ponente: "Esteban Molina Pérez",
     img: "esteban-molina-ponencia.webp",
     credencial: {
@@ -86,10 +86,10 @@ export const PONENCIAS = [
 export const I18N = {
   es: {
     ruta: "/ponencias/",
-    metaTitle: "Ciclo Profesional · Ponencias · La Negra Dance Festival",
+    metaTitle: "Ciclo Profesional · Charlas para el oficio · La Negra Dance Festival",
     metaDesc: "Tres charlas sobre la profesión: el error en directo, fiscalidad para bailarines y redes sociales. Calpe, 21–25 de octubre de 2026.",
     eyebrow: "Mundial de Pasos Libres · 2026",
-    h1: "Ciclo Profesional (Ponencias)",
+    h1: "Ciclo Profesional",
     lead: "Tres charlas sobre el oficio, no sobre los pasos: qué hacer cuando algo sale mal en el escenario, cómo llevar tus cuentas y qué funciona de verdad en redes. Entran con el Full Pass.",
     enPrograma: "Ver la programación completa",
     verBio: "Quién es",
@@ -97,10 +97,10 @@ export const I18N = {
   },
   en: {
     ruta: "/en/talks/",
-    metaTitle: "Professional Series · Talks · La Negra Dance Festival",
+    metaTitle: "Professional Series · Talks for the profession · La Negra Dance Festival",
     metaDesc: "Three talks about the profession: mistakes on stage, tax for dancers and social media. Calpe, 21–25 October 2026.",
     eyebrow: "Pasos Libres World Championship · 2026",
-    h1: "Professional Series (Talks)",
+    h1: "Professional Series",
     lead: "Three talks about the job, not the steps: what to do when something goes wrong on stage, how to handle your accounts and what really works on social media. Included with the Full Pass.",
     enPrograma: "See the full programme",
     verBio: "Who they are",
@@ -108,10 +108,10 @@ export const I18N = {
   },
   it: {
     ruta: "/it/conferenze/",
-    metaTitle: "Ciclo Professionale · Conferenze · La Negra Dance Festival",
+    metaTitle: "Ciclo Professionale · Incontri per il mestiere · La Negra Dance Festival",
     metaDesc: "Tre incontri sulla professione: l'errore in diretta, fisco per ballerini e social media. Calpe, 21–25 ottobre 2026.",
     eyebrow: "Mondiale di Pasos Libres · 2026",
-    h1: "Ciclo Professionale (Conferenze)",
+    h1: "Ciclo Professionale",
     lead: "Tre incontri sul mestiere, non sui passi: cosa fare quando qualcosa va storto sul palco, come gestire i conti e cosa funziona davvero sui social. Inclusi nel Full Pass.",
     enPrograma: "Vedi il programma completo",
     verBio: "Chi è",
