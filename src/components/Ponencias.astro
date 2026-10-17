@@ -20,7 +20,13 @@ function cuando(clave) {
     for (const s of d.sessions) {
       if (s.n === clave) {
         const dia = (tp.days && tp.days[d.day]) || d.day;
-        return { dia, fecha: d.date, hora: s.t, sala: ROOMS[s.r] || s.r };
+        return {
+          dia, fecha: d.date, hora: s.t, sala: ROOMS[s.r] || s.r,
+          // Misma clave que compone el corazón de la programación
+          // (`díaÍndice|franja|sala|nombre`): así una charla marcada aquí
+          // aparece marcada allí, y al revés, sin duplicar nada.
+          fav: `${PROGRAMA.indexOf(d)}|${s.t}|${s.r}|${s.n}`,
+        };
       }
     }
   }
@@ -59,7 +65,15 @@ const iniciales = (n) => n.split(" ").filter(Boolean).slice(0, 2).map((x) => x[0
                   ? `${p.horario.dia} ${p.horario.fecha} · ${p.horario.hora} · ${p.horario.sala}`
                   : t.sinHorario}
               </p>
-              <h2 class="po-titulo">{p.titulo[lang] || p.titulo.es}</h2>
+              <div class="po-cab">
+                <h2 class="po-titulo">{p.titulo[lang] || p.titulo.es}</h2>
+                {p.horario && (
+                  <button class="po-fav" type="button" aria-pressed="false"
+                          aria-label={t.favAria} title={t.favAria} data-fav={p.horario.fav}>
+                    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  </button>
+                )}
+              </div>
               <p class="po-bajada">{p.bajada[lang] || p.bajada.es}</p>
               <p class="po-ponente">{p.ponente}</p>
               {p.credencial && <p class="po-credencial">{p.credencial[lang] || p.credencial.es}</p>}
@@ -90,8 +104,85 @@ const iniciales = (n) => n.split(" ").filter(Boolean).slice(0, 2).map((x) => x[0
   </section>
 </div>
 
+<script is:inline define:vars={{ IDIOMA: lang }}>
+  // Favoritos del ciclo. Usan la MISMA clave y el MISMO almacén que el corazón
+  // de la programación, así que marcar aquí se ve allí y al revés.
+  (function () {
+    const BOTONES = Array.prototype.slice.call(document.querySelectorAll(".po-fav"));
+    if (!BOTONES.length) return;
+    const CLAVE = "lanegra:programa:favs";
+    const leer = () => { try { return new Set(JSON.parse(localStorage.getItem(CLAVE) || "[]")); } catch (e) { return new Set(); } };
+    const guardar = (f) => { try { localStorage.setItem(CLAVE, JSON.stringify([].concat(Array.from(f)))); } catch (e) {} };
+
+    let favs = leer();
+    const pintar = () => BOTONES.forEach(function (b) {
+      const on = favs.has(b.dataset.fav);
+      b.classList.toggle("es-fav", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    pintar();
+
+    // Si hay sesión, el cambio sube también a la cuenta. Si no la hay, o si
+    // falla, queda guardado en este navegador: la programación lo subirá la
+    // próxima vez que se abra con la sesión iniciada.
+    async function aLaCuenta(clave, anadir) {
+      try {
+        const cuenta = window.laNegraCuenta;
+        const sesion = cuenta && cuenta.sesion && cuenta.sesion();
+        if (!sesion) return;
+        const sb = await cuenta.cliente();
+        const uid = sesion.user.id;
+        if (anadir) {
+          const p = clave.split("|");
+          const dia = Number.parseInt(p[0], 10);
+          await sb.from("favoritos").insert([{
+            user_id: uid, email: sesion.user.email, clave: clave,
+            dia: Number.isInteger(dia) ? dia : null,
+            sala: p[2] || null, titulo: p.slice(3).join("|") || null, idioma: IDIOMA,
+          }]);
+        } else {
+          await sb.from("favoritos").delete().eq("user_id", uid).eq("clave", clave);
+        }
+      } catch (e) { /* el favorito ya está guardado en el navegador */ }
+    }
+
+    BOTONES.forEach(function (b) {
+      b.addEventListener("click", function () {
+        const k = b.dataset.fav;
+        favs = leer();                       // por si otra pestaña lo cambió
+        const anadir = !favs.has(k);
+        if (anadir) favs.add(k); else favs.delete(k);
+        guardar(favs);
+        pintar();
+        b.classList.remove("po-fav-pop"); void b.offsetWidth;
+        if (anadir) b.classList.add("po-fav-pop");
+        aLaCuenta(k, anadir);
+      });
+    });
+
+    // Al volver de iniciar sesión, o desde otra pestaña, se repinta.
+    window.addEventListener("focus", function () { favs = leer(); pintar(); });
+  })();
+</script>
+
 <style>
   .po { padding-top: 20px; }
+
+  /* El corazón vive a la derecha del titular, alineado con su primera línea. */
+  .po-cab { display: flex; align-items: flex-start; gap: 12px; }
+  .po-cab .po-titulo { flex: 1 1 auto; min-width: 0; }
+  .po-fav {
+    flex: 0 0 auto; margin-top: 2px; background: none; border: 0; padding: 2px;
+    cursor: pointer; color: #d7d2c8; line-height: 0; transition: color .18s ease;
+  }
+  .po-fav svg path { fill: currentColor; }
+  .po-fav:hover { color: #ec7c90; }
+  .po-fav.es-fav { color: #e0435f; }
+  .po-fav.po-fav-pop svg { animation: poFavPop .34s ease; }
+  @keyframes poFavPop {
+    0% { transform: scale(1); } 40% { transform: scale(1.32); } 100% { transform: scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) { .po-fav.po-fav-pop svg { animation: none; } }
   .po-h1 { font-size: clamp(34px, 5vw, 60px); margin-bottom: 16px; }
 
   .po-rejilla {

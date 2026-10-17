@@ -93,6 +93,7 @@ export const I18N = {
     lead: "Tres charlas sobre el oficio, no sobre los pasos: qué hacer cuando algo sale mal en el escenario, cómo llevar tus cuentas y qué funciona de verdad en redes. Entran con el Full Pass.",
     enPrograma: "Ver la programación completa",
     verBio: "Quién es",
+    favAria: "Guardar en mis favoritos",
     sinHorario: "Horario por confirmar",
   },
   en: {
@@ -104,6 +105,7 @@ export const I18N = {
     lead: "Three talks about the job, not the steps: what to do when something goes wrong on stage, how to handle your accounts and what really works on social media. Included with the Full Pass.",
     enPrograma: "See the full programme",
     verBio: "Who they are",
+    favAria: "Save to my favourites",
     sinHorario: "Time to be confirmed",
   },
   it: {
@@ -115,6 +117,7 @@ export const I18N = {
     lead: "Tre incontri sul mestiere, non sui passi: cosa fare quando qualcosa va storto sul palco, come gestire i conti e cosa funziona davvero sui social. Inclusi nel Full Pass.",
     enPrograma: "Vedi il programma completo",
     verBio: "Chi è",
+    favAria: "Salva nei preferiti",
     sinHorario: "Orario da confermare",
   },
 };
