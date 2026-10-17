@@ -96,6 +96,19 @@ const artists = ARTISTS_ES.map((a) => {
 >
   <Fragment slot="head">
     <link rel="preload" as="image" href="/img/hero-lanegra-poster.jpg" fetchpriority="high" />
+    {/* `js-fx` tiene que estar puesta ANTES del primer pintado. Si la añade
+        home.js, que es un módulo y por tanto diferido, el titular del hero se
+        ve un instante tal cual, luego salta a invisible para animarse y se
+        nota como un fogonazo. Esto es un script en línea en la cabecera: se
+        ejecuta antes de que se pinte el cuerpo. Sin JavaScript la clase no se
+        pone y todo queda visible, que es justo lo que debe pasar. */}
+    <script is:inline>
+      try {
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.classList.add("js-fx");
+        }
+      } catch (e) {}
+    </script>
   </Fragment>
   <EventSchema lang="es" />
   <div class="prop">
