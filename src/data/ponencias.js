@@ -59,7 +59,7 @@ export const PONENCIAS = [
   {
     clave: "Ponencia: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
     ponente: "Esteban Molina Pérez",
-    img: "esteban-molina.webp",
+    img: "esteban-molina-ponencia.webp",
     credencial: {
       es: "Economista colegiado · Especialista en escuelas de baile y artistas",
       en: "Chartered economist · Specialist in dance schools and performers",
