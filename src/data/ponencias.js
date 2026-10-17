@@ -36,7 +36,7 @@ export const PONENCIAS = [
     },
   },
   {
-    clave: "Ciclo Profesional: redes sociales sin humo, lo que funciona, lo que no y lo que viene con la IA en nuestro sector laboral",
+    clave: "Ciclo Profesional: redes sociales sin humo, lo que funciona, lo que no y lo que viene con la IA",
     ponente: "Manuel Ruiz",
     img: "manuel-ruiz-ponencia.webp",
     web: "https://digitalstrategy.es",
@@ -51,9 +51,9 @@ export const PONENCIAS = [
       it: "Social senza fumo",
     },
     bajada: {
-      es: "Lo que funciona, lo que no, y lo que viene con la inteligencia artificial en nuestro sector.",
-      en: "What works, what doesn't, and what AI is bringing to our industry.",
-      it: "Cosa funziona, cosa no e cosa porta l'intelligenza artificiale nel nostro settore.",
+      es: "Lo que funciona, lo que no, y lo que viene con la inteligencia artificial.",
+      en: "What works, what doesn't, and what AI is bringing.",
+      it: "Cosa funziona, cosa no e cosa porta l'intelligenza artificiale.",
     },
   },
   {
