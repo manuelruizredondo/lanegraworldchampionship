@@ -13,7 +13,7 @@ export const PONENCIAS = [
     clave: "Ponencia: el error en directo, estrategias para el reenfoque inmediato",
     ponente: "Dr. Alessandro Massaro",
     img: "alessandro-massaro-ponencia.webp",
-    ig: "https://www.instagram.com/ale.massaro86/",
+    ig: "https://www.instagram.com/alessandro_massaro_psicologo/",
     credencial: {
       es: "Psicólogo clínico y del deporte · Coreógrafo y juez internacional",
       en: "Clinical and sports psychologist · International choreographer and judge",
