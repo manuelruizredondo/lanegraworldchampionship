@@ -30,9 +30,9 @@ export const PONENCIAS = [
       it: "L'errore in diretta",
     },
     bajada: {
-      es: "Los tres segundos que deciden la performance.",
-      en: "The three seconds that decide the performance.",
-      it: "I tre secondi che decidono la performance.",
+      es: "Estrategias para el reenfoque inmediato.",
+      en: "How to refocus on the spot.",
+      it: "Strategie per ritrovare subito la concentrazione.",
     },
   },
   {
