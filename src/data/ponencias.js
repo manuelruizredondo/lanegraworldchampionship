@@ -12,7 +12,7 @@ export const PONENCIAS = [
     // La clave con la que se busca en el programa: el texto español exacto.
     clave: "Ponencia: el error en directo, estrategias para el reenfoque inmediato",
     ponente: "Dr. Alessandro Massaro",
-    img: "alessandro-massaro-ponencia.webp",
+    img: "alessandro-massaro-ponencia-bn.webp",
     ig: "https://www.instagram.com/alessandro_massaro_psicologo/",
     credencial: {
       es: "Psicólogo clínico y del deporte · Coreógrafo y juez internacional",
