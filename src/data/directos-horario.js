@@ -119,3 +119,41 @@ export function ventanasDirecto() {
   });
   return fundidas;
 }
+
+// ── Tramos en antena ────────────────────────────────────────────────────
+// La parrilla tiene los pases pegados: entre uno y otro hay de 0 a 10 minutos.
+// En un evento en vivo siempre se va con retraso, así que basta con que una
+// prueba se alargue un cuarto de hora para que NINGUNA ventana esté activa y
+// la página se quede sin botón de reproducir, con la emisión en antena.
+//
+// Esto devuelve los tramos en los que hay cámara encendida. No se agrupa por
+// día natural —eso juntaría la madrugada del sábado con la tarde del sábado y
+// daría un tramo de veintiséis horas, con once sin emisión en medio—, sino
+// fundiendo los pases que se siguen de cerca. Entre bloques queda el parón de
+// verdad: la noche, la comida.
+const MARGEN_ANTES = 10 * 60 * 1000;
+const MARGEN_DESPUES = 45 * 60 * 1000;
+const SEPARA_BLOQUES = 90 * 60 * 1000;   // más de hora y media sin pases: bloque nuevo
+
+export function jornadasEnAntena(lang = "es") {
+  const porComp = horarioPorCompeticion(lang);
+  const pases = [];
+  Object.keys(porComp).forEach((k) => {
+    porComp[k].forEach((s) => { if (s.emision) pases.push(s); });
+  });
+  pases.sort((a, b) => a.desde - b.desde);
+
+  const bloques = [];
+  pases.forEach((s) => {
+    const ult = bloques[bloques.length - 1];
+    if (ult && s.desde - ult.hasta <= SEPARA_BLOQUES) {
+      ult.hasta = Math.max(ult.hasta, s.hasta);
+    } else {
+      // El enlace del bloque es el del primer pase: si una final se alarga
+      // pasada la medianoche sigue siendo la emisión de esa misma noche.
+      bloques.push({ desde: s.desde, hasta: s.hasta, etiqueta: s.etiqueta, emision: s.emision });
+    }
+  });
+
+  return bloques.map((b) => ({ ...b, desde: b.desde - MARGEN_ANTES, hasta: b.hasta + MARGEN_DESPUES }));
+}

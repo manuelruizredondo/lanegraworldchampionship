@@ -9,7 +9,7 @@
 // Aquí solo se ordena y se pinta. El "qué hay ahora" se resuelve en el
 // navegador, porque la página es estática: se recalcula cada 30 s.
 import { COMPETICIONES, NOMBRES_COMP, ZONA, I18N } from "@/data/directos.js";
-import { horarioPorCompeticion } from "@/data/directos-horario.js";
+import { horarioPorCompeticion, jornadasEnAntena } from "@/data/directos-horario.js";
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
@@ -30,8 +30,11 @@ const pantallas = COMPETICIONES.map((c) => ({
   sesiones: porComp[c.clave],
 })).sort((a, b) => momento(a.sesiones[0]) - momento(b.sesiones[0]));
 
+const JORNADAS = jornadasEnAntena(lang);
+
 const DATOS = {
   zona: ZONA,
+  jornadas: JORNADAS,
   comps: pantallas.map((p) => ({ clave: p.clave, sesiones: p.sesiones })),
   textos: {
     directo: t.directo, luego: t.luego, sinEnlace: t.sinEnlace,
@@ -39,6 +42,7 @@ const DATOS = {
     ningunaActiva: t.ningunaActiva, antesDelFestival: t.antesDelFestival,
     despuesDelFestival: t.despuesDelFestival,
     una: t.activas(1), varias: t.activas(2).replace(/^2\s*/, ""),
+    enAntena: t.enAntena, verEmision: t.verEmision,
   },
 };
 ---
@@ -58,6 +62,21 @@ const DATOS = {
 
   <section class="p-section p-tight">
     <div class="p-container">
+      {/* Red de seguridad: los pases van pegados, así que si una prueba se
+          alarga no hay ninguna ventana activa y nadie podría darle a reproducir
+          con la emisión en antena. Este panel sale mientras haya cámara
+          encendida ese día, caiga o no dentro de una ventana. */}
+      <div class="dir-antena" data-dir-antena hidden>
+        <div class="dir-antena-txt">
+          <span class="dir-badge"><span class="dir-badge-punto" aria-hidden="true"></span>{t.directo}</span>
+          <p class="dir-antena-t">{t.enAntena}</p>
+        </div>
+        <button class="p-btn p-btn-dark dir-antena-btn" type="button" data-dir-antena-play>
+          {t.verEmision}
+        </button>
+        <div class="dir-antena-video" data-dir-antena-video hidden></div>
+      </div>
+
       <div class="dir-grid" data-dir-grid>
         {pantallas.map((p) => (
           <article class="dir-pantalla" data-comp={p.clave} data-disc={p.disciplina}>
@@ -154,26 +173,37 @@ const DATOS = {
       p.classList.remove("reproduciendo");
     }
 
+    function fuenteSrc(em) {
+      return em.tipo === "vimeo"
+        ? "https://player.vimeo.com/video/" + encodeURIComponent(em.fuente) + "?autoplay=1"
+        : em.tipo === "youtube"
+        ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(em.fuente) + "?autoplay=1&rel=0"
+        : em.fuente;
+    }
+
+    function marco(em, titulo) {
+      const f = document.createElement("iframe");
+      f.src = fuenteSrc(em);
+      f.title = titulo || "";
+      f.setAttribute("allow", "autoplay; fullscreen; picture-in-picture");
+      f.setAttribute("allowfullscreen", "");
+      f.setAttribute("loading", "lazy");
+      return f;
+    }
+
     function abrir(p) {
       const em = p._emision;
       if (!em || !em.fuente) return;
       // Solo una competición sonando a la vez: varios directos simultáneos
       // saturan la conexión y además se pisan los audios.
       pantallas.forEach((o) => { if (o !== p) limpiarReproductor(o); });
+      if (antenaVideo && !antenaVideo.hidden) {
+        antenaVideo.innerHTML = ""; antenaVideo.hidden = true;
+        if (antenaBtn) antenaBtn.hidden = false;
+      }
 
       const caja = p.querySelector("[data-dir-reproductor]");
-      const src = em.tipo === "vimeo"
-        ? "https://player.vimeo.com/video/" + encodeURIComponent(em.fuente) + "?autoplay=1"
-        : em.tipo === "youtube"
-        ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(em.fuente) + "?autoplay=1&rel=0"
-        : em.fuente;
-      const marco = document.createElement("iframe");
-      marco.src = src;
-      marco.title = (p.querySelector(".dir-comp") || {}).textContent || "";
-      marco.setAttribute("allow", "autoplay; fullscreen; picture-in-picture");
-      marco.setAttribute("allowfullscreen", "");
-      marco.setAttribute("loading", "lazy");
-      caja.appendChild(marco);
+      caja.appendChild(marco(em, (p.querySelector(".dir-comp") || {}).textContent));
       caja.hidden = false;
       p.classList.add("reproduciendo");
     }
@@ -253,15 +283,41 @@ const DATOS = {
       }
     }
 
+    // ── Panel de «emisión en antena» ─────────────────────────────────────
+    const antena = document.querySelector("[data-dir-antena]");
+    const antenaVideo = document.querySelector("[data-dir-antena-video]");
+    const antenaBtn = document.querySelector("[data-dir-antena-play]");
+    const jornadas = D.jornadas || [];
+    let jornadaAhora = null;
+
+    function revisarAntena() {
+      const t = Date.now();
+      jornadaAhora = jornadas.find(function (j) { return t >= j.desde && t < j.hasta; }) || null;
+      if (!antena) return;
+      const habia = !antena.hidden;
+      antena.hidden = !jornadaAhora;
+      if (!jornadaAhora && habia && antenaVideo) { antenaVideo.innerHTML = ""; antenaVideo.hidden = true; }
+    }
+
+    if (antenaBtn) antenaBtn.addEventListener("click", function () {
+      if (!jornadaAhora) return;
+      pantallas.forEach(limpiarReproductor);
+      antenaVideo.innerHTML = "";
+      antenaVideo.appendChild(marco(jornadaAhora.emision, antena.querySelector(".dir-antena-t").textContent));
+      antenaVideo.hidden = false;
+      antenaBtn.hidden = true;
+    });
+
     pantallas.forEach((p) => {
       const b = p.querySelector("[data-dir-play]");
       if (b) b.addEventListener("click", function () { abrir(p); });
     });
 
+    revisarAntena();
     pintar();
-    setInterval(pintar, 30000);
+    setInterval(function () { revisarAntena(); pintar(); }, 30000);
     document.addEventListener("visibilitychange", function () {
-      if (!document.hidden) pintar();
+      if (!document.hidden) { revisarAntena(); pintar(); }
     });
   })();
 </script>
@@ -287,6 +343,27 @@ const DATOS = {
   .dir-estado { margin: 26px 0 0; font-weight: 700; font-size: 17px; color: var(--p-muted); }
   .dir-estado.hay-directo { color: #c21818; }
   .dir-zona { margin: 4px 0 0; font-size: 14px; color: var(--p-muted); }
+
+  /* Panel de emisión en antena: va por delante de la rejilla y solo sale
+     mientras hay cámara encendida. */
+  .dir-antena {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 14px 18px;
+    border: 1px solid #e02020; border-radius: var(--p-radius);
+    background: linear-gradient(100deg, rgba(224,32,32,.07), rgba(224,32,32,0) 60%);
+    padding: 18px 22px; margin-bottom: 26px;
+  }
+  .dir-antena-txt { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
+  .dir-antena-t { margin: 0; font-weight: 700; font-size: 16.5px; letter-spacing: -.01em; }
+  .dir-antena-btn { margin-left: auto; }
+  .dir-antena-video {
+    flex: 1 0 100%; aspect-ratio: 16 / 9; background: #000;
+    border-radius: 14px; overflow: hidden;
+  }
+  .dir-antena-video :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .dir-antena [hidden] { display: none !important; }
+  @media (max-width: 560px) {
+    .dir-antena-btn { margin-left: 0; width: 100%; text-align: center; }
+  }
 
   .dir-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); }
 
