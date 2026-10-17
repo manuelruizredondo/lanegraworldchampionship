@@ -30,9 +30,9 @@ export const PONENCIAS = [
       it: "L'errore in diretta",
     },
     bajada: {
-      es: "Estrategias para el reenfoque inmediato cuando algo sale mal delante del público.",
-      en: "How to refocus on the spot when something goes wrong in front of an audience.",
-      it: "Strategie per ritrovare la concentrazione quando qualcosa va storto davanti al pubblico.",
+      es: "Los tres segundos que deciden la performance.",
+      en: "The three seconds that decide the performance.",
+      it: "I tre secondi che decidono la performance.",
     },
   },
   {
@@ -61,9 +61,9 @@ export const PONENCIAS = [
     ponente: "Esteban Molina Pérez",
     img: "esteban-molina-ponencia.webp",
     credencial: {
-      es: "Economista colegiado · Especialista en escuelas de baile y artistas",
-      en: "Chartered economist · Specialist in dance schools and performers",
-      it: "Economista iscritto all'albo · Specialista in scuole di ballo e artisti",
+      es: "Economista y gerente de Gesplan",
+      en: "Economist and manager of Gesplan",
+      it: "Economista e direttore di Gesplan",
     },
     bio: {
       es: "Licenciado en Ciencias Económicas y Empresariales por la Universidad Autónoma de Madrid y colegiado en el Colegio de Economistas de Madrid. Especialista en régimen fiscal de sociedades y autónomos, y en la gestión empresarial de escuelas de baile y artistas. Su despacho, constituido en 2005, lleva actualmente más de 60 empresas del sector del baile y la música.",
@@ -71,9 +71,9 @@ export const PONENCIAS = [
       it: "Laureato in Economia e Commercio all'Universidad Autónoma de Madrid e iscritto all'Ordine degli Economisti di Madrid. Specialista in regime fiscale di società e lavoratori autonomi e nella gestione aziendale di scuole di ballo e artisti. Il suo studio, fondato nel 2005, segue oggi più di 60 imprese del settore della danza e della musica.",
     },
     titulo: {
-      es: "Fiscalidad y gestión",
-      en: "Tax and business",
-      it: "Fisco e gestione",
+      es: "Fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
+      en: "Tax and business management for freelance dancers and dance schools",
+      it: "Fisco e gestione aziendale per ballerini autonomi e scuole di ballo",
     },
     bajada: {
       es: "Los primeros pasos para emprender tu negocio: cómo crear y desarrollar tu empresa, y todo lo relacionado con impuestos y Seguridad Social.",
