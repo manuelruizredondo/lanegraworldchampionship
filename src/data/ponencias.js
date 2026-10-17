@@ -12,7 +12,7 @@ export const PONENCIAS = [
     // La clave con la que se busca en el programa: el texto español exacto.
     clave: "Ciclo Profesional: el error en directo, estrategias para el reenfoque inmediato",
     ponente: "Dr. Alessandro Massaro",
-    img: "alessandro-massaro-ponencia-bn.webp",
+    img: "alessandro-massaro-ciclo.webp",
     ig: "https://www.instagram.com/alessandro_massaro_psicologo/",
     credencial: {
       es: "Psicólogo clínico y del deporte · Coreógrafo y juez internacional",
@@ -59,7 +59,7 @@ export const PONENCIAS = [
   {
     clave: "Ciclo Profesional: fiscalidad y gestión empresarial para bailarines autónomos y escuelas de baile",
     ponente: "Esteban Molina Pérez",
-    img: "esteban-molina-ponencia.webp",
+    img: "esteban-molina-ciclo.webp",
     credencial: {
       es: "Economista y gerente de Gesplan",
       en: "Economist and manager of Gesplan",
@@ -85,7 +85,7 @@ export const PONENCIAS = [
 
 export const I18N = {
   es: {
-    ruta: "/ponencias/",
+    ruta: "/ciclo-profesional/",
     metaTitle: "Ciclo Profesional · Charlas para el oficio · La Negra Dance Festival",
     metaDesc: "Tres charlas sobre la profesión: el error en directo, fiscalidad para bailarines y redes sociales. Calpe, 21–25 de octubre de 2026.",
     eyebrow: "Mundial de Pasos Libres · 2026",
@@ -96,7 +96,7 @@ export const I18N = {
     sinHorario: "Horario por confirmar",
   },
   en: {
-    ruta: "/en/talks/",
+    ruta: "/en/professional-series/",
     metaTitle: "Professional Series · Talks for the profession · La Negra Dance Festival",
     metaDesc: "Three talks about the profession: mistakes on stage, tax for dancers and social media. Calpe, 21–25 October 2026.",
     eyebrow: "Pasos Libres World Championship · 2026",
@@ -107,7 +107,7 @@ export const I18N = {
     sinHorario: "Time to be confirmed",
   },
   it: {
-    ruta: "/it/conferenze/",
+    ruta: "/it/ciclo-professionale/",
     metaTitle: "Ciclo Professionale · Incontri per il mestiere · La Negra Dance Festival",
     metaDesc: "Tre incontri sulla professione: l'errore in diretta, fisco per ballerini e social media. Calpe, 21–25 ottobre 2026.",
     eyebrow: "Mondiale di Pasos Libres · 2026",

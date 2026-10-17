@@ -44,6 +44,24 @@
 # Rutas antiguas que cambiaron de nombre. Antes eran páginas con <meta refresh>,
 # que es más lento y Google trata como redirección "blanda": mejor un 301 de verdad.
 [[redirects]]
+  from = "/ponencias/*"
+  to = "/ciclo-profesional/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/en/talks/*"
+  to = "/en/professional-series/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/it/conferenze/*"
+  to = "/it/ciclo-professionale/"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/talleres/*"
   to = "/programacion-2026/"
   status = 301
