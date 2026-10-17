@@ -69,8 +69,6 @@ export default async (req) => {
   const TOKEN = process.env.AIRTABLE_TOKEN;
   const BASE = process.env.AIRTABLE_BASE_ID;
   const TABLE = process.env.AIRTABLE_TABLA_VOTACION || "Votación Dani J";
-  if (!TOKEN || !BASE) return json({ error: "Servidor sin configurar (faltan claves de Airtable)." }, 500);
-
   const url = `https://api.airtable.com/v0/${BASE}/${encodeURIComponent(TABLE)}`;
   const cabeceras = { Authorization: `Bearer ${TOKEN}`, "content-type": "application/json" };
 
@@ -81,6 +79,16 @@ export default async (req) => {
   const sbApi = SB_URL ? `${SB_URL.replace(/\/$/, "")}/rest/v1/votos_danij` : null;
   const sbCab = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, "content-type": "application/json" };
 
+  // Airtable es el respaldo, no el requisito: si le falta la clave o alguien
+  // la rota en mitad del festival, la votación sigue en pie con Supabase, que
+  // es el registro principal. Solo se rinde si no hay ningún sitio donde
+  // guardar, y entonces lo dice claro.
+  const hayAirtable = Boolean(TOKEN && BASE);
+  const haySupabase = Boolean(sbApi && SB_KEY);
+  if (!hayAirtable && !haySupabase) {
+    return json({ error: "Servidor sin configurar (no hay dónde guardar el voto)." }, 500);
+  }
+
   // 0) ¿Ha votado ya este email, según Supabase?
   if (sbApi) {
     try {
@@ -89,8 +97,8 @@ export default async (req) => {
     } catch { /* si falla, decide Airtable */ }
   }
 
-  // 1) ¿Ha votado ya este email?
-  try {
+  // 1) ¿Ha votado ya este email? (segunda opinión de Airtable)
+  if (hayAirtable) try {
     const filtro = encodeURIComponent(`LOWER({Email}) = '${escapa(email)}'`);
     const res = await fetch(`${url}?filterByFormula=${filtro}&maxRecords=1&fields%5B%5D=Email`, { headers: cabeceras });
     if (res.ok) {
@@ -116,6 +124,12 @@ export default async (req) => {
     headers: cabeceras,
     body: JSON.stringify({ records: [{ fields: f }], typecast: true }),
   });
+
+  if (!hayAirtable) {
+    const salvado = await guardarEnSupabase();
+    if (salvado) return json({ ok: true, recordId: null });
+    return json({ error: m.servidor, detail: "Supabase no aceptó el voto." }, 502);
+  }
 
   try {
     let res = await escribir(fields);
