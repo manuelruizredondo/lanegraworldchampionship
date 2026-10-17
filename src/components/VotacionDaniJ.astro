@@ -6,8 +6,12 @@ import { CANCIONES, MAX_VOTOS, CIERRE, I18N, RUTA_PROGRAMA, YT, ENTRADAS } from 
 
 const { lang = "es" } = Astro.props;
 const t = I18N[lang] || I18N.es;
-// El cierre se comprueba también en el servidor; esto solo evita enseñar el
-// formulario cuando la página se genera después del plazo.
+// La web es estática: si el cierre solo se mirara aquí, al generar la página,
+// a las 21:01 del día 24 la gente seguiría viendo el formulario, elegiría sus
+// diez canciones y se comería un error al enviar. Así que los dos estados van
+// en el HTML y es el navegador quien decide cuál enseñar, comparando con el
+// reloj de verdad. El servidor sigue rechazando los votos tardíos: esto es
+// para no hacer perder el tiempo a nadie.
 const cerrada = Date.now() > Date.parse(CIERRE);
 ---
 
@@ -16,18 +20,17 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   <div class="p-container dj-head">
     <p class="p-eyebrow">{t.eyebrow}</p>
     <h1 class="script-title dj-h1">{t.h1}</h1>
-    {cerrada
-      ? <p class="p-lead p-narrow">{t.cerradaTexto}</p>
-      : <><p class="p-lead p-narrow">{t.lead}</p><p class="dj-plazo">{t.plazo}</p></>}
+    <p class="p-lead p-narrow" data-dj-si-cerrada hidden={!cerrada}>{t.cerradaTexto}</p>
+    <p class="p-lead p-narrow" data-dj-si-abierta hidden={cerrada}>{t.lead}</p>
+    <p class="dj-plazo" data-dj-si-abierta hidden={cerrada}>{t.plazo}</p>
   </div>
 
-  {cerrada ? (
-    <div class="p-container dj-cerrada">
-      <h2 class="p-h2">{t.cerradaTitulo}</h2>
-      <a class="p-btn p-btn-dark" href={RUTA_PROGRAMA[lang] || RUTA_PROGRAMA.es}>{t.okVolver}</a>
-    </div>
-  ) : (
-    <div class="p-container dj-wrap">
+  <div class="p-container dj-cerrada" data-dj-si-cerrada hidden={!cerrada}>
+    <h2 class="p-h2">{t.cerradaTitulo}</h2>
+    <a class="p-btn p-btn-dark" href={RUTA_PROGRAMA[lang] || RUTA_PROGRAMA.es}>{t.okVolver}</a>
+  </div>
+
+  <div class="p-container dj-wrap" data-dj-si-abierta hidden={cerrada}>
       <form class="dj-form" data-dj novalidate>
         <label class="dj-label" for="dj-email">{t.emailLabel}</label>
         <input class="dj-input" id="dj-email" type="email" name="email" inputmode="email"
@@ -101,8 +104,7 @@ const cerrada = Date.now() > Date.parse(CIERRE);
         <p class="p-lead p-narrow">{t.okTexto}</p>
         <a class="p-btn p-btn-dark" href={RUTA_PROGRAMA[lang] || RUTA_PROGRAMA.es}>{t.okVolver}</a>
       </div>
-    </div>
-  )}
+  </div>
 
   <!-- Entradas: al final, para que esté igual con la votación abierta,
        cerrada o ya enviada. -->
@@ -144,7 +146,26 @@ const cerrada = Date.now() > Date.parse(CIERRE);
   enviandoTxt: t.enviando, errEmail: t.errEmail, errPocas: t.errPocas,
   faltaUna: t.faltaUna, faltanVarias: t.faltanVarias,
   errGenerico: t.errGenerico, maxAviso: t.maxAviso,
-} }}>
+}, CIERRE_ISO: CIERRE }}>
+  // Cierre de la votación en el navegador. La página es estática, así que sin
+  // esto el formulario seguiría a la vista pasado el plazo.
+  (function () {
+    var limite = Date.parse(CIERRE_ISO);
+    if (!limite) return;
+    function revisar() {
+      var cerrada = Date.now() > limite;
+      document.querySelectorAll("[data-dj-si-cerrada]").forEach(function (e) { e.hidden = !cerrada; });
+      document.querySelectorAll("[data-dj-si-abierta]").forEach(function (e) { e.hidden = cerrada; });
+      return cerrada;
+    }
+    if (!revisar()) {
+      // Se vuelve a mirar cada minuto: así cierra sola aunque alguien tenga la
+      // página abierta desde antes de las 21:00.
+      var reloj = setInterval(function () { if (revisar()) clearInterval(reloj); }, 60000);
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) revisar(); });
+    }
+  })();
+
   (function () {
     const form = document.querySelector("[data-dj]");
     if (!form) return;
@@ -392,6 +413,9 @@ const cerrada = Date.now() > Date.parse(CIERRE);
     display: inline-block; margin: 10px 0 0; padding: 7px 14px; border-radius: 999px;
     background: #f4efe4; color: var(--gold-dark, #a28243); font-size: 13px; font-weight: 700;
   }
+  /* `display` gana al atributo `hidden`: sin esto, al cerrar la votación se
+     verían a la vez el formulario y el aviso de cerrada. */
+  .dj [hidden] { display: none !important; }
   .dj-wrap { max-width: 720px; margin-top: 26px; }
   .dj-cerrada { max-width: 560px; text-align: center; margin-top: 30px; }
 
