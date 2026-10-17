@@ -36,6 +36,11 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
         <span>{t.google}</span>
       </button>
 
+      {/* Google enseña el nombre técnico del servidor que guarda las cuentas,
+          no el del festival, y eso asusta a quien no lo espera. Avisar antes
+          cuesta una línea y evita que la gente abandone ahí. */}
+      <p class="cu-aviso-google" data-cu-google-aviso>{t.avisoGoogle}</p>
+
       <p class="cu-o" data-cu-o><span>{t.oBien}</span></p>
 
       {/* El mismo formulario sirve para entrar, darse de alta y recuperar la
@@ -165,6 +170,7 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
     const titulo = panel.querySelector("#cu-t");
     const lead = panel.querySelector(".cu-lead");
     const google = panel.querySelector("[data-cu-google]");
+    const avisoGoogle = panel.querySelector("[data-cu-google-aviso]");
     const separador = panel.querySelector("[data-cu-o]");
     const enlaces = panel.querySelectorAll("[data-cu-modo]");
     const TITULO_INICIAL = titulo.textContent;
@@ -184,6 +190,7 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
       bEnviar.textContent = alta ? T.crearCuenta : olvido ? T.enviarEnlace : T.entrarPass;
       // Con Google solo tiene sentido en la pantalla de entrar.
       google.hidden = olvido;
+      if (avisoGoogle) avisoGoogle.hidden = olvido;
       separador.hidden = olvido;
       enlaces.forEach((b) => { b.hidden = (b.dataset.cuModo === modo) || (modo === "entrar" && b.dataset.cuModo === "entrar"); });
       if (modo !== "entrar") panel.querySelector('[data-cu-modo="entrar"]').hidden = false;
@@ -305,6 +312,11 @@ const t = CUENTA_I18N[lang] || CUENTA_I18N.es;
   }
   .cu-google:hover { border-color: #c9c3b8; background: #fbfaf8; }
   .cu-google[hidden] { display: none; }
+  .cu-aviso-google {
+    margin: 9px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--p-muted, #6a6a74);
+    text-align: center;
+  }
+  .cu-aviso-google[hidden] { display: none; }
 
   .cu-o { display: flex; align-items: center; gap: 10px; margin: 16px 0 14px; }
   .cu-o[hidden] { display: none; }
