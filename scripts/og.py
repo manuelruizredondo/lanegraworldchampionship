@@ -24,7 +24,7 @@ BLANCO = (255, 255, 255)
 GRIS = (176, 172, 184)
 ROJO = (224, 32, 32)
 HELVETICA = "/System/Library/Fonts/HelveticaNeue.ttc"
-LOGO = "public/img/logo-lanegra-face.png"
+LOGO = "public/img/logo-campeonato.png"
 
 # archivo → (cejilla, [líneas del titular], pie, distintivo rojo opcional)
 IMAGENES = {
@@ -70,14 +70,13 @@ IMAGENES = {
 
 
 def pon_logo(lienzo):
-    """El logo es negro: sobre fondo oscuro se repinta en blanco."""
+    """La chapa del campeonato ya viene con su texto en blanco y su aro en
+    amarillo y granate: está pensada para fondo oscuro, así que va tal cual."""
     try:
         logo = Image.open(LOGO).convert("RGBA")
-        blanco = Image.new("RGBA", logo.size, BLANCO + (255,))
-        blanco.putalpha(logo.getchannel("A"))
-        alto = 94
-        blanco = blanco.resize((round(logo.width * alto / logo.height), alto), Image.LANCZOS)
-        lienzo.paste(blanco, (60, 48), blanco)
+        alto = 124
+        logo = logo.resize((round(logo.width * alto / logo.height), alto), Image.LANCZOS)
+        lienzo.paste(logo, (58, 40), logo)
     except Exception as e:  # sin logo antes que sin imagen
         print("  aviso · no se pudo poner el logo:", e)
 
@@ -102,7 +101,7 @@ def componer(nombre, cejilla, titulo, pie, marca):
     d = ImageDraw.Draw(lienzo)
 
     # Filete dorado fino bajo el logo: da estructura sin robar atención.
-    d.line([(60, 182), (240, 182)], fill=ORO, width=3)
+    d.line([(60, 196), (240, 196)], fill=ORO, width=3)
 
     # El bloque de texto se monta de abajo arriba para que el pie quede
     # siempre a la misma altura, tenga el titular una línea o dos.
